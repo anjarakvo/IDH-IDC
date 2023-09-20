@@ -1,0 +1,63 @@
+{
+  "name": "idh-idc",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "axios": "^0.25.0",
+    "axios-mock-adapter": "^1.21.1",
+    "buffer": "^6.0.3",
+    "lodash": "^4.17.21",
+    "pullstate": "^1.23.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.15.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.12",
+    "@babel/eslint-parser": "^7.16.5",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.0",
+    "@testing-library/dom": "^8.11.3",
+    "@testing-library/jest-dom": "^5.16.1",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios-mock-adapter": "^1.21.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.7.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-export": "^0.1.2",
+    "eslint-plugin-jsx-a11y": "^6.5.1",
+    "eslint-plugin-prettier": "^4.0.0",
+    "http-proxy-middleware": "^2.0.2",
+    "jest-canvas-mock": "^2.4.0",
+    "node-sass": "^7.0.1",
+    "prettier": "^2.5.1",
+    "react-test-renderer": "^17.0.2",
+    "yarn-audit-fix": "^9.3.1"
+  },
+  "resolutions": {
+    "mini-css-extract-plugin": "2.4.6"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "lint": "eslint --config .eslintrc.json src --ext .js,.jsx",
+    "prettier": "prettier --check src",
+    "prettier-write": "prettier --write ./src",
+    "build": "react-scripts build",
+    "test": "react-scripts test --updateSnapshot --transformIgnorePatterns \"node_modules/(?!d3|d3-geo|d3-array|internmap|delaunator|robust-predicates)/\"",
+    "test:ci": "CI=true react-scripts test --watchAll=false --coverage --transformIgnorePatterns \"node_modules/(?!d3|d3-geo|d3-array|internmap|delaunator|robust-predicates)/\"",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": ["react-app", "react-app/jest"]
+  },
+  "browserslist": {
+    "production": [">0.2%", "not dead", "not op_mini all"],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
