@@ -1,0 +1,5 @@
+---
+version: "2"
+syncs:
+  idh-idc-docker-sync:
+    src: "./frontend/node_modules"

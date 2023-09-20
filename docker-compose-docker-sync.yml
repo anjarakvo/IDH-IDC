@@ -1,0 +1,9 @@
+---
+version: "3.9"
+services:
+  frontend:
+    volumes:
+      - idc-docker-sync:/app/node_modules:nocopy
+volumes:
+  idc-docker-sync:
+    external: true
