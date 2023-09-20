@@ -18,7 +18,7 @@ services:
     volumes:
       - ./backend:/app:delegated
     working_dir: /app
-    command: "pytest -rP"
+    command: ["./check.sh"]
     environment:
       - DATABASE_URL=postgresql://idc:password@db:5432/idh_idc
       - SKIP_MIGRATION=yes
