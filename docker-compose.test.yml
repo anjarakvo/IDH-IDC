@@ -21,11 +21,6 @@ services:
     command: ["./check.sh"]
     environment:
       - DATABASE_URL=postgresql://idc:password@db:5432/idh_idc
-      - SKIP_MIGRATION=yes
-      - AUTH0_DOMAIN
-      - AUTH0_CLIENT_ID
-      - AUTH0_SECRET
-      - AUTH0_AUDIENCE
     depends_on:
       - db
 volumes:

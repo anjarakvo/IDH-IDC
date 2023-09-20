@@ -26,7 +26,6 @@ services:
       - ./backend:/app:delegated
     working_dir: /app
   frontend:
-    network_mode: service:mainnetwork
     image: akvo/akvo-node-18-alpine:20230831.105309.b9593b7
     command: ["./start.sh"]
     volumes:

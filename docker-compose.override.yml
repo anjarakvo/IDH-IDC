@@ -18,5 +18,7 @@ services:
       - pg-admin-data:/var/lib/pgadmin
     depends_on:
       - db
+  frontend:
+    network_mode: service:mainnetwork
 volumes:
   pg-admin-data:
