@@ -1,11 +1,12 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, Request
+from middleware import decode_token
+
+from routes.user import user_route
 
 
 app = FastAPI(
     root_path="/api",
     title="IDH-IDC",
-    instance_name="IDH-IDC",
     description="Auth Client ID: 99w2F1wVLZq8GqJwZph1kE42GuAZFvlF",
     version="1.0.0",
     contact={
@@ -19,16 +20,9 @@ app = FastAPI(
     },
 )
 
-origins = ["http://localhost:3000"]
-methods = ["GET"]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=methods,
-    allow_headers=["*"],
-)
+# Routes register
+app.include_router(user_route)
 
 
 @app.get("/", tags=["Dev"])
@@ -41,13 +35,11 @@ def health_check():
     return "OK"
 
 
-# @app.middleware("http")
-# async def route_middleware(request: Request, call_next):
-#     auth = request.headers.get("Authorization")
-#     if auth:
-#         auth = jwt.decode(
-#             auth.replace("Bearer ", ""), options={"verify_signature": False}
-#         )
-#         request.state.authenticated = auth
-#     response = await call_next(request)
-#     return response
+@app.middleware("http")
+async def route_middleware(request: Request, call_next):
+    auth = request.headers.get('Authorization')
+    if auth:
+        auth = decode_token(auth.replace("Bearer ", ""))
+        request.state.authenticated = auth
+    response = await call_next(request)
+    return response

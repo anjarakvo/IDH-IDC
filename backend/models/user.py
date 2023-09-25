@@ -2,9 +2,19 @@ from db.connection import Base
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import TypedDict
-from pydantic import BaseModel
+from pydantic import BaseModel, SecretStr
+from models.organisation import OrganisationDict
+from fastapi import Form
+from uuid import uuid4
+
+
+class UserWithOrg(TypedDict):
+    id: int
+    fullname: str
+    email: str
+    organisation_detail: OrganisationDict
 
 
 class UserDict(TypedDict):
@@ -72,4 +82,26 @@ class UserBase(BaseModel):
     password: Optional[str] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
+
+    @classmethod
+    def as_form(
+        cls,
+        fullname: str = Form(...),
+        email: str = Form(...),
+        password: SecretStr = Form(str(uuid4())),
+        organisation: int = Form(...),
+    ):
+        return cls(
+            fullname=fullname,
+            email=email,
+            password=password,
+            organisation=organisation,
+        )
+
+
+class UserResponse(BaseModel):
+    current: int
+    data: List[UserDict]
+    total: int
+    total_page: int

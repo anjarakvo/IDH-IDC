@@ -40,4 +40,4 @@ class CropCategoryQuestionBase(BaseModel):
     question: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

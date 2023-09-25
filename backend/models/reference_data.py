@@ -109,4 +109,4 @@ class ReferenceDataBase(BaseModel):
     diversified_income: Optional[float] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True

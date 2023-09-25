@@ -40,4 +40,4 @@ class UserFolderAccessBase(BaseModel):
     folder: int
 
     class Config:
-        orm_mode = True
+        from_attributes = True

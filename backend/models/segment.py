@@ -66,4 +66,4 @@ class SegmentBase(BaseModel):
     household_size: Optional[float] = None
 
     class Config:
-        orm_mode = True
+        from_attributes = True
