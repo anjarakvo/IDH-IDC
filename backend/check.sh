@@ -2,9 +2,6 @@
 
 set -euo pipefail
 
-echo "Migrating main schema"
-alembic upgrade head
-
 echo "Running tests"
 COVERAGE_PROCESS_START=./.coveragerc \
   coverage run --parallel-mode --concurrency=thread,gevent --rcfile=./.coveragerc \

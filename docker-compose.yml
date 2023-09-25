@@ -19,6 +19,8 @@ services:
       - db
     environment:
       - DATABASE_URL=postgresql://idc:password@db:5432/idh_idc
+      - CLIENT_ID=test
+      - CLIENT_SECRET=test
     network_mode: service:mainnetwork
     image: python:3.10.7
     command: ["./dev.sh"]

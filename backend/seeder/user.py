@@ -3,6 +3,8 @@ import sys
 from db.connection import Base, SessionLocal, engine
 import db.crud_user as crud
 import db.crud_organisation as crud_organisation
+from middleware import get_password_hash
+from models.user import User
 
 inputs = [
     {"value": "fullname", "question": "Full Name"},
@@ -60,12 +62,16 @@ if user:
     session.close()
     sys.exit()
 
-user = crud.add_user(
-    session=session,
-    email=payload["email"],
+payload["organisation"] = org.id
+user = User(
     fullname=payload["fullname"],
+    email=payload["email"],
+    password=get_password_hash("password"),
     organisation=org.id,
-    password="password"
 )
+session.add(user)
+session.commit()
+session.flush()
+session.refresh(user)
 print(f"{user.email} of {org.name} added")
 session.close()

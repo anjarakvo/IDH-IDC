@@ -21,6 +21,8 @@ services:
     command: ["./check.sh"]
     environment:
       - DATABASE_URL=postgresql://idc:password@db:5432/idh_idc
+      - CLIENT_ID=test
+      - CLIENT_SECRET=test
     depends_on:
       - db
 volumes:

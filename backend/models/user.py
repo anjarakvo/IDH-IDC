@@ -7,7 +7,6 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel, SecretStr
 from models.organisation import OrganisationDict
 from fastapi import Form
-from uuid import uuid4
 
 
 class UserWithOrg(TypedDict):
@@ -48,10 +47,10 @@ class User(Base):
 
     def __init__(
         self,
-        id: Optional[int],
         organisation: int,
         email: str,
         fullname: str,
+        id: Optional[int] = None,
         password: Optional[str] = None
     ):
         self.id = id
@@ -89,7 +88,7 @@ class UserBase(BaseModel):
         cls,
         fullname: str = Form(...),
         email: str = Form(...),
-        password: SecretStr = Form(str(uuid4())),
+        password: SecretStr = Form(None),
         organisation: int = Form(...),
     ):
         return cls(
