@@ -1,5 +1,5 @@
 from db.connection import Base
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy import Column, Integer, Float, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Optional
 from typing_extensions import TypedDict
@@ -8,11 +8,10 @@ from pydantic import BaseModel
 
 class LivingIncomeBenchmarkDict(TypedDict):
     id: int
-    crop: int
-    segment: int
-    question: int
-    current_value: float
-    feasible_value: Optional[float]
+    country: int
+    currency: int
+    year: int
+    value: float
 
 
 class LivingIncomeBenchmark(Base):
@@ -20,7 +19,7 @@ class LivingIncomeBenchmark(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     country = Column(Integer, ForeignKey('country.id'))
-    currency = Column(String, nullable=False)
+    currency = Column(Integer, ForeignKey('currency.id'))
     year = Column(Integer, nullable=False)
     value = Column(Float, nullable=False)
 
@@ -30,12 +29,18 @@ class LivingIncomeBenchmark(Base):
         passive_deletes=True,
         backref='country_living_income_benchmark'
     )
+    currency_detail = relationship(
+        'Currency',
+        cascade="all, delete",
+        passive_deletes=True,
+        backref='currency_living_income_benchmark'
+    )
 
     def __init__(
         self,
         id: Optional[int],
         country: int,
-        currency: str,
+        currency: int,
         year: int,
         value: float,
     ):
@@ -62,7 +67,7 @@ class LivingIncomeBenchmark(Base):
 class LivingIncomeBenchmarkBase(BaseModel):
     id: int
     country: int
-    currency: str
+    currency: int
     year: int
     value: float
 
