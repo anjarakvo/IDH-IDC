@@ -8,7 +8,6 @@ Create Date: 2023-09-22 09:04:21.615121
 from typing import Sequence, Union
 
 from alembic import op
-from sqlalchemy import func
 import sqlalchemy as sa
 
 
@@ -27,12 +26,6 @@ def upgrade() -> None:
             'crop_category', sa.Integer(),
             sa.ForeignKey('crop_category.id')),
         sa.Column('name', sa.String(), nullable=False),
-        sa.Column(
-            'created_at', sa.DateTime(),
-            nullable=False, server_default=func.now()),
-        sa.Column(
-            'updated_at', sa.DateTime(), nullable=False,
-            server_default=func.now(), onupdate=func.now()),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['crop_category'], ['crop_category.id'],
