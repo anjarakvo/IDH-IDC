@@ -9,6 +9,6 @@ test("it renders correctly", async () => {
     </Router>
   );
   waitFor(() => {
-    expect(getByTestId("hello")).toBeInTheDocument();
+    expect(getByTestId("page-layout")).toBeInTheDocument();
   });
 });
