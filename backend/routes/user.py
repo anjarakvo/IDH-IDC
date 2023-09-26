@@ -54,10 +54,14 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"email": user.email})
+    organisation = crud_organisation.get_organisation_by_id(
+        session=session, id=user.organisation)
+    res_user = user.serialize
+    res_user['organisation_detail'] = organisation.serialize
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": user.serialize
+        "user": res_user
     }
 
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Breadcrumb } from "antd";
 
-const ContentLayout = ({ children, breadcrumbItems = [{ title: null }] }) => {
+const ContentLayout = ({ children, breadcrumbItems = [] }) => {
   return (
     <div>
       <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbItems} />
