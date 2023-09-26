@@ -5,7 +5,7 @@ import logging
 from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
-from sqlalchemy import pool, create_engine
+from sqlalchemy import pool, create_engine, text
 from db.connection import Base
 from psycopg2 import DatabaseError
 
@@ -56,8 +56,8 @@ def run_migrations_online():
         )
         # drop testing db if it exists and create a fresh one
         with default_engine.connect() as default_conn:
-            default_conn.execute("DROP DATABASE IF EXISTS idh_idc_test")
-            default_conn.execute("CREATE DATABASE idh_idc_test")
+            default_conn.execute(text("DROP DATABASE IF EXISTS idh_idc_test"))
+            default_conn.execute(text("CREATE DATABASE idh_idc_test"))
     connectable = config.attributes.get("connection", None)
     config.set_main_option("sqlalchemy.url", DB_URL)
 

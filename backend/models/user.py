@@ -74,11 +74,11 @@ class User(Base):
 
 
 class UserBase(BaseModel):
-    id: int
+    id: Optional[int] = None
     organisation: int
     email: str
     fullname: str
-    password: Optional[str] = None
+    password: Optional[SecretStr] = None
 
     class Config:
         from_attributes = True
