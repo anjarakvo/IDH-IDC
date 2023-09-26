@@ -130,7 +130,8 @@ def get_me(
 def register(
     req: Request,
     payload: UserBase = Depends(UserBase.as_form),
-    session: Session = Depends(get_session)
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
 ):
     # Check if user exist by email
     check_user_exist = crud_user.get_user_by_email(
