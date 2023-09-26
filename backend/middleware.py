@@ -1,3 +1,5 @@
+import os
+
 from datetime import datetime, timedelta
 
 from fastapi import Depends, HTTPException, status
@@ -9,12 +11,11 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from models.user import UserDict
-
-import db.crud_user as crud_user
+from db import crud_user
 
 # to get a string like this run:
 # openssl rand -hex 32
-SECRET_KEY = "09d25e094faa6ca2556c818166b7a9563b93f7099f6f0f4caa6cf63b88e8d3e7"
+SECRET_KEY = os.environ.get("SECRET_KEY", None)
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 1
 ACCESS_TOKEN_EXPIRE_DAYS = 1
