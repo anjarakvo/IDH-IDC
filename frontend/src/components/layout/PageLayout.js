@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Menu, Breadcrumb } from "antd";
+import { Layout, Menu } from "antd";
 
 const { Header, Content } = Layout;
 
@@ -34,17 +34,7 @@ const PageLayout = ({ children }) => {
         className="site-layout"
         style={{ padding: "0 50px" }}
       >
-        <Breadcrumb
-          style={{ margin: "16px 0" }}
-          items={[
-            {
-              title: "Home",
-            },
-          ]}
-        />
-        <div style={{ padding: 24, minHeight: 380, background: "#fff" }}>
-          {children}
-        </div>
+        {children}
       </Content>
     </Layout>
   );

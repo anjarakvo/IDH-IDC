@@ -1,10 +1,11 @@
 import React from "react";
+import { ContentLayout } from "../../components/layout";
 
 const Home = () => {
   return (
-    <div>
+    <ContentLayout breadcrumbItems={[{ title: "Home" }]}>
       <h1>Home</h1>
-    </div>
+    </ContentLayout>
   );
 };
 
