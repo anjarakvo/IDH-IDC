@@ -6,12 +6,14 @@ import { useCookies } from "react-cookie";
 import { api } from "../../lib";
 import { UserState } from "../../store";
 
+const env = window?.__ENV__;
+const client_id = env?.client_id || "test";
+const client_secret = env?.client_secret || "test";
+
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["AUTH_TOKEN"]);
-
-  const { client_id, client_secret } = window.__ENV__;
 
   const onFinish = (values) => {
     setLoading(true);
@@ -21,8 +23,8 @@ const Login = () => {
     payload.append("username", email);
     payload.append("password", password);
     payload.append("scope", "openid email");
-    payload.append("client_id", client_id || "test");
-    payload.append("client_secret", client_secret || "test");
+    payload.append("client_id", client_id);
+    payload.append("client_secret", client_secret);
 
     api
       .post("user/login", payload)
@@ -58,7 +60,6 @@ const Login = () => {
             name="form-login"
             layout="vertical"
             onFinish={onFinish}
-            // onFinishFailed={onFinishFailed}
             autoComplete="off"
           >
             <Form.Item
@@ -71,7 +72,7 @@ const Login = () => {
                 },
               ]}
             >
-              <Input testid="input-email" />
+              <Input data-testid="input-email" />
             </Form.Item>
 
             <Form.Item
@@ -84,11 +85,11 @@ const Login = () => {
                 },
               ]}
             >
-              <Input.Password testid="input-password" />
+              <Input.Password data-testid="input-password" />
             </Form.Item>
             <Form.Item>
               <Button
-                testid="login-button"
+                data-testid="button-login"
                 type="primary"
                 htmlType="submit"
                 block
