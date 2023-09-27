@@ -1,5 +1,8 @@
-from fastapi import FastAPI, Request
+import os
+from jsmin import jsmin
+from fastapi import FastAPI, Request, Response
 from middleware import decode_token
+from fastapi.responses import FileResponse
 
 from routes.user import user_route
 
@@ -20,6 +23,8 @@ app = FastAPI(
     },
 )
 
+JS_FILE = "./config.min.js"
+
 
 # Routes register
 app.include_router(user_route)
@@ -33,6 +38,27 @@ def read_main():
 @app.get("/health-check", tags=["Dev"])
 def health_check():
     return "OK"
+
+
+@app.get(
+    "/config.js",
+    response_class=FileResponse,
+    tags=["Config"],
+    name="config.js",
+    description="static javascript config")
+async def main(res: Response):
+    # if not os.path.exists(JS_FILE):
+    env_js = "var __ENV__={"
+    env_js += "client_id:\"{}\"".format(os.environ["CLIENT_ID"])
+    env_js += ", client_secret:\"{}\"".format(os.environ["CLIENT_SECRET"])
+    env_js += "};"
+    min_js = jsmin("".join([
+        env_js,
+        ";"
+    ]))
+    open(JS_FILE, 'w').write(min_js)
+    res.headers["Content-Type"] = "application/x-javascript; charset=utf-8"
+    return JS_FILE
 
 
 @app.middleware("http")

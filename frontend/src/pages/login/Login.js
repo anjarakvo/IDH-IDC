@@ -11,8 +11,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["AUTH_TOKEN"]);
 
-  // TODO : add env
-  // const { client_id, client_secret } = window.__ENV__;
+  const { client_id, client_secret } = window.__ENV__;
 
   const onFinish = (values) => {
     setLoading(true);
@@ -22,10 +21,8 @@ const Login = () => {
     payload.append("username", email);
     payload.append("password", password);
     payload.append("scope", "openid email");
-    // payload.append("client_id", client_id);
-    // payload.append("client_secret", client_secret);
-    payload.append("client_id", "test");
-    payload.append("client_secret", "test");
+    payload.append("client_id", client_id || "test");
+    payload.append("client_secret", client_secret || "test");
 
     api
       .post("user/login", payload)
