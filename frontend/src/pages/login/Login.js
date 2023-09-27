@@ -1,10 +1,13 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
-import { Row, Col, Button, Form, Input, Divider, notification } from "antd";
+import { Row, Col, Button, Form, Input, Divider } from "antd";
 import { useCookies } from "react-cookie";
 import { api } from "../../lib";
+import { UserState } from "../../store";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["AUTH_TOKEN"]);
 
@@ -31,10 +34,14 @@ const Login = () => {
         removeCookie("AUTH_TOKEN");
         setCookie("AUTH_TOKEN", data?.access_token);
         api.setToken(cookies?.AUTH_TOKEN);
-        // store.update((s) => {
-        //   s.user = data.user;
-        // });
-        // navigate("/dashboard");
+        UserState.update((s) => {
+          s.id = data.id;
+          s.fullname = data.fullname;
+          s.email = data.email;
+          s.active = data.active;
+          s.organisation_detail = data.organisation_detail;
+        });
+        navigate("/dashboard");
       })
       .catch(() => {
         console.info("error");

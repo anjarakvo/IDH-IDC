@@ -9,7 +9,7 @@ const PrivateRoutes = () => {
   const authTokenAvailable =
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
 
-  return authTokenAvailable && userId && userActive ? (
+  return authTokenAvailable || (userId && userActive) ? (
     <Outlet />
   ) : (
     <Navigate to="/login" />

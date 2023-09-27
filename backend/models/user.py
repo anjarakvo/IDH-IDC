@@ -13,6 +13,7 @@ class UserWithOrg(TypedDict):
     id: int
     fullname: str
     email: str
+    active: bool
     organisation_detail: OrganisationDict
 
 
