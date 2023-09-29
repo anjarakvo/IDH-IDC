@@ -5,39 +5,39 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class UserFolderAccess(Base):
-    __tablename__ = 'user_folder_access'
+class UserTag(Base):
+    __tablename__ = 'user_tag'
 
     id = Column(Integer, primary_key=True, nullable=False)
     user = Column(Integer, ForeignKey('user.id'), nullable=False)
-    folder = Column(Integer, ForeignKey('folder.id'), nullable=False)
+    tag = Column(Integer, ForeignKey('tag.id'), nullable=False)
 
     user_detail = relationship(
-        'Folder',
+        'User',
         cascade="all, delete",
         passive_deletes=True,
-        backref='user_access'
+        backref='user_tag'
     )
-    folder_detail = relationship(
-        'Folder',
+    tag_detail = relationship(
+        'Tag',
         cascade="all, delete",
         passive_deletes=True,
-        backref='folder_access'
+        backref='tag_user'
     )
 
-    def __init__(self, id: Optional[int], user: int, folder: int):
+    def __init__(self, id: Optional[int], user: int, tag: int):
         self.id = id
         self.user = user
-        self.folder = folder
+        self.tag = tag
 
     def __repr__(self) -> int:
-        return f"<UserFolderAccess {self.id}>"
+        return f"<UserTag {self.id}>"
 
 
-class UserFolderAccessBase(BaseModel):
+class UserTagBase(BaseModel):
     id: int
     user: int
-    folder: int
+    tag: int
 
     class Config:
         from_attributes = True

@@ -12,7 +12,6 @@ from pydantic import BaseModel
 
 class ProjectDict(TypedDict):
     id: Optional[int]
-    folder: int
     name: str
     date: str
     year: int
@@ -34,7 +33,6 @@ class Project(Base):
     __tablename__ = 'project'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    folder = Column(Integer, ForeignKey('folder.id'))
     name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
     year = Column(Integer, nullable=False)
@@ -64,12 +62,6 @@ class Project(Base):
         onupdate=func.now()
     )
 
-    folder_detail = relationship(
-        'Folder',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='projects'
-    )
     country_detail = relationship(
         'Country',
         cascade="all, delete",
@@ -92,7 +84,6 @@ class Project(Base):
     def __init__(
         self,
         id: Optional[int],
-        folder: int,
         name: str,
         date: str,
         year: int,
@@ -110,7 +101,6 @@ class Project(Base):
         created_by: int
     ):
         self.id = id
-        self.folder = folder
         self.name = name
         self.date = date
         self.year = year
@@ -134,7 +124,6 @@ class Project(Base):
     def serialize(self) -> ProjectDict:
         return {
             "id": self.id,
-            "folder": self.folder,
             "name": self.name,
             "date": self.date,
             "year": self.year,
@@ -155,7 +144,6 @@ class Project(Base):
 
 class ProjectBase(BaseModel):
     id: int
-    folder: int
     name: str
     date: str
     year: int
