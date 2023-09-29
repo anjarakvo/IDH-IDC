@@ -23,7 +23,6 @@ def upgrade() -> None:
     op.create_table(
         'project',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('folder', sa.Integer(), sa.ForeignKey('folder.id')),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('date', sa.Date(), nullable=False),
         sa.Column('year', sa.Integer(), nullable=False),
@@ -54,10 +53,6 @@ def upgrade() -> None:
             'updated_at', sa.DateTime(), nullable=False,
             server_default=func.now(), onupdate=func.now()),
         sa.PrimaryKeyConstraint('id'),
-        sa.ForeignKeyConstraint(
-            ['folder'], ['folder.id'],
-            name='project_folder_constraint',
-            ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
             ['country'], ['country.id'],
             name='project_country_constraint',

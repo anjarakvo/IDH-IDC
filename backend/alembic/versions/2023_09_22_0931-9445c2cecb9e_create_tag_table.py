@@ -1,4 +1,4 @@
-"""create folder table
+"""create tag table
 
 Revision ID: 9445c2cecb9e
 Revises: 99c1425bb885
@@ -21,9 +21,8 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'folder',
+        'tag',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('parent', sa.Integer(), nullable=True),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('description', sa.String(), nullable=True),
         sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id')),
@@ -36,16 +35,13 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['created_by'], ['user.id'],
-            name='folder_created_by_constraint',
+            name='tag_created_by_constraint',
             ondelete='CASCADE'),
     )
-    op.create_foreign_key(
-        None, 'folder', 'folder',
-        ['parent'], ['id'])
     op.create_index(
-        op.f('ix_folder_id'), 'folder', ['id'], unique=True)
+        op.f('ix_tag_id'), 'tag', ['id'], unique=True)
 
 
 def downgrade() -> None:
-    op.drop_index(op.f('ix_folder_id'), table_name='folder')
-    op.drop_table('folder')
+    op.drop_index(op.f('ix_tag_id'), table_name='tag')
+    op.drop_table('tag')

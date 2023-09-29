@@ -1,4 +1,4 @@
-"""create user folder access table
+"""create user tag table
 
 Revision ID: 76e7ed4bab85
 Revises: 23904705dc42
@@ -20,26 +20,26 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'user_folder_access',
+        'user_tag',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('user', sa.Integer(), sa.ForeignKey('user.id')),
-        sa.Column('folder', sa.Integer(), sa.ForeignKey('folder.id')),
+        sa.Column('tag', sa.Integer(), sa.ForeignKey('tag.id')),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['user'], ['user.id'],
-            name='user_folder_access_user_constraint',
+            name='user_tag_user_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
-            ['folder'], ['folder.id'],
-            name='user_folder_access_folder_constraint',
+            ['tag'], ['tag.id'],
+            name='user_tag_tag_constraint',
             ondelete='CASCADE'),
     )
     op.create_index(
-        op.f('ix_user_folder_access_id'), 'user_folder_access',
+        op.f('ix_user_tag_id'), 'user_tag',
         ['id'], unique=True)
 
 
 def downgrade() -> None:
     op.drop_index(
-        op.f('ix_user_folder_access_id'), table_name='user_folder_access')
-    op.drop_table('user_folder_access')
+        op.f('ix_user_tag_id'), table_name='user_tag')
+    op.drop_table('user_tag')
