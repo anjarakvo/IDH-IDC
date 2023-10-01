@@ -1,0 +1,14 @@
+#root {
+  .demo-logo {
+    width: 120px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 6px;
+  }
+
+  .loading-container {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+  }
+}
