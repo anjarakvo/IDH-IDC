@@ -17,7 +17,7 @@ const PageLayout = ({ children }) => {
           alignItems: "center",
         }}
       >
-        <div testid="logo-container" className="demo-logo" />
+        <div testid="logo-container" className="logo" />
         <Menu
           testid="menu-container"
           theme="dark"
@@ -29,11 +29,7 @@ const PageLayout = ({ children }) => {
           }))}
         />
       </Header>
-      <Content
-        testid="layout-content"
-        className="site-layout"
-        style={{ padding: "0 50px" }}
-      >
+      <Content testid="layout-content" className="content-container">
         {children}
       </Content>
     </Layout>

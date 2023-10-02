@@ -12,9 +12,9 @@ const App = () => {
     <PageLayout testid="page-layout">
       <Routes>
         <Route element={<PrivateRoutes />}>
+          <Route exact path="/" element={<Home />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
         </Route>
-        <Route exact path="/" element={<Home />} />
         <Route exact path="/login" element={<Login />} />
       </Routes>
     </PageLayout>
