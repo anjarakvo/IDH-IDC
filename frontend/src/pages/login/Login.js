@@ -41,7 +41,7 @@ const Login = () => {
           s.active = data.active;
           s.organisation_detail = data.organisation_detail;
         });
-        navigate("/dashboard");
+        navigate("/");
       })
       .catch(() => {
         console.info("error");

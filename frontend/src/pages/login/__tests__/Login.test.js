@@ -42,8 +42,6 @@ describe("Login page", () => {
         </PageLayout>
       </Router>
     );
-    // const emailInput = getByTestId("input-email")
-    // const pwdInput = getByTestId("input-password")
     const loginBtn = getByTestId("button-login");
     fireEvent.click(loginBtn);
 
