@@ -41,7 +41,9 @@ const Login = () => {
           s.active = data.active;
           s.organisation_detail = data.organisation_detail;
         });
-        navigate("/");
+        setTimeout(() => {
+          navigate("/");
+        }, 100);
       })
       .catch(() => {
         console.info("error");

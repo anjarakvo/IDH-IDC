@@ -1,6 +1,6 @@
 import { Store } from "pullstate";
 
-export const defaultUserState = {
+const defaultUserState = {
   id: null,
   fullname: null,
   email: null,

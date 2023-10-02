@@ -6,7 +6,7 @@ import {
   NotificationOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-// import { UserState } from "../../store";
+import { UserState } from "../../store";
 
 const { Header, Content, Sider } = Layout;
 
@@ -33,7 +33,7 @@ const PageHeader = () => {
 
 const PageLayout = ({ children }) => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
-  // const { id: userId, active: userActive } = UserState.useState((s) => s);
+  const { id: userId, active: userActive } = UserState.useState((s) => s);
   const authTokenAvailable =
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
 
@@ -55,7 +55,7 @@ const PageLayout = ({ children }) => {
     }
   );
 
-  if (!authTokenAvailable) {
+  if (!authTokenAvailable || !(userId && userActive)) {
     return (
       <Layout>
         <Content testid="layout-content" className="content-container">
@@ -69,8 +69,9 @@ const PageLayout = ({ children }) => {
     <Layout>
       <PageHeader />
       <Layout>
-        <Sider width={235}>
+        <Sider testid="layout-sider" width={235}>
           <Menu
+            testid="menu-container"
             mode="inline"
             defaultSelectedKeys={["1"]}
             defaultOpenKeys={["sub1"]}
