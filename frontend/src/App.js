@@ -7,6 +7,7 @@ import { PageLayout } from "./components/layout";
 import { Home } from "./pages/home";
 import { Login } from "./pages/login";
 import { Dashboard } from "./pages/dashboard";
+import { NotFound } from "./pages/not-found";
 import { UserState } from "./store";
 import { api } from "./lib";
 
@@ -48,6 +49,7 @@ const App = () => {
   return (
     <PageLayout testid="page-layout">
       <Routes>
+        <Route path="*" element={<NotFound />} />
         <Route element={<PrivateRoutes />}>
           <Route exact path="/" element={<Home />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
