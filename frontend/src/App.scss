@@ -38,22 +38,32 @@
     min-height: 100vh;
     background: $bg-color-grey;
 
-    .ant-card-body {
-      padding: 12px 24px;
+    .content-card-container {
+      .ant-card-body {
+        padding-bottom: 18px;
 
-      .title {
-        font-size: 18px;
-        font-weight: 600;
-        padding-top: 4px;
-      }
+        .title {
+          font-size: 18px;
+          font-weight: 600;
+          padding-top: 4px;
+        }
 
-      .subTitle {
-        padding-top: 4px;
+        .subTitle {
+          padding-top: 4px;
+        }
       }
     }
 
     .content-wrapper {
-      padding: 12px !important;
+      padding: $default-space-size !important;
+
+      .ant-space {
+        width: 100%;
+      }
+
+      .ant-select {
+        width: 30vw;
+      }
     }
   }
 

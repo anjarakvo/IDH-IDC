@@ -21,7 +21,7 @@ const PageHeader = () => {
     >
       <div testid="logo-container" className="logo" />
       <div className="title">
-        <h3>Project Title</h3>
+        <h3>Explore Cases</h3>
       </div>
     </Header>
   );

@@ -1,0 +1,8 @@
+@import "../../variables.scss";
+
+.home-card-container {
+  .ant-body {
+    padding: $default-ant-card-body-padding;
+  }
+  margin-bottom: $default-space-size;
+}

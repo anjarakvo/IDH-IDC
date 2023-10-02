@@ -16,7 +16,7 @@ const ContentLayout = ({
 
   return (
     <div>
-      <Card style={{ padding: "12px 0 8px 0" }}>
+      <Card className="content-card-container">
         {hasBreadcrumb ? (
           <Breadcrumb testid="breadcrumb" items={breadcrumbItems} />
         ) : (
@@ -24,7 +24,7 @@ const ContentLayout = ({
         )}
         {title ? (
           <div testid="title" className="title">
-            Page Title
+            {title}
           </div>
         ) : (
           ""
