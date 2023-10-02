@@ -11,8 +11,8 @@
   }
 
   .content-container {
-    padding: 24;
-    height: 92vh;
+    padding: 24px !important;
+    min-height: 82vh;
     background: $bg-color-grey;
   }
 
