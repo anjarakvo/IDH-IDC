@@ -43,7 +43,7 @@ const App = () => {
           });
         });
     }
-  }, [authTokenAvailable]);
+  }, [authTokenAvailable, cookies?.AUTH_TOKEN]);
 
   return (
     <PageLayout testid="page-layout">

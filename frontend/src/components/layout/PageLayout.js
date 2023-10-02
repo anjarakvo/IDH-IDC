@@ -1,11 +1,7 @@
 import React from "react";
 import { Layout, Menu } from "antd";
 import { useCookies } from "react-cookie";
-import {
-  LaptopOutlined,
-  NotificationOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { UserState } from "../../store";
 
 const { Header, Content, Sider } = Layout;
@@ -31,29 +27,51 @@ const PageHeader = () => {
   );
 };
 
+const PageSider = () => {
+  const sideMenuItems = [
+    {
+      key: `project`,
+      icon: <FolderOpenOutlined />,
+      label: "Project",
+      // children: new Array(4).fill(null).map((_, j) => {
+      //   const subKey = index * 4 + j + 1;
+      //   return {
+      //     key: subKey,
+      //     label: `option${subKey}`,
+      //   };
+      // }),
+    },
+    {
+      key: `inputs`,
+      icon: <CheckCircleOutlined />,
+      label: "Inputs",
+    },
+    {
+      key: `outputs`,
+      icon: <CheckCircleOutlined />,
+      label: "Outputs",
+    },
+  ];
+
+  return (
+    <Sider testid="layout-sider" width={235}>
+      <Menu
+        testid="menu-container"
+        mode="inline"
+        defaultSelectedKeys={["1"]}
+        defaultOpenKeys={["sub1"]}
+        style={{ height: "100%", borderRight: 0 }}
+        items={sideMenuItems}
+      />
+    </Sider>
+  );
+};
+
 const PageLayout = ({ children }) => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
   const { id: userId, active: userActive } = UserState.useState((s) => s);
   const authTokenAvailable =
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
-
-  const items2 = [UserOutlined, LaptopOutlined, NotificationOutlined].map(
-    (icon, index) => {
-      const key = String(index + 1);
-      return {
-        key: `sub${key}`,
-        icon: React.createElement(icon),
-        label: `subnav ${key}`,
-        children: new Array(4).fill(null).map((_, j) => {
-          const subKey = index * 4 + j + 1;
-          return {
-            key: subKey,
-            label: `option${subKey}`,
-          };
-        }),
-      };
-    }
-  );
 
   if (!authTokenAvailable || !(userId && userActive)) {
     return (
@@ -69,16 +87,7 @@ const PageLayout = ({ children }) => {
     <Layout>
       <PageHeader />
       <Layout>
-        <Sider testid="layout-sider" width={235}>
-          <Menu
-            testid="menu-container"
-            mode="inline"
-            defaultSelectedKeys={["1"]}
-            defaultOpenKeys={["sub1"]}
-            style={{ height: "100%", borderRight: 0 }}
-            items={items2}
-          />
-        </Sider>
+        <PageSider />
         <Layout>
           <Content testid="layout-content" className="content-container">
             {children}
