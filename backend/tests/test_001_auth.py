@@ -67,7 +67,8 @@ class TestUserAuthentication():
             "email": "test@akvo.org",
             "fullname": "John Doe",
             "organisation": 1,
-            "active": True
+            "active": True,
+            "is_admin": False
         }
 
     @pytest.mark.asyncio

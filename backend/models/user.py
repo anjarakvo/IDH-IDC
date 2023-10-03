@@ -1,5 +1,7 @@
 from db.connection import Base
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import (
+    Column, Integer, String, DateTime, ForeignKey, Boolean
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
@@ -14,6 +16,7 @@ class UserWithOrg(TypedDict):
     fullname: str
     email: str
     active: bool
+    is_admin: bool
     organisation_detail: OrganisationDict
 
 
@@ -23,6 +26,7 @@ class UserDict(TypedDict):
     email: str
     fullname: str
     active: bool
+    is_admin: bool
 
 
 class User(Base):
@@ -33,6 +37,8 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
+    is_admin = Column(Boolean, nullable=False, default=False)
+    invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime, nullable=False, server_default=func.now(),
@@ -52,6 +58,8 @@ class User(Base):
         email: str,
         fullname: str,
         id: Optional[int] = None,
+        is_admin: Optional[bool] = False,
+        invitation_id: Optional[str] = None,
         password: Optional[str] = None
     ):
         self.id = id
@@ -59,6 +67,8 @@ class User(Base):
         self.email = email
         self.fullname = fullname
         self.password = password
+        self.is_admin = is_admin
+        self.invitation_id = invitation_id
 
     def __repr__(self) -> int:
         return f"<User {self.id}>"
@@ -70,7 +80,8 @@ class User(Base):
             "organisation": self.organisation,
             "email": self.email,
             "fullname": self.fullname,
-            "active": True if self.password else False
+            "active": True if self.password else False,
+            "is_admin": self.is_admin,
         }
 
 
