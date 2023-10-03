@@ -26,6 +26,7 @@ def upgrade() -> None:
             'crop_category', sa.Integer(),
             sa.ForeignKey('crop_category.id')),
         sa.Column('name', sa.String(), nullable=False),
+        sa.Column('focus_crop', sa.Boolean(), nullable=False, default=True),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['crop_category'], ['crop_category.id'],
