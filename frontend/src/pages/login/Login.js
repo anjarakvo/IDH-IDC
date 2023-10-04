@@ -1,7 +1,8 @@
 import React, { useState } from "react";
+import "./login.scss";
 import { useNavigate } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
-import { Row, Col, Button, Form, Input, Divider } from "antd";
+import { Row, Col, Button, Form, Input, Divider, Typography } from "antd";
 import { useCookies } from "react-cookie";
 import { api } from "../../lib";
 import { UserState } from "../../store";
@@ -40,7 +41,9 @@ const Login = () => {
           s.active = data.active;
           s.organisation_detail = data.organisation_detail;
         });
-        navigate("/dashboard");
+        setTimeout(() => {
+          navigate("/");
+        }, 100);
       })
       .catch(() => {
         console.info("error");
@@ -52,9 +55,15 @@ const Login = () => {
 
   return (
     <ContentLayout>
-      <Row align="center">
-        <Col span={6}>
-          <h3>Login</h3>
+      <Row align="center" className="login-container">
+        <Col span={8} align="center">
+          <div className="page-title-container">
+            <Typography.Title>Income Driver Calculator</Typography.Title>
+            <Typography.Title level={3}>
+              Welcome to the income driver calculator version 2.0
+            </Typography.Title>
+          </div>
+          <h4>Get Started</h4>
           <Divider />
           <Form
             name="form-login"
@@ -95,7 +104,7 @@ const Login = () => {
                 block
                 loading={loading}
               >
-                Login
+                Sign in
               </Button>
             </Form.Item>
           </Form>

@@ -1,13 +1,43 @@
 import React from "react";
-import { Breadcrumb } from "antd";
+import { Breadcrumb, Card } from "antd";
 
-const ContentLayout = ({ children, breadcrumbItems = [] }) => {
+const ContentLayout = ({
+  children,
+  breadcrumbItems = [],
+  title = null,
+  subTitle = null,
+}) => {
+  const hasBreadcrumb = breadcrumbItems.length;
+  const renderCard = hasBreadcrumb || title;
+
+  if (!renderCard) {
+    return <div className="content-wrapper">{children}</div>;
+  }
+
   return (
     <div>
-      <Breadcrumb style={{ margin: "16px 0" }} items={breadcrumbItems} />
-      <div style={{ padding: 24, minHeight: 380, background: "#fff" }}>
-        {children}
-      </div>
+      <Card className="content-card-container">
+        {hasBreadcrumb ? (
+          <Breadcrumb testid="breadcrumb" items={breadcrumbItems} />
+        ) : (
+          ""
+        )}
+        {title ? (
+          <div testid="title" className="title">
+            {title}
+          </div>
+        ) : (
+          ""
+        )}
+        {subTitle ? (
+          <div testid="subTitle" className="subTitle">
+            {subTitle}
+          </div>
+        ) : (
+          ""
+        )}
+      </Card>
+      <div className="content-wrapper">{children}</div>
     </div>
   );
 };

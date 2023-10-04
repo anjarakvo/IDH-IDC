@@ -7,6 +7,20 @@ import { api } from "../../../lib";
 jest.mock("../../../lib/api");
 
 describe("Login page", () => {
+  it("should show page title and subtitle", () => {
+    const { getByText } = render(
+      <Router>
+        <PageLayout>
+          <Login />
+        </PageLayout>
+      </Router>
+    );
+    expect(getByText("Income Driver Calculator")).toBeInTheDocument();
+    expect(
+      getByText("Welcome to the income driver calculator version 2.0")
+    ).toBeInTheDocument();
+  });
+
   it("should have email & password input and login button", () => {
     const { getByTestId } = render(
       <Router>
@@ -28,8 +42,6 @@ describe("Login page", () => {
         </PageLayout>
       </Router>
     );
-    // const emailInput = getByTestId("input-email")
-    // const pwdInput = getByTestId("input-password")
     const loginBtn = getByTestId("button-login");
     fireEvent.click(loginBtn);
 

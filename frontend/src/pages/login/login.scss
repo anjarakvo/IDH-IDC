@@ -1,0 +1,19 @@
+@import "../../variables.scss";
+
+// .content-container {
+// }
+
+.login-container {
+  background-image: url("/assets/images/bg-login.png") !important;
+  padding-top: 125px;
+  height: 97vh !important;
+
+  .page-title-container {
+    h1 {
+      color: $primary-color !important;
+    }
+    h3 {
+      color: rgba(0, 0, 0, 0.45);
+    }
+  }
+}

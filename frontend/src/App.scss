@@ -1,9 +1,70 @@
+@import "./variables.scss";
+
 #root {
-  .demo-logo {
-    width: 120px;
-    height: 32px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
+  header {
+    background: $primary-color;
+    padding: 12px 24px;
+
+    .logo {
+      width: 125px;
+      height: 50px;
+      background-image: url("/assets/images/logo.png");
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+
+    .title {
+      margin-left: 24px;
+      h3 {
+        color: #ffffff;
+      }
+    }
+  }
+
+  aside {
+    ul.ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light.css-dev-only-do-not-override-relbw9 {
+      padding-top: 12px;
+    }
+
+    li.ant-menu-item.ant-menu-item-selected {
+      background: #e6f7ff;
+      font-weight: 600;
+      border-right: 4px solid $primary-color;
+    }
+  }
+
+  .content-container {
+    min-height: 100vh;
+    background: $bg-color-grey;
+
+    .content-card-container {
+      .ant-card-body {
+        padding-bottom: 18px;
+
+        .title {
+          font-size: 18px;
+          font-weight: 600;
+          padding-top: 4px;
+        }
+
+        .subTitle {
+          padding-top: 4px;
+        }
+      }
+    }
+
+    .content-wrapper {
+      padding: $default-space-size !important;
+
+      .ant-space {
+        width: 100%;
+      }
+
+      .ant-select {
+        width: 30vw;
+      }
+    }
   }
 
   .loading-container {
