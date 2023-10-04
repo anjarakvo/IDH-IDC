@@ -1,9 +1,10 @@
 from fastapi import HTTPException, status
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from models.user import User, UserDict, UserBase
-from typing import List
+from models.user import User, UserDict, UserBase, UserUpdateBase
+from models.user_project_access import UserProjectAccess
+from models.user_tag import UserTag
 
 
 def add_user(
@@ -21,6 +22,40 @@ def add_user(
         organisation=payload.organisation,
     )
     session.add(user)
+    session.commit()
+    session.flush()
+    session.refresh(user)
+    return user
+
+
+def update_user_by_admin(
+    session: Session, id: int, payload: UserUpdateBase
+) -> UserDict:
+    user = get_user_by_id(session=session, id=id)
+    user.fullname = payload.fullname
+    user.organisation = payload.organisation
+    user.is_admin = 1 if payload.is_admin else 0
+    user.is_active = 1 if payload.is_active else 0
+    if payload.password:
+        user.password = payload
+    if payload.projects:
+        for proj in payload.projects:
+            project_access = UserProjectAccess(
+                user=user.id, project=proj)
+            user.user_project_access.apend(project_access)
+    if payload.tags:
+        for tag in payload.tags:
+            user_tag = UserTag(user=user.id, tag=tag)
+            user.user_tags.apend(user_tag)
+    session.commit()
+    session.flush()
+    session.refresh(user)
+    return user
+
+
+def update_password(session: Session, id: int, password: str) -> UserDict:
+    user = get_user_by_id(session=session, id=id)
+    user.password = password
     session.commit()
     session.flush()
     session.refresh(user)

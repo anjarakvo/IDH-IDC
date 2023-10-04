@@ -173,3 +173,13 @@ class UserResponse(BaseModel):
     data: List[UserPageDict]
     total: int
     total_page: int
+
+
+class UserUpdateBase(BaseModel):
+    fullname: str
+    organisation: int
+    is_admin: Optional[bool] = False
+    is_active: Optional[bool] = False
+    password: Optional[str] = None
+    projects: Optional[List[int]] = None
+    tags: Optional[List[int]] = None

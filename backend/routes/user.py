@@ -12,10 +12,13 @@ from fastapi.security import HTTPBasicCredentials as credentials
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.connection import get_session
-from models.user import UserDict, UserBase, UserResponse, UserWithOrg
+from models.user import (
+    UserDict, UserBase, UserResponse, UserWithOrg, UserUpdateBase
+)
 from db import crud_user
 from typing import Optional
 from http import HTTPStatus
+from middleware import verify_admin
 
 security = HTTPBearer()
 user_route = APIRouter()
@@ -77,6 +80,7 @@ def get_all(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
+    verify_admin(session=session, authenticated=req.state.authenticated)
     user = crud_user.get_all_user(
         session=session,
         search=search,
@@ -145,8 +149,42 @@ def register(
     return user
 
 
+@user_route.get(
+    "/user/{user_id:path}",
+    response_model=UserWithOrg,
+    summary="get user detail by id",
+    name="user:get_by_id",
+    tags=["User"])
+def get_user_by_id(
+    req: Request,
+    user_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    user = crud_user.get_user_by_id(session=session, id=user_id)
+    return user.to_user_with_org
+
+
+@user_route.put(
+    "/user/{user_id:path}",
+    response_model=UserWithOrg,
+    summary="update user by id",
+    name="user:update",
+    tags=["User"])
+def update_user_by_id(
+    req: Request,
+    user_id: int,
+    payload: UserUpdateBase,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    user = verify_user(session=session, authenticated=req.state.authenticated)
+    return user.to_user_with_org
+
+
 @user_route.delete(
-    "/user/{id:path}",
+    "/user/{user_id:path}",
     responses={204: {"model": None}},
     status_code=HTTPStatus.NO_CONTENT,
     summary="delete user by id",
@@ -154,9 +192,10 @@ def register(
     tags=["User"])
 def delete(
     req: Request,
-    id: int,
+    user_id: int,
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    crud_user.delete_user(session=session, id=id)
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    crud_user.delete_user(session=session, id=user_id)
     return Response(status_code=HTTPStatus.NO_CONTENT.value)
