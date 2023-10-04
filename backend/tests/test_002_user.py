@@ -17,7 +17,7 @@ CLIENT_SECRET = os.environ.get("CLIENT_SECRET", None)
 
 class TestUserEndpoint():
     @pytest.mark.asyncio
-    async def test_add_user_without_password(
+    async def test_invite_user_with_no_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user_payload = {
@@ -29,11 +29,23 @@ class TestUserEndpoint():
         # without credential
         res = await client.post(
             app.url_path_for("user:register"),
+            params={"invitation": 1},
             data=user_payload,
             headers={
                 "content-type": "application/x-www-form-urlencoded",
             })
         assert res.status_code == 403
+
+    @pytest.mark.asyncio
+    async def test_add_user_without_password(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user_payload = {
+            "fullname": "Test User",
+            "email": "test_user@akvo.org",
+            "password": None,
+            "organisation": 1,
+        }
         # with credential
         res = await client.post(
             app.url_path_for("user:register"),
@@ -259,6 +271,39 @@ class TestUserEndpoint():
         assert res['access_token'] is not None
         assert res['user']['email'] == user.email
 
+    # TODO :: user invitation and invited user register password
+    @pytest.mark.asyncio
+    async def test_invite_user_with_by_admin(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user_payload = {
+            "fullname": "Invited User",
+            "email": "invited_user@akvo.org",
+            "password": None,
+            "organisation": 1,
+        }
+        # with credential
+        res = await client.post(
+            app.url_path_for("user:register"),
+            params={"invitation": 1},
+            data=user_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 4,
+            "fullname": "Invited User",
+            "email": "invited_user@akvo.org",
+            "organisation": 1,
+            "is_admin": 0,
+            "active": 0
+        }
+        user = get_user_by_email(session=session, email=user_payload["email"])
+        assert user.invitation_id is not None
+        assert user.password is None
+
     # TODO :: user register with projects and tags
     # TODO :: user update with projects and tags
-    # TODO :: user invitation and invited user register password

@@ -121,6 +121,7 @@ def get_me(
     return user.to_user_with_org
 
 
+# user register by admin (user invitation)
 @user_route.post(
     "/user/register",
     response_model=UserDict,
@@ -130,9 +131,17 @@ def get_me(
 def register(
     req: Request,
     payload: UserBase = Depends(UserBase.as_form),
+    invitation: Optional[bool] = False,
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security)
 ):
+    # check invitation or not
+    if invitation:
+        if hasattr(req.state, 'authenticated'):
+            verify_admin(
+                session=session,
+                authenticated=req.state.authenticated)
+        else:
+            raise HTTPException(status_code=403, detail="Forbidden access")
     # Check if user exist by email
     check_user_exist = crud_user.get_user_by_email(
         session=session, email=payload.email)
@@ -144,7 +153,7 @@ def register(
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
     user = crud_user.add_user(
-        session=session, payload=payload)
+        session=session, payload=payload, invitation=invitation)
     user = user.serialize
     return user
 

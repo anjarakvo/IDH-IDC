@@ -1,3 +1,4 @@
+from uuid import uuid4
 from fastapi import HTTPException, status
 from typing import Optional, List
 from sqlalchemy import or_
@@ -10,6 +11,7 @@ from models.user_tag import UserTag
 def add_user(
     session: Session,
     payload: UserBase,
+    invitation: Optional[bool] = False,
 ) -> UserDict:
     try:
         password = payload.password.get_secret_value()
@@ -18,8 +20,9 @@ def add_user(
     user = User(
         fullname=payload.fullname,
         email=payload.email,
-        password=password,
+        password=password if not invitation else None,
         organisation=payload.organisation,
+        invitation_id=str(uuid4()) if invitation else None
     )
     session.add(user)
     session.commit()
