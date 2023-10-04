@@ -28,9 +28,9 @@ class Crop(Base):
 
     def __init__(
         self,
-        id: Optional[int],
         crop_category: int,
-        name: str
+        name: str,
+        id: Optional[int] = None,
     ):
         self.id = id
         self.crop_category = crop_category

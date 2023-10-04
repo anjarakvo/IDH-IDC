@@ -1,7 +1,7 @@
 from db.connection import Base
 from sqlalchemy import (
     Column, Integer, String, Date,
-    Boolean, Enum, ForeignKey, DateTime
+    SmallInteger, Enum, ForeignKey, DateTime
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -22,9 +22,9 @@ class ProjectDict(TypedDict):
     volume_measurement_unit: str
     cost_of_production_unit: str
     reporting_period: str
-    segmentation: str
+    segmentation: int
     living_income_study: Optional[str]
-    multiple_crops: bool
+    multiple_crops: int
     logo: Optional[str]
     created_by: int
 
@@ -43,7 +43,7 @@ class Project(Base):
     volume_measurement_unit = Column(String, nullable=False)
     cost_of_production_unit = Column(String, nullable=False)
     reporting_period = Column(String, nullable=False)
-    segmentation = Column(Boolean, nullable=False, default=False)
+    segmentation = Column(SmallInteger, nullable=False, default=0)
     living_income_study = Column(
         Enum(
             'better_income', 'living_income',
@@ -51,7 +51,7 @@ class Project(Base):
         ),
         nullable=True
     )
-    multiple_crops = Column(Boolean, nullable=False, default=False)
+    multiple_crops = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
     created_by = Column(Integer, ForeignKey('user.id'))
     created_at = Column(DateTime, nullable=False, server_default=func.now())
@@ -83,7 +83,6 @@ class Project(Base):
 
     def __init__(
         self,
-        id: Optional[int],
         name: str,
         date: str,
         year: int,
@@ -94,11 +93,12 @@ class Project(Base):
         volume_measurement_unit: str,
         cost_of_production_unit: str,
         reporting_period: str,
-        segmentation: str,
+        segmentation: int,
         living_income_study: Optional[str],
-        multiple_crops: bool,
+        multiple_crops: int,
         logo: Optional[str],
-        created_by: int
+        created_by: int,
+        id: Optional[int] = None,
     ):
         self.id = id
         self.name = name
@@ -154,9 +154,9 @@ class ProjectBase(BaseModel):
     volume_measurement_unit: str
     cost_of_production_unit: str
     reporting_period: str
-    segmentation: str
+    segmentation: int
     living_income_study: Optional[str] = None
-    multiple_crops: bool
+    multiple_crops: int
     logo: Optional[str] = None
     created_by: int
 

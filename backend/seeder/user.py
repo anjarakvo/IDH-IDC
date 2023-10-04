@@ -68,6 +68,7 @@ user = User(
     email=payload["email"],
     password=get_password_hash("password"),
     organisation=org.id,
+    is_active=1
 )
 session.add(user)
 session.commit()

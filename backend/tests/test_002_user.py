@@ -48,7 +48,8 @@ class TestUserEndpoint():
             "email": "test_user@akvo.org",
             "fullname": "Test User",
             "organisation": 1,
-            "active": False
+            "is_admin": 0,
+            "active": 0,
         }
 
     @pytest.mark.asyncio
@@ -71,13 +72,15 @@ class TestUserEndpoint():
                 'organisation': 1,
                 'email': 'test_user@akvo.org',
                 'fullname': 'Test User',
-                'active': False
+                "is_admin": 0,
+                'active': 0,
             }, {
                 'id': 1,
                 'organisation': 1,
                 'email': 'test@akvo.org',
                 'fullname': 'John Doe',
-                'active': True
+                "is_admin": 0,
+                'active': 0,
             }],
             'total': 2,
             'total_page': 1

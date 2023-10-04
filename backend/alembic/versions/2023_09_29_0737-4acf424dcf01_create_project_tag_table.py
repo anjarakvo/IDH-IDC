@@ -33,6 +33,9 @@ def upgrade() -> None:
             ['tag'], ['tag.id'],
             name='project_tag_tag_constraint',
             ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'project', 'tag',
+            name='project_tag_unique')
     )
     op.create_index(
         op.f('ix_project_tag_id'), 'project_tag',
@@ -42,4 +45,9 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index(
         op.f('ix_project_tag_id'), table_name='project_tag')
+    op.drop_constraint(
+        'project_tag_unique',
+        'project_tag',
+        type_='unique'
+    )
     op.drop_table('project_tag')

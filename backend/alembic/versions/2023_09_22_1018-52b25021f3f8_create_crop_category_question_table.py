@@ -34,6 +34,9 @@ def upgrade() -> None:
             ['question'], ['question.id'],
             name='crop_category_question_question_constraint',
             ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'crop_category', 'question',
+            name='crop_category_question_unique')
     )
     op.create_index(
         op.f('ix_crop_category_question_id'), 'crop_category_question',
@@ -44,4 +47,9 @@ def downgrade() -> None:
     op.drop_index(
         op.f('ix_crop_category_question_id'),
         table_name='crop_category_question')
+    op.drop_constraint(
+        'crop_category_question_unique',
+        'crop_category_question',
+        type_='unique'
+    )
     op.drop_table('crop_category_question')

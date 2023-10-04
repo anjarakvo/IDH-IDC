@@ -23,16 +23,28 @@ def upgrade() -> None:
     op.create_table(
         'visualization',
         sa.Column('id', sa.Integer(), nullable=False),
+        sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
+        sa.Column('segment', sa.Integer(), sa.ForeignKey('segment.id')),
         sa.Column(
-            'tabs',
+            'tab',
             sa.Enum(
-                'income_overview',
                 'sensitivity_analysis',
                 'scenario_modeling',
-                name='visualization_tabs_enum'
+                name='visualization_tab_enum'
             ),
             nullable=False),
         sa.Column('config', pg.JSONB()),
+        sa.PrimaryKeyConstraint('id'),
+        sa.ForeignKeyConstraint(
+            ['project'], ['project.id'],
+            name='visualization_project_constraint',
+            ondelete='CASCADE'),
+        sa.ForeignKeyConstraint(
+            ['segment'], ['segment.id'],
+            name='visualization_segment_constraint',
+            ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'segment', 'tab', name='visualization_segment_tab_unique')
     )
     op.create_index(
         op.f('ix_visualization_id'), 'project', ['id'], unique=True)
@@ -40,5 +52,10 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_index(op.f('ix_visualization_id'), table_name='visualization')
+    op.drop_constraint(
+        'visualization_segment_tab_unique',
+        'visualization',
+        type_='unique'
+    )
     op.drop_table('visualization')
-    op.execute('DROP TYPE visualization_tabs_enum')
+    op.execute('DROP TYPE visualization_tab_enum')
