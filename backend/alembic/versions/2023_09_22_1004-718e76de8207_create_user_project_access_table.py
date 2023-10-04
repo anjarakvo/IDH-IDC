@@ -33,6 +33,9 @@ def upgrade() -> None:
             ['project'], ['project.id'],
             name='user_project_access_project_constraint',
             ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'user', 'project',
+            name='user_project_access_unique')
     )
     op.create_index(
         op.f('ix_user_project_access_id'), 'user_project_access',
@@ -42,4 +45,9 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index(
         op.f('ix_user_project_access_id'), table_name='user_project_access')
+    op.drop_constraint(
+        'user_project_access_unique',
+        'user_project_access',
+        type_='unique'
+    )
     op.drop_table('user_project_access')

@@ -31,6 +31,9 @@ def upgrade() -> None:
             ['project'], ['project.id'],
             name='segment_project_constraint',
             ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'project', 'name',
+            name='project_segment_name_unique')
     )
     op.create_index(
         op.f('ix_segment_id'), 'segment',
@@ -40,4 +43,9 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index(
         op.f('ix_segment_id'), table_name='segment')
+    op.drop_constraint(
+        'project_segment_name_unique',
+        'segment',
+        type_='unique'
+    )
     op.drop_table('segment')

@@ -35,6 +35,8 @@ def upgrade() -> None:
             ['currency'], ['currency.id'],
             name='living_income_benchmark_currency_constraint',
             ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'country', 'currency', name='country_currency_unique')
     )
     op.create_index(
         op.f('ix_living_income_benchmark_id'), 'living_income_benchmark',
@@ -45,4 +47,9 @@ def downgrade() -> None:
     op.drop_index(
         op.f('ix_living_income_benchmark_id'),
         table_name='living_income_benchmark')
+    op.drop_constraint(
+        'country_currency_unique',
+        'living_income_benchmark',
+        type_='unique'
+    )
     op.drop_table('living_income_benchmark')
