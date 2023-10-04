@@ -9,7 +9,7 @@ describe("UserState", () => {
     expect(id).toBe(null);
     expect(fullname).toBe(null);
     expect(email).toBe(null);
-    expect(active).toBe(false);
+    expect(active).toBe(0);
     expect(organisation_detail).toEqual({
       id: null,
       name: null,
@@ -23,7 +23,7 @@ describe("UserState", () => {
         s.id = 1;
         s.fullname = "John Doe";
         s.email = "test@test.com";
-        s.active = true;
+        s.active = 1;
         s.organisation_detail = {
           id: 1,
           name: "Akvo",
@@ -35,7 +35,7 @@ describe("UserState", () => {
     expect(id).toBe(1);
     expect(fullname).toBe("John Doe");
     expect(email).toBe("test@test.com");
-    expect(active).toBe(true);
+    expect(active).toBe(1);
     expect(organisation_detail).toEqual({
       id: 1,
       name: "Akvo",
