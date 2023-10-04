@@ -89,7 +89,7 @@ def get_all(
     # count total user
     total = crud_user.count(
         session=session, search=search, organisation=organisation)
-    user = [u.serialize for u in user]
+    user = [u.to_user_list for u in user]
     total_page = ceil(total / limit) if total > 0 else 0
     if total_page < page:
         raise HTTPException(status_code=404, detail="Not found")

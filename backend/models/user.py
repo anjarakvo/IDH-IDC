@@ -25,6 +25,17 @@ class UserWithOrg(TypedDict):
     projects_count: int
 
 
+class UserPageDict(TypedDict):
+    id: int
+    organisation: int
+    email: str
+    fullname: str
+    is_admin: int
+    active: int
+    tags_count: int
+    projects_count: int
+
+
 class UserDict(TypedDict):
     id: int
     organisation: int
@@ -106,7 +117,6 @@ class User(Base):
 
     @property
     def to_user_with_org(self) -> UserDict:
-        print(self.user_tags)
         return {
             "id": self.id,
             "fullname": self.fullname,
@@ -114,6 +124,19 @@ class User(Base):
             "is_admin": self.is_admin,
             "active": self.is_active,
             "organisation_detail": self.user_organisation.serialize,
+            "tags_count": len(self.user_tags),
+            "projects_count": len(self.user_project_access),
+        }
+
+    @property
+    def to_user_list(self) -> UserDict:
+        return {
+            "id": self.id,
+            "organisation": self.organisation,
+            "email": self.email,
+            "fullname": self.fullname,
+            "is_admin": self.is_admin,
+            "active": self.is_active,
             "tags_count": len(self.user_tags),
             "projects_count": len(self.user_project_access),
         }
@@ -147,6 +170,6 @@ class UserBase(BaseModel):
 
 class UserResponse(BaseModel):
     current: int
-    data: List[UserDict]
+    data: List[UserPageDict]
     total: int
     total_page: int

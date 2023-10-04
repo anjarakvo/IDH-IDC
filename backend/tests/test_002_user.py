@@ -66,24 +66,28 @@ class TestUserEndpoint():
         assert res.status_code == 200
         res = res.json()
         assert res == {
-            'current': 1,
-            'data': [{
-                'id': 2,
-                'organisation': 1,
-                'email': 'test_user@akvo.org',
-                'fullname': 'Test User',
+            "current": 1,
+            "data": [{
+                "id": 2,
+                "organisation": 1,
+                "email": "test_user@akvo.org",
+                "fullname": "Test User",
                 "is_admin": 0,
-                'active': 0,
+                "active": 0,
+                "tags_count": 0,
+                "projects_count": 0,
             }, {
-                'id': 1,
-                'organisation': 1,
-                'email': 'test@akvo.org',
-                'fullname': 'John Doe',
+                "id": 1,
+                "organisation": 1,
+                "email": "test@akvo.org",
+                "fullname": "John Doe",
                 "is_admin": 0,
-                'active': 0,
+                "active": 0,
+                "tags_count": 0,
+                "projects_count": 0,
             }],
-            'total': 2,
-            'total_page': 1
+            "total": 2,
+            "total_page": 1
         }
 
     @pytest.mark.asyncio
