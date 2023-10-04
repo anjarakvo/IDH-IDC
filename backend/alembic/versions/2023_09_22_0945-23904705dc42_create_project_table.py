@@ -33,7 +33,9 @@ def upgrade() -> None:
         sa.Column('volume_measurement_unit', sa.String(), nullable=False),
         sa.Column('cost_of_production_unit', sa.String(), nullable=False),
         sa.Column('reporting_period', sa.String(), nullable=False),
-        sa.Column('segmentation', sa.Boolean(), nullable=False, default=False),
+        sa.Column(
+            'segmentation', sa.SmallInteger(),
+            nullable=False, server_default='0'),
         sa.Column(
             'living_income_study',
             sa.Enum(
@@ -43,7 +45,8 @@ def upgrade() -> None:
             ),
             nullable=True),
         sa.Column(
-            'multiple_crops', sa.Boolean(), nullable=False, default=False),
+            'multiple_crops', sa.SmallInteger(),
+            nullable=False, server_default='0'),
         sa.Column('logo', sa.String(), nullable=True),
         sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id')),
         sa.Column(
