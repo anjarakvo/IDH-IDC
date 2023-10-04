@@ -1,6 +1,7 @@
 from db.connection import Base
 from sqlalchemy import (
-    Column, Integer, String, DateTime, ForeignKey, Boolean
+    Column, Integer, String, DateTime, ForeignKey,
+    SmallInteger
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -15,8 +16,8 @@ class UserWithOrg(TypedDict):
     id: int
     fullname: str
     email: str
-    active: bool
-    is_admin: bool
+    is_admin: int
+    active: int
     organisation_detail: OrganisationDict
 
 
@@ -25,8 +26,8 @@ class UserDict(TypedDict):
     organisation: int
     email: str
     fullname: str
-    active: bool
-    is_admin: bool
+    is_admin: int
+    active: int
 
 
 class User(Base):
@@ -37,7 +38,8 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
-    is_admin = Column(Boolean, nullable=False, default=False)
+    is_admin = Column(SmallInteger, nullable=False, default=0)
+    is_active = Column(SmallInteger, nullable=False, default=0)
     invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
@@ -58,7 +60,8 @@ class User(Base):
         email: str,
         fullname: str,
         id: Optional[int] = None,
-        is_admin: Optional[bool] = False,
+        is_admin: Optional[int] = 0,
+        is_active: Optional[int] = 0,
         invitation_id: Optional[str] = None,
         password: Optional[str] = None
     ):
@@ -68,6 +71,7 @@ class User(Base):
         self.fullname = fullname
         self.password = password
         self.is_admin = is_admin
+        self.is_active = is_active
         self.invitation_id = invitation_id
 
     def __repr__(self) -> int:
@@ -80,8 +84,8 @@ class User(Base):
             "organisation": self.organisation,
             "email": self.email,
             "fullname": self.fullname,
-            "active": True if self.password else False,
             "is_admin": self.is_admin,
+            "active": self.is_active,
         }
 
 

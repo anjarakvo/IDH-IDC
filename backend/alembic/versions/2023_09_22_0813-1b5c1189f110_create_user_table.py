@@ -29,7 +29,12 @@ def upgrade() -> None:
         sa.Column('email', sa.String(), nullable=False),
         sa.Column('fullname', sa.String(), nullable=False),
         sa.Column('password', sa.String(), nullable=True),
-        sa.Column('is_admin', sa.Boolean(), default=False, nullable=False),
+        sa.Column(
+            'is_admin', sa.SmallInteger(),
+            server_default='0', nullable=False),
+        sa.Column(
+            'is_active', sa.SmallInteger(),
+            server_default='0', nullable=False),
         sa.Column('invitation_id', sa.Text(), default=None, nullable=True),
         sa.Column(
             'created_at', sa.DateTime(),

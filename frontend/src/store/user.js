@@ -4,7 +4,7 @@ export const defaultUserState = {
   id: null,
   fullname: null,
   email: null,
-  active: false,
+  active: 0,
   organisation_detail: {
     id: null,
     name: null,
