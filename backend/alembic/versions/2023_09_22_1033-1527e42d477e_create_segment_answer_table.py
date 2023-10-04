@@ -22,14 +22,15 @@ def upgrade() -> None:
     op.create_table(
         'segment_answer',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('crop', sa.Integer(), sa.ForeignKey('crop.id')),
+        sa.Column(
+            'project_crop', sa.Integer(), sa.ForeignKey('project_crop.id')),
         sa.Column('segment', sa.Integer(), sa.ForeignKey('segment.id')),
         sa.Column('question', sa.Integer(), sa.ForeignKey('question.id')),
         sa.Column('current_value', sa.Float(), nullable=False),
         sa.Column('feasible_value', sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['crop'], ['crop.id'],
+            ['project_crop'], ['project_crop.id'],
             name='segment_answer_crop_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
@@ -40,6 +41,9 @@ def upgrade() -> None:
             ['question'], ['question.id'],
             name='segment_answer_question_constraint',
             ondelete='CASCADE'),
+        sa.UniqueConstraint(
+            'project_crop', 'segment', 'question',
+            name='segment_answer_project_crop_segment_question_unique')
     )
     op.create_index(
         op.f('ix_segment_answer_id'), 'segment_answer',
@@ -50,4 +54,9 @@ def downgrade() -> None:
     op.drop_index(
         op.f('ix_segment_answer_id'),
         table_name='segment_answer')
+    op.drop_constraint(
+        'segment_answer_project_crop_segment_question_unique',
+        'segment_answer',
+        type_='unique'
+    )
     op.drop_table('segment_answer')
