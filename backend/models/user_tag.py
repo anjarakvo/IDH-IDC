@@ -12,18 +12,18 @@ class UserTag(Base):
     user = Column(Integer, ForeignKey('user.id'), nullable=False)
     tag = Column(Integer, ForeignKey('tag.id'), nullable=False)
 
-    user_detail = relationship(
+    user_tag_detail = relationship(
         'User',
         cascade="all, delete",
         passive_deletes=True,
-        backref='user_tag'
+        back_populates='user_tags'
     )
-    tag_detail = relationship(
-        'Tag',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='tag_user'
-    )
+    # tag_detail = relationship(
+    #     'Tag',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='tag_users'
+    # )
 
     def __init__(self, id: Optional[int], user: int, tag: int):
         self.id = id

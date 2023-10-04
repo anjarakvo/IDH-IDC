@@ -18,16 +18,16 @@ CLIENT_SECRET = os.environ.get("CLIENT_SECRET", None)
 
 class TestUserAuthentication():
     @pytest.mark.asyncio
-    async def test_get_all_user_expect_404(
+    async def test_get_all_user_expect_401(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         res = await client.get(
             app.url_path_for("user:get_all"),
             headers={"Authorization": f"Bearer {account.token}"})
-        assert res.status_code == 404
+        assert res.status_code == 401
 
     def test_token_verification(self):
-        account = Acc(email="test@akvo.org", token=None)
+        account = Acc(email="admin@akvo.org", token=None)
         assert account.token != ""
         assert account.decoded == account.data
         verify = verify_token(account.decoded)
@@ -48,7 +48,7 @@ class TestUserAuthentication():
         # create organisation
         user_payload = {
             "fullname": "John Doe",
-            "email": "test@akvo.org",
+            "email": "admin@akvo.org",
             "password": "test",
             "organisation": 1,
         }
@@ -64,7 +64,7 @@ class TestUserAuthentication():
         res = res.json()
         assert res == {
             "id": 1,
-            "email": "test@akvo.org",
+            "email": "admin@akvo.org",
             "fullname": "John Doe",
             "organisation": 1,
             "active": 0,
@@ -78,7 +78,7 @@ class TestUserAuthentication():
         # create organisation
         user_payload = {
             "fullname": "John Doe",
-            "email": "test@akvo.org",
+            "email": "admin@akvo.org",
             "password": "test",
             "organisation": 1,
         }
@@ -101,7 +101,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "test@akvo.org",
+                "username": "admin@akvo.org",
                 "password": "wrong_password",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -131,7 +131,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "test@akvo.org",
+                "username": "admin@akvo.org",
                 "password": "test",
                 "grant_type": "email",
                 "scopes": ["openid", "email"],
@@ -144,7 +144,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "test@akvo.org",
+                "username": "admin@akvo.org",
                 "password": "test",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -157,7 +157,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "test@akvo.org",
+                "username": "admin@akvo.org",
                 "password": "test",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -175,7 +175,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "test@akvo.org",
+                "username": "admin@akvo.org",
                 "password": "test",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -185,22 +185,46 @@ class TestUserAuthentication():
         assert res.status_code == 200
         res = res.json()
         assert res['access_token'] is not None
-        assert res['token_type'] == 'bearer'
-        account = Acc(email="test@akvo.org", token=res['access_token'])
+        account = Acc(email="admin@akvo.org", token=res['access_token'])
         assert account.token == res['access_token']
+        assert res == {
+            "access_token": res["access_token"],
+            "token_type": "bearer",
+            "user": {
+                "id": 1,
+                "fullname": "John Doe",
+                "email": "admin@akvo.org",
+                "active": 0,
+                "is_admin": 0,
+                "organisation_detail": {
+                    "id": 1,
+                    "name": "Akvo"
+                },
+                "tags_count": 0,
+                "projects_count": 0
+            }
+        }
 
     @pytest.mark.asyncio
     async def test_get_user_me(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        account = Acc(email="test@akvo.org", token=None)
+        account = Acc(email="admin@akvo.org", token=None)
         res = await client.get(
             app.url_path_for("user:me"),
             headers={"Authorization": f"Bearer {account.token}"})
         assert res.status_code == 200
         res = res.json()
-        assert res['email'] == "test@akvo.org"
-        assert res['fullname'] == "John Doe"
-        assert res['organisation_detail'] == {
-            'id': 1, 'name': 'Akvo'
+        assert res == {
+            "id": 1,
+            "fullname": "John Doe",
+            "email": "admin@akvo.org",
+            "active": 0,
+            "is_admin": 0,
+            "organisation_detail": {
+                "id": 1,
+                "name": "Akvo"
+            },
+            "tags_count": 0,
+            "projects_count": 0
         }

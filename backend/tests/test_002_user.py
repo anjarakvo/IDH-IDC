@@ -5,10 +5,11 @@ from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
+from db.crud_user import get_user_by_email
 
 sys.path.append("..")
 
-account = Acc(email=None, token=None)
+account = Acc(email="admin@akvo.org", token=None)
 
 CLIENT_ID = os.environ.get("CLIENT_ID", None)
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", None)
@@ -16,7 +17,7 @@ CLIENT_SECRET = os.environ.get("CLIENT_SECRET", None)
 
 class TestUserEndpoint():
     @pytest.mark.asyncio
-    async def test_add_user_without_password(
+    async def test_invite_user_with_no_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user_payload = {
@@ -28,11 +29,23 @@ class TestUserEndpoint():
         # without credential
         res = await client.post(
             app.url_path_for("user:register"),
+            params={"invitation_id": 1},
             data=user_payload,
             headers={
                 "content-type": "application/x-www-form-urlencoded",
             })
         assert res.status_code == 403
+
+    @pytest.mark.asyncio
+    async def test_add_user_without_password(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user_payload = {
+            "fullname": "Test User",
+            "email": "test_user@akvo.org",
+            "password": None,
+            "organisation": 1,
+        }
         # with credential
         res = await client.post(
             app.url_path_for("user:register"),
@@ -53,41 +66,34 @@ class TestUserEndpoint():
         }
 
     @pytest.mark.asyncio
-    async def test_get_all_user(
+    async def test_get_all_user_by_not_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # without credential
         res = await client.get(app.url_path_for("user:get_all"))
         assert res.status_code == 403
-        # with credential
+        # with credential but not an admin
         res = await client.get(
             app.url_path_for("user:get_all"),
             headers={"Authorization": f"Bearer {account.token}"})
-        assert res.status_code == 200
-        res = res.json()
-        assert res == {
-            'current': 1,
-            'data': [{
-                'id': 2,
-                'organisation': 1,
-                'email': 'test_user@akvo.org',
-                'fullname': 'Test User',
-                "is_admin": 0,
-                'active': 0,
-            }, {
-                'id': 1,
-                'organisation': 1,
-                'email': 'test@akvo.org',
-                'fullname': 'John Doe',
-                "is_admin": 0,
-                'active': 0,
-            }],
-            'total': 2,
-            'total_page': 1
-        }
+        assert res.status_code == 403
 
     @pytest.mark.asyncio
-    async def test_delete_user(
+    async def test_get_user_by_id_by_not_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without credential
+        res = await client.get(
+            app.url_path_for("user:get_by_id", user_id=1))
+        assert res.status_code == 403
+        # with credential but not an admin
+        res = await client.get(
+            app.url_path_for("user:get_by_id", user_id=1),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 403
+
+    @pytest.mark.asyncio
+    async def test_delete_user_by_not_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # add user to delete
@@ -109,10 +115,240 @@ class TestUserEndpoint():
         user_id = res['id']
         # delete user without cred
         res = await client.delete(
-            app.url_path_for("user:delete", id=user_id))
+            app.url_path_for("user:delete", user_id=user_id))
         assert res.status_code == 403
-        # delete user
+        # delete user by not admin
         res = await client.delete(
-            app.url_path_for("user:delete", id=user_id),
+            app.url_path_for("user:delete", user_id=user_id),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 403
+
+    @pytest.mark.asyncio
+    async def test_update_user_to_an_admin(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user = get_user_by_email(session=session, email="admin@akvo.org")
+        assert user.email == "admin@akvo.org"
+        update_payload = {
+            "fullname": user.fullname,
+            "organisation": user.organisation,
+            "is_admin": True,
+            "is_active": True,
+        }
+        # without cred
+        res = await client.put(
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload)
+        assert res.status_code == 403
+        # with cred
+        res = await client.put(
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+        res = res.json()
+        assert res["is_admin"] == 1
+        assert res["active"] == 1
+
+    @pytest.mark.asyncio
+    async def test_get_all_user_by_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # with admin credential
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "current": 1,
+            "data": [{
+                "id": 3,
+                "organisation": 1,
+                "email": "user@test.com",
+                "fullname": "User to delete",
+                "is_admin": 0,
+                "active": 0,
+                "tags_count": 0,
+                "projects_count": 0,
+            }, {
+                "id": 2,
+                "organisation": 1,
+                "email": "test_user@akvo.org",
+                "fullname": "Test User",
+                "is_admin": 0,
+                "active": 0,
+                "tags_count": 0,
+                "projects_count": 0,
+            }, {
+                "id": 1,
+                "organisation": 1,
+                "email": "admin@akvo.org",
+                "fullname": "John Doe",
+                "is_admin": 1,
+                "active": 1,
+                "tags_count": 0,
+                "projects_count": 0,
+            }],
+            "total": 3,
+            "total_page": 1
+        }
+
+    @pytest.mark.asyncio
+    async def test_get_user_by_id_by_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # with admin credential
+        res = await client.get(
+            app.url_path_for("user:get_by_id", user_id=1),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 1,
+            "email": "admin@akvo.org",
+            "fullname": "John Doe",
+            "is_admin": 1,
+            "active": 1,
+            "organisation_detail": {"id": 1, "name": "Akvo"},
+            "tags_count": 0,
+            "projects_count": 0,
+        }
+
+    @pytest.mark.asyncio
+    async def test_delete_user_by_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # delete user by admin
+        res = await client.delete(
+            app.url_path_for("user:delete", user_id=3),
             headers={"Authorization": f"Bearer {account.token}"})
         assert res.status_code == 204
+
+    @pytest.mark.asyncio
+    async def test_update_user_password(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        account = Acc(email="test_user@akvo.org", token=None)
+        user = get_user_by_email(session=session, email="test_user@akvo.org")
+        assert user.email == "test_user@akvo.org"
+        update_payload = {
+            "fullname": "Sample User",
+            "organisation": user.organisation,
+            "is_active": True,
+            "password": "secret"
+        }
+        # with cred
+        res = await client.put(
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+        res = res.json()
+        assert res["fullname"] == "Sample User"
+        assert res["is_admin"] == 0
+        assert res["active"] == 1
+        # test login with new password
+        res = await client.post(
+            app.url_path_for("user:login"),
+            headers={"content-type": "application/x-www-form-urlencoded"},
+            data={
+                "username": user.email,
+                "password": "secret",
+                "grant_type": "password",
+                "scopes": ["openid", "email"],
+                "client_id": CLIENT_ID,
+                "client_secret": CLIENT_SECRET
+            })
+        assert res.status_code == 200
+        res = res.json()
+        assert res['access_token'] is not None
+        assert res['user']['email'] == user.email
+
+    @pytest.mark.asyncio
+    async def test_invite_user_with_by_admin(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user_payload = {
+            "fullname": "Invited User",
+            "email": "invited_user@akvo.org",
+            "password": None,
+            "organisation": 1,
+        }
+        # with credential
+        res = await client.post(
+            app.url_path_for("user:register"),
+            params={"invitation_id": 1},
+            data=user_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 4,
+            "fullname": "Invited User",
+            "email": "invited_user@akvo.org",
+            "organisation": 1,
+            "is_admin": 0,
+            "active": 0
+        }
+        user = get_user_by_email(session=session, email=user_payload["email"])
+        assert user.invitation_id is not None
+        assert user.password is None
+
+    @pytest.mark.asyncio
+    async def test_get_user_by_invitation_id(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user = get_user_by_email(
+            session=session, email="invited_user@akvo.org")
+        res = await client.get(
+            app.url_path_for(
+                "user:invitation",
+                invitation_id=user.invitation_id
+            )
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == user.to_user_invitation
+
+    @pytest.mark.asyncio
+    async def test_register_password_by_invitation_id(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user = get_user_by_email(
+            session=session, email="invited_user@akvo.org")
+        res = await client.post(
+            app.url_path_for(
+                "user:invitation",
+                invitation_id=user.invitation_id
+            ),
+            data={"password": "secret"}
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'access_token': res['access_token'],
+            'token_type': 'bearer',
+            'user': {
+                'id': 4,
+                'fullname': 'Invited User',
+                'email': 'invited_user@akvo.org',
+                'is_admin': 0,
+                'active': 1,
+                'organisation_detail': {'id': 1, 'name': 'Akvo'},
+                'tags_count': 0,
+                'projects_count': 0
+            }
+        }
+
+    # TODO :: user register with projects and tags
+    # TODO :: user update with projects and tags

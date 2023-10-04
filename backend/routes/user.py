@@ -1,21 +1,28 @@
 import os
+import db.crud_user as crud_user
 from math import ceil
 from middleware import (
     Token, authenticate_user, create_access_token, verify_user,
     get_password_hash
 
 )
-from fastapi import Depends, HTTPException, status, APIRouter, Request, Query
+from fastapi import (
+    Depends, HTTPException, status, APIRouter, Request, Query, Form
+)
 from fastapi import Response
 from fastapi.security import HTTPBearer
 from fastapi.security import HTTPBasicCredentials as credentials
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.connection import get_session
-from models.user import UserDict, UserBase, UserResponse, UserWithOrg
-from db import crud_user, crud_organisation
+from models.user import (
+    UserDict, UserBase, UserResponse, UserWithOrg, UserUpdateBase,
+    UserInvitation
+)
 from typing import Optional
+from pydantic import SecretStr
 from http import HTTPStatus
+from middleware import verify_admin
 
 security = HTTPBearer()
 user_route = APIRouter()
@@ -54,14 +61,10 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"email": user.email})
-    organisation = crud_organisation.get_organisation_by_id(
-        session=session, id=user.organisation)
-    res_user = user.serialize
-    res_user['organisation_detail'] = organisation.serialize
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": res_user
+        "user": user.to_user_with_org
     }
 
 
@@ -81,6 +84,7 @@ def get_all(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
+    verify_admin(session=session, authenticated=req.state.authenticated)
     user = crud_user.get_all_user(
         session=session,
         search=search,
@@ -93,7 +97,7 @@ def get_all(
     # count total user
     total = crud_user.count(
         session=session, search=search, organisation=organisation)
-    user = [u.serialize for u in user]
+    user = [u.to_user_list for u in user]
     total_page = ceil(total / limit) if total > 0 else 0
     if total_page < page:
         raise HTTPException(status_code=404, detail="Not found")
@@ -118,13 +122,10 @@ def get_me(
     credentials: credentials = Depends(security)
 ):
     user = verify_user(session=session, authenticated=req.state.authenticated)
-    organisation = crud_organisation.get_organisation_by_id(
-        session=session, id=user.organisation)
-    res = user.serialize
-    res['organisation_detail'] = organisation.serialize
-    return res
+    return user.to_user_with_org
 
 
+# user register by admin (user invitation)
 @user_route.post(
     "/user/register",
     response_model=UserDict,
@@ -134,9 +135,17 @@ def get_me(
 def register(
     req: Request,
     payload: UserBase = Depends(UserBase.as_form),
+    invitation_id: Optional[bool] = False,
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security)
 ):
+    # check invitation or not
+    if invitation_id:
+        if hasattr(req.state, 'authenticated'):
+            verify_admin(
+                session=session,
+                authenticated=req.state.authenticated)
+        else:
+            raise HTTPException(status_code=403, detail="Forbidden access")
     # Check if user exist by email
     check_user_exist = crud_user.get_user_by_email(
         session=session, email=payload.email)
@@ -148,13 +157,96 @@ def register(
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
     user = crud_user.add_user(
-        session=session, payload=payload)
+        session=session, payload=payload, invitation_id=invitation_id)
     user = user.serialize
     return user
 
 
+@user_route.get(
+    "/user/invitation/{invitation_id:path}",
+    response_model=UserInvitation,
+    summary="get invitation detail",
+    name="user:invitation",
+    tags=["User"]
+)
+def invitation(
+    req: Request,
+    invitation_id: str,
+    session: Session = Depends(get_session)
+):
+    user = crud_user.get_invitation(
+        session=session, invitation_id=invitation_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Not found")
+    return user.to_user_invitation
+
+
+@user_route.post(
+    "/user/invitation/{invitation_id:path}",
+    response_model=Token,
+    summary="get invitation detail",
+    name="user:register_password",
+    tags=["User"]
+)
+def change_password(
+    req: Request,
+    invitation_id: str,
+    password: SecretStr = Form(...),
+    session: Session = Depends(get_session)
+):
+    password = get_password_hash(password.get_secret_value())
+    user = crud_user.accept_invitation(
+        session=session, invitation_id=invitation_id, password=password)
+    if not user:
+        raise HTTPException(status_code=404, detail="Not found")
+    access_token = create_access_token(data={"email": user.email})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user.to_user_with_org
+    }
+
+
+@user_route.get(
+    "/user/{user_id:path}",
+    response_model=UserWithOrg,
+    summary="get user detail by id",
+    name="user:get_by_id",
+    tags=["User"])
+def get_user_by_id(
+    req: Request,
+    user_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    user = crud_user.get_user_by_id(session=session, id=user_id)
+    return user.to_user_with_org
+
+
+@user_route.put(
+    "/user/{user_id:path}",
+    response_model=UserWithOrg,
+    summary="update user by id",
+    name="user:update",
+    tags=["User"])
+def update_user_by_id(
+    req: Request,
+    user_id: int,
+    payload: UserUpdateBase = Depends(UserUpdateBase.as_form),
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    verify_user(session=session, authenticated=req.state.authenticated)
+    if payload.password:
+        payload.password = payload.password.get_secret_value()
+        payload.password = get_password_hash(payload.password)
+    user = crud_user.update_user(session=session, id=user_id, payload=payload)
+    return user.to_user_with_org
+
+
 @user_route.delete(
-    "/user/{id:path}",
+    "/user/{user_id:path}",
     responses={204: {"model": None}},
     status_code=HTTPStatus.NO_CONTENT,
     summary="delete user by id",
@@ -162,9 +254,10 @@ def register(
     tags=["User"])
 def delete(
     req: Request,
-    id: int,
+    user_id: int,
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    crud_user.delete_user(session=session, id=id)
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    crud_user.delete_user(session=session, id=user_id)
     return Response(status_code=HTTPStatus.NO_CONTENT.value)

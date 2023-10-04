@@ -12,18 +12,18 @@ class UserProjectAccess(Base):
     user = Column(Integer, ForeignKey('user.id'), nullable=False)
     project = Column(Integer, ForeignKey('project.id'), nullable=False)
 
-    user_detail = relationship(
-        'Project',
+    user_project_access_detail = relationship(
+        'User',
         cascade="all, delete",
         passive_deletes=True,
-        backref='user_access'
+        back_populates='user_project_access'
     )
-    project_detail = relationship(
-        'Project',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='project_access'
-    )
+    # project_detail = relationship(
+    #     'Project',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='project_access'
+    # )
 
     def __init__(self, id: Optional[int], user: int, project: int):
         self.id = id
