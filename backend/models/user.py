@@ -148,6 +148,8 @@ class UserBase(BaseModel):
     email: str
     fullname: str
     password: Optional[SecretStr] = None
+    projects: Optional[List[int]] = None
+    tags: Optional[List[int]] = None
 
     class Config:
         from_attributes = True
@@ -159,12 +161,16 @@ class UserBase(BaseModel):
         email: str = Form(...),
         password: SecretStr = Form(None),
         organisation: int = Form(...),
+        projects: List[int] = Form(None),
+        tags: List[int] = Form(None),
     ):
         return cls(
             fullname=fullname,
             email=email,
             password=password,
             organisation=organisation,
+            projects=projects,
+            tags=tags,
         )
 
 

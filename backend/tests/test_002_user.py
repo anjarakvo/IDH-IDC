@@ -258,3 +258,7 @@ class TestUserEndpoint():
         res = res.json()
         assert res['access_token'] is not None
         assert res['user']['email'] == user.email
+
+    # TODO :: user register with projects and tags
+    # TODO :: user update with projects and tags
+    # TODO :: user invitation and invited user register password
