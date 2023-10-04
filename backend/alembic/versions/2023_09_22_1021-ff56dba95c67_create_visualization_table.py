@@ -52,5 +52,10 @@ def upgrade() -> None:
 
 def downgrade() -> None:
     op.drop_index(op.f('ix_visualization_id'), table_name='visualization')
+    op.drop_constraint(
+        'visualization_segment_tab_unique',
+        'visualization',
+        type_='unique'
+    )
     op.drop_table('visualization')
     op.execute('DROP TYPE visualization_tab_enum')
