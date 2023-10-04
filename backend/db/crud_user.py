@@ -28,7 +28,7 @@ def add_user(
     return user
 
 
-def update_user_by_admin(
+def update_user(
     session: Session, id: int, payload: UserUpdateBase
 ) -> UserDict:
     user = get_user_by_id(session=session, id=id)
@@ -37,7 +37,11 @@ def update_user_by_admin(
     user.is_admin = 1 if payload.is_admin else 0
     user.is_active = 1 if payload.is_active else 0
     if payload.password:
-        user.password = payload
+        try:
+            password = payload.password.get_secret_value()
+        except AttributeError:
+            password = payload.password
+        user.password = password
     if payload.projects:
         for proj in payload.projects:
             project_access = UserProjectAccess(

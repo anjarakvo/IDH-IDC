@@ -1,4 +1,5 @@
 import os
+import db.crud_user as crud_user
 from math import ceil
 from middleware import (
     Token, authenticate_user, create_access_token, verify_user,
@@ -15,7 +16,6 @@ from db.connection import get_session
 from models.user import (
     UserDict, UserBase, UserResponse, UserWithOrg, UserUpdateBase
 )
-from db import crud_user
 from typing import Optional
 from http import HTTPStatus
 from middleware import verify_admin
@@ -175,11 +175,15 @@ def get_user_by_id(
 def update_user_by_id(
     req: Request,
     user_id: int,
-    payload: UserUpdateBase,
+    payload: UserUpdateBase = Depends(UserUpdateBase.as_form),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    user = verify_user(session=session, authenticated=req.state.authenticated)
+    verify_user(session=session, authenticated=req.state.authenticated)
+    if payload.password:
+        payload.password = payload.password.get_secret_value()
+        payload.password = get_password_hash(payload.password)
+    user = crud_user.update_user(session=session, id=user_id, payload=payload)
     return user.to_user_with_org
 
 

@@ -180,6 +180,27 @@ class UserUpdateBase(BaseModel):
     organisation: int
     is_admin: Optional[bool] = False
     is_active: Optional[bool] = False
-    password: Optional[str] = None
+    password: Optional[SecretStr] = None
     projects: Optional[List[int]] = None
     tags: Optional[List[int]] = None
+
+    @classmethod
+    def as_form(
+        cls,
+        fullname: str = Form(...),
+        password: SecretStr = Form(None),
+        organisation: int = Form(...),
+        is_admin: bool = Form(False),
+        is_active: bool = Form(False),
+        projects: List[int] = Form(None),
+        tags: List[int] = Form(None),
+    ):
+        return cls(
+            fullname=fullname,
+            password=password,
+            organisation=organisation,
+            is_admin=is_admin,
+            is_active=is_active,
+            projects=projects,
+            tags=tags,
+        )
