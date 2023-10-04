@@ -45,6 +45,13 @@ class UserDict(TypedDict):
     active: int
 
 
+class UserInvitation(TypedDict):
+    id: int
+    fullname: str
+    email: str
+    invitation_id: str
+
+
 class User(Base):
     __tablename__ = 'user'
 
@@ -139,6 +146,15 @@ class User(Base):
             "active": self.is_active,
             "tags_count": len(self.user_tags),
             "projects_count": len(self.user_project_access),
+        }
+
+    @property
+    def to_user_invitation(self) -> UserInvitation:
+        return {
+            "id": self.id,
+            "fullname": self.fullname,
+            "email": self.email,
+            "invitation_id": self.invitation_id,
         }
 
 

@@ -6,7 +6,9 @@ from middleware import (
     get_password_hash
 
 )
-from fastapi import Depends, HTTPException, status, APIRouter, Request, Query
+from fastapi import (
+    Depends, HTTPException, status, APIRouter, Request, Query, Form
+)
 from fastapi import Response
 from fastapi.security import HTTPBearer
 from fastapi.security import HTTPBasicCredentials as credentials
@@ -14,9 +16,11 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.connection import get_session
 from models.user import (
-    UserDict, UserBase, UserResponse, UserWithOrg, UserUpdateBase
+    UserDict, UserBase, UserResponse, UserWithOrg, UserUpdateBase,
+    UserInvitation
 )
 from typing import Optional
+from pydantic import SecretStr
 from http import HTTPStatus
 from middleware import verify_admin
 
@@ -131,11 +135,11 @@ def get_me(
 def register(
     req: Request,
     payload: UserBase = Depends(UserBase.as_form),
-    invitation: Optional[bool] = False,
+    invitation_id: Optional[bool] = False,
     session: Session = Depends(get_session),
 ):
     # check invitation or not
-    if invitation:
+    if invitation_id:
         if hasattr(req.state, 'authenticated'):
             verify_admin(
                 session=session,
@@ -153,9 +157,54 @@ def register(
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
     user = crud_user.add_user(
-        session=session, payload=payload, invitation=invitation)
+        session=session, payload=payload, invitation_id=invitation_id)
     user = user.serialize
     return user
+
+
+@user_route.get(
+    "/user/invitation/{invitation_id:path}",
+    response_model=UserInvitation,
+    summary="get invitation detail",
+    name="user:invitation",
+    tags=["User"]
+)
+def invitation(
+    req: Request,
+    invitation_id: str,
+    session: Session = Depends(get_session)
+):
+    user = crud_user.get_invitation(
+        session=session, invitation_id=invitation_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Not found")
+    return user.to_user_invitation
+
+
+@user_route.post(
+    "/user/invitation/{invitation_id:path}",
+    response_model=Token,
+    summary="get invitation detail",
+    name="user:register_password",
+    tags=["User"]
+)
+def change_password(
+    req: Request,
+    invitation_id: str,
+    password: SecretStr = Form(...),
+    session: Session = Depends(get_session)
+):
+    password = get_password_hash(password.get_secret_value())
+    user = crud_user.accept_invitation(
+        session=session, invitation_id=invitation_id, password=password)
+    if not user:
+        raise HTTPException(status_code=404, detail="Not found")
+    access_token = create_access_token(data={"email": user.email})
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "user": user.to_user_with_org
+    }
 
 
 @user_route.get(

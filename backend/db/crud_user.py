@@ -3,7 +3,9 @@ from fastapi import HTTPException, status
 from typing import Optional, List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from models.user import User, UserDict, UserBase, UserUpdateBase
+from models.user import (
+    User, UserDict, UserBase, UserUpdateBase, UserInvitation
+)
 from models.user_project_access import UserProjectAccess
 from models.user_tag import UserTag
 
@@ -11,7 +13,7 @@ from models.user_tag import UserTag
 def add_user(
     session: Session,
     payload: UserBase,
-    invitation: Optional[bool] = False,
+    invitation_id: Optional[bool] = False,
 ) -> UserDict:
     try:
         password = payload.password.get_secret_value()
@@ -20,9 +22,9 @@ def add_user(
     user = User(
         fullname=payload.fullname,
         email=payload.email,
-        password=password if not invitation else None,
+        password=password if not invitation_id else None,
         organisation=payload.organisation,
-        invitation_id=str(uuid4()) if invitation else None
+        invitation_id=str(uuid4()) if invitation_id else None
     )
     session.add(user)
     session.commit()
@@ -128,3 +130,26 @@ def delete_user(session: Session, id: int):
     session.delete(user)
     session.commit()
     session.flush()
+
+
+def get_invitation(session: Session, invitation_id: str) -> UserInvitation:
+    user = session.query(User).filter(
+        User.invitation_id == invitation_id).first()
+    if not user:
+        return None
+    return user
+
+
+def accept_invitation(
+    session: Session,
+    invitation_id: str,
+    password=str
+) -> UserInvitation:
+    user = get_invitation(session=session, invitation_id=invitation_id)
+    user.password = password
+    user.invitation = None
+    user.is_active = 1
+    session.commit()
+    session.flush()
+    session.refresh(user)
+    return user
