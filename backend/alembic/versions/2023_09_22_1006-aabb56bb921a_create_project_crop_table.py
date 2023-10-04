@@ -1,4 +1,4 @@
-"""create diversified crop table
+"""create project crop table
 
 Revision ID: aabb56bb921a
 Revises: 718e76de8207
@@ -20,27 +20,32 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'diversified_crop',
+        'project_crop',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
         sa.Column('crop', sa.Integer(), sa.ForeignKey('crop.id')),
-        sa.Column('breakdown', sa.Boolean(), nullable=False),
+        sa.Column(
+            'focus_crop', sa.SmallInteger(),
+            server_default='0', nullable=False),
+        sa.Column(
+            'breakdown', sa.SmallInteger(),
+            server_default='0', nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['project'], ['project.id'],
-            name='diversified_crop_project_constraint',
+            name='project_crop_project_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
             ['crop'], ['crop.id'],
-            name='diversified_crop_crop_constraint',
+            name='project_crop_crop_constraint',
             ondelete='CASCADE'),
     )
     op.create_index(
-        op.f('ix_diversified_crop_id'), 'diversified_crop',
+        op.f('ix_project_crop_id'), 'project_crop',
         ['id'], unique=True)
 
 
 def downgrade() -> None:
     op.drop_index(
-        op.f('ix_diversified_crop_id'), table_name='diversified_crop')
-    op.drop_table('diversified_crop')
+        op.f('ix_project_crop_id'), table_name='project_crop')
+    op.drop_table('project_crop')
