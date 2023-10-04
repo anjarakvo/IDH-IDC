@@ -185,9 +185,25 @@ class TestUserAuthentication():
         assert res.status_code == 200
         res = res.json()
         assert res['access_token'] is not None
-        assert res['token_type'] == 'bearer'
         account = Acc(email="test@akvo.org", token=res['access_token'])
         assert account.token == res['access_token']
+        assert res == {
+            "access_token": res["access_token"],
+            "token_type": "bearer",
+            "user": {
+                "id": 1,
+                "fullname": "John Doe",
+                "email": "test@akvo.org",
+                "active": 0,
+                "is_admin": 0,
+                "organisation_detail": {
+                    "id": 1,
+                    "name": "Akvo"
+                },
+                "tags_count": 0,
+                "projects_count": 0
+            }
+        }
 
     @pytest.mark.asyncio
     async def test_get_user_me(
@@ -199,8 +215,16 @@ class TestUserAuthentication():
             headers={"Authorization": f"Bearer {account.token}"})
         assert res.status_code == 200
         res = res.json()
-        assert res['email'] == "test@akvo.org"
-        assert res['fullname'] == "John Doe"
-        assert res['organisation_detail'] == {
-            'id': 1, 'name': 'Akvo'
+        assert res == {
+            "id": 1,
+            "fullname": "John Doe",
+            "email": "test@akvo.org",
+            "active": 0,
+            "is_admin": 0,
+            "organisation_detail": {
+                "id": 1,
+                "name": "Akvo"
+            },
+            "tags_count": 0,
+            "projects_count": 0
         }

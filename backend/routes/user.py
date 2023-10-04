@@ -13,7 +13,7 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.connection import get_session
 from models.user import UserDict, UserBase, UserResponse, UserWithOrg
-from db import crud_user, crud_organisation
+from db import crud_user
 from typing import Optional
 from http import HTTPStatus
 
@@ -54,14 +54,10 @@ def login(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"email": user.email})
-    organisation = crud_organisation.get_organisation_by_id(
-        session=session, id=user.organisation)
-    res_user = user.serialize
-    res_user['organisation_detail'] = organisation.serialize
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": res_user
+        "user": user.to_user_with_org
     }
 
 
@@ -118,11 +114,7 @@ def get_me(
     credentials: credentials = Depends(security)
 ):
     user = verify_user(session=session, authenticated=req.state.authenticated)
-    organisation = crud_organisation.get_organisation_by_id(
-        session=session, id=user.organisation)
-    res = user.serialize
-    res['organisation_detail'] = organisation.serialize
-    return res
+    return user.to_user_with_org
 
 
 @user_route.post(

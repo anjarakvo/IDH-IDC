@@ -10,6 +10,8 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel, SecretStr
 from models.organisation import OrganisationDict
 from fastapi import Form
+from models.user_tag import UserTag
+from models.user_project_access import UserProjectAccess
 
 
 class UserWithOrg(TypedDict):
@@ -19,6 +21,8 @@ class UserWithOrg(TypedDict):
     is_admin: int
     active: int
     organisation_detail: OrganisationDict
+    tags_count: int
+    projects_count: int
 
 
 class UserDict(TypedDict):
@@ -51,7 +55,19 @@ class User(Base):
         'Organisation',
         cascade="all, delete",
         passive_deletes=True,
-        backref='users'
+        back_populates='users'
+    )
+    user_tags = relationship(
+        UserTag,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates='user_tag_detail'
+    )
+    user_project_access = relationship(
+        UserProjectAccess,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates='user_project_access_detail'
     )
 
     def __init__(
@@ -86,6 +102,20 @@ class User(Base):
             "fullname": self.fullname,
             "is_admin": self.is_admin,
             "active": self.is_active,
+        }
+
+    @property
+    def to_user_with_org(self) -> UserDict:
+        print(self.user_tags)
+        return {
+            "id": self.id,
+            "fullname": self.fullname,
+            "email": self.email,
+            "is_admin": self.is_admin,
+            "active": self.is_active,
+            "organisation_detail": self.user_organisation.serialize,
+            "tags_count": len(self.user_tags),
+            "projects_count": len(self.user_project_access),
         }
 
 
