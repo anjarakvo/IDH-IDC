@@ -102,13 +102,13 @@ class Email:
     def __init__(
         self,
         recipients: List[EmailRecipient],
-        mail_type: MailTypeEnum,
+        email: MailTypeEnum,
         bcc: Optional[List[EmailRecipient]] = None,
         attachment: Optional[str] = None,
         context: Optional[str] = None,
         body: Optional[str] = None,
     ):
-        self.mail_type = EmailBody[mail_type.value]
+        self.email = EmailBody[email.value]
         self.recipients = recipients
         self.bcc = bcc
         self.attachment = attachment
@@ -117,22 +117,22 @@ class Email:
 
     @property
     def data(self):
-        mail_type = self.mail_type.value
-        body = mail_type["body"]
+        email = self.email.value
+        body = email["body"]
         if self.body:
             body = self.body
         html = html_template.render(
             logo=f"{webdomain}/logo.png",
             webdomain=webdomain,
-            title=type["title"],
+            title=email["title"],
             body=body,
-            image=type["image"],
-            message=type["message"],
+            image=email["image"],
+            message=email["message"],
             context=self.context,
         )
         payload = {
             "FromEmail": "noreply@akvo.org",
-            "Subject": type["subject"],
+            "Subject": email["subject"],
             "Html-part": html,
             "Text-part": html_to_text(html),
             "Recipients": self.recipients,
