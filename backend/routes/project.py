@@ -2,7 +2,7 @@ import db.crud_project as crud_project
 
 from math import ceil
 from fastapi import (
-    APIRouter, Request, Depends, HTTPException
+    APIRouter, Request, Depends, HTTPException, Query
 )
 from fastapi.security import (
     HTTPBearer, HTTPBasicCredentials as credentials
@@ -51,8 +51,8 @@ def get_all_project(
     page: int = 1,
     limit: int = 10,
     search: Optional[str] = None,
-    tags: Optional[List[int]] = None,
-    focus_crop: Optional[List[int]] = None,
+    tags: Optional[List[int]] = Query(None),
+    focus_crop: Optional[List[int]] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
