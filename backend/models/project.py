@@ -16,7 +16,7 @@ class ProjectDict(TypedDict):
     date: str
     year: int
     country: int
-    crop: int
+    focus_crop: int
     currency: str
     area_size_unit: str
     volume_measurement_unit: str
@@ -37,7 +37,7 @@ class Project(Base):
     date = Column(Date, nullable=False)
     year = Column(Integer, nullable=False)
     country = Column(Integer, ForeignKey('country.id'))
-    crop = Column(Integer, ForeignKey('crop.id'))
+    focus_crop = Column(Integer, ForeignKey('crop.id'))
     currency = Column(String, nullable=False)
     area_size_unit = Column(String, nullable=False)
     volume_measurement_unit = Column(String, nullable=False)
@@ -87,7 +87,7 @@ class Project(Base):
         date: str,
         year: int,
         country: int,
-        crop: int,
+        focus_crop: int,
         currency: str,
         area_size_unit: str,
         volume_measurement_unit: str,
@@ -105,7 +105,7 @@ class Project(Base):
         self.date = date
         self.year = year
         self.country = country
-        self.crop = crop
+        self.focus_crop = focus_crop
         self.currency = currency
         self.area_size_unit = area_size_unit
         self.volume_measurement_unit = volume_measurement_unit
@@ -128,7 +128,7 @@ class Project(Base):
             "date": self.date,
             "year": self.year,
             "country": self.country,
-            "crop": self.crop,
+            "focus_crop": self.focus_crop,
             "currency": self.currency,
             "area_size_unit": self.area_size_unit,
             "volume_measurement_unit": self.volume_measurement_unit,
@@ -148,7 +148,7 @@ class ProjectBase(BaseModel):
     date: str
     year: int
     country: int
-    crop: int
+    focus_crop: int
     currency: str
     area_size_unit: str
     volume_measurement_unit: str
@@ -159,6 +159,3 @@ class ProjectBase(BaseModel):
     multiple_crops: int
     logo: Optional[str] = None
     created_by: int
-
-    class Config:
-        from_attributes = True
