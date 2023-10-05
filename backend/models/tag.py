@@ -86,6 +86,12 @@ class TagBase(BaseModel):
     projects: Optional[List[int]] = None
 
 
+class UpdateTagBase(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    projects: Optional[List[int]] = None
+
+
 class PaginatedTagResponse(BaseModel):
     current: int
     data: List[TagListDict]

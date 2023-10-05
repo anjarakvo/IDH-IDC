@@ -12,7 +12,7 @@ from typing import Optional
 
 from db.connection import get_session
 from models.tag import (
-    PaginatedTagResponse, TagListDict, TagBase
+    PaginatedTagResponse, TagListDict, TagBase, UpdateTagBase
 )
 from middleware import verify_admin
 
@@ -88,4 +88,23 @@ def get_tag_by_id(
     credentials: credentials = Depends(security)
 ):
     tag = crud_tag.get_tag_by_id(session=session, id=tag_id)
+    return tag.to_tag_list
+
+
+@tag_route.put(
+    "/tag/{tag_id:path}",
+    response_model=TagListDict,
+    summary="update tag by id",
+    name="tag:update",
+    tags=["Tag"]
+)
+def update_tag(
+    req: Request,
+    tag_id: int,
+    payload: UpdateTagBase,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    tag = crud_tag.update_tag(session=session, id=tag_id, payload=payload)
     return tag.to_tag_list

@@ -125,3 +125,39 @@ class TestTagRoute():
             "description": "Lorem ipsum...",
             "projects_count": 0
         }
+
+    @pytest.mark.asyncio
+    async def test_update_tag_without_project_list(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        payload = {
+            "name": "Tag Name",
+            "description": "Tag Description"
+        }
+        # without cred
+        res = await client.put(
+            app.url_path_for("tag:update", tag_id=1),
+            json=payload,
+        )
+        assert res.status_code == 403
+        # with normal user cred
+        res = await client.put(
+            app.url_path_for("tag:update", tag_id=1),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 401
+        # with admin user cred
+        res = await client.put(
+            app.url_path_for("tag:update", tag_id=1),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 1,
+            "name": "Tag Name",
+            "description": "Tag Description",
+            "projects_count": 0
+        }

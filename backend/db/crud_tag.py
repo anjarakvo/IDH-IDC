@@ -3,7 +3,7 @@ from typing import Optional, List
 from typing_extensions import TypedDict
 from fastapi import HTTPException, status
 
-from models.tag import Tag, TagListDict, TagBase
+from models.tag import Tag, TagListDict, TagBase, UpdateTagBase
 from models.project_tag import ProjectTag
 
 
@@ -51,4 +51,22 @@ def get_tag_by_id(session: Session, id: int) -> TagListDict:
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Tag {id} not found"
         )
+    return tag
+
+
+def update_tag(
+    session: Session, id: int, payload: UpdateTagBase
+) -> TagListDict:
+    tag = get_tag_by_id(session=session, id=id)
+    tag.name = payload.name
+    tag.description = payload.description
+    if payload.projects:
+        # delete previous project tag then add new tag
+        session.query(ProjectTag).filter(ProjectTag.tag == tag.id).delete()
+        for proj in payload.projects:
+            project_tag = ProjectTag(project=proj, tag=tag.id)
+            tag.tag_projects.append(project_tag)
+    session.commit()
+    session.flush()
+    session.refresh(tag)
     return tag
