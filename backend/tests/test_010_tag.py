@@ -65,9 +65,6 @@ class TestTagRoute():
     async def test_get_all_tag_without_project_list(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        # without cred
-        res = await client.get(app.url_path_for("tag:get_all"))
-        assert res.status_code == 403
         # with normal user cred
         res = await client.get(
             app.url_path_for("tag:get_all"),

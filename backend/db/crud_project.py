@@ -1,11 +1,19 @@
 from sqlalchemy.orm import Session
-# from typing import Optional, List
-# from typing_extensions import TypedDict
+from typing import Optional, List
+from typing_extensions import TypedDict
 # from fastapi import HTTPException, status
 
 from models.user import User
-from models.project import Project, ProjectBase, ProjectDict
+from models.project import (
+    Project, ProjectBase, ProjectDict, ProjectListDict
+)
 from models.project_crop import ProjectCrop
+from models.project_tag import ProjectTag
+
+
+class PaginatedProjectData(TypedDict):
+    count: int
+    data: List[ProjectListDict]
 
 
 def add_project(
@@ -44,3 +52,29 @@ def add_project(
     session.flush()
     session.refresh(project)
     return project
+
+
+def get_all_project(
+    session: Session,
+    search: Optional[str] = None,
+    tags: Optional[int] = None,
+    focus_crops: Optional[int] = None,
+    skip: int = 0,
+    limit: int = 10
+) -> List[ProjectListDict]:
+    project = session.query(Project)
+    if search:
+        project = project.filter(
+            Project.name.ilike("%{}%".format(search.lower().strip()))
+        )
+    if focus_crops:
+        project = project.filter(Project.focus_crop.in_(focus_crops))
+    if tags:
+        project_tags = session.query(ProjectTag).filter(
+            ProjectTag.tag.in_(tags)).all()
+        project_ids = [pt.project for pt in project_tags]
+        project = project.filter(Project.id.in_(project_ids))
+    count = project.count()
+    project = project.order_by(
+        Project.id.desc()).offset(skip).limit(limit).all()
+    return PaginatedProjectData(count=count, data=project)

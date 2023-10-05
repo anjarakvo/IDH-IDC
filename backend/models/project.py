@@ -18,6 +18,16 @@ class LivingIncomeStudyEnum(enum.Enum):
     living_income = "living_income"
 
 
+class ProjectListDict(TypedDict):
+    id: int
+    name: str
+    country: int
+    focus_crop: int
+    diversified_crops_count: int
+    created_at: str
+    created_by: str
+
+
 class ProjectDict(TypedDict):
     id: Optional[int]
     name: str
@@ -83,12 +93,12 @@ class Project(Base):
     #     passive_deletes=True,
     #     backref='projects'
     # )
-    # created_by_user = relationship(
-    #     'User',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='projects'
-    # )
+    created_by_user = relationship(
+        'User',
+        cascade="all, delete",
+        passive_deletes=True,
+        backref='projects'
+    )
 
     def __init__(
         self,
@@ -151,6 +161,23 @@ class Project(Base):
             "project_crops": [pc.simplify for pc in self.project_crops]
         }
 
+    @property
+    def to_project_list(self) -> ProjectListDict:
+        # filter diversified count by !equal to focus crop
+        diversified_count = [
+            val for val in self.project_crops
+            if val.crop != self.focus_crop
+        ]
+        return {
+            "id": self.id,
+            "name": self.name,
+            "country": self.country,
+            "focus_crop": self.focus_crop,
+            "diversified_crops_count": len(diversified_count),
+            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "created_by": self.created_by_user.email,
+        }
+
 
 class OtherCropsBase(BaseModel):
     crop: int
@@ -173,3 +200,10 @@ class ProjectBase(BaseModel):
     living_income_study: Optional[LivingIncomeStudyEnum] = None
     logo: Optional[str] = None
     other_crops: Optional[List[OtherCropsBase]] = None
+
+
+class PaginatedProjectResponse(BaseModel):
+    current: int
+    data: List[ProjectListDict]
+    total: int
+    total_page: int

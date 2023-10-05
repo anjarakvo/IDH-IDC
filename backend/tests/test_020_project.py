@@ -1,6 +1,5 @@
 import sys
 import pytest
-import datetime
 
 from fastapi import FastAPI
 from httpx import AsyncClient
@@ -14,10 +13,21 @@ sys.path.append("..")
 non_admin_account = Acc(email="support@akvo.org", token=None)
 admin_account = Acc(email="admin@akvo.org", token=None)
 
-current_date = datetime.date.today()
-
 
 class TestProjectRoute():
+    @pytest.mark.asyncio
+    async def test_get_all_project_return_404(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.get(app.url_path_for("project:get_all"))
+        assert res.status_code == 403
+        res = await client.get(
+            app.url_path_for("project:get_all"),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 404
+
     @pytest.mark.asyncio
     async def test_create_project(
         self, app: FastAPI, session: Session, client: AsyncClient
@@ -85,4 +95,36 @@ class TestProjectRoute():
                 'crop': 3,
                 'breakdown': True
             }]
+        }
+
+    @pytest.mark.asyncio
+    async def test_get_all_project(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # with normal user cred
+        res = await client.get(
+            app.url_path_for("project:get_all"),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+        )
+        assert res.status_code == 200
+        # with admin user cred
+        res = await client.get(
+            app.url_path_for("project:get_all"),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'current': 1,
+            'data': [{
+                'id': 1,
+                'name': 'Bali Rice and Corn Production Comparison',
+                'country': 2,
+                'focus_crop': 2,
+                'diversified_crops_count': 1,
+                'created_at': res["data"][0]["created_at"],
+                'created_by': 'admin@akvo.org'
+            }],
+            'total': 1,
+            'total_page': 1
         }
