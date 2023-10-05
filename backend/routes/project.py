@@ -73,3 +73,23 @@ def get_all_project(
         'total': total,
         'total_page': total_page
     }
+
+
+@project_route.put(
+    "/project/{project_id:path}",
+    response_model=ProjectDict,
+    summary="update project by id",
+    name="project:update",
+    tags=["Project"]
+)
+def update_Project(
+    req: Request,
+    project_id: int,
+    payload: ProjectBase,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    project = crud_project.update_project(
+        session=session, id=project_id, payload=payload)
+    return project.serialize

@@ -128,3 +128,72 @@ class TestProjectRoute():
             'total': 1,
             'total_page': 1
         }
+
+    @pytest.mark.asyncio
+    async def test_update_project(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        payload = {
+            "name": "Bali Rice and Corn Production",
+            "date": "2023-10-03",
+            "year": 2023,
+            "country": 2,
+            "focus_crop": 2,
+            "currency": "USD",
+            "area_size_unit": "acre",
+            "volume_measurement_unit": "kilograms",
+            "cost_of_production_unit": "Per-acre",
+            "reporting_period": "Per-year",
+            "segmentation": False,
+            "living_income_study": LivingIncomeStudyEnum.living_income.value,
+            "multiple_crops": False,
+            "other_crops": [{"crop": 3, "breakdown": False}]
+        }
+        # without cred
+        res = await client.put(
+            app.url_path_for("project:update", project_id=1),
+            json=payload,
+        )
+        assert res.status_code == 403
+        # with normal user cred
+        res = await client.put(
+            app.url_path_for("project:update", project_id=1),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 401
+        # with admin user cred
+        res = await client.put(
+            app.url_path_for("project:update", project_id=1),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'id': 1,
+            'name': 'Bali Rice and Corn Production',
+            'date': '2023-10-03',
+            'year': 2023,
+            'country': 2,
+            'focus_crop': 2,
+            'currency': 'USD',
+            'area_size_unit': 'acre',
+            'volume_measurement_unit': 'kilograms',
+            'cost_of_production_unit': 'Per-acre',
+            'reporting_period': 'Per-year',
+            'segmentation': False,
+            'living_income_study': 'living_income',
+            'multiple_crops': False,
+            'logo': None,
+            'created_by': 1,
+            'project_crops': [{
+                'id': 1,
+                'crop': 2,
+                'breakdown': True
+            }, {
+                'id': 2,
+                'crop': 3,
+                'breakdown': False
+            }]
+        }
