@@ -23,7 +23,12 @@ class Country(Base):
     parent_detail = relationship(
         "Country", remote_side=[id], overlaps="children")
 
-    def __init__(self, id: Optional[int], parent: Optional[int], name: str):
+    def __init__(
+        self,
+        name: str,
+        id: Optional[int] = None,
+        parent: Optional[int] = None
+    ):
         self.id = id
         self.parent = parent
         self.name = name
@@ -37,7 +42,7 @@ class Country(Base):
             "id": self.id,
             "parent": self.parent,
             "name": self.name,
-            "children": self.children
+            "children": [c.serialize for c in self.children]
         }
 
 
@@ -45,6 +50,3 @@ class CountryBase(BaseModel):
     id: int
     parent: Optional[int] = None
     name: str
-
-    class Config:
-        from_attributes = True

@@ -12,6 +12,11 @@ class CropDict(TypedDict):
     name: str
 
 
+class SimplifiedCropDict(TypedDict):
+    id: int
+    name: str
+
+
 class Crop(Base):
     __tablename__ = 'crop'
 
@@ -23,13 +28,13 @@ class Crop(Base):
         'CropCategory',
         cascade="all, delete",
         passive_deletes=True,
-        backref='crops'
+        back_populates='crops'
     )
 
     def __init__(
         self,
-        crop_category: int,
         name: str,
+        crop_category: Optional[int] = None,
         id: Optional[int] = None,
     ):
         self.id = id
@@ -47,11 +52,15 @@ class Crop(Base):
             "name": self.name,
         }
 
+    @property
+    def simplify(self) -> SimplifiedCropDict:
+        return {
+            "id": self.id,
+            "name": self.name,
+        }
+
 
 class CropBase(BaseModel):
     id: int
     crop_category: int
     name: str
-
-    class Config:
-        from_attributes = True
