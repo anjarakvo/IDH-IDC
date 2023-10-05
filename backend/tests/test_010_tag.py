@@ -92,3 +92,36 @@ class TestTagRoute():
             "total": 1,
             "total_page": 1,
         }
+
+    @pytest.mark.asyncio
+    async def test_get_tag_by_id_without_project_list(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.get(app.url_path_for("tag:get_by_id", tag_id=1))
+        assert res.status_code == 403
+        # return 404
+        res = await client.get(
+            app.url_path_for("tag:get_by_id", tag_id=100),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 404
+        # with normal user cred
+        res = await client.get(
+            app.url_path_for("tag:get_by_id", tag_id=1),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+        )
+        assert res.status_code == 200
+        # with admin user cred
+        res = await client.get(
+            app.url_path_for("tag:get_by_id", tag_id=1),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 1,
+            "name": "Tag 1",
+            "description": "Lorem ipsum...",
+            "projects_count": 0
+        }

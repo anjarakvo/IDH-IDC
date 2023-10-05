@@ -72,3 +72,20 @@ def create_tag(
     verify_admin(session=session, authenticated=req.state.authenticated)
     tag = crud_tag.add_tag(session=session, payload=payload)
     return tag.to_tag_list
+
+
+@tag_route.get(
+    "/tag/{tag_id:path}",
+    response_model=TagListDict,
+    summary="get tag by id",
+    name="tag:get_by_id",
+    tags=["Tag"]
+)
+def get_tag_by_id(
+    req: Request,
+    tag_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    tag = crud_tag.get_tag_by_id(session=session, id=tag_id)
+    return tag.to_tag_list

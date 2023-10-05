@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from typing_extensions import TypedDict
+from fastapi import HTTPException, status
 
 from models.tag import Tag, TagListDict, TagBase
 from models.project_tag import ProjectTag
@@ -40,4 +41,14 @@ def add_tag(session: Session, payload: TagBase) -> TagListDict:
     session.commit()
     session.flush()
     session.refresh(tag)
+    return tag
+
+
+def get_tag_by_id(session: Session, id: int) -> TagListDict:
+    tag = session.query(Tag).filter(Tag.id == id).first()
+    if not tag:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Tag {id} not found"
+        )
     return tag
