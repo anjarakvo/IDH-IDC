@@ -11,7 +11,8 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
 from models.project import (
-    ProjectBase, ProjectDict, PaginatedProjectResponse
+    ProjectBase, ProjectDict, PaginatedProjectResponse,
+    ProjectDetailDict
 )
 from middleware import verify_admin
 
@@ -93,3 +94,21 @@ def update_Project(
     project = crud_project.update_project(
         session=session, id=project_id, payload=payload)
     return project.serialize
+
+
+@project_route.get(
+    "/project/{project_id:path}",
+    response_model=ProjectDetailDict,
+    summary="get project by id",
+    name="project:get_by_id",
+    tags=["Project"]
+)
+def get_project_by_id(
+    req: Request,
+    project_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    project = crud_project.get_project_by_id(session=session, id=project_id)
+    return project.to_project_detail

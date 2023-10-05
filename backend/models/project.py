@@ -11,6 +11,7 @@ from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 from models.project_crop import ProjectCrop, SimplifiedProjectCropDict
+from models.segment import Segment, SimplifiedSegmentDict
 
 
 class LivingIncomeStudyEnum(enum.Enum):
@@ -48,6 +49,28 @@ class ProjectDict(TypedDict):
     project_crops: List[SimplifiedProjectCropDict]
 
 
+class ProjectDetailDict(TypedDict):
+    id: int
+    name: str
+    date: str
+    year: int
+    country: int
+    focus_crop: int
+    currency: str
+    area_size_unit: str
+    volume_measurement_unit: str
+    cost_of_production_unit: str
+    reporting_period: str
+    segmentation: bool
+    living_income_study: Optional[LivingIncomeStudyEnum]
+    multiple_crops: bool
+    created_by: str
+    created_at: str
+    updated_at: Optional[str]
+    segments: Optional[List[SimplifiedSegmentDict]]
+    project_crops: List[SimplifiedProjectCropDict]
+
+
 class Project(Base):
     __tablename__ = 'project'
 
@@ -77,6 +100,12 @@ class Project(Base):
 
     project_crops = relationship(
         ProjectCrop,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates='project_detail'
+    )
+    project_segments = relationship(
+        Segment,
         cascade="all, delete",
         passive_deletes=True,
         back_populates='project_detail'
@@ -158,7 +187,7 @@ class Project(Base):
             "multiple_crops": self.multiple_crops,
             "logo": self.logo,
             "created_by": self.created_by,
-            "project_crops": [pc.simplify for pc in self.project_crops]
+            "project_crops": [pc.simplify for pc in self.project_crops],
         }
 
     @property
@@ -176,6 +205,31 @@ class Project(Base):
             "diversified_crops_count": len(diversified_count),
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "created_by": self.created_by_user.email,
+        }
+
+    @property
+    def to_project_detail(self) -> ProjectDetailDict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "date": self.date.strftime('%Y-%m-%d'),
+            "year": self.year,
+            "country": self.country,
+            "focus_crop": self.focus_crop,
+            "currency": self.currency,
+            "area_size_unit": self.area_size_unit,
+            "volume_measurement_unit": self.volume_measurement_unit,
+            "cost_of_production_unit": self.cost_of_production_unit,
+            "reporting_period": self.reporting_period,
+            "segmentation": self.segmentation,
+            "living_income_study": self.living_income_study,
+            "multiple_crops": self.multiple_crops,
+            "logo": self.logo,
+            "created_by": self.created_by_user.email,
+            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "updated_at": self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "segments": [ps.simplify for ps in self.project_segments],
+            "project_crops": [pc.simplify for pc in self.project_crops],
         }
 
 

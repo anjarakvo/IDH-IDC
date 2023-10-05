@@ -197,3 +197,61 @@ class TestProjectRoute():
                 'breakdown': False
             }]
         }
+
+    @pytest.mark.asyncio
+    async def test_get_project_by_id_without_segments(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.get(
+            app.url_path_for("project:get_by_id", project_id=1)
+        )
+        assert res.status_code == 403
+        # return 404
+        res = await client.get(
+            app.url_path_for("project:get_by_id", project_id=100),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 404
+        # with normal user cred
+        res = await client.get(
+            app.url_path_for("project:get_by_id", project_id=1),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+        )
+        assert res.status_code == 401
+        # with admin user cred
+        res = await client.get(
+            app.url_path_for("project:get_by_id", project_id=1),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'id': 1,
+            'name': 'Bali Rice and Corn Production',
+            'date': '2023-10-03',
+            'year': 2023,
+            'country': 2,
+            'focus_crop': 2,
+            'currency': 'USD',
+            'area_size_unit': 'acre',
+            'volume_measurement_unit': 'kilograms',
+            'cost_of_production_unit': 'Per-acre',
+            'reporting_period': 'Per-year',
+            'segmentation': False,
+            'living_income_study': 'living_income',
+            'multiple_crops': False,
+            'created_by': 'admin@akvo.org',
+            'created_at': res['created_at'],
+            'updated_at': res['updated_at'],
+            'segments': [],
+            'project_crops': [{
+                'id': 1,
+                'crop': 2,
+                'breakdown': True
+            }, {
+                'id': 2,
+                'crop': 3,
+                'breakdown': False
+            }]
+        }
