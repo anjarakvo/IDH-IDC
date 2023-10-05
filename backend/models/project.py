@@ -1,3 +1,5 @@
+import enum
+from datetime import date as date_format
 from db.connection import Base
 from sqlalchemy import (
     Column, Integer, String, Date,
@@ -5,9 +7,15 @@ from sqlalchemy import (
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+from models.project_crop import ProjectCrop, SimplifiedProjectCropDict
+
+
+class LivingIncomeStudyEnum(enum.Enum):
+    better_income = "better_income"
+    living_income = "living_income"
 
 
 class ProjectDict(TypedDict):
@@ -22,11 +30,12 @@ class ProjectDict(TypedDict):
     volume_measurement_unit: str
     cost_of_production_unit: str
     reporting_period: str
-    segmentation: int
-    living_income_study: Optional[str]
-    multiple_crops: int
+    segmentation: bool
+    living_income_study: Optional[LivingIncomeStudyEnum]
+    multiple_crops: bool
     logo: Optional[str]
     created_by: int
+    project_crops: List[SimplifiedProjectCropDict]
 
 
 class Project(Base):
@@ -44,13 +53,7 @@ class Project(Base):
     cost_of_production_unit = Column(String, nullable=False)
     reporting_period = Column(String, nullable=False)
     segmentation = Column(SmallInteger, nullable=False, default=0)
-    living_income_study = Column(
-        Enum(
-            'better_income', 'living_income',
-            name='project_living_income_study'
-        ),
-        nullable=True
-    )
+    living_income_study = Column(Enum(LivingIncomeStudyEnum), nullable=True)
     multiple_crops = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
     created_by = Column(Integer, ForeignKey('user.id'))
@@ -62,24 +65,30 @@ class Project(Base):
         onupdate=func.now()
     )
 
-    country_detail = relationship(
-        'Country',
+    project_crops = relationship(
+        ProjectCrop,
         cascade="all, delete",
         passive_deletes=True,
-        backref='projects'
+        back_populates='project_detail'
     )
-    crop_detail = relationship(
-        'Crop',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='projects'
-    )
-    created_by_user = relationship(
-        'User',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='projects'
-    )
+    # country_detail = relationship(
+    #     'Country',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='projects'
+    # )
+    # crop_detail = relationship(
+    #     'Crop',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='projects'
+    # )
+    # created_by_user = relationship(
+    #     'User',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='projects'
+    # )
 
     def __init__(
         self,
@@ -125,7 +134,7 @@ class Project(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "date": self.date,
+            "date": self.date.strftime('%Y-%m-%d'),
             "year": self.year,
             "country": self.country,
             "focus_crop": self.focus_crop,
@@ -139,13 +148,18 @@ class Project(Base):
             "multiple_crops": self.multiple_crops,
             "logo": self.logo,
             "created_by": self.created_by,
+            "project_crops": [pc.simplify for pc in self.project_crops]
         }
 
 
+class OtherCropsBase(BaseModel):
+    crop: int
+    breakdown: bool
+
+
 class ProjectBase(BaseModel):
-    id: int
     name: str
-    date: str
+    date: date_format
     year: int
     country: int
     focus_crop: int
@@ -154,8 +168,8 @@ class ProjectBase(BaseModel):
     volume_measurement_unit: str
     cost_of_production_unit: str
     reporting_period: str
-    segmentation: int
-    living_income_study: Optional[str] = None
-    multiple_crops: int
+    segmentation: bool
+    multiple_crops: bool
+    living_income_study: Optional[LivingIncomeStudyEnum] = None
     logo: Optional[str] = None
-    created_by: int
+    other_crops: Optional[List[OtherCropsBase]] = None
