@@ -26,6 +26,14 @@ def add_user(
         organisation=payload.organisation,
         invitation_id=str(uuid4()) if invitation_id else None
     )
+    if payload.projects:
+        for proj in payload.projects:
+            project_access = UserProjectAccess(project=proj)
+            user.user_project_access.append(project_access)
+    if payload.tags:
+        for tag in payload.tags:
+            user_tag = UserTag(tag=tag)
+            user.user_tags.append(user_tag)
     session.add(user)
     session.commit()
     session.flush()
@@ -51,11 +59,11 @@ def update_user(
         for proj in payload.projects:
             project_access = UserProjectAccess(
                 user=user.id, project=proj)
-            user.user_project_access.apend(project_access)
+            user.user_project_access.append(project_access)
     if payload.tags:
         for tag in payload.tags:
             user_tag = UserTag(user=user.id, tag=tag)
-            user.user_tags.apend(user_tag)
+            user.user_tags.append(user_tag)
     session.commit()
     session.flush()
     session.refresh(user)
