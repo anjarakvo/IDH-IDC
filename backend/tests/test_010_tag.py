@@ -13,6 +13,19 @@ admin_account = Acc(email="admin@akvo.org", token=None)
 
 class TestTagRoute():
     @pytest.mark.asyncio
+    async def test_get_all_tag_return_404(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.get(app.url_path_for("tag:get_all"))
+        assert res.status_code == 403
+        res = await client.get(
+            app.url_path_for("tag:get_all"),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 404
+
+    @pytest.mark.asyncio
     async def test_create_tag_without_project_list(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:

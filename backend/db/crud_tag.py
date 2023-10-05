@@ -32,8 +32,8 @@ def add_tag(session: Session, payload: TagBase) -> TagListDict:
         name=payload.name,
         description=payload.description
     )
-    if payload.project_list:
-        for proj in payload.project_list:
+    if payload.projects:
+        for proj in payload.projects:
             project_tag = ProjectTag(project=proj)
             tag.tag_projects.append(project_tag)
     session.add(tag)

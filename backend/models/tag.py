@@ -83,7 +83,7 @@ class TagBase(BaseModel):
     name: str
     id: Optional[int] = None
     description: Optional[str] = None
-    project_list: Optional[List[int]] = None
+    projects: Optional[List[int]] = None
 
 
 class PaginatedTagResponse(BaseModel):
