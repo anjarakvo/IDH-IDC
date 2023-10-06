@@ -3,6 +3,13 @@ from sqlalchemy import Column, Integer, SmallInteger, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
+from typing_extensions import TypedDict
+
+
+class SimplifiedProjectCropDict(TypedDict):
+    id: int
+    crop: int
+    breakdown: bool
 
 
 class ProjectCrop(Base):
@@ -18,19 +25,19 @@ class ProjectCrop(Base):
         'Project',
         cascade="all, delete",
         passive_deletes=True,
-        backref='project_detail_project_crop'
+        back_populates='project_crops'
     )
-    crop_detail = relationship(
-        'Project',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='crop_detail_project_crop'
-    )
+    # crop_detail = relationship(
+    #     'Project',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='crop_detail_project_crop'
+    # )
 
     def __init__(
         self,
-        project: int,
         crop: int,
+        project: Optional[int] = None,
         id: Optional[int] = None,
         focus_crop: Optional[int] = 0,
         breakdown: Optional[int] = 0,
@@ -44,6 +51,14 @@ class ProjectCrop(Base):
     def __repr__(self) -> int:
         return f"<ProjectCrop {self.id}>"
 
+    @property
+    def simplify(self):
+        return {
+            "id": self.id,
+            "crop": self.crop,
+            "breakdown": self.breakdown
+        }
+
 
 class ProjectCropBase(BaseModel):
     id: int
@@ -51,6 +66,3 @@ class ProjectCropBase(BaseModel):
     crop: int
     focus_crop: Optional[int] = 0
     breakdown: Optional[int] = 0
-
-    class Config:
-        from_attributes = True

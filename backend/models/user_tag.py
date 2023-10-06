@@ -25,7 +25,12 @@ class UserTag(Base):
     #     backref='tag_users'
     # )
 
-    def __init__(self, id: Optional[int], user: int, tag: int):
+    def __init__(
+        self,
+        tag: int,
+        id: Optional[int] = None,
+        user: Optional[int] = None,
+    ):
         self.id = id
         self.user = user
         self.tag = tag

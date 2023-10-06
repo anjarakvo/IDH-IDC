@@ -3,8 +3,9 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing_extensions import TypedDict
-from typing import Optional
+from typing import Optional, List
 from pydantic import BaseModel
+from models.project_tag import ProjectTag
 
 
 class TagDict(TypedDict):
@@ -12,6 +13,13 @@ class TagDict(TypedDict):
     name: str
     description: Optional[str]
     created_by: int
+
+
+class TagListDict(TypedDict):
+    id: int
+    name: str
+    description: Optional[str]
+    projects_count: int
 
 
 class Tag(Base):
@@ -33,12 +41,18 @@ class Tag(Base):
         passive_deletes=True,
         backref='Tags'
     )
+    tag_projects = relationship(
+        ProjectTag,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates='project_tag_detail'
+    )
 
     def __init__(
         self,
-        id: Optional[int],
         name: str,
-        description: Optional[str]
+        id: Optional[int] = None,
+        description: Optional[str] = None,
     ):
         self.id = id
         self.name = name
@@ -53,14 +67,33 @@ class Tag(Base):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "children": self.children
+        }
+
+    @property
+    def to_tag_list(self) -> TagListDict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "description": self.description,
+            "projects_count": len(self.tag_projects)
         }
 
 
 class TagBase(BaseModel):
-    id: int
     name: str
+    id: Optional[int] = None
     description: Optional[str] = None
+    projects: Optional[List[int]] = None
 
-    class Config:
-        from_attributes = True
+
+class UpdateTagBase(BaseModel):
+    name: Optional[str] = None
+    description: Optional[str] = None
+    projects: Optional[List[int]] = None
+
+
+class PaginatedTagResponse(BaseModel):
+    current: int
+    data: List[TagListDict]
+    total: int
+    total_page: int

@@ -14,6 +14,13 @@ class SegmentDict(TypedDict):
     household_size: Optional[float]
 
 
+class SimplifiedSegmentDict(TypedDict):
+    id: int
+    name: str
+    target: Optional[float]
+    household_size: Optional[float]
+
+
 class Segment(Base):
     __tablename__ = 'segment'
 
@@ -27,7 +34,7 @@ class Segment(Base):
         'Project',
         cascade="all, delete",
         passive_deletes=True,
-        backref='project_segment'
+        back_populates='project_segments'
     )
 
     def __init__(
@@ -57,6 +64,15 @@ class Segment(Base):
             "household_size": self.household_size,
         }
 
+    @property
+    def simplify(self) -> SimplifiedSegmentDict:
+        return {
+            "id": self.id,
+            "name": self.name,
+            "target": self.target,
+            "household_size": self.household_size,
+        }
+
 
 class SegmentBase(BaseModel):
     id: int
@@ -64,6 +80,3 @@ class SegmentBase(BaseModel):
     name: str
     target: Optional[float] = None
     household_size: Optional[float] = None
-
-    class Config:
-        from_attributes = True

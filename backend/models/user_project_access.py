@@ -25,7 +25,12 @@ class UserProjectAccess(Base):
     #     backref='project_access'
     # )
 
-    def __init__(self, id: Optional[int], user: int, project: int):
+    def __init__(
+        self,
+        project: int,
+        id: Optional[int] = None,
+        user: Optional[int] = None,
+    ):
         self.id = id
         self.user = user
         self.project = project

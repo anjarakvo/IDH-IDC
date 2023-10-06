@@ -5,6 +5,8 @@ from middleware import decode_token
 from fastapi.responses import FileResponse
 
 from routes.user import user_route
+from routes.tag import tag_route
+from routes.project import project_route
 
 
 app = FastAPI(
@@ -28,6 +30,8 @@ JS_FILE = "./config.min.js"
 
 # Routes register
 app.include_router(user_route)
+app.include_router(tag_route)
+app.include_router(project_route)
 
 
 @app.get("/", tags=["Dev"])

@@ -12,20 +12,25 @@ class ProjectTag(Base):
     project = Column(Integer, ForeignKey('project.id'), nullable=False)
     tag = Column(Integer, ForeignKey('tag.id'), nullable=False)
 
-    project_detail = relationship(
-        'Project',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='project_tag'
-    )
-    tag_detail = relationship(
+    # project_detail = relationship(
+    #     'Project',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='project_tag'
+    # )
+    project_tag_detail = relationship(
         'Tag',
         cascade="all, delete",
         passive_deletes=True,
-        backref='tag_project'
+        back_populates='tag_projects'
     )
 
-    def __init__(self, id: Optional[int], project: int, tag: int):
+    def __init__(
+        self,
+        project: int,
+        tag: Optional[int] = None,
+        id: Optional[int] = None,
+    ):
         self.id = id
         self.project = project
         self.tag = tag
@@ -34,10 +39,7 @@ class ProjectTag(Base):
         return f"<ProjectTag {self.id}>"
 
 
-class projectTagBase(BaseModel):
+class ProjectTagBase(BaseModel):
     id: int
     project: int
     tag: int
-
-    class Config:
-        from_attributes = True

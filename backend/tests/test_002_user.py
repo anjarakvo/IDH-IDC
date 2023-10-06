@@ -349,6 +349,3 @@ class TestUserEndpoint():
                 'projects_count': 0
             }
         }
-
-    # TODO :: user register with projects and tags
-    # TODO :: user update with projects and tags
