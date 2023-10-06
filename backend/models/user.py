@@ -1,8 +1,5 @@
 from db.connection import Base
-from sqlalchemy import (
-    Column, Integer, String, DateTime, ForeignKey,
-    SmallInteger
-)
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, SmallInteger
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
@@ -52,11 +49,16 @@ class UserInvitation(TypedDict):
     invitation_id: str
 
 
+class EmailRecipient(TypedDict):
+    Email: str
+    Name: str
+
+
 class User(Base):
-    __tablename__ = 'user'
+    __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
-    organisation = Column(Integer, ForeignKey('organisation.id'))
+    organisation = Column(Integer, ForeignKey("organisation.id"))
     email = Column(String, nullable=False, unique=True)
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
@@ -65,27 +67,26 @@ class User(Base):
     invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime, nullable=False, server_default=func.now(),
-        onupdate=func.now()
+        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
     user_organisation = relationship(
-        'Organisation',
+        "Organisation",
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='users'
+        back_populates="users",
     )
     user_tags = relationship(
         UserTag,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='user_tag_detail'
+        back_populates="user_tag_detail",
     )
     user_project_access = relationship(
         UserProjectAccess,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='user_project_access_detail'
+        back_populates="user_project_access_detail",
     )
 
     def __init__(
@@ -97,7 +98,7 @@ class User(Base):
         is_admin: Optional[int] = 0,
         is_active: Optional[int] = 0,
         invitation_id: Optional[str] = None,
-        password: Optional[str] = None
+        password: Optional[str] = None,
     ):
         self.id = id
         self.organisation = organisation
@@ -156,6 +157,10 @@ class User(Base):
             "email": self.email,
             "invitation_id": self.invitation_id,
         }
+
+    @property
+    def recipient(self) -> EmailRecipient:
+        return {"Email": self.email, "Name": self.fullname}
 
 
 class UserBase(BaseModel):

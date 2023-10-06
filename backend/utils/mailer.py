@@ -3,7 +3,7 @@ import enum
 import base64
 from typing import List, Optional
 from bs4 import BeautifulSoup
-from typing_extensions import TypedDict
+from models.user import EmailRecipient
 from mailjet_rest import Client
 from jinja2 import Environment, FileSystemLoader
 
@@ -15,7 +15,7 @@ image_url = f"{webdomain}/email-icons"
 mailjet = Client(auth=(mjkey, mjsecret))
 loader = FileSystemLoader(".")
 env = Environment(loader=loader)
-html_template = env.get_template("./templates/main.html")
+html_template = env.get_template("./templates/email.html")
 image_url = f"{webdomain}/email-icons"
 FTYPE = (
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64"  # noqa
@@ -47,11 +47,13 @@ class EmailBody(enum.Enum):
         "message": None,
         "image": f"{image_url}/user-switch.png",
     }
-
-
-class EmailRecipient(TypedDict):
-    Email: str
-    Name: str
+    FORGOT_PASSWORD = {
+        "title": "Forgot Password",
+        "subject": "Forgot Password",
+        "body": "You have requested to reset your password.",
+        "message": None,
+        "image": f"{image_url}/lock.png",
+    }
 
 
 def send(data):
@@ -96,6 +98,7 @@ class MailTypeEnum(enum.Enum):
     REG_NEW = "USER_REGISTRATION_NEW"
     REG_APPROVED = "USER_REGISTRATION_APPROVED"
     REG_PASSWORD_CREATED = "USER_PASSWORD_CREATED"
+    FORGOT_PASSWORD = "FORGOT_PASSWORD"
 
 
 class Email:
