@@ -1,28 +1,39 @@
 import React from "react";
-import { Layout, Menu } from "antd";
+import { Layout, Menu, Row, Col, Space } from "antd";
 import { useCookies } from "react-cookie";
 import { FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { UserState } from "../../store";
+import { Link, useLocation } from "react-router-dom";
 
 const { Header, Content, Sider } = Layout;
 
-const PageHeader = () => {
+const PageHeader = ({ isLoggedIn }) => {
   return (
-    <Header
-      testid="layout-header"
-      style={{
-        position: "sticky",
-        top: 0,
-        zIndex: 1,
-        width: "100%",
-        display: "flex",
-        alignItems: "center",
-      }}
-    >
-      <div testid="logo-container" className="logo" />
-      <div className="title">
-        <h3>Explore Cases</h3>
-      </div>
+    <Header testid="layout-header">
+      <Row justify="center" align="middle">
+        <Col span={14} align="start">
+          <div data-testid="logo-container" className="logo" />
+          {isLoggedIn ? (
+            <div className="title">
+              <h3>Explore Cases</h3>
+            </div>
+          ) : (
+            ""
+          )}
+        </Col>
+        <Col span={10} align="end" testid="nav-container">
+          {!isLoggedIn ? (
+            <Space size="large" className="navigation-container">
+              <Link>About Us</Link>
+              <Link className="nav-sign-in" to="/login">
+                Sign in
+              </Link>
+            </Space>
+          ) : (
+            ""
+          )}
+        </Col>
+      </Row>
     </Header>
   );
 };
@@ -72,11 +83,17 @@ const PageLayout = ({ children }) => {
   const { id: userId, active: userActive } = UserState.useState((s) => s);
   const authTokenAvailable =
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+  const isLoggedIn = authTokenAvailable || (userId && userActive);
+  const location = useLocation();
 
-  if (!authTokenAvailable || !(userId && userActive)) {
+  if (!isLoggedIn) {
     return (
       <Layout>
-        {window.location.pathname !== "/login" ? <PageHeader /> : ""}
+        {location.pathname !== "/login" ? (
+          <PageHeader isLoggedIn={isLoggedIn} />
+        ) : (
+          ""
+        )}
         <Content testid="layout-content" className="content-container">
           {children}
         </Content>
@@ -86,7 +103,7 @@ const PageLayout = ({ children }) => {
 
   return (
     <Layout>
-      <PageHeader />
+      <PageHeader isLoggedIn={isLoggedIn} />
       <Layout>
         <PageSider />
         <Layout>

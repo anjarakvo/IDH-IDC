@@ -1,11 +1,14 @@
 import { render, waitFor } from "@testing-library/react";
+import { BrowserRouter as Router } from "react-router-dom";
 import PageLayout from "../PageLayout";
 
 test("it renders correctly", async () => {
   const wrapper = render(
-    <PageLayout>
-      <h1>Hello world!</h1>
-    </PageLayout>
+    <Router>
+      <PageLayout>
+        <h1>Hello world!</h1>
+      </PageLayout>
+    </Router>
   );
   waitFor(() => {
     expect(wrapper.getAllByTestId("layout-header")).toBeInTheDocument();
