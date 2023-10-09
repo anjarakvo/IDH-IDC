@@ -50,7 +50,7 @@ class SegmentAnswer(Base):
         segment: int,
         question: int,
         current_value: float,
-        feasible_value: Optional[float],
+        feasible_value: Optional[float] = None,
         id: Optional[int] = None,
     ):
         self.id = id
@@ -64,7 +64,7 @@ class SegmentAnswer(Base):
         return f"<SegmentAnswer {self.id}>"
 
     @property
-    def serializer(self) -> SegmentAnswerDict:
+    def serialize(self) -> SegmentAnswerDict:
         return {
             "id": self.id,
             "project_crop": self.project_crop,
@@ -76,12 +76,8 @@ class SegmentAnswer(Base):
 
 
 class SegmentAnswerBase(BaseModel):
-    id: int
     project_crop: int
     segment: int
     question: int
     current_value: float
     feasible_value: Optional[float] = None
-
-    class Config:
-        from_attributes = True

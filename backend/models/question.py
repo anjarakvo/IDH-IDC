@@ -1,9 +1,15 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+from models.crop_category_question import CropCategoryQuestion
+
+
+class QuestionGroupParam(TypedDict):
+    crop: int
+    breakdown: bool
 
 
 class QuestionDict(TypedDict):
@@ -14,6 +20,13 @@ class QuestionDict(TypedDict):
     description: Optional[str]
     default_value: Optional[str]
     created_by: int
+    childrens: Optional[List]
+
+
+class QuestionGroupListDict(TypedDict):
+    crop_id: int
+    crop_name: str
+    questions: List[QuestionDict]
 
 
 class Question(Base):
@@ -36,16 +49,23 @@ class Question(Base):
         passive_deletes=True,
         backref='questions'
     )
+    question_crop_category_detail = relationship(
+        'CropCategory',
+        secondary=CropCategoryQuestion.__tablename__,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates='crop_category_questions'
+    )
 
     def __init__(
         self,
-        id: Optional[int],
-        parent: Optional[int],
-        code: Optional[str],
         text: str,
-        description: Optional[str],
-        default_value: Optional[str],
         created_by: int,
+        id: Optional[int] = None,
+        parent: Optional[int] = None,
+        code: Optional[str] = None,
+        description: Optional[str] = None,
+        default_value: Optional[str] = None,
     ):
         self.id = id
         self.parent = parent
@@ -59,7 +79,7 @@ class Question(Base):
         return f"<Question {self.id}>"
 
     @property
-    def serializer(self) -> QuestionDict:
+    def serialize(self) -> QuestionDict:
         return {
             "id": self.id,
             "parent": self.parent,
@@ -68,6 +88,21 @@ class Question(Base):
             "description": self.description,
             "default_value": self.default_value,
             "created_by": self.created_by,
+            "childrens": [],
+        }
+
+    @property
+    def serialize_with_child(self) -> QuestionDict:
+        childrens = [c.serialize for c in self.children]
+        return {
+            "id": self.id,
+            "parent": self.parent,
+            "code": self.code,
+            "text": self.text,
+            "description": self.description,
+            "default_value": self.default_value,
+            "created_by": self.created_by,
+            "childrens": childrens,
         }
 
 
@@ -79,6 +114,3 @@ class QuestionBase(BaseModel):
     description: Optional[str] = None
     default_value: Optional[str] = None
     created_by: int
-
-    class Config:
-        from_attributes = True

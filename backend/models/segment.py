@@ -39,11 +39,11 @@ class Segment(Base):
 
     def __init__(
         self,
-        id: Optional[int],
-        project: int,
         name: str,
-        target: Optional[float],
-        household_size: Optional[float],
+        project: int,
+        target: Optional[float] = None,
+        household_size: Optional[float] = None,
+        id: Optional[int] = None,
     ):
         self.id = id
         self.project = project
@@ -55,7 +55,7 @@ class Segment(Base):
         return f"<Segment {self.id}>"
 
     @property
-    def serializer(self) -> SegmentDict:
+    def serialize(self) -> SegmentDict:
         return {
             "id": self.id,
             "project": self.project,
@@ -75,8 +75,7 @@ class Segment(Base):
 
 
 class SegmentBase(BaseModel):
-    id: int
-    project: int
     name: str
+    project: int
     target: Optional[float] = None
     household_size: Optional[float] = None

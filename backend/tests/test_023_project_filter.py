@@ -30,6 +30,7 @@ class TestProjectWithFilterRoute():
             params={"search": "Bali Rice"},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
+        assert res.status_code == 200
         res = res.json()
         assert res == {
             'current': 1,
@@ -63,6 +64,7 @@ class TestProjectWithFilterRoute():
             params={"tags": [1, 2]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
+        assert res.status_code == 200
         res = res.json()
         assert res == {
             'current': 1,
@@ -96,6 +98,7 @@ class TestProjectWithFilterRoute():
             params={"focus_crop": [2]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
+        assert res.status_code == 200
         res = res.json()
         assert res == {
             'current': 1,
@@ -137,6 +140,7 @@ class TestProjectWithFilterRoute():
             },
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
+        assert res.status_code == 200
         res = res.json()
         assert res == {
             'current': 1,

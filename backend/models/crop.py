@@ -59,6 +59,14 @@ class Crop(Base):
             "name": self.name,
         }
 
+    @property
+    def to_question_list(self):
+        return {
+            "crop_id": self.id,
+            "crop_name": self.name,
+            "questions": self.crop_category_detail.crop_category_questions,
+        }
+
 
 class CropBase(BaseModel):
     id: int

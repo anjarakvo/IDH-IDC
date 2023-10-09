@@ -32,7 +32,7 @@ def test_read_main():
     assert response.status_code == 200
 
 
-class TestAddMasterData():
+class TestAddMasterDataWithoutDedenpentToUser():
     @pytest.mark.asyncio
     async def test_add_crop_categories_and_crops_master_data(
         self, app: FastAPI, session: Session, client: AsyncClient

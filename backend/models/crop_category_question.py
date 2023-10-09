@@ -1,8 +1,9 @@
 from db.connection import Base
 from sqlalchemy import Column, ForeignKey, Integer
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
+# from models.question import Question
 
 
 class CropCategoryQuestion(Base):
@@ -12,20 +13,25 @@ class CropCategoryQuestion(Base):
     crop_category = Column(Integer, ForeignKey('crop_category.id'))
     question = Column(Integer, ForeignKey('question.id'))
 
-    crop_category_detail = relationship(
-        'CropCategory',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='crop_category_question'
-    )
-    question_detail = relationship(
-        'Question',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='question_crop_category_detail'
-    )
+    # crop_category_detail = relationship(
+    #     'CropCategory',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     back_populates='crop_category_questions'
+    # )
+    # crop_questions = relationship(
+    #     Question,
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     back_populates='question_crop_category'
+    # )
 
-    def __init__(self, id: Optional[int], crop_category: int, question: int):
+    def __init__(
+        self,
+        crop_category: int,
+        id: Optional[int] = None,
+        question: Optional[int] = None,
+    ):
         self.id = id
         self.crop_category = crop_category
         self.question = question
@@ -38,6 +44,3 @@ class CropCategoryQuestionBase(BaseModel):
     id: int
     crop_category: int
     question: int
-
-    class Config:
-        from_attributes = True
