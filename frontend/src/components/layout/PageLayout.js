@@ -76,6 +76,7 @@ const PageLayout = ({ children }) => {
   if (!authTokenAvailable || !(userId && userActive)) {
     return (
       <Layout>
+        {window.location.pathname !== "/login" ? <PageHeader /> : ""}
         <Content testid="layout-content" className="content-container">
           {children}
         </Content>
