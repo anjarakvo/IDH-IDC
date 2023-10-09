@@ -1,5 +1,4 @@
 import db.crud_segment_answer as crud_segment_answer
-import db.crud_segment as crud_segment
 
 from fastapi import (
     APIRouter, Request, Depends
@@ -32,9 +31,32 @@ def add_segment_answer(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    # check segment
-    crud_segment.get_segment_by_id(session=session, id=segment_id)
     # add segment answers
     segment_answers = crud_segment_answer.add_segment_answer(
-        session=session, payloads=payload)
+        session=session, payloads=payload, segment_id=segment_id
+    )
+    return [sa.serialize for sa in segment_answers]
+
+
+@segment_answer_route.put(
+    "/segment-answer/{segment_id:path}",
+    response_model=List[SegmentAnswerDict],
+    summary="update segment answer/value",
+    name="segment_answer:update_answer",
+    tags=["Segment Answer"]
+)
+def update_segment_answer(
+    req: Request,
+    segment_id: int,
+    payload: List[SegmentAnswerBase],
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    # delete previous answers
+    crud_segment_answer.delete_previous_segment_answer_by_segment_id(
+        session=session, segment_id=segment_id
+    )
+    # add new segment answers
+    segment_answers = crud_segment_answer.add_segment_answer(
+        session=session, payloads=payload, segment_id=segment_id)
     return [sa.serialize for sa in segment_answers]
