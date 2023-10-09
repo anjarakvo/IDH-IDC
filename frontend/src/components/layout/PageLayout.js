@@ -8,6 +8,9 @@ import { Link, useLocation } from "react-router-dom";
 const { Header, Content, Sider } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
+  const location = useLocation();
+  const pathname = location?.pathname;
+
   return (
     <Header
       testid="layout-header"
@@ -21,16 +24,16 @@ const PageHeader = ({ isLoggedIn }) => {
       <Row justify="center" align="middle">
         <Col span={14} align="start">
           <div data-testid="logo-container" className="logo" />
-          {isLoggedIn ? (
+          {/* {isLoggedIn ? (
             <div className="title">
               <h3>Explore Cases</h3>
             </div>
           ) : (
             ""
-          )}
+          )} */}
         </Col>
         <Col span={10} align="end" testid="nav-container">
-          {!isLoggedIn ? (
+          {!isLoggedIn || pathname == "/" ? (
             <Space size="large" className="navigation-container">
               <Link>About Us</Link>
               <Link className="nav-sign-in" to="/login">
@@ -93,15 +96,12 @@ const PageLayout = ({ children }) => {
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
   const isLoggedIn = authTokenAvailable || (userId && userActive);
   const location = useLocation();
+  const pathname = location?.pathname;
 
-  if (!isLoggedIn) {
+  if (pathname == "/" || pathname == "/login") {
     return (
       <Layout>
-        {location.pathname !== "/login" ? (
-          <PageHeader isLoggedIn={isLoggedIn} />
-        ) : (
-          ""
-        )}
+        {pathname !== "/login" ? <PageHeader isLoggedIn={isLoggedIn} /> : ""}
         <Content testid="layout-content" className="content-container">
           {children}
         </Content>
