@@ -3,11 +3,7 @@
 #root {
   header {
     background: $primary-color;
-    padding: 0 24px;
-    position: "sticky";
-    top: 0;
-    z-index: 1;
-    width: 100%;
+    padding: 0 $default-padding-size;
 
     .logo {
       width: 125px;
@@ -19,14 +15,14 @@
     }
 
     .title {
-      margin-left: 24px;
+      margin-left: $default-padding-size;
       h3 {
         color: #ffffff;
       }
     }
 
     .navigation-container {
-      margin-left: 24px;
+      margin-left: $default-padding-size;
       align-self: flex-end;
       a {
         color: #ffffff;

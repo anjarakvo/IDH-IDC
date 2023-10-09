@@ -9,7 +9,15 @@ const { Header, Content, Sider } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
   return (
-    <Header testid="layout-header">
+    <Header
+      testid="layout-header"
+      style={{
+        position: "sticky",
+        top: 0,
+        zIndex: 1,
+        width: "100%",
+      }}
+    >
       <Row justify="center" align="middle">
         <Col span={14} align="start">
           <div data-testid="logo-container" className="logo" />

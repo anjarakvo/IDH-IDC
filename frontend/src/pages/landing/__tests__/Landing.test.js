@@ -18,11 +18,90 @@ describe("Landing page", () => {
     expect(wrapper.getByText("Sign in")).toBeInTheDocument();
   });
 
-  it.todo(
-    "should render jumbotron image with title, subtitle, and learn more button"
-  );
-  it.todo("should render first section");
-  it.todo("should render second section");
-  it.todo("should render third section");
-  it.todo("should render disclaimer section");
+  it("should render jumbotron image with title, subtitle, and learn more button", () => {
+    const wrapper = render(
+      <Router>
+        <PageLayout>
+          <Landing />
+        </PageLayout>
+      </Router>
+    );
+
+    expect(wrapper.getByTestId("jumbotron-wrapper")).toBeInTheDocument();
+    expect(wrapper.getByTestId("jumbotron-title")).toBeInTheDocument();
+    expect(wrapper.getByTestId("jumbotron-subtitle")).toBeInTheDocument();
+    expect(wrapper.getByTestId("button-learn-more")).toBeInTheDocument();
+  });
+
+  it("should render first section", () => {
+    const wrapper = render(
+      <Router>
+        <PageLayout>
+          <Landing />
+        </PageLayout>
+      </Router>
+    );
+
+    expect(wrapper.getByTestId("first-section-wrapper")).toBeInTheDocument();
+    expect(wrapper.getByTestId("first-section-left-text")).toBeInTheDocument();
+    expect(wrapper.getByTestId("first-section-right-text")).toBeInTheDocument();
+    expect(wrapper.getByTestId("button-learn-more-2")).toBeInTheDocument();
+  });
+
+  it("should render second section", () => {
+    const wrapper = render(
+      <Router>
+        <PageLayout>
+          <Landing />
+        </PageLayout>
+      </Router>
+    );
+
+    expect(wrapper.getByTestId("second-section-wrapper")).toBeInTheDocument();
+    expect(wrapper.getByTestId("second-section-title")).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("second-section-description")
+    ).toBeInTheDocument();
+    expect(wrapper.getByText("Qualitative data")).toBeInTheDocument();
+    expect(
+      wrapper.getByText("Report generation and visualizations")
+    ).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("button-use-the-calculator")
+    ).toBeInTheDocument();
+    expect(wrapper.getByTestId("second-section-image")).toBeInTheDocument();
+  });
+
+  it("should render third section", () => {
+    const wrapper = render(
+      <Router>
+        <PageLayout>
+          <Landing />
+        </PageLayout>
+      </Router>
+    );
+
+    expect(wrapper.getByTestId("third-section-wrapper")).toBeInTheDocument();
+    expect(wrapper.getByTestId("third-section-title")).toBeInTheDocument();
+    expect(wrapper.getByTestId("third-section-subtitle")).toBeInTheDocument();
+    expect(wrapper.getByTestId("map")).toBeInTheDocument();
+  });
+
+  it("should render disclaimer section", () => {
+    const wrapper = render(
+      <Router>
+        <PageLayout>
+          <Landing />
+        </PageLayout>
+      </Router>
+    );
+
+    expect(
+      wrapper.getByTestId("disclaimer-section-wrapper")
+    ).toBeInTheDocument();
+    expect(wrapper.getByTestId("disclaimer-section-title")).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("disclaimer-section-description")
+    ).toBeInTheDocument();
+  });
 });
