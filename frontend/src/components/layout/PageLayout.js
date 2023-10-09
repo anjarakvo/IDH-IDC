@@ -33,7 +33,7 @@ const PageHeader = ({ isLoggedIn }) => {
           )} */}
         </Col>
         <Col span={10} align="end" testid="nav-container">
-          {!isLoggedIn || pathname == "/" ? (
+          {!isLoggedIn || pathname === "/" ? (
             <Space size="large" className="navigation-container">
               <Link>About Us</Link>
               <Link className="nav-sign-in" to="/login">
@@ -98,7 +98,7 @@ const PageLayout = ({ children }) => {
   const location = useLocation();
   const pathname = location?.pathname;
 
-  if (pathname == "/" || pathname == "/login") {
+  if (pathname === "/" || pathname === "/login") {
     return (
       <Layout>
         {pathname !== "/login" ? <PageHeader isLoggedIn={isLoggedIn} /> : ""}
