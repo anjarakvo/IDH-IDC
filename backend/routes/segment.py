@@ -24,7 +24,7 @@ segment_route = APIRouter()
     name="segment:create",
     tags=["Segment"]
 )
-def create_tag(
+def create_segment(
     req: Request,
     payload: List[SegmentBase],
     session: Session = Depends(get_session),

@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from typing import List
-# from fastapi import HTTPException, status
+from fastapi import HTTPException, status
 
 from models.segment import Segment, SegmentBase, SegmentDict
 
@@ -22,3 +22,13 @@ def add_segment(
         session.refresh(segment)
         segments.append(segment)
     return segments
+
+
+def get_segment_by_id(session: Session, id: int) -> SegmentDict:
+    segment = session.query(Segment).filter(Segment.id == id).first()
+    if not segment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Segment {id} not found"
+        )
+    return segment
