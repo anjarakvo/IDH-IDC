@@ -5,19 +5,19 @@ import { UserState } from "../../../store";
 import PrivateRoutes from "../PrivateRoutes";
 
 describe("PrivateRoutes Component", () => {
-  it("redirects to /login when authToken is not available", () => {
+  it("redirects to landing page when authToken is not available", () => {
     const { getByText } = render(
       <MemoryRouter initialEntries={["/private"]}>
         <Routes>
           <Route element={<PrivateRoutes />}>
             <Route path="/private" element={<div testid="private-route" />} />
           </Route>
-          <Route path="/login" element={<div>Mock Login Page</div>} />
+          <Route path="/" element={<div>Mock Landing Page</div>} />
         </Routes>
       </MemoryRouter>
     );
 
-    expect(getByText("Mock Login Page")).toBeInTheDocument();
+    expect(getByText("Mock Landing Page")).toBeInTheDocument();
   });
 
   it("renders Outlet when authToken and user info are available", () => {

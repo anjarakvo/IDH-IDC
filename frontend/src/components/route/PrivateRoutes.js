@@ -12,7 +12,7 @@ const PrivateRoutes = () => {
   return authTokenAvailable || (userId && userActive) ? (
     <Outlet />
   ) : (
-    <Navigate to="/login" />
+    <Navigate to="/" />
   );
 };
 
