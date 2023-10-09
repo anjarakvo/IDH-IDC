@@ -5,6 +5,7 @@ asgi-lifespan==2.1.0
 attrs==23.1.0
 bcrypt==4.0.1
 black==23.9.1
+bs4==0.0.1
 certifi==2023.7.22
 cffi==1.15.1
 charset-normalizer==3.2.0
@@ -30,6 +31,7 @@ iniconfig==2.0.0
 itsdangerous==2.1.2
 Jinja2==3.1.2
 jsmin==3.0.1
+mailjet-rest==1.3.4
 Mako==1.2.4
 MarkupSafe==2.1.3
 mccabe==0.7.0
@@ -78,3 +80,4 @@ watchfiles==0.20.0
 websockets==11.0.3
 zope.event==5.0
 zope.interface==6.0
+lxml==4.9.3
