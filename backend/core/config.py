@@ -8,6 +8,7 @@ from routes.user import user_route
 from routes.tag import tag_route
 from routes.project import project_route
 from routes.question import question_route
+from routes.segment import segment_route
 
 
 app = FastAPI(
@@ -34,6 +35,7 @@ app.include_router(user_route)
 app.include_router(tag_route)
 app.include_router(project_route)
 app.include_router(question_route)
+app.include_router(segment_route)
 
 
 @app.get("/", tags=["Dev"])
