@@ -1,6 +1,19 @@
 @import "./variables.scss";
 
 #root {
+  h1,
+  h2 {
+    font-family: "TabletGothicBold" !important;
+  }
+
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  a {
+    font-family: "TabletGothic" !important;
+  }
   header {
     height: 5rem;
     background: $primary-color;
@@ -28,7 +41,8 @@
       float: right;
       a {
         color: #ffffff;
-        font-weight: 600;
+        font-weight: 700;
+        font-size: 0.95rem;
       }
       .nav-sign-in {
         background-color: $yellow-color;
