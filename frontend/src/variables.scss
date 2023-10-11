@@ -1,6 +1,22 @@
 $primary-color: #26605f;
 $bg-color-grey: #f0f2f5;
 $bg-color-white: #ffffff;
+$yellow-color: #ffc505;
 
-$default-space-size: 18px;
-$default-ant-card-body-padding: 14px 18px;
+$default-space-size: 1.5rem;
+$default-ant-card-body-padding: 0.9rem 1.5rem;
+$default-padding-size: 5rem;
+
+@font-face {
+  font-family: "TabletGothic";
+  src: url("/assets/fonts/TabletGothic.woff2") format("woff2");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "TabletGothicBold";
+  src: url("/assets/fonts/TabletGothic-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+}

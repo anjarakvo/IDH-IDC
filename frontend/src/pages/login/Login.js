@@ -42,7 +42,7 @@ const Login = () => {
           s.organisation_detail = data.organisation_detail;
         });
         setTimeout(() => {
-          navigate("/");
+          navigate("/dashboard");
         }, 100);
       })
       .catch(() => {

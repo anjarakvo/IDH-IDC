@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import { PrivateRoutes } from "./components/route";
 import { PageLayout } from "./components/layout";
 import { Home } from "./pages/home";
+import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Dashboard } from "./pages/dashboard";
 import { NotFound } from "./pages/not-found";
@@ -51,9 +52,10 @@ const App = () => {
       <Routes>
         <Route path="*" element={<NotFound />} />
         <Route element={<PrivateRoutes />}>
-          <Route exact path="/" element={<Home />} />
+          <Route exact path="/home" element={<Home />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
         </Route>
+        <Route exact path="/" element={<Landing />} />
         <Route exact path="/login" element={<Login />} />
       </Routes>
     </PageLayout>
