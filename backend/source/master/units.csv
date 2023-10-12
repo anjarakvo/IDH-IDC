@@ -1,0 +1,10 @@
+id,unit_type,unit_name
+1,"Area Size Units",hectares
+2,"Area Size Units",square meters
+3,"Area Size Units",acres
+4,"Volume Measurement Units",kilograms
+5,"Volume Measurement Units",liters
+6,"Volume Measurement Units",bushels
+7,"Cost of Production Measurement Units",Per-area
+8,"Cost of Production Measurement Units",Per-yield
+9,"Cost of Production Measurement Units",Per-tree
