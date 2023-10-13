@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.project_crop import ProjectCrop, SimplifiedProjectCropDict
+from models.project_commodity import ProjectCommodity, SimplifiedProjectCommodityDict
 from models.segment import Segment, SimplifiedSegmentDict
 
 
@@ -23,8 +23,8 @@ class ProjectListDict(TypedDict):
     id: int
     name: str
     country: int
-    focus_crop: int
-    diversified_crops_count: int
+    focus_commodity: int
+    diversified_commoditys_count: int
     created_at: str
     created_by: str
 
@@ -35,7 +35,7 @@ class ProjectDict(TypedDict):
     date: str
     year: int
     country: int
-    focus_crop: int
+    focus_commodity: int
     currency: str
     area_size_unit: str
     volume_measurement_unit: str
@@ -43,10 +43,10 @@ class ProjectDict(TypedDict):
     reporting_period: str
     segmentation: bool
     living_income_study: Optional[LivingIncomeStudyEnum]
-    multiple_crops: bool
+    multiple_commoditys: bool
     logo: Optional[str]
     created_by: int
-    project_crops: List[SimplifiedProjectCropDict]
+    project_commoditys: List[SimplifiedProjectCommodityDict]
 
 
 class ProjectDetailDict(TypedDict):
@@ -55,7 +55,7 @@ class ProjectDetailDict(TypedDict):
     date: str
     year: int
     country: int
-    focus_crop: int
+    focus_commodity: int
     currency: str
     area_size_unit: str
     volume_measurement_unit: str
@@ -63,12 +63,12 @@ class ProjectDetailDict(TypedDict):
     reporting_period: str
     segmentation: bool
     living_income_study: Optional[LivingIncomeStudyEnum]
-    multiple_crops: bool
+    multiple_commoditys: bool
     created_by: str
     created_at: str
     updated_at: Optional[str]
     segments: Optional[List[SimplifiedSegmentDict]]
-    project_crops: List[SimplifiedProjectCropDict]
+    project_commoditys: List[SimplifiedProjectCommodityDict]
 
 
 class Project(Base):
@@ -79,7 +79,7 @@ class Project(Base):
     date = Column(Date, nullable=False)
     year = Column(Integer, nullable=False)
     country = Column(Integer, ForeignKey('country.id'))
-    focus_crop = Column(Integer, ForeignKey('crop.id'))
+    focus_commodity = Column(Integer, ForeignKey('commodity.id'))
     currency = Column(String, nullable=False)
     area_size_unit = Column(String, nullable=False)
     volume_measurement_unit = Column(String, nullable=False)
@@ -87,7 +87,7 @@ class Project(Base):
     reporting_period = Column(String, nullable=False)
     segmentation = Column(SmallInteger, nullable=False, default=0)
     living_income_study = Column(Enum(LivingIncomeStudyEnum), nullable=True)
-    multiple_crops = Column(SmallInteger, nullable=False, default=0)
+    multiple_commoditys = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
     created_by = Column(Integer, ForeignKey('user.id'))
     created_at = Column(DateTime, nullable=False, server_default=func.now())
@@ -98,8 +98,8 @@ class Project(Base):
         onupdate=func.now()
     )
 
-    project_crops = relationship(
-        ProjectCrop,
+    project_commoditys = relationship(
+        ProjectCommodity,
         cascade="all, delete",
         passive_deletes=True,
         back_populates='project_detail'
@@ -116,8 +116,8 @@ class Project(Base):
     #     passive_deletes=True,
     #     backref='projects'
     # )
-    # crop_detail = relationship(
-    #     'Crop',
+    # commodity_detail = relationship(
+    #     'Commodity',
     #     cascade="all, delete",
     #     passive_deletes=True,
     #     backref='projects'
@@ -135,7 +135,7 @@ class Project(Base):
         date: str,
         year: int,
         country: int,
-        focus_crop: int,
+        focus_commodity: int,
         currency: str,
         area_size_unit: str,
         volume_measurement_unit: str,
@@ -143,7 +143,7 @@ class Project(Base):
         reporting_period: str,
         segmentation: int,
         living_income_study: Optional[str],
-        multiple_crops: int,
+        multiple_commoditys: int,
         logo: Optional[str],
         created_by: int,
         id: Optional[int] = None,
@@ -153,7 +153,7 @@ class Project(Base):
         self.date = date
         self.year = year
         self.country = country
-        self.focus_crop = focus_crop
+        self.focus_commodity = focus_commodity
         self.currency = currency
         self.area_size_unit = area_size_unit
         self.volume_measurement_unit = volume_measurement_unit
@@ -161,7 +161,7 @@ class Project(Base):
         self.reporting_period = reporting_period
         self.segmentation = segmentation
         self.living_income_study = living_income_study
-        self.multiple_crops = multiple_crops
+        self.multiple_commoditys = multiple_commoditys
         self.logo = logo
         self.created_by = created_by
 
@@ -176,7 +176,7 @@ class Project(Base):
             "date": self.date.strftime('%Y-%m-%d'),
             "year": self.year,
             "country": self.country,
-            "focus_crop": self.focus_crop,
+            "focus_commodity": self.focus_commodity,
             "currency": self.currency,
             "area_size_unit": self.area_size_unit,
             "volume_measurement_unit": self.volume_measurement_unit,
@@ -184,25 +184,25 @@ class Project(Base):
             "reporting_period": self.reporting_period,
             "segmentation": self.segmentation,
             "living_income_study": self.living_income_study,
-            "multiple_crops": self.multiple_crops,
+            "multiple_commoditys": self.multiple_commoditys,
             "logo": self.logo,
             "created_by": self.created_by,
-            "project_crops": [pc.simplify for pc in self.project_crops],
+            "project_commoditys": [pc.simplify for pc in self.project_commoditys],
         }
 
     @property
     def to_project_list(self) -> ProjectListDict:
-        # filter diversified count by !equal to focus crop
+        # filter diversified count by !equal to focus commodity
         diversified_count = [
-            val for val in self.project_crops
-            if val.crop != self.focus_crop
+            val for val in self.project_commoditys
+            if val.commodity != self.focus_commodity
         ]
         return {
             "id": self.id,
             "name": self.name,
             "country": self.country,
-            "focus_crop": self.focus_crop,
-            "diversified_crops_count": len(diversified_count),
+            "focus_commodity": self.focus_commodity,
+            "diversified_commoditys_count": len(diversified_count),
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "created_by": self.created_by_user.email,
         }
@@ -215,7 +215,7 @@ class Project(Base):
             "date": self.date.strftime('%Y-%m-%d'),
             "year": self.year,
             "country": self.country,
-            "focus_crop": self.focus_crop,
+            "focus_commodity": self.focus_commodity,
             "currency": self.currency,
             "area_size_unit": self.area_size_unit,
             "volume_measurement_unit": self.volume_measurement_unit,
@@ -223,18 +223,18 @@ class Project(Base):
             "reporting_period": self.reporting_period,
             "segmentation": self.segmentation,
             "living_income_study": self.living_income_study,
-            "multiple_crops": self.multiple_crops,
+            "multiple_commoditys": self.multiple_commoditys,
             "logo": self.logo,
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "updated_at": self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
             "segments": [ps.simplify for ps in self.project_segments],
-            "project_crops": [pc.simplify for pc in self.project_crops],
+            "project_commoditys": [pc.simplify for pc in self.project_commoditys],
         }
 
 
-class OtherCropsBase(BaseModel):
-    crop: int
+class OtherCommoditysBase(BaseModel):
+    commodity: int
     breakdown: bool
 
 
@@ -243,17 +243,17 @@ class ProjectBase(BaseModel):
     date: date_format
     year: int
     country: int
-    focus_crop: int
+    focus_commodity: int
     currency: str
     area_size_unit: str
     volume_measurement_unit: str
     cost_of_production_unit: str
     reporting_period: str
     segmentation: bool
-    multiple_crops: bool
+    multiple_commoditys: bool
     living_income_study: Optional[LivingIncomeStudyEnum] = None
     logo: Optional[str] = None
-    other_crops: Optional[List[OtherCropsBase]] = None
+    other_commoditys: Optional[List[OtherCommoditysBase]] = None
 
 
 class PaginatedProjectResponse(BaseModel):

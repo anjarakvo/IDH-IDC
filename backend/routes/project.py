@@ -52,13 +52,13 @@ def get_all_project(
     limit: int = 10,
     search: Optional[str] = None,
     tags: Optional[List[int]] = Query(None),
-    focus_crop: Optional[List[int]] = Query(None),
+    focus_commodity: Optional[List[int]] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
     projects = crud_project.get_all_project(
         session=session, search=search,
-        tags=tags, focus_crops=focus_crop,
+        tags=tags, focus_commoditys=focus_commodity,
         skip=(limit * (page - 1)), limit=limit
     )
     if not projects:

@@ -38,8 +38,8 @@ class TestProjectWithFilterRoute():
                 'id': 1,
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
-                'focus_crop': 2,
-                'diversified_crops_count': 1,
+                'focus_commodity': 2,
+                'diversified_commoditys_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -72,8 +72,8 @@ class TestProjectWithFilterRoute():
                 'id': 1,
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
-                'focus_crop': 2,
-                'diversified_crops_count': 1,
+                'focus_commodity': 2,
+                'diversified_commoditys_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -82,20 +82,20 @@ class TestProjectWithFilterRoute():
         }
 
     @pytest.mark.asyncio
-    async def test_get_project_filter_by_focus_Crop(
+    async def test_get_project_filter_by_focus_Commodity(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # test invalid search
         res = await client.get(
             app.url_path_for("project:get_all"),
-            params={"focus_crop": [100]},
+            params={"focus_commodity": [100]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 404
         # test valid search
         res = await client.get(
             app.url_path_for("project:get_all"),
-            params={"focus_crop": [2]},
+            params={"focus_commodity": [2]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 200
@@ -106,8 +106,8 @@ class TestProjectWithFilterRoute():
                 'id': 1,
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
-                'focus_crop': 2,
-                'diversified_crops_count': 1,
+                'focus_commodity': 2,
+                'diversified_commoditys_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -125,7 +125,7 @@ class TestProjectWithFilterRoute():
             params={
                 "search": "Rice",
                 "tags": [1],
-                "focus_crop": [100]
+                "focus_commodity": [100]
             },
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
@@ -136,7 +136,7 @@ class TestProjectWithFilterRoute():
             params={
                 "search": "Rice",
                 "tags": [1],
-                "focus_crop": [2]
+                "focus_commodity": [2]
             },
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
@@ -148,8 +148,8 @@ class TestProjectWithFilterRoute():
                 'id': 1,
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
-                'focus_crop': 2,
-                'diversified_crops_count': 1,
+                'focus_commodity': 2,
+                'diversified_commoditys_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],

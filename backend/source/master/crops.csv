@@ -1,9 +1,9 @@
 id,group_id,name,group_name
-1000,100,Coffee,Crop
-1001,100,Tea,Crop
-1002,100,Wheat,Crop
-1003,100,Rice,Crop
-1004,100,Corn,Crop
+1000,100,Coffee,Commodity
+1001,100,Tea,Commodity
+1002,100,Wheat,Commodity
+1003,100,Rice,Commodity
+1004,100,Corn,Commodity
 1005,101,Shrimp,Aquaculture
 1006,101,Salmon,Aquaculture
 1007,101,Tilapia,Aquaculture

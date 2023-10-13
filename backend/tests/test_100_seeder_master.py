@@ -1,9 +1,9 @@
 # import sys
 # import pytest
 # from seeder.master import seeder_master
-# from models.crop_category import CropCategory
+# from models.commodity_category import CommodityCategory
 # from models.country import Country
-# from models.crop import Crop
+# from models.commodity import Commodity
 # from sqlalchemy import create_engine
 # from sqlalchemy.orm import Session
 # from db.connection import get_db_url
@@ -15,13 +15,13 @@
 # class TestSeederMaster:
 #     @pytest.mark.asyncio
 #     async def test_seeder_master(self, session: Session) -> None:
-#         crop_categories = session.query(CropCategory).all()
-#         crop_categories = [val.serialize_with_crops for val in crop_categories]
-#         assert crop_categories == [
+#         commodity_categories = session.query(CommodityCategory).all()
+#         commodity_categories = [val.serialize_with_commoditys for val in commodity_categories]
+#         assert commodity_categories == [
 #             {
 #                 "id": 1,
 #                 "name": "Grains",
-#                 "crops": [
+#                 "commoditys": [
 #                     {"id": 1, "name": "Wheat"},
 #                     {"id": 2, "name": "Rice"},
 #                     {"id": 3, "name": "Corn"},
@@ -30,7 +30,7 @@
 #             {
 #                 "id": 2,
 #                 "name": "Nuts",
-#                 "crops": [
+#                 "commoditys": [
 #                     {"id": 4, "name": "Almonds"},
 #                     {"id": 5, "name": "Walnuts"},
 #                     {"id": 6, "name": "Pecans"},
@@ -64,7 +64,7 @@
 #         seeder_master(session=session, engine=engine)
 #         countries_count = session.query(Country).count()
 #         assert countries_count == 249
-#         crop_category_count = session.query(CropCategory).count()
-#         assert crop_category_count == 3
-#         crop_count = session.query(Crop).count()
-#         assert crop_count == 11
+#         commodity_category_count = session.query(CommodityCategory).count()
+#         assert commodity_category_count == 3
+#         commodity_count = session.query(Commodity).count()
+#         assert commodity_count == 11

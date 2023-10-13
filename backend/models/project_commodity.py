@@ -6,63 +6,63 @@ from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 
-class SimplifiedProjectCropDict(TypedDict):
+class SimplifiedProjectCommodityDict(TypedDict):
     id: int
-    crop: int
+    commodity: int
     breakdown: bool
 
 
-class ProjectCrop(Base):
-    __tablename__ = 'project_crop'
+class ProjectCommodity(Base):
+    __tablename__ = 'project_commodity'
 
     id = Column(Integer, primary_key=True, nullable=False)
     project = Column(Integer, ForeignKey('project.id'))
-    crop = Column(Integer, ForeignKey('crop.id'))
-    focus_crop = Column(SmallInteger, nullable=False, default=0)
+    commodity = Column(Integer, ForeignKey('commodity.id'))
+    focus_commodity = Column(SmallInteger, nullable=False, default=0)
     breakdown = Column(SmallInteger, nullable=False, default=0)
 
     project_detail = relationship(
         'Project',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='project_crops'
+        back_populates='project_commoditys'
     )
-    # crop_detail = relationship(
+    # commodity_detail = relationship(
     #     'Project',
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     backref='crop_detail_project_crop'
+    #     backref='commodity_detail_project_commodity'
     # )
 
     def __init__(
         self,
-        crop: int,
+        commodity: int,
         project: Optional[int] = None,
         id: Optional[int] = None,
-        focus_crop: Optional[int] = 0,
+        focus_commodity: Optional[int] = 0,
         breakdown: Optional[int] = 0,
     ):
         self.id = id
         self.project = project
-        self.crop = crop
-        self.focus_crop = focus_crop
+        self.commodity = commodity
+        self.focus_commodity = focus_commodity
         self.breakdown = breakdown
 
     def __repr__(self) -> int:
-        return f"<ProjectCrop {self.id}>"
+        return f"<ProjectCommodity {self.id}>"
 
     @property
     def simplify(self):
         return {
             "id": self.id,
-            "crop": self.crop,
+            "commodity": self.commodity,
             "breakdown": self.breakdown
         }
 
 
-class ProjectCropBase(BaseModel):
+class ProjectCommodityBase(BaseModel):
     id: int
     project: int
-    crop: int
-    focus_crop: Optional[int] = 0
+    commodity: int
+    focus_commodity: Optional[int] = 0
     breakdown: Optional[int] = 0

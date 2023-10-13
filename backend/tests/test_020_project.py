@@ -37,7 +37,7 @@ class TestProjectRoute():
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
-            "focus_crop": 2,
+            "focus_commodity": 2,
             "currency": "USD",
             "area_size_unit": "hectare",
             "volume_measurement_unit": "liters",
@@ -45,8 +45,8 @@ class TestProjectRoute():
             "reporting_period": "Per-season",
             "segmentation": False,
             "living_income_study": LivingIncomeStudyEnum.better_income.value,
-            "multiple_crops": False,
-            "other_crops": [{"crop": 3, "breakdown": True}]
+            "multiple_commoditys": False,
+            "other_commoditys": [{"commodity": 3, "breakdown": True}]
         }
         # without cred
         res = await client.post(
@@ -75,7 +75,7 @@ class TestProjectRoute():
             'date': '2023-10-03',
             'year': 2023,
             'country': 2,
-            'focus_crop': 2,
+            'focus_commodity': 2,
             'currency': 'USD',
             'area_size_unit': 'hectare',
             'volume_measurement_unit': 'liters',
@@ -83,16 +83,16 @@ class TestProjectRoute():
             'reporting_period': 'Per-season',
             'segmentation': False,
             'living_income_study': 'better_income',
-            'multiple_crops': False,
+            'multiple_commoditys': False,
             'logo': None,
             'created_by': 1,
-            'project_crops': [{
+            'project_commoditys': [{
                 'id': 1,
-                'crop': 2,
+                'commodity': 2,
                 'breakdown': True
             }, {
                 'id': 2,
-                'crop': 3,
+                'commodity': 3,
                 'breakdown': True
             }]
         }
@@ -120,8 +120,8 @@ class TestProjectRoute():
                 'id': 1,
                 'name': 'Bali Rice and Corn Production Comparison',
                 'country': 2,
-                'focus_crop': 2,
-                'diversified_crops_count': 1,
+                'focus_commodity': 2,
+                'diversified_commoditys_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -138,7 +138,7 @@ class TestProjectRoute():
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
-            "focus_crop": 2,
+            "focus_commodity": 2,
             "currency": "USD",
             "area_size_unit": "acre",
             "volume_measurement_unit": "kilograms",
@@ -146,8 +146,8 @@ class TestProjectRoute():
             "reporting_period": "Per-year",
             "segmentation": False,
             "living_income_study": LivingIncomeStudyEnum.living_income.value,
-            "multiple_crops": False,
-            "other_crops": [{"crop": 3, "breakdown": False}]
+            "multiple_commoditys": False,
+            "other_commoditys": [{"commodity": 3, "breakdown": False}]
         }
         # without cred
         res = await client.put(
@@ -176,7 +176,7 @@ class TestProjectRoute():
             'date': '2023-10-03',
             'year': 2023,
             'country': 2,
-            'focus_crop': 2,
+            'focus_commodity': 2,
             'currency': 'USD',
             'area_size_unit': 'acre',
             'volume_measurement_unit': 'kilograms',
@@ -184,16 +184,16 @@ class TestProjectRoute():
             'reporting_period': 'Per-year',
             'segmentation': False,
             'living_income_study': 'living_income',
-            'multiple_crops': False,
+            'multiple_commoditys': False,
             'logo': None,
             'created_by': 1,
-            'project_crops': [{
+            'project_commoditys': [{
                 'id': 1,
-                'crop': 2,
+                'commodity': 2,
                 'breakdown': True
             }, {
                 'id': 2,
-                'crop': 3,
+                'commodity': 3,
                 'breakdown': False
             }]
         }
@@ -232,7 +232,7 @@ class TestProjectRoute():
             'date': '2023-10-03',
             'year': 2023,
             'country': 2,
-            'focus_crop': 2,
+            'focus_commodity': 2,
             'currency': 'USD',
             'area_size_unit': 'acre',
             'volume_measurement_unit': 'kilograms',
@@ -240,18 +240,18 @@ class TestProjectRoute():
             'reporting_period': 'Per-year',
             'segmentation': False,
             'living_income_study': 'living_income',
-            'multiple_crops': False,
+            'multiple_commoditys': False,
             'created_by': 'super_admin@akvo.org',
             'created_at': res['created_at'],
             'updated_at': res['updated_at'],
             'segments': [],
-            'project_crops': [{
+            'project_commoditys': [{
                 'id': 1,
-                'crop': 2,
+                'commodity': 2,
                 'breakdown': True
             }, {
                 'id': 2,
-                'crop': 3,
+                'commodity': 3,
                 'breakdown': False
             }]
         }

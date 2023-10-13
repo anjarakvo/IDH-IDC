@@ -8,8 +8,8 @@ from fastapi import FastAPI
 from middleware import create_access_token
 from middleware import decode_token
 from sqlalchemy.orm import Session
-from models.crop_category import CropCategory
-from models.crop import Crop
+from models.commodity_category import CommodityCategory
+from models.commodity import Commodity
 from models.country import Country
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,7 +34,7 @@ def test_read_main():
 
 class TestAddMasterDataWithoutDedenpentToUser():
     @pytest.mark.asyncio
-    async def test_add_crop_categories_and_crops_master_data(
+    async def test_add_commodity_categories_and_commoditys_master_data(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = [{
@@ -53,20 +53,20 @@ class TestAddMasterDataWithoutDedenpentToUser():
             ]
         }]
         for val in payload:
-            crop_category = CropCategory(name=val["name"])
+            commodity_category = CommodityCategory(name=val["name"])
             for child in val["children"]:
-                crop = Crop(name=child["name"])
-                crop_category.crops.append(crop)
-            session.add(crop_category)
+                commodity = Commodity(name=child["name"])
+                commodity_category.commoditys.append(commodity)
+            session.add(commodity_category)
             session.commit()
             session.flush()
-            session.refresh(crop_category)
-        crop_categories = session.query(CropCategory).all()
-        crop_categories = [val.serialize_with_crops for val in crop_categories]
-        assert crop_categories == [{
+            session.refresh(commodity_category)
+        commodity_categories = session.query(CommodityCategory).all()
+        commodity_categories = [val.serialize_with_commoditys for val in commodity_categories]
+        assert commodity_categories == [{
             'id': 1,
             'name': 'Grains',
-            'crops': [{
+            'commoditys': [{
                 'id': 1,
                 'name': 'Wheat'
             }, {
@@ -79,7 +79,7 @@ class TestAddMasterDataWithoutDedenpentToUser():
         }, {
             'id': 2,
             'name': 'Nuts',
-            'crops': [{
+            'commoditys': [{
                 'id': 4,
                 'name': 'Almonds'
             }, {

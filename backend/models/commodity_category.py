@@ -4,39 +4,39 @@ from sqlalchemy.orm import relationship
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.crop import Crop
+from models.commodity import Commodity
 from models.question import Question
-from models.crop_category_question import CropCategoryQuestion
+from models.commodity_category_question import CommodityCategoryQuestion
 
 
-class CropCategoryDict(TypedDict):
+class CommodityCategoryDict(TypedDict):
     id: int
     name: str
 
 
-class CropCategoryWithChildDict(TypedDict):
+class CommodityCategoryWithChildDict(TypedDict):
     id: int
     name: str
 
 
-class CropCategory(Base):
-    __tablename__ = 'crop_category'
+class CommodityCategory(Base):
+    __tablename__ = 'commodity_category'
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False, unique=True)
 
-    crops = relationship(
-        Crop,
+    commoditys = relationship(
+        Commodity,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='crop_category_detail'
+        back_populates='commodity_category_detail'
     )
-    crop_category_questions = relationship(
+    commodity_category_questions = relationship(
         Question,
-        secondary=CropCategoryQuestion.__tablename__,
+        secondary=CommodityCategoryQuestion.__tablename__,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='question_crop_category_detail'
+        back_populates='question_commodity_category_detail'
     )
 
     def __init__(self, name: str, id: Optional[int] = None):
@@ -44,24 +44,24 @@ class CropCategory(Base):
         self.name = name
 
     def __repr__(self) -> int:
-        return f"<CropCategory {self.id}>"
+        return f"<CommodityCategory {self.id}>"
 
     @property
-    def serialize(self) -> CropCategoryDict:
+    def serialize(self) -> CommodityCategoryDict:
         return {
             "id": self.id,
             "name": self.name,
         }
 
     @property
-    def serialize_with_crops(self) -> CropCategoryWithChildDict:
+    def serialize_with_commoditys(self) -> CommodityCategoryWithChildDict:
         return {
             "id": self.id,
             "name": self.name,
-            "crops": [c.simplify for c in self.crops]
+            "commoditys": [c.simplify for c in self.commoditys]
         }
 
 
-class CropCategoryBase(BaseModel):
+class CommodityCategoryBase(BaseModel):
     id: int
     name: str

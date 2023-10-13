@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 class SegmentAnswerDict(TypedDict):
     id: int
-    project_crop: int
+    project_commodity: int
     segment: int
     question: int
     current_value: float
@@ -19,17 +19,17 @@ class SegmentAnswer(Base):
     __tablename__ = 'segment_answer'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    project_crop = Column(Integer, ForeignKey('project_crop.id'))
+    project_commodity = Column(Integer, ForeignKey('project_commodity.id'))
     segment = Column(Integer, ForeignKey('segment.id'))
     question = Column(Integer, ForeignKey('question.id'))
     current_value = Column(Float, nullable=False)
     feasible_value = Column(Float, nullable=True)
 
-    project_crop_detail = relationship(
-        'ProjectCrop',
+    project_commodity_detail = relationship(
+        'ProjectCommodity',
         cascade="all, delete",
         passive_deletes=True,
-        backref='project_crop_segment_answer'
+        backref='project_commodity_segment_answer'
     )
     segment_detail = relationship(
         'Segment',
@@ -46,7 +46,7 @@ class SegmentAnswer(Base):
 
     def __init__(
         self,
-        project_crop: int,
+        project_commodity: int,
         segment: int,
         question: int,
         current_value: float,
@@ -54,7 +54,7 @@ class SegmentAnswer(Base):
         id: Optional[int] = None,
     ):
         self.id = id
-        self.project_crop = project_crop
+        self.project_commodity = project_commodity
         self.segment = segment
         self.question = question
         self.current_value = current_value
@@ -67,7 +67,7 @@ class SegmentAnswer(Base):
     def serialize(self) -> SegmentAnswerDict:
         return {
             "id": self.id,
-            "project_crop": self.project_crop,
+            "project_commodity": self.project_commodity,
             "segment": self.segment,
             "question": self.question,
             "current_value": self.current_value,
@@ -76,7 +76,7 @@ class SegmentAnswer(Base):
 
 
 class SegmentAnswerBase(BaseModel):
-    project_crop: int
+    project_commodity: int
     segment: int
     question: int
     current_value: float

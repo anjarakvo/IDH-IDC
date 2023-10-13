@@ -23,7 +23,7 @@ def upgrade() -> None:
         'reference_data',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('country', sa.Integer(), sa.ForeignKey('country.id')),
-        sa.Column('crop', sa.Integer(), sa.ForeignKey('crop.id')),
+        sa.Column('commodity', sa.Integer(), sa.ForeignKey('commodity.id')),
         sa.Column(
             'type',
             sa.Enum(
@@ -53,8 +53,8 @@ def upgrade() -> None:
             name='reference_data_country_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
-            ['crop'], ['crop.id'],
-            name='reference_data_crop_constraint',
+            ['commodity'], ['commodity.id'],
+            name='reference_data_commodity_constraint',
             ondelete='CASCADE'),
     )
     op.create_index(

@@ -1,4 +1,4 @@
-"""alter crop column and add foreign key constraint on project table
+"""alter commodity column and add foreign key constraint on project table
 
 Revision ID: 3993ee60390f
 Revises: 4acf424dcf01
@@ -18,19 +18,19 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.drop_constraint('project_crop_fkey', 'project', type_='foreignkey')
-    op.alter_column('project', 'crop', new_column_name='focus_crop')
+    op.drop_constraint('project_commodity_fkey', 'project', type_='foreignkey')
+    op.alter_column('project', 'commodity', new_column_name='focus_commodity')
     op.create_foreign_key(
-        'project_focus_crop_fkey', 'project', 'crop',
-        ['focus_crop'], ['id']
+        'project_focus_commodity_fkey', 'project', 'commodity',
+        ['focus_commodity'], ['id']
     )
 
 
 def downgrade() -> None:
     op.drop_constraint(
-        'project_focus_crop_fkey', 'project', type_='foreignkey')
-    op.alter_column('project', 'focus_crop', new_column_name='crop')
+        'project_focus_commodity_fkey', 'project', type_='foreignkey')
+    op.alter_column('project', 'focus_commodity', new_column_name='commodity')
     op.create_foreign_key(
-        'project_crop_fkey', 'project', 'crop',
-        ['crop'], ['id']
+        'project_commodity_fkey', 'project', 'commodity',
+        ['commodity'], ['id']
     )

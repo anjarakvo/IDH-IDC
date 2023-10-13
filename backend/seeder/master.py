@@ -28,22 +28,22 @@ def seeder_master(session: Session, engine: create_engine):
     currencies.to_sql("currency", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Currency")
 
-    ## Crop Categories and Crops
-    truncatedb(session=session, table="crop")
-    truncatedb(session=session, table="crop_category")
-    crops = pd.read_csv(MASTER_DIR + "crops.csv")
-    crop_category = crops[["group_id", "group_name"]]
-    crop_category = crop_category.rename(
+    ## Commodity Categories and Commoditys
+    truncatedb(session=session, table="commodity")
+    truncatedb(session=session, table="commodity_category")
+    commoditys = pd.read_csv(MASTER_DIR + "commoditys.csv")
+    commodity_category = commoditys[["group_id", "group_name"]]
+    commodity_category = commodity_category.rename(
         columns={"group_id": "id", "group_name": "name"}
     )
-    crop_category = crop_category.drop_duplicates(subset="id").reset_index()
-    crop_category = crop_category[["id", "name"]]
-    crop_category.to_sql("crop_category", con=engine, if_exists="append", index=False)
-    print("[DATABASE UPDATED]: Crop Category")
-    crops = crops[["id", "group_id", "name"]]
-    crops = crops.rename(columns={"group_id": "crop_category"})
-    crops.to_sql("crop", con=engine, if_exists="append", index=False)
-    print("[DATABASE UPDATED]: Crop")
+    commodity_category = commodity_category.drop_duplicates(subset="id").reset_index()
+    commodity_category = commodity_category[["id", "name"]]
+    commodity_category.to_sql("commodity_category", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Commodity Category")
+    commoditys = commoditys[["id", "group_id", "name"]]
+    commoditys = commoditys.rename(columns={"group_id": "commodity_category"})
+    commoditys.to_sql("commodity", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Commodity")
 
 
 if __name__ == "__main__":

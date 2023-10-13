@@ -27,7 +27,7 @@ def upgrade() -> None:
         sa.Column('date', sa.Date(), nullable=False),
         sa.Column('year', sa.Integer(), nullable=False),
         sa.Column('country', sa.Integer(), sa.ForeignKey('country.id')),
-        sa.Column('crop', sa.Integer(), sa.ForeignKey('crop.id')),
+        sa.Column('commodity', sa.Integer(), sa.ForeignKey('commodity.id')),
         sa.Column('currency', sa.String(), nullable=False),
         sa.Column('area_size_unit', sa.String(), nullable=False),
         sa.Column('volume_measurement_unit', sa.String(), nullable=False),
@@ -45,7 +45,7 @@ def upgrade() -> None:
             ),
             nullable=True),
         sa.Column(
-            'multiple_crops', sa.SmallInteger(),
+            'multiple_commoditys', sa.SmallInteger(),
             nullable=False, server_default='0'),
         sa.Column('logo', sa.String(), nullable=True),
         sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id')),

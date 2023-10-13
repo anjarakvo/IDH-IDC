@@ -8,7 +8,7 @@ from models.user import User
 from models.project import (
     Project, ProjectBase, ProjectDict, ProjectListDict
 )
-from models.project_crop import ProjectCrop
+from models.project_commodity import ProjectCommodity
 from models.project_tag import ProjectTag
 
 
@@ -25,7 +25,7 @@ def add_project(
         date=payload.date,
         year=payload.year,
         country=payload.country,
-        focus_crop=payload.focus_crop,
+        focus_commodity=payload.focus_commodity,
         currency=payload.currency,
         area_size_unit=payload.area_size_unit,
         volume_measurement_unit=payload.volume_measurement_unit,
@@ -33,21 +33,21 @@ def add_project(
         reporting_period=payload.reporting_period,
         segmentation=1 if payload.segmentation else 0,
         living_income_study=payload.living_income_study,
-        multiple_crops=1 if payload.multiple_crops else 0,
+        multiple_commoditys=1 if payload.multiple_commoditys else 0,
         logo=payload.logo,
         created_by=user.id
     )
-    # store to project_crop by default using focus_crop & breakdown true
-    def_project_crop = ProjectCrop(crop=payload.focus_crop, breakdown=1)
-    project.project_crops.append(def_project_crop)
-    # store other crops
-    if payload.other_crops:
-        for val in payload.other_crops:
-            project_crop = ProjectCrop(
-                crop=val.crop,
+    # store to project_commodity by default using focus_commodity & breakdown true
+    def_project_commodity = ProjectCommodity(commodity=payload.focus_commodity, breakdown=1)
+    project.project_commoditys.append(def_project_commodity)
+    # store other commoditys
+    if payload.other_commoditys:
+        for val in payload.other_commoditys:
+            project_commodity = ProjectCommodity(
+                commodity=val.commodity,
                 breakdown=1 if val.breakdown else 0
             )
-            project.project_crops.append(project_crop)
+            project.project_commoditys.append(project_commodity)
     session.add(project)
     session.commit()
     session.flush()
@@ -59,7 +59,7 @@ def get_all_project(
     session: Session,
     search: Optional[str] = None,
     tags: Optional[int] = None,
-    focus_crops: Optional[int] = None,
+    focus_commoditys: Optional[int] = None,
     skip: int = 0,
     limit: int = 10
 ) -> List[ProjectListDict]:
@@ -68,8 +68,8 @@ def get_all_project(
         project = project.filter(
             Project.name.ilike("%{}%".format(search.lower().strip()))
         )
-    if focus_crops:
-        project = project.filter(Project.focus_crop.in_(focus_crops))
+    if focus_commoditys:
+        project = project.filter(Project.focus_commodity.in_(focus_commoditys))
     if tags:
         project_tags = session.query(ProjectTag).filter(
             ProjectTag.tag.in_(tags)).all()
@@ -99,7 +99,7 @@ def update_project(
     project.date = payload.date
     project.year = payload.year
     project.country = payload.country
-    project.focus_crop = payload.focus_crop
+    project.focus_commodity = payload.focus_commodity
     project.currency = payload.currency
     project.area_size_unit = payload.area_size_unit
     project.volume_measurement_unit = payload.volume_measurement_unit
@@ -107,33 +107,33 @@ def update_project(
     project.reporting_period = payload.reporting_period
     project.segmentation = 1 if payload.segmentation else 0
     project.living_income_study = payload.living_income_study
-    project.multiple_crops = 1 if payload.multiple_crops else 0
+    project.multiple_commoditys = 1 if payload.multiple_commoditys else 0
     project.logo = payload.logo
-    # store other crops
+    # store other commoditys
     # TODO ::
     '''
-    What if we remove the other_crops from project
+    What if we remove the other_commoditys from project
     which has existing question value?
     '''
-    if payload.other_crops:
-        for val in payload.other_crops:
+    if payload.other_commoditys:
+        for val in payload.other_commoditys:
             breakdown = 1 if val.breakdown else 0
-            prev_project_crop = session.query(ProjectCrop).filter(and_(
-                ProjectCrop.project == project.id,
-                ProjectCrop.crop == val.crop
+            prev_project_commodity = session.query(ProjectCommodity).filter(and_(
+                ProjectCommodity.project == project.id,
+                ProjectCommodity.commodity == val.commodity
             )).first()
-            if prev_project_crop:
+            if prev_project_commodity:
                 # update breakdown value
-                prev_project_crop.breakdown = breakdown
+                prev_project_commodity.breakdown = breakdown
                 session.commit()
                 session.flush()
-                session.refresh(prev_project_crop)
+                session.refresh(prev_project_commodity)
             else:
-                project_crop = ProjectCrop(
-                    crop=val.crop,
+                project_commodity = ProjectCommodity(
+                    commodity=val.commodity,
                     breakdown=breakdown
                 )
-                project.project_crops.append(project_crop)
+                project.project_commoditys.append(project_commodity)
     session.commit()
     session.flush()
     session.refresh(project)

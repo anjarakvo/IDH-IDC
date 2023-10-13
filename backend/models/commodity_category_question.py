@@ -6,41 +6,41 @@ from pydantic import BaseModel
 # from models.question import Question
 
 
-class CropCategoryQuestion(Base):
-    __tablename__ = 'crop_category_question'
+class CommodityCategoryQuestion(Base):
+    __tablename__ = 'commodity_category_question'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    crop_category = Column(Integer, ForeignKey('crop_category.id'))
+    commodity_category = Column(Integer, ForeignKey('commodity_category.id'))
     question = Column(Integer, ForeignKey('question.id'))
 
-    # crop_category_detail = relationship(
-    #     'CropCategory',
+    # commodity_category_detail = relationship(
+    #     'CommodityCategory',
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     back_populates='crop_category_questions'
+    #     back_populates='commodity_category_questions'
     # )
-    # crop_questions = relationship(
+    # commodity_questions = relationship(
     #     Question,
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     back_populates='question_crop_category'
+    #     back_populates='question_commodity_category'
     # )
 
     def __init__(
         self,
-        crop_category: int,
+        commodity_category: int,
         id: Optional[int] = None,
         question: Optional[int] = None,
     ):
         self.id = id
-        self.crop_category = crop_category
+        self.commodity_category = commodity_category
         self.question = question
 
     def __repr__(self) -> int:
-        return f"<CropCategoryQuestion {self.id}>"
+        return f"<CommodityCategoryQuestion {self.id}>"
 
 
-class CropCategoryQuestionBase(BaseModel):
+class CommodityCategoryQuestionBase(BaseModel):
     id: int
-    crop_category: int
+    commodity_category: int
     question: int

@@ -5,7 +5,7 @@ from httpx import AsyncClient
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
 from models.question import Question
-from models.crop_category_question import CropCategoryQuestion
+from models.commodity_category_question import CommodityCategoryQuestion
 from db.crud_user import get_user_by_email
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -28,7 +28,7 @@ class TestAddMasterDataDedenpentToUser():
         }, {
             "parent_id": None,
             "code": "Q2",
-            "text": "Income from Crop / Month",
+            "text": "Income from Commodity / Month",
             "description": None,
             "default_value": None,
         }, {
@@ -51,18 +51,18 @@ class TestAddMasterDataDedenpentToUser():
             session.commit()
             session.flush()
             session.refresh(question)
-            # add crop cateqory question
-            crop_category_question = CropCategoryQuestion(
-                crop_category=1,
+            # add commodity cateqory question
+            commodity_category_question = CommodityCategoryQuestion(
+                commodity_category=1,
                 question=question.id
             )
-            session.add(crop_category_question)
+            session.add(commodity_category_question)
             session.commit()
             session.flush()
-            session.refresh(crop_category_question)
+            session.refresh(commodity_category_question)
         # expect
-        crop_category_questions = session.query(CropCategoryQuestion).all()
-        assert crop_category_questions is not None
+        commodity_category_questions = session.query(CommodityCategoryQuestion).all()
+        assert commodity_category_questions is not None
         questions = session.query(Question).all()
         questions = [q.serialize for q in questions]
         assert questions == [{
@@ -78,7 +78,7 @@ class TestAddMasterDataDedenpentToUser():
             'id': 2,
             'parent': None,
             'code': 'Q2',
-            'text': 'Income from Crop / Month',
+            'text': 'Income from Commodity / Month',
             'description': None,
             'default_value': None,
             'created_by': 1,

@@ -1,4 +1,4 @@
-"""create crop category question table
+"""create commodity category question table
 
 Revision ID: 52b25021f3f8
 Revises: 914c0f61095e
@@ -20,36 +20,36 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'crop_category_question',
+        'commodity_category_question',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column(
-            'crop_category', sa.Integer(), sa.ForeignKey('crop_category.id')),
+            'commodity_category', sa.Integer(), sa.ForeignKey('commodity_category.id')),
         sa.Column('question', sa.Integer(), sa.ForeignKey('question.id')),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['crop_category'], ['crop_category.id'],
-            name='crop_category_question_crop_category_constraint',
+            ['commodity_category'], ['commodity_category.id'],
+            name='commodity_category_question_commodity_category_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
             ['question'], ['question.id'],
-            name='crop_category_question_question_constraint',
+            name='commodity_category_question_question_constraint',
             ondelete='CASCADE'),
         sa.UniqueConstraint(
-            'crop_category', 'question',
-            name='crop_category_question_unique')
+            'commodity_category', 'question',
+            name='commodity_category_question_unique')
     )
     op.create_index(
-        op.f('ix_crop_category_question_id'), 'crop_category_question',
+        op.f('ix_commodity_category_question_id'), 'commodity_category_question',
         ['id'], unique=True)
 
 
 def downgrade() -> None:
     op.drop_index(
-        op.f('ix_crop_category_question_id'),
-        table_name='crop_category_question')
+        op.f('ix_commodity_category_question_id'),
+        table_name='commodity_category_question')
     op.drop_constraint(
-        'crop_category_question_unique',
-        'crop_category_question',
+        'commodity_category_question_unique',
+        'commodity_category_question',
         type_='unique'
     )
-    op.drop_table('crop_category_question')
+    op.drop_table('commodity_category_question')

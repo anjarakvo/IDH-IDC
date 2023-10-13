@@ -4,11 +4,11 @@ from sqlalchemy.orm import relationship
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.crop_category_question import CropCategoryQuestion
+from models.commodity_category_question import CommodityCategoryQuestion
 
 
 class QuestionGroupParam(TypedDict):
-    crop: int
+    commodity: int
     breakdown: bool
 
 
@@ -24,8 +24,8 @@ class QuestionDict(TypedDict):
 
 
 class QuestionGroupListDict(TypedDict):
-    crop_id: int
-    crop_name: str
+    commodity_id: int
+    commodity_name: str
     questions: List[QuestionDict]
 
 
@@ -49,12 +49,12 @@ class Question(Base):
         passive_deletes=True,
         backref='questions'
     )
-    question_crop_category_detail = relationship(
-        'CropCategory',
-        secondary=CropCategoryQuestion.__tablename__,
+    question_commodity_category_detail = relationship(
+        'CommodityCategory',
+        secondary=CommodityCategoryQuestion.__tablename__,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='crop_category_questions'
+        back_populates='commodity_category_questions'
     )
 
     def __init__(
