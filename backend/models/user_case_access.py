@@ -43,6 +43,3 @@ class UserCaseAccessBase(BaseModel):
     id: int
     user: int
     case: int
-
-    class Config:
-        from_attributes = True

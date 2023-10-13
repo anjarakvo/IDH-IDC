@@ -107,6 +107,3 @@ class ReferenceDataBase(BaseModel):
     farmgate_price: Optional[float] = None
     farmer_expenses: Optional[float] = None
     diversified_income: Optional[float] = None
-
-    class Config:
-        from_attributes = True

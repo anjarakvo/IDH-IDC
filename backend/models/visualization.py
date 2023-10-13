@@ -78,6 +78,3 @@ class VisualizationBase(BaseModel):
     segment: int
     tab: VisualizationTab
     config: dict
-
-    class Config:
-        from_attributes = True

@@ -58,6 +58,3 @@ class CurrencyBase(BaseModel):
     country: id
     name: str
     abbreviation: str
-
-    class Config:
-        from_attributes = True
