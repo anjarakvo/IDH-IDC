@@ -4,7 +4,7 @@ from db.connection import Base, SessionLocal, engine
 import db.crud_user as crud
 import db.crud_organisation as crud_organisation
 from middleware import get_password_hash
-from models.user import User
+from models.user import User, UserRole
 
 inputs = [
     {"value": "fullname", "question": "Full Name"},
@@ -52,12 +52,11 @@ if not org:
 user = crud.get_user_by_email(session=session, email=payload["email"])
 
 if user:
-    user = crud.update_user_by_id(
-        session=session,
-        id=user.id,
-        fullname=payload["fullname"],
-        organisation=org.id,
-    )
+    user.fullname = payload["fullname"]
+    user.organisation = org.id
+    session.commit()
+    session.flush()
+    session.refresh(user)
     print(f"{user.email} of {org.name} updated")
     session.close()
     sys.exit()
@@ -68,7 +67,8 @@ user = User(
     email=payload["email"],
     password=get_password_hash("password"),
     organisation=org.id,
-    is_active=1
+    is_active=1,
+    role=UserRole.super_admin
 )
 session.add(user)
 session.commit()
