@@ -4,7 +4,7 @@ const defaultUserState = {
   id: null,
   fullname: null,
   email: null,
-  active: 0,
+  active: false,
   organisation_detail: {
     id: null,
     name: null,
