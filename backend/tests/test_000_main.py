@@ -11,6 +11,7 @@ from sqlalchemy.orm import Session
 from models.commodity_category import CommodityCategory
 from models.commodity import Commodity
 from models.country import Country
+from models.business_unit import BusinessUnit
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -33,6 +34,33 @@ def test_read_main():
 
 
 class TestAddMasterDataWithoutDedenpentToUser():
+    @pytest.mark.asyncio
+    async def test_add_business_unit_master_data(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        payload = [
+            {"name": "Acme Technologies Sales Division"},
+            {"name": "Global Marketing Solutions"},
+            {"name": "Finance and Accounting Services, Inc."},
+            {"name": "Human Resources and Talent Management"},
+            {"name": "Research and Development Labs"}
+        ]
+        for val in payload:
+            business_unit = BusinessUnit(name=val["name"])
+            session.add(business_unit)
+            session.commit()
+            session.flush()
+            session.refresh(business_unit)
+        business_units = session.query(BusinessUnit).all()
+        business_units = [val.serialize for val in business_units]
+        assert business_units == [
+            {"id": 1, "name": "Acme Technologies Sales Division"},
+            {"id": 2, "name": "Global Marketing Solutions"},
+            {"id": 3, "name": "Finance and Accounting Services, Inc."},
+            {"id": 4, "name": "Human Resources and Talent Management"},
+            {"id": 5, "name": "Research and Development Labs"}
+        ]
+
     @pytest.mark.asyncio
     async def test_add_commodity_categories_and_commodities_master_data(
         self, app: FastAPI, session: Session, client: AsyncClient
@@ -62,7 +90,9 @@ class TestAddMasterDataWithoutDedenpentToUser():
             session.flush()
             session.refresh(commodity_category)
         commodity_categories = session.query(CommodityCategory).all()
-        commodity_categories = [val.serialize_with_commodities for val in commodity_categories]
+        commodity_categories = [
+            val.serialize_with_commodities for val in commodity_categories
+        ]
         assert commodity_categories == [{
             'id': 1,
             'name': 'Grains',

@@ -61,7 +61,8 @@ class TestAddMasterDataDedenpentToUser():
             session.flush()
             session.refresh(commodity_category_question)
         # expect
-        commodity_category_questions = session.query(CommodityCategoryQuestion).all()
+        commodity_category_questions = session.query(
+            CommodityCategoryQuestion).all()
         assert commodity_category_questions is not None
         questions = session.query(Question).all()
         questions = [q.serialize for q in questions]
