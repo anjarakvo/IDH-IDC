@@ -27,7 +27,8 @@ def upgrade() -> None:
         sa.Column('date', sa.Date(), nullable=False),
         sa.Column('year', sa.Integer(), nullable=False),
         sa.Column('country', sa.Integer(), sa.ForeignKey('country.id')),
-        sa.Column('commodity', sa.Integer(), sa.ForeignKey('commodity.id')),
+        sa.Column(
+            'focus_commodity', sa.Integer(), sa.ForeignKey('commodity.id')),
         sa.Column('currency', sa.String(), nullable=False),
         sa.Column('area_size_unit', sa.String(), nullable=False),
         sa.Column('volume_measurement_unit', sa.String(), nullable=False),
