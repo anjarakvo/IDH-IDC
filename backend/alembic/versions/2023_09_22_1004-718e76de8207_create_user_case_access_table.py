@@ -30,7 +30,7 @@ def upgrade() -> None:
                 'edit',
                 'view',
                 name='user_case_access_permission'
-            ), nullable=True),
+            ), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['user'], ['user.id'],

@@ -30,9 +30,9 @@ class UserCaseAccess(Base):
     def __init__(
         self,
         case: int,
-        permission: Optional[PermissionType] = PermissionType.view,
         id: Optional[int] = None,
         user: Optional[int] = None,
+        permission: Optional[PermissionType] = PermissionType.view,
     ):
         self.id = id
         self.user = user
@@ -47,3 +47,4 @@ class UserCaseAccessBase(BaseModel):
     id: int
     user: int
     case: int
+    permission: Optional[PermissionType] = PermissionType.view
