@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from models.user import UserWithOrg, UserRole
+from models.user import UserInfo, UserRole
 from db import crud_user
 
 # to get a string like this run:
@@ -28,7 +28,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 class Token(BaseModel):
     access_token: str
     token_type: str
-    user: UserWithOrg
+    user: UserInfo
 
 
 class TokenData(BaseModel):

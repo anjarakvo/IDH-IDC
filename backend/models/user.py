@@ -14,6 +14,9 @@ from fastapi import Form
 from models.user_tag import UserTag
 from models.user_case_access import UserCaseAccess
 from models.enum_type import PermissionType
+from models.user_business_unit import (
+    UserBusinessUnit, UserBusinessUnitDetailDict
+)
 
 
 class UserRole(enum.Enum):
@@ -24,12 +27,13 @@ class UserRole(enum.Enum):
     user = "user"
 
 
-class UserWithOrg(TypedDict):
+class UserInfo(TypedDict):
     id: int
     fullname: str
     email: str
     role: UserRole
     active: bool
+    business_unit_detail: Optional[UserBusinessUnitDetailDict]
     organisation_detail: OrganisationDict
     tags_count: int
     cases_count: int
@@ -104,6 +108,12 @@ class User(Base):
         passive_deletes=True,
         back_populates="user_case_access_detail",
     )
+    user_business_unit_detail = relationship(
+        UserBusinessUnit,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates="user_business_unit_user_detail"
+    )
 
     def __init__(
         self,
@@ -142,20 +152,28 @@ class User(Base):
         }
 
     @property
-    def to_user_with_org(self) -> UserDict:
+    def to_user_info(self) -> UserInfo:
+        business_unit_detail = [
+            bu.to_business_unit_detail for bu
+            in self.user_business_unit_detail
+        ]
+        business_unit_detail = (
+            business_unit_detail[0] if business_unit_detail else None
+        )
         return {
             "id": self.id,
             "fullname": self.fullname,
             "email": self.email,
             "role": self.role,
             "active": self.is_active,
+            "business_unit_detail": business_unit_detail,
             "organisation_detail": self.user_organisation.serialize,
             "tags_count": len(self.user_tags),
             "cases_count": len(self.user_case_access),
         }
 
     @property
-    def to_user_list(self) -> UserDict:
+    def to_user_list(self) -> UserPageDict:
         return {
             "id": self.id,
             "organisation": self.organisation,

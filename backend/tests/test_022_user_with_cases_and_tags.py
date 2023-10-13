@@ -84,6 +84,7 @@ class TestUserWithCasesAndTagsEndpoint():
             'email': 'super_admin@akvo.org',
             'role': UserRole.super_admin.value,
             'active': True,
+            'business_unit_detail': None,
             'organisation_detail': {
                 'id': 1,
                 'name': 'Akvo'

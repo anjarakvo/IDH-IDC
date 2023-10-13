@@ -216,6 +216,7 @@ class TestUserEndpoint():
             "fullname": "John Doe",
             "role": UserRole.super_admin.value,
             "active": True,
+            "business_unit_detail": None,
             "organisation_detail": {"id": 1, "name": "Akvo"},
             "tags_count": 0,
             "cases_count": 0,
@@ -354,6 +355,7 @@ class TestUserEndpoint():
                 'email': 'admin@akvo.org',
                 'role': UserRole.admin.value,
                 'active': 1,
+                'business_unit_detail': None,
                 'organisation_detail': {'id': 1, 'name': 'Akvo'},
                 'tags_count': 0,
                 'cases_count': 0
