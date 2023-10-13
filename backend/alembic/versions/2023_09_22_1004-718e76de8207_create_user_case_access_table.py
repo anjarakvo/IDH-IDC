@@ -24,6 +24,13 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('user', sa.Integer(), sa.ForeignKey('user.id')),
         sa.Column('case', sa.Integer(), sa.ForeignKey('case.id')),
+        sa.Column(
+            'permission',
+            sa.Enum(
+                'edit',
+                'view',
+                name='user_case_access_permission'
+            ), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['user'], ['user.id'],

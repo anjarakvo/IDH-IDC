@@ -13,6 +13,7 @@ from models.organisation import OrganisationDict
 from fastapi import Form
 from models.user_tag import UserTag
 from models.user_case_access import UserCaseAccess
+from models.enum_type import PermissionType
 
 
 class UserRole(enum.Enum):
@@ -21,11 +22,6 @@ class UserRole(enum.Enum):
     editor = "editor"
     viewer = "viewer"
     user = "user"
-
-
-class UserPermission(enum.Enum):
-    edit = "edit"
-    view = "view"
 
 
 class UserWithOrg(TypedDict):
@@ -81,7 +77,7 @@ class User(Base):
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
     role = Column(Enum(UserRole), nullable=False)
-    permission = Column(Enum(UserPermission), nullable=True)
+    permission = Column(Enum(PermissionType), nullable=True)
     is_active = Column(SmallInteger, nullable=False, default=0)
     invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
@@ -119,7 +115,7 @@ class User(Base):
         is_active: Optional[int] = 0,
         invitation_id: Optional[str] = None,
         password: Optional[str] = None,
-        permission: Optional[UserPermission] = None,
+        permission: Optional[PermissionType] = None,
     ):
         self.id = id
         self.organisation = organisation
@@ -229,7 +225,7 @@ class UserUpdateBase(BaseModel):
     fullname: str
     organisation: int
     role: Optional[UserRole] = None
-    permission: Optional[UserPermission] = None
+    permission: Optional[PermissionType] = None
     is_active: Optional[bool] = False
     password: Optional[SecretStr] = None
     cases: Optional[List[int]] = None
@@ -242,7 +238,7 @@ class UserUpdateBase(BaseModel):
         organisation: int = Form(...),
         password: SecretStr = Form(None),
         role: UserRole = Form(None),
-        permission: UserPermission = Form(None),
+        permission: PermissionType = Form(None),
         is_active: bool = Form(False),
         cases: List[int] = Form(None),
         tags: List[int] = Form(None),
