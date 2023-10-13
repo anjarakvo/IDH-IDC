@@ -15,12 +15,15 @@ def add_segment_answer(
     get_segment_by_id(session=session, id=segment_id)
     segment_answers = []
     for payload in payloads:
+        feasible_value = payload.feasible_value
+        if not payload.feasible_value:
+            feasible_value = payload.current_value
         segment_answer = SegmentAnswer(
             case_commodity=payload.case_commodity,
             segment=payload.segment,
             question=payload.question,
             current_value=payload.current_value,
-            feasible_value=payload.feasible_value,
+            feasible_value=feasible_value,
         )
         session.add(segment_answer)
         session.commit()
