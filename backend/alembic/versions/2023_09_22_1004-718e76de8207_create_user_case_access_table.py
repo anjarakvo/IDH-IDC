@@ -58,3 +58,4 @@ def downgrade() -> None:
         type_='unique'
     )
     op.drop_table('user_case_access')
+    op.execute('DROP TYPE user_case_access_permission')

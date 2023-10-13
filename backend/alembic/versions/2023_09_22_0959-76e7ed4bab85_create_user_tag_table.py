@@ -58,3 +58,4 @@ def downgrade() -> None:
         type_='unique'
     )
     op.drop_table('user_tag')
+    op.execute('DROP TYPE user_tag_permission')

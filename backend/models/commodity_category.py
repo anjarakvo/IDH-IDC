@@ -1,10 +1,10 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.commodity import Commodity
+from models.commodity import Commodity, SimplifiedCommodityDict
 from models.question import Question
 from models.commodity_category_question import CommodityCategoryQuestion
 
@@ -17,6 +17,7 @@ class CommodityCategoryDict(TypedDict):
 class CommodityCategoryWithChildDict(TypedDict):
     id: int
     name: str
+    commodities: Optional[List[SimplifiedCommodityDict]]
 
 
 class CommodityCategory(Base):
