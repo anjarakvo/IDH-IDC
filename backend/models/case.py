@@ -10,7 +10,7 @@ from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.project_commodity import ProjectCommodity, SimplifiedProjectCommodityDict
+from models.case_commodity import CaseCommodity, SimplifiedCaseCommodityDict
 from models.segment import Segment, SimplifiedSegmentDict
 
 
@@ -19,17 +19,17 @@ class LivingIncomeStudyEnum(enum.Enum):
     living_income = "living_income"
 
 
-class ProjectListDict(TypedDict):
+class CaseListDict(TypedDict):
     id: int
     name: str
     country: int
     focus_commodity: int
-    diversified_commoditys_count: int
+    diversified_commodities_count: int
     created_at: str
     created_by: str
 
 
-class ProjectDict(TypedDict):
+class CaseDict(TypedDict):
     id: Optional[int]
     name: str
     date: str
@@ -43,13 +43,13 @@ class ProjectDict(TypedDict):
     reporting_period: str
     segmentation: bool
     living_income_study: Optional[LivingIncomeStudyEnum]
-    multiple_commoditys: bool
+    multiple_commodities: bool
     logo: Optional[str]
     created_by: int
-    project_commoditys: List[SimplifiedProjectCommodityDict]
+    case_commodities: List[SimplifiedCaseCommodityDict]
 
 
-class ProjectDetailDict(TypedDict):
+class CaseDetailDict(TypedDict):
     id: int
     name: str
     date: str
@@ -63,16 +63,16 @@ class ProjectDetailDict(TypedDict):
     reporting_period: str
     segmentation: bool
     living_income_study: Optional[LivingIncomeStudyEnum]
-    multiple_commoditys: bool
+    multiple_commodities: bool
     created_by: str
     created_at: str
     updated_at: Optional[str]
     segments: Optional[List[SimplifiedSegmentDict]]
-    project_commoditys: List[SimplifiedProjectCommodityDict]
+    case_commodities: List[SimplifiedCaseCommodityDict]
 
 
-class Project(Base):
-    __tablename__ = 'project'
+class Case(Base):
+    __tablename__ = 'case'
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
@@ -87,7 +87,8 @@ class Project(Base):
     reporting_period = Column(String, nullable=False)
     segmentation = Column(SmallInteger, nullable=False, default=0)
     living_income_study = Column(Enum(LivingIncomeStudyEnum), nullable=True)
-    multiple_commoditys = Column(SmallInteger, nullable=False, default=0)
+    multiple_commodities = Column(SmallInteger, nullable=False, default=0)
+    private = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
     created_by = Column(Integer, ForeignKey('user.id'))
     created_at = Column(DateTime, nullable=False, server_default=func.now())
@@ -98,35 +99,35 @@ class Project(Base):
         onupdate=func.now()
     )
 
-    project_commoditys = relationship(
-        ProjectCommodity,
+    case_commodities = relationship(
+        CaseCommodity,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='project_detail'
+        back_populates='case_detail'
     )
-    project_segments = relationship(
+    case_segments = relationship(
         Segment,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='project_detail'
+        back_populates='case_detail'
     )
     # country_detail = relationship(
     #     'Country',
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     backref='projects'
+    #     backref='cases'
     # )
     # commodity_detail = relationship(
     #     'Commodity',
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     backref='projects'
+    #     backref='cases'
     # )
     created_by_user = relationship(
         'User',
         cascade="all, delete",
         passive_deletes=True,
-        backref='projects'
+        backref='cases'
     )
 
     def __init__(
@@ -143,9 +144,10 @@ class Project(Base):
         reporting_period: str,
         segmentation: int,
         living_income_study: Optional[str],
-        multiple_commoditys: int,
+        multiple_commodities: int,
         logo: Optional[str],
         created_by: int,
+        private: Optional[int] = 0,
         id: Optional[int] = None,
     ):
         self.id = id
@@ -161,15 +163,16 @@ class Project(Base):
         self.reporting_period = reporting_period
         self.segmentation = segmentation
         self.living_income_study = living_income_study
-        self.multiple_commoditys = multiple_commoditys
+        self.multiple_commodities = multiple_commodities
         self.logo = logo
+        self.private = private
         self.created_by = created_by
 
     def __repr__(self) -> int:
-        return f"<Project {self.id}>"
+        return f"<Case {self.id}>"
 
     @property
-    def serialize(self) -> ProjectDict:
+    def serialize(self) -> CaseDict:
         return {
             "id": self.id,
             "name": self.name,
@@ -184,17 +187,17 @@ class Project(Base):
             "reporting_period": self.reporting_period,
             "segmentation": self.segmentation,
             "living_income_study": self.living_income_study,
-            "multiple_commoditys": self.multiple_commoditys,
+            "multiple_commodities": self.multiple_commodities,
             "logo": self.logo,
             "created_by": self.created_by,
-            "project_commoditys": [pc.simplify for pc in self.project_commoditys],
+            "case_commodities": [pc.simplify for pc in self.case_commodities],
         }
 
     @property
-    def to_project_list(self) -> ProjectListDict:
+    def to_case_list(self) -> CaseListDict:
         # filter diversified count by !equal to focus commodity
         diversified_count = [
-            val for val in self.project_commoditys
+            val for val in self.case_commodities
             if val.commodity != self.focus_commodity
         ]
         return {
@@ -202,13 +205,13 @@ class Project(Base):
             "name": self.name,
             "country": self.country,
             "focus_commodity": self.focus_commodity,
-            "diversified_commoditys_count": len(diversified_count),
+            "diversified_commodities_count": len(diversified_count),
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "created_by": self.created_by_user.email,
         }
 
     @property
-    def to_project_detail(self) -> ProjectDetailDict:
+    def to_case_detail(self) -> CaseDetailDict:
         return {
             "id": self.id,
             "name": self.name,
@@ -223,13 +226,13 @@ class Project(Base):
             "reporting_period": self.reporting_period,
             "segmentation": self.segmentation,
             "living_income_study": self.living_income_study,
-            "multiple_commoditys": self.multiple_commoditys,
+            "multiple_commodities": self.multiple_commodities,
             "logo": self.logo,
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
             "updated_at": self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
-            "segments": [ps.simplify for ps in self.project_segments],
-            "project_commoditys": [pc.simplify for pc in self.project_commoditys],
+            "segments": [ps.simplify for ps in self.case_segments],
+            "case_commodities": [pc.simplify for pc in self.case_commodities],
         }
 
 
@@ -238,7 +241,7 @@ class OtherCommoditysBase(BaseModel):
     breakdown: bool
 
 
-class ProjectBase(BaseModel):
+class CaseBase(BaseModel):
     name: str
     date: date_format
     year: int
@@ -250,14 +253,15 @@ class ProjectBase(BaseModel):
     cost_of_production_unit: str
     reporting_period: str
     segmentation: bool
-    multiple_commoditys: bool
+    multiple_commodities: bool
     living_income_study: Optional[LivingIncomeStudyEnum] = None
     logo: Optional[str] = None
-    other_commoditys: Optional[List[OtherCommoditysBase]] = None
+    private: Optional[bool] = False
+    other_commodities: Optional[List[OtherCommoditysBase]] = None
 
 
-class PaginatedProjectResponse(BaseModel):
+class PaginatedCaseResponse(BaseModel):
     current: int
-    data: List[ProjectListDict]
+    data: List[CaseListDict]
     total: int
     total_page: int

@@ -200,7 +200,7 @@ class TestUserAuthentication():
                     "name": "Akvo"
                 },
                 "tags_count": 0,
-                "projects_count": 0
+                "cases_count": 0
             }
         }
 
@@ -225,5 +225,5 @@ class TestUserAuthentication():
                 "name": "Akvo"
             },
             "tags_count": 0,
-            "projects_count": 0
+            "cases_count": 0
         }

@@ -16,12 +16,12 @@
 #     @pytest.mark.asyncio
 #     async def test_seeder_master(self, session: Session) -> None:
 #         commodity_categories = session.query(CommodityCategory).all()
-#         commodity_categories = [val.serialize_with_commoditys for val in commodity_categories]
+#         commodity_categories = [val.serialize_with_commodities for val in commodity_categories]
 #         assert commodity_categories == [
 #             {
 #                 "id": 1,
 #                 "name": "Grains",
-#                 "commoditys": [
+#                 "commodities": [
 #                     {"id": 1, "name": "Wheat"},
 #                     {"id": 2, "name": "Rice"},
 #                     {"id": 3, "name": "Corn"},
@@ -30,7 +30,7 @@
 #             {
 #                 "id": 2,
 #                 "name": "Nuts",
-#                 "commoditys": [
+#                 "commodities": [
 #                     {"id": 4, "name": "Almonds"},
 #                     {"id": 5, "name": "Walnuts"},
 #                     {"id": 6, "name": "Pecans"},

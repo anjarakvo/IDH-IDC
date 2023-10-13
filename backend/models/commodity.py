@@ -28,7 +28,7 @@ class Commodity(Base):
         'CommodityCategory',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='commoditys'
+        back_populates='commodities'
     )
 
     def __init__(

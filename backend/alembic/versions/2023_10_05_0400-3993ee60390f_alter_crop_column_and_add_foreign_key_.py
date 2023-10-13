@@ -1,4 +1,4 @@
-"""alter commodity column and add foreign key constraint on project table
+"""alter commodity column and add foreign key constraint on case table
 
 Revision ID: 3993ee60390f
 Revises: 4acf424dcf01
@@ -18,19 +18,19 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    op.drop_constraint('project_commodity_fkey', 'project', type_='foreignkey')
-    op.alter_column('project', 'commodity', new_column_name='focus_commodity')
+    op.drop_constraint('case_commodity_fkey', 'case', type_='foreignkey')
+    op.alter_column('case', 'commodity', new_column_name='focus_commodity')
     op.create_foreign_key(
-        'project_focus_commodity_fkey', 'project', 'commodity',
+        'case_focus_commodity_fkey', 'case', 'commodity',
         ['focus_commodity'], ['id']
     )
 
 
 def downgrade() -> None:
     op.drop_constraint(
-        'project_focus_commodity_fkey', 'project', type_='foreignkey')
-    op.alter_column('project', 'focus_commodity', new_column_name='commodity')
+        'case_focus_commodity_fkey', 'case', type_='foreignkey')
+    op.alter_column('case', 'focus_commodity', new_column_name='commodity')
     op.create_foreign_key(
-        'project_commodity_fkey', 'project', 'commodity',
+        'case_commodity_fkey', 'case', 'commodity',
         ['commodity'], ['id']
     )

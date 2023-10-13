@@ -176,7 +176,7 @@ class TestUserEndpoint():
                 "role": UserRole.user.value,
                 "active": False,
                 "tags_count": 0,
-                "projects_count": 0,
+                "cases_count": 0,
             }, {
                 "id": 2,
                 "organisation": 1,
@@ -185,7 +185,7 @@ class TestUserEndpoint():
                 "role": UserRole.viewer.value,
                 "active": False,
                 "tags_count": 0,
-                "projects_count": 0,
+                "cases_count": 0,
             }, {
                 "id": 1,
                 "organisation": 1,
@@ -194,7 +194,7 @@ class TestUserEndpoint():
                 "role": UserRole.super_admin.value,
                 "active": True,
                 "tags_count": 0,
-                "projects_count": 0,
+                "cases_count": 0,
             }],
             "total": 3,
             "total_page": 1
@@ -218,7 +218,7 @@ class TestUserEndpoint():
             "active": True,
             "organisation_detail": {"id": 1, "name": "Akvo"},
             "tags_count": 0,
-            "projects_count": 0,
+            "cases_count": 0,
         }
 
     @pytest.mark.asyncio
@@ -356,6 +356,6 @@ class TestUserEndpoint():
                 'active': 1,
                 'organisation_detail': {'id': 1, 'name': 'Akvo'},
                 'tags_count': 0,
-                'projects_count': 0
+                'cases_count': 0
             }
         }

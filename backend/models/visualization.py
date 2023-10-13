@@ -15,7 +15,7 @@ class VisualizationTab(enum.Enum):
 
 class VisualizationDict(TypedDict):
     id: int
-    project: int
+    case: int
     segment: int
     tab: VisualizationTab
     config: dict
@@ -25,17 +25,17 @@ class Visualization(Base):
     __tablename__ = "visualization"
 
     id = Column(Integer, primary_key=True, index=True, nullable=True)
-    project = Column(Integer, ForeignKey('project.id'))
+    case = Column(Integer, ForeignKey('case.id'))
     segment = Column(Integer, ForeignKey('segment.id'))
     tab = Column(
         Enum(VisualizationTab), default=VisualizationTab.sensitivity_analysis)
     config = Column(pg.JSONB, nullable=False)
 
-    project_detail = relationship(
-        'Project',
+    case_detail = relationship(
+        'Case',
         cascade="all, delete",
         passive_deletes=True,
-        backref='project_visualization'
+        backref='case_visualization'
     )
     segment_detail = relationship(
         'Segment',
@@ -46,14 +46,14 @@ class Visualization(Base):
 
     def __init__(
         self,
-        project: int,
+        case: int,
         segment: int,
         tab: VisualizationTab,
         config: dict,
         id: Optional[int] = None,
     ):
         self.id = id
-        self.project = project
+        self.case = case
         self.segment = segment
         self.tab = tab
         self.config = config
@@ -65,7 +65,7 @@ class Visualization(Base):
     def serialize(self) -> VisualizationDict:
         return {
             "id": self.id,
-            "project": self.project,
+            "case": self.case,
             "segment": self.segment,
             "tab": self.tab,
             "config": self.config
@@ -74,7 +74,7 @@ class Visualization(Base):
 
 class VisualizationBase(BaseModel):
     id: int
-    project: int
+    case: int
     segment: int
     tab: VisualizationTab
     config: dict

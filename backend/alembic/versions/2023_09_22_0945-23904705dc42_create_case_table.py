@@ -1,4 +1,4 @@
-"""create project table
+"""create case table
 
 Revision ID: 23904705dc42
 Revises: 12be64f1b34c
@@ -21,7 +21,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'project',
+        'case',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('date', sa.Date(), nullable=False),
@@ -41,13 +41,16 @@ def upgrade() -> None:
             sa.Enum(
                 'better_income',
                 'living_income',
-                name='project_living_income_study'
+                name='case_living_income_study'
             ),
             nullable=True),
         sa.Column(
-            'multiple_commoditys', sa.SmallInteger(),
+            'multiple_commodities', sa.SmallInteger(),
             nullable=False, server_default='0'),
         sa.Column('logo', sa.String(), nullable=True),
+        sa.Column(
+            'private', sa.SmallInteger(),
+            nullable=False, server_default='0'),
         sa.Column('created_by', sa.Integer(), sa.ForeignKey('user.id')),
         sa.Column(
             'created_at', sa.DateTime(),
@@ -58,18 +61,18 @@ def upgrade() -> None:
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['country'], ['country.id'],
-            name='project_country_constraint',
+            name='case_country_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
             ['created_by'], ['user.id'],
-            name='project_created_by_constraint',
+            name='case_created_by_constraint',
             ondelete='CASCADE'),
     )
     op.create_index(
-        op.f('ix_project_id'), 'project', ['id'], unique=True)
+        op.f('ix_case_id'), 'case', ['id'], unique=True)
 
 
 def downgrade() -> None:
-    op.drop_index(op.f('ix_project_id'), table_name='project')
-    op.drop_table('project')
-    op.execute('DROP TYPE project_living_income_study')
+    op.drop_index(op.f('ix_case_id'), table_name='case')
+    op.drop_table('case')
+    op.execute('DROP TYPE case_living_income_study')

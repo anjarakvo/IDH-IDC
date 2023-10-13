@@ -18,11 +18,11 @@ class TestQuestionRoute():
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # without cred
-        res = await client.post(app.url_path_for("question:get_by_commoditys"))
+        res = await client.post(app.url_path_for("question:get_by_commodities"))
         assert res.status_code == 403
         # with non admin cred
         res = await client.post(
-            app.url_path_for("question:get_by_commoditys"),
+            app.url_path_for("question:get_by_commodities"),
             json=[{
                 "commodity": 1,
                 "breakdown": False,
@@ -35,7 +35,7 @@ class TestQuestionRoute():
         assert res.status_code == 200
         # test valid search
         res = await client.post(
-            app.url_path_for("question:get_by_commoditys"),
+            app.url_path_for("question:get_by_commodities"),
             json=[{
                 "commodity": 1,
                 "breakdown": False,

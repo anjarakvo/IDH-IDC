@@ -31,8 +31,8 @@ def seeder_master(session: Session, engine: create_engine):
     ## Commodity Categories and Commoditys
     truncatedb(session=session, table="commodity")
     truncatedb(session=session, table="commodity_category")
-    commoditys = pd.read_csv(MASTER_DIR + "commoditys.csv")
-    commodity_category = commoditys[["group_id", "group_name"]]
+    commodities = pd.read_csv(MASTER_DIR + "commodities.csv")
+    commodity_category = commodities[["group_id", "group_name"]]
     commodity_category = commodity_category.rename(
         columns={"group_id": "id", "group_name": "name"}
     )
@@ -40,9 +40,9 @@ def seeder_master(session: Session, engine: create_engine):
     commodity_category = commodity_category[["id", "name"]]
     commodity_category.to_sql("commodity_category", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Commodity Category")
-    commoditys = commoditys[["id", "group_id", "name"]]
-    commoditys = commoditys.rename(columns={"group_id": "commodity_category"})
-    commoditys.to_sql("commodity", con=engine, if_exists="append", index=False)
+    commodities = commodities[["id", "group_id", "name"]]
+    commodities = commodities.rename(columns={"group_id": "commodity_category"})
+    commodities.to_sql("commodity", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Commodity")
 
 

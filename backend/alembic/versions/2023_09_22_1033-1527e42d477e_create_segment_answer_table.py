@@ -23,14 +23,14 @@ def upgrade() -> None:
         'segment_answer',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column(
-            'project_commodity', sa.Integer(), sa.ForeignKey('project_commodity.id')),
+            'case_commodity', sa.Integer(), sa.ForeignKey('case_commodity.id')),
         sa.Column('segment', sa.Integer(), sa.ForeignKey('segment.id')),
         sa.Column('question', sa.Integer(), sa.ForeignKey('question.id')),
         sa.Column('current_value', sa.Float(), nullable=False),
         sa.Column('feasible_value', sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['project_commodity'], ['project_commodity.id'],
+            ['case_commodity'], ['case_commodity.id'],
             name='segment_answer_commodity_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
@@ -42,8 +42,8 @@ def upgrade() -> None:
             name='segment_answer_question_constraint',
             ondelete='CASCADE'),
         sa.UniqueConstraint(
-            'project_commodity', 'segment', 'question',
-            name='segment_answer_project_commodity_segment_question_unique')
+            'case_commodity', 'segment', 'question',
+            name='segment_answer_case_commodity_segment_question_unique')
     )
     op.create_index(
         op.f('ix_segment_answer_id'), 'segment_answer',
@@ -55,7 +55,7 @@ def downgrade() -> None:
         op.f('ix_segment_answer_id'),
         table_name='segment_answer')
     op.drop_constraint(
-        'segment_answer_project_commodity_segment_question_unique',
+        'segment_answer_case_commodity_segment_question_unique',
         'segment_answer',
         type_='unique'
     )

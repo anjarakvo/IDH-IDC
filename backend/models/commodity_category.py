@@ -25,7 +25,7 @@ class CommodityCategory(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False, unique=True)
 
-    commoditys = relationship(
+    commodities = relationship(
         Commodity,
         cascade="all, delete",
         passive_deletes=True,
@@ -54,11 +54,11 @@ class CommodityCategory(Base):
         }
 
     @property
-    def serialize_with_commoditys(self) -> CommodityCategoryWithChildDict:
+    def serialize_with_commodities(self) -> CommodityCategoryWithChildDict:
         return {
             "id": self.id,
             "name": self.name,
-            "commoditys": [c.simplify for c in self.commoditys]
+            "commodities": [c.simplify for c in self.commodities]
         }
 
 

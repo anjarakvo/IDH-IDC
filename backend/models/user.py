@@ -12,7 +12,7 @@ from pydantic import BaseModel, SecretStr
 from models.organisation import OrganisationDict
 from fastapi import Form
 from models.user_tag import UserTag
-from models.user_project_access import UserProjectAccess
+from models.user_case_access import UserCaseAccess
 
 
 class UserRole(enum.Enum):
@@ -36,7 +36,7 @@ class UserWithOrg(TypedDict):
     active: bool
     organisation_detail: OrganisationDict
     tags_count: int
-    projects_count: int
+    cases_count: int
 
 
 class UserPageDict(TypedDict):
@@ -47,7 +47,7 @@ class UserPageDict(TypedDict):
     role: UserRole
     active: bool
     tags_count: int
-    projects_count: int
+    cases_count: int
 
 
 class UserDict(TypedDict):
@@ -102,11 +102,11 @@ class User(Base):
         passive_deletes=True,
         back_populates="user_tag_detail",
     )
-    user_project_access = relationship(
-        UserProjectAccess,
+    user_case_access = relationship(
+        UserCaseAccess,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates="user_project_access_detail",
+        back_populates="user_case_access_detail",
     )
 
     def __init__(
@@ -155,7 +155,7 @@ class User(Base):
             "active": self.is_active,
             "organisation_detail": self.user_organisation.serialize,
             "tags_count": len(self.user_tags),
-            "projects_count": len(self.user_project_access),
+            "cases_count": len(self.user_case_access),
         }
 
     @property
@@ -168,7 +168,7 @@ class User(Base):
             "role": self.role,
             "active": self.is_active,
             "tags_count": len(self.user_tags),
-            "projects_count": len(self.user_project_access),
+            "cases_count": len(self.user_case_access),
         }
 
     @property
@@ -193,7 +193,7 @@ class UserBase(BaseModel):
     fullname: str
     role: Optional[UserRole] = UserRole.user
     password: Optional[SecretStr] = None
-    projects: Optional[List[int]] = None
+    cases: Optional[List[int]] = None
     tags: Optional[List[int]] = None
 
     @classmethod
@@ -204,7 +204,7 @@ class UserBase(BaseModel):
         email: str = Form(...),
         password: SecretStr = Form(None),
         role: UserRole = Form(None),
-        projects: List[int] = Form(None),
+        cases: List[int] = Form(None),
         tags: List[int] = Form(None),
     ):
         return cls(
@@ -213,7 +213,7 @@ class UserBase(BaseModel):
             password=password,
             organisation=organisation,
             role=role,
-            projects=projects,
+            cases=cases,
             tags=tags,
         )
 
@@ -232,7 +232,7 @@ class UserUpdateBase(BaseModel):
     permission: Optional[UserPermission] = None
     is_active: Optional[bool] = False
     password: Optional[SecretStr] = None
-    projects: Optional[List[int]] = None
+    cases: Optional[List[int]] = None
     tags: Optional[List[int]] = None
 
     @classmethod
@@ -244,7 +244,7 @@ class UserUpdateBase(BaseModel):
         role: UserRole = Form(None),
         permission: UserPermission = Form(None),
         is_active: bool = Form(False),
-        projects: List[int] = Form(None),
+        cases: List[int] = Form(None),
         tags: List[int] = Form(None),
     ):
         return cls(
@@ -254,6 +254,6 @@ class UserUpdateBase(BaseModel):
             permission=permission,
             organisation=organisation,
             is_active=is_active,
-            projects=projects,
+            cases=cases,
             tags=tags,
         )

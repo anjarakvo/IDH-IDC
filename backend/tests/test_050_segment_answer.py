@@ -18,7 +18,7 @@ class TestSegmentAnswerRoute():
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = [{
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 100,
             "question": 1,
             "current_value": 10000,
@@ -39,13 +39,13 @@ class TestSegmentAnswerRoute():
         assert res.status_code == 404
         # with normal user cred
         payload = [{
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 1,
             "current_value": 10000,
             "feasible_value": 5000,
         }, {
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 2,
             "current_value": 20000,
@@ -60,14 +60,14 @@ class TestSegmentAnswerRoute():
         res = res.json()
         assert res == [{
             'id': 1,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 1,
             'current_value': 10000.0,
             'feasible_value': 5000.0
         }, {
             'id': 2,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 2,
             'current_value': 20000.0,
@@ -75,7 +75,7 @@ class TestSegmentAnswerRoute():
         }]
         # with admin user cred
         payload = [{
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 3,
             "current_value": 30000,
@@ -90,7 +90,7 @@ class TestSegmentAnswerRoute():
         res = res.json()
         assert res == [{
             'id': 3,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 3,
             'current_value': 30000.0,
@@ -105,7 +105,7 @@ class TestSegmentAnswerRoute():
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = [{
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 100,
             "question": 1,
             "current_value": 100,
@@ -126,7 +126,7 @@ class TestSegmentAnswerRoute():
         assert res.status_code == 404
         # with normal user cred
         payload = [{
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 1,
             "current_value": 5,
@@ -141,7 +141,7 @@ class TestSegmentAnswerRoute():
         res = res.json()
         assert res == [{
             'id': 4,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 1,
             'current_value': 5.0,
@@ -149,19 +149,19 @@ class TestSegmentAnswerRoute():
         }]
         # with admin user cred
         payload = [{
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 1,
             "current_value": 100,
             "feasible_value": 100,
         }, {
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 2,
             "current_value": 200,
             "feasible_value": 200,
         }, {
-            "project_commodity": 1,
+            "case_commodity": 1,
             "segment": 1,
             "question": 3,
             "current_value": 300,
@@ -176,21 +176,21 @@ class TestSegmentAnswerRoute():
         res = res.json()
         assert res == [{
             'id': 5,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 1,
             'current_value': 100.0,
             'feasible_value': 100.0
         }, {
             'id': 6,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 2,
             'current_value': 200.0,
             'feasible_value': 200.0
         }, {
             'id': 7,
-            'project_commodity': 1,
+            'case_commodity': 1,
             'segment': 1,
             'question': 3,
             'current_value': 300.0,

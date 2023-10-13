@@ -12,9 +12,9 @@ sys.path.append("..")
 account = Acc(email="super_admin@akvo.org", token=None)
 
 
-class TestUserWithProjectsAndTagsEndpoint():
+class TestUserWithCasesAndTagsEndpoint():
     @pytest.mark.asyncio
-    async def test_invite_user_with_projects_n_tags_by_admin(
+    async def test_invite_user_with_cases_n_tags_by_admin(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user_payload = {
@@ -23,7 +23,7 @@ class TestUserWithProjectsAndTagsEndpoint():
             "password": None,
             "role": UserRole.user.value,
             "organisation": 1,
-            "projects": [1],
+            "cases": [1],
             "tags": [1]
         }
         # with credential
@@ -46,11 +46,11 @@ class TestUserWithProjectsAndTagsEndpoint():
             'role': UserRole.user,
             'active': 0,
             'tags_count': 1,
-            'projects_count': 1
+            'cases_count': 1
         }
 
     @pytest.mark.asyncio
-    async def test_update_user_with_projects_n_tags(
+    async def test_update_user_with_cases_n_tags(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user = get_user_by_email(session=session, email="super_admin@akvo.org")
@@ -60,7 +60,7 @@ class TestUserWithProjectsAndTagsEndpoint():
             "organisation": user.organisation,
             "role": UserRole.super_admin.value,
             "is_active": user.is_active,
-            "projects": [1],
+            "cases": [1],
             "tags": [1],
         }
         # without cred
@@ -89,5 +89,5 @@ class TestUserWithProjectsAndTagsEndpoint():
                 'name': 'Akvo'
             },
             'tags_count': 1,
-            'projects_count': 1
+            'cases_count': 1
         }

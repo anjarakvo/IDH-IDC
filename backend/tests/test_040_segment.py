@@ -19,7 +19,7 @@ class TestSegmentRoute():
     ) -> None:
         payload = [{
             "name": "Segment 1",
-            "project": 1,
+            "case": 1,
             "target": 1000,
             "household_size": 20
         }]
@@ -39,7 +39,7 @@ class TestSegmentRoute():
         res = res.json()
         assert res == [{
             'id': 1,
-            'project': 1,
+            'case': 1,
             'name': 'Segment 1',
             'target': 1000.0,
             'household_size': 20.0
@@ -47,12 +47,12 @@ class TestSegmentRoute():
         # with admin user cred
         payload = [{
             "name": "Segment 2",
-            "project": 1,
+            "case": 1,
             "target": 2000,
             "household_size": 30
         }, {
             "name": "Segment 3",
-            "project": 1,
+            "case": 1,
             "target": 3000,
             "household_size": 40
         }]
@@ -65,13 +65,13 @@ class TestSegmentRoute():
         res = res.json()
         assert res == [{
             'id': 2,
-            'project': 1,
+            'case': 1,
             'name': 'Segment 2',
             'target': 2000.0,
             'household_size': 30.0
         }, {
             'id': 3,
-            'project': 1,
+            'case': 1,
             'name': 'Segment 3',
             'target': 3000.0,
             'household_size': 40.0

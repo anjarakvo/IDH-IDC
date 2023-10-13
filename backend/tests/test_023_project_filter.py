@@ -12,21 +12,21 @@ non_admin_account = Acc(email="support@akvo.org", token=None)
 admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
-class TestProjectWithFilterRoute():
+class TestCaseWithFilterRoute():
     @pytest.mark.asyncio
-    async def test_get_project_filter_by_search(
+    async def test_get_case_filter_by_search(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # test invalid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={"search": "Lombok"},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 404
         # test valid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={"search": "Bali Rice"},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
@@ -39,7 +39,7 @@ class TestProjectWithFilterRoute():
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
                 'focus_commodity': 2,
-                'diversified_commoditys_count': 1,
+                'diversified_commodities_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -48,19 +48,19 @@ class TestProjectWithFilterRoute():
         }
 
     @pytest.mark.asyncio
-    async def test_get_project_filter_by_tags(
+    async def test_get_case_filter_by_tags(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # test invalid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={"tags": [100, 200]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 404
         # test valid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={"tags": [1, 2]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
@@ -73,7 +73,7 @@ class TestProjectWithFilterRoute():
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
                 'focus_commodity': 2,
-                'diversified_commoditys_count': 1,
+                'diversified_commodities_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -82,19 +82,19 @@ class TestProjectWithFilterRoute():
         }
 
     @pytest.mark.asyncio
-    async def test_get_project_filter_by_focus_Commodity(
+    async def test_get_case_filter_by_focus_Commodity(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # test invalid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={"focus_commodity": [100]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 404
         # test valid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={"focus_commodity": [2]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
@@ -107,7 +107,7 @@ class TestProjectWithFilterRoute():
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
                 'focus_commodity': 2,
-                'diversified_commoditys_count': 1,
+                'diversified_commodities_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],
@@ -116,12 +116,12 @@ class TestProjectWithFilterRoute():
         }
 
     @pytest.mark.asyncio
-    async def test_get_project_combined_filter(
+    async def test_get_case_combined_filter(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # test invalid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={
                 "search": "Rice",
                 "tags": [1],
@@ -132,7 +132,7 @@ class TestProjectWithFilterRoute():
         assert res.status_code == 404
         # test valid search
         res = await client.get(
-            app.url_path_for("project:get_all"),
+            app.url_path_for("case:get_all"),
             params={
                 "search": "Rice",
                 "tags": [1],
@@ -149,7 +149,7 @@ class TestProjectWithFilterRoute():
                 'name': 'Bali Rice and Corn Production',
                 'country': 2,
                 'focus_commodity': 2,
-                'diversified_commoditys_count': 1,
+                'diversified_commodities_count': 1,
                 'created_at': res["data"][0]["created_at"],
                 'created_by': 'super_admin@akvo.org'
             }],

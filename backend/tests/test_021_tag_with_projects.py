@@ -11,14 +11,14 @@ non_admin_account = Acc(email="support@akvo.org", token=None)
 admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
-class TestTagWithProjectsRoute():
+class TestTagWithCasesRoute():
     @pytest.mark.asyncio
-    async def test_create_tag_with_projects(
+    async def test_create_tag_with_cases(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = {
             "name": "Tag 2",
-            "projects": [1],
+            "cases": [1],
         }
         # with admin user cred
         res = await client.post(
@@ -32,17 +32,17 @@ class TestTagWithProjectsRoute():
             "id": 2,
             "name": "Tag 2",
             "description": None,
-            "projects_count": 1
+            "cases_count": 1
         }
 
     @pytest.mark.asyncio
-    async def test_update_tag_with_projects(
+    async def test_update_tag_with_cases(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = {
             "name": "Tag 1",
             "description": "Tag Description",
-            "projects": [1],
+            "cases": [1],
         }
         # with admin user cred
         res = await client.put(
@@ -56,5 +56,5 @@ class TestTagWithProjectsRoute():
             "id": 1,
             "name": "Tag 1",
             "description": "Tag Description",
-            "projects_count": 1
+            "cases_count": 1
         }

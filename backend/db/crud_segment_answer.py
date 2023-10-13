@@ -16,7 +16,7 @@ def add_segment_answer(
     segment_answers = []
     for payload in payloads:
         segment_answer = SegmentAnswer(
-            project_commodity=payload.project_commodity,
+            case_commodity=payload.case_commodity,
             segment=payload.segment,
             question=payload.question,
             current_value=payload.current_value,

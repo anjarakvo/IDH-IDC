@@ -34,7 +34,7 @@ def test_read_main():
 
 class TestAddMasterDataWithoutDedenpentToUser():
     @pytest.mark.asyncio
-    async def test_add_commodity_categories_and_commoditys_master_data(
+    async def test_add_commodity_categories_and_commodities_master_data(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = [{
@@ -56,17 +56,17 @@ class TestAddMasterDataWithoutDedenpentToUser():
             commodity_category = CommodityCategory(name=val["name"])
             for child in val["children"]:
                 commodity = Commodity(name=child["name"])
-                commodity_category.commoditys.append(commodity)
+                commodity_category.commodities.append(commodity)
             session.add(commodity_category)
             session.commit()
             session.flush()
             session.refresh(commodity_category)
         commodity_categories = session.query(CommodityCategory).all()
-        commodity_categories = [val.serialize_with_commoditys for val in commodity_categories]
+        commodity_categories = [val.serialize_with_commodities for val in commodity_categories]
         assert commodity_categories == [{
             'id': 1,
             'name': 'Grains',
-            'commoditys': [{
+            'commodities': [{
                 'id': 1,
                 'name': 'Wheat'
             }, {
@@ -79,7 +79,7 @@ class TestAddMasterDataWithoutDedenpentToUser():
         }, {
             'id': 2,
             'name': 'Nuts',
-            'commoditys': [{
+            'commodities': [{
                 'id': 4,
                 'name': 'Almonds'
             }, {

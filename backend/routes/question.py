@@ -22,7 +22,7 @@ question_route = APIRouter()
     "/questions",
     response_model=List[QuestionGroupListDict],
     summary="get question by commodity ID",
-    name="question:get_by_commoditys",
+    name="question:get_by_commodities",
     tags=["Question"]
 )
 def get_question_by_commodity_id(

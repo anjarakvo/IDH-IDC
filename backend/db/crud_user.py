@@ -7,7 +7,7 @@ from models.user import (
     User, UserDict, UserBase, UserUpdateBase, UserInvitation,
     UserRole
 )
-from models.user_project_access import UserProjectAccess
+from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
 
 
@@ -33,10 +33,10 @@ def add_user(
         role=role,
         invitation_id=str(uuid4()) if invitation_id else None
     )
-    if payload.projects:
-        for proj in payload.projects:
-            project_access = UserProjectAccess(project=proj)
-            user.user_project_access.append(project_access)
+    if payload.cases:
+        for proj in payload.cases:
+            case_access = UserCaseAccess(case=proj)
+            user.user_case_access.append(case_access)
     if payload.tags:
         for tag in payload.tags:
             user_tag = UserTag(tag=tag)
@@ -63,11 +63,11 @@ def update_user(
         except AttributeError:
             password = payload.password
         user.password = password
-    if payload.projects:
-        for proj in payload.projects:
-            project_access = UserProjectAccess(
-                user=user.id, project=proj)
-            user.user_project_access.append(project_access)
+    if payload.cases:
+        for proj in payload.cases:
+            case_access = UserCaseAccess(
+                user=user.id, case=proj)
+            user.user_case_access.append(case_access)
     if payload.tags:
         for tag in payload.tags:
             user_tag = UserTag(user=user.id, tag=tag)
