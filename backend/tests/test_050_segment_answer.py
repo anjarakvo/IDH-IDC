@@ -8,7 +8,7 @@ from tests.test_000_main import Acc
 sys.path.append("..")
 
 non_admin_account = Acc(email="support@akvo.org", token=None)
-admin_account = Acc(email="admin@akvo.org", token=None)
+admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestSegmentAnswerRoute():

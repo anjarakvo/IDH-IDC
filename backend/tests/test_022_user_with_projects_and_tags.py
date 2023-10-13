@@ -5,10 +5,11 @@ from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 from db.crud_user import get_user_by_email
+from models.user import UserRole
 
 sys.path.append("..")
 
-account = Acc(email="admin@akvo.org", token=None)
+account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestUserWithProjectsAndTagsEndpoint():
@@ -20,6 +21,7 @@ class TestUserWithProjectsAndTagsEndpoint():
             "fullname": "Jane Doe",
             "email": "jane@akvo.org",
             "password": None,
+            "role": UserRole.user.value,
             "organisation": 1,
             "projects": [1],
             "tags": [1]
@@ -41,7 +43,7 @@ class TestUserWithProjectsAndTagsEndpoint():
             'organisation': 1,
             'email': 'jane@akvo.org',
             'fullname': 'Jane Doe',
-            'is_admin': 0,
+            'role': UserRole.user,
             'active': 0,
             'tags_count': 1,
             'projects_count': 1
@@ -51,12 +53,12 @@ class TestUserWithProjectsAndTagsEndpoint():
     async def test_update_user_with_projects_n_tags(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        user = get_user_by_email(session=session, email="admin@akvo.org")
-        assert user.email == "admin@akvo.org"
+        user = get_user_by_email(session=session, email="super_admin@akvo.org")
+        assert user.email == "super_admin@akvo.org"
         update_payload = {
             "fullname": user.fullname,
             "organisation": user.organisation,
-            "is_admin": user.is_admin,
+            "role": UserRole.super_admin.value,
             "is_active": user.is_active,
             "projects": [1],
             "tags": [1],
@@ -79,9 +81,9 @@ class TestUserWithProjectsAndTagsEndpoint():
         assert res == {
             'id': 1,
             'fullname': 'John Doe',
-            'email': 'admin@akvo.org',
-            'is_admin': 1,
-            'active': 1,
+            'email': 'super_admin@akvo.org',
+            'role': UserRole.super_admin.value,
+            'active': True,
             'organisation_detail': {
                 'id': 1,
                 'name': 'Akvo'

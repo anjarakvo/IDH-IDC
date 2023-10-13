@@ -30,8 +30,22 @@ def upgrade() -> None:
         sa.Column('fullname', sa.String(), nullable=False),
         sa.Column('password', sa.String(), nullable=True),
         sa.Column(
-            'is_admin', sa.SmallInteger(),
-            server_default='0', nullable=False),
+            'role',
+            sa.Enum(
+                'super_admin',
+                'admin',
+                'editor',
+                'viewer',
+                'user',
+                name='user_role'
+            ), nullable=False),
+        sa.Column(
+            'permission',
+            sa.Enum(
+                'edit',
+                'view',
+                name='user_permission'
+            ), nullable=True),
         sa.Column(
             'is_active', sa.SmallInteger(),
             server_default='0', nullable=False),
@@ -55,3 +69,5 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_user_id'), table_name='user')
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
+    op.execute('DROP TYPE user_role')
+    op.execute('DROP TYPE user_permission')

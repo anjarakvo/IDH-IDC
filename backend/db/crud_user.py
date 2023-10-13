@@ -4,7 +4,8 @@ from typing import Optional, List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from models.user import (
-    User, UserDict, UserBase, UserUpdateBase, UserInvitation
+    User, UserDict, UserBase, UserUpdateBase, UserInvitation,
+    UserRole
 )
 from models.user_project_access import UserProjectAccess
 from models.user_tag import UserTag
@@ -19,11 +20,17 @@ def add_user(
         password = payload.password.get_secret_value()
     except AttributeError:
         password = payload.password
+    role = (
+        payload.role
+        if invitation_id or payload.role
+        else UserRole.user
+    )
     user = User(
         fullname=payload.fullname,
         email=payload.email,
         password=password if not invitation_id else None,
         organisation=payload.organisation,
+        role=role,
         invitation_id=str(uuid4()) if invitation_id else None
     )
     if payload.projects:
@@ -47,8 +54,9 @@ def update_user(
     user = get_user_by_id(session=session, id=id)
     user.fullname = payload.fullname
     user.organisation = payload.organisation
-    user.is_admin = 1 if payload.is_admin else 0
     user.is_active = 1 if payload.is_active else 0
+    user.role = payload.role if payload.role else user.role
+    user.permission = payload.permission
     if payload.password:
         try:
             password = payload.password.get_secret_value()

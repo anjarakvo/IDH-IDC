@@ -8,7 +8,7 @@ from utils.mailer import Email, MailTypeEnum
 pytestmark = pytest.mark.asyncio
 sys.path.append("..")
 
-account = Acc(email="admin@akvo.org", token=None)
+account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestMailer:
@@ -16,7 +16,7 @@ class TestMailer:
     async def test_email_recipient(self, session: Session) -> None:
         user = get_user_by_email(session=session, email=account.data["email"])
         user = user.recipient
-        assert user == {"Email": "admin@akvo.org", "Name": "John Doe"}
+        assert user == {"Email": "super_admin@akvo.org", "Name": "John Doe"}
 
     @pytest.mark.asyncio
     async def test_email_data(self, session: Session) -> None:
@@ -26,7 +26,7 @@ class TestMailer:
             email=MailTypeEnum.REG_NEW,
         )
         data = email.data
-        assert data["Recipients"] == [{"Email": "admin@akvo.org", "Name": "John Doe"}]
+        assert data["Recipients"] == [{"Email": "super_admin@akvo.org", "Name": "John Doe"}]
         assert data["FromEmail"] == "noreply@akvo.org"
         assert data["Subject"] == "Registration"
         assert email.send is True

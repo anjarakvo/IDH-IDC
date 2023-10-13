@@ -9,7 +9,7 @@ from tests.test_000_main import Acc
 sys.path.append("..")
 
 non_admin_account = Acc(email="support@akvo.org", token=None)
-admin_account = Acc(email="admin@akvo.org", token=None)
+admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestProjectWithFilterRoute():
@@ -41,7 +41,7 @@ class TestProjectWithFilterRoute():
                 'focus_crop': 2,
                 'diversified_crops_count': 1,
                 'created_at': res["data"][0]["created_at"],
-                'created_by': 'admin@akvo.org'
+                'created_by': 'super_admin@akvo.org'
             }],
             'total': 1,
             'total_page': 1
@@ -75,7 +75,7 @@ class TestProjectWithFilterRoute():
                 'focus_crop': 2,
                 'diversified_crops_count': 1,
                 'created_at': res["data"][0]["created_at"],
-                'created_by': 'admin@akvo.org'
+                'created_by': 'super_admin@akvo.org'
             }],
             'total': 1,
             'total_page': 1
@@ -109,7 +109,7 @@ class TestProjectWithFilterRoute():
                 'focus_crop': 2,
                 'diversified_crops_count': 1,
                 'created_at': res["data"][0]["created_at"],
-                'created_by': 'admin@akvo.org'
+                'created_by': 'super_admin@akvo.org'
             }],
             'total': 1,
             'total_page': 1
@@ -151,7 +151,7 @@ class TestProjectWithFilterRoute():
                 'focus_crop': 2,
                 'diversified_crops_count': 1,
                 'created_at': res["data"][0]["created_at"],
-                'created_by': 'admin@akvo.org'
+                'created_by': 'super_admin@akvo.org'
             }],
             'total': 1,
             'total_page': 1

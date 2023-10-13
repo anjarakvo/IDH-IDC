@@ -11,7 +11,7 @@ from models.project import LivingIncomeStudyEnum
 sys.path.append("..")
 
 non_admin_account = Acc(email="support@akvo.org", token=None)
-admin_account = Acc(email="admin@akvo.org", token=None)
+admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestProjectRoute():
@@ -123,7 +123,7 @@ class TestProjectRoute():
                 'focus_crop': 2,
                 'diversified_crops_count': 1,
                 'created_at': res["data"][0]["created_at"],
-                'created_by': 'admin@akvo.org'
+                'created_by': 'super_admin@akvo.org'
             }],
             'total': 1,
             'total_page': 1
@@ -241,7 +241,7 @@ class TestProjectRoute():
             'segmentation': False,
             'living_income_study': 'living_income',
             'multiple_crops': False,
-            'created_by': 'admin@akvo.org',
+            'created_by': 'super_admin@akvo.org',
             'created_at': res['created_at'],
             'updated_at': res['updated_at'],
             'segments': [],

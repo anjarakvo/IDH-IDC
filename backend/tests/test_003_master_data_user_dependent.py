@@ -17,7 +17,7 @@ class TestAddMasterDataDedenpentToUser():
     async def test_add_question_master_data(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        user = get_user_by_email(session=session, email="admin@akvo.org")
+        user = get_user_by_email(session=session, email="super_admin@akvo.org")
         assert user.id is not None
         payload = [{
             "parent_id": None,

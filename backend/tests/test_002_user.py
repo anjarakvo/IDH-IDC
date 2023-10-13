@@ -6,10 +6,11 @@ from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 from db.crud_user import get_user_by_email
+from models.user import UserRole
 
 sys.path.append("..")
 
-account = Acc(email="admin@akvo.org", token=None)
+account = Acc(email="super_admin@akvo.org", token=None)
 
 CLIENT_ID = os.environ.get("CLIENT_ID", None)
 CLIENT_SECRET = os.environ.get("CLIENT_SECRET", None)
@@ -24,6 +25,7 @@ class TestUserEndpoint():
             "fullname": "Test User",
             "email": "test_user@akvo.org",
             "password": None,
+            "role": UserRole.viewer.value,
             "organisation": 1,
         }
         # without credential
@@ -44,6 +46,7 @@ class TestUserEndpoint():
             "fullname": "Test User",
             "email": "test_user@akvo.org",
             "password": None,
+            "role": UserRole.viewer.value,
             "organisation": 1,
         }
         # with credential
@@ -61,8 +64,8 @@ class TestUserEndpoint():
             "email": "test_user@akvo.org",
             "fullname": "Test User",
             "organisation": 1,
-            "is_admin": 0,
-            "active": 0,
+            "role": UserRole.viewer.value,
+            "active": False,
         }
 
     @pytest.mark.asyncio
@@ -124,15 +127,15 @@ class TestUserEndpoint():
         assert res.status_code == 403
 
     @pytest.mark.asyncio
-    async def test_update_user_to_an_admin(
+    async def test_update_user_to_a_super_admin(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        user = get_user_by_email(session=session, email="admin@akvo.org")
-        assert user.email == "admin@akvo.org"
+        user = get_user_by_email(session=session, email="super_admin@akvo.org")
+        assert user.email == "super_admin@akvo.org"
         update_payload = {
             "fullname": user.fullname,
             "organisation": user.organisation,
-            "is_admin": True,
+            "role": UserRole.super_admin.value,
             "is_active": True,
         }
         # without cred
@@ -150,11 +153,11 @@ class TestUserEndpoint():
             })
         assert res.status_code == 200
         res = res.json()
-        assert res["is_admin"] == 1
-        assert res["active"] == 1
+        assert res["role"] == UserRole.super_admin.value
+        assert res["active"] is True
 
     @pytest.mark.asyncio
-    async def test_get_all_user_by_admin_cred(
+    async def test_get_all_user_by_super_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # with admin credential
@@ -170,8 +173,8 @@ class TestUserEndpoint():
                 "organisation": 1,
                 "email": "user@test.com",
                 "fullname": "User to delete",
-                "is_admin": 0,
-                "active": 0,
+                "role": UserRole.user.value,
+                "active": False,
                 "tags_count": 0,
                 "projects_count": 0,
             }, {
@@ -179,17 +182,17 @@ class TestUserEndpoint():
                 "organisation": 1,
                 "email": "test_user@akvo.org",
                 "fullname": "Test User",
-                "is_admin": 0,
-                "active": 0,
+                "role": UserRole.viewer.value,
+                "active": False,
                 "tags_count": 0,
                 "projects_count": 0,
             }, {
                 "id": 1,
                 "organisation": 1,
-                "email": "admin@akvo.org",
+                "email": "super_admin@akvo.org",
                 "fullname": "John Doe",
-                "is_admin": 1,
-                "active": 1,
+                "role": UserRole.super_admin.value,
+                "active": True,
                 "tags_count": 0,
                 "projects_count": 0,
             }],
@@ -198,7 +201,7 @@ class TestUserEndpoint():
         }
 
     @pytest.mark.asyncio
-    async def test_get_user_by_id_by_admin_cred(
+    async def test_get_user_by_id_by_super_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # with admin credential
@@ -209,17 +212,17 @@ class TestUserEndpoint():
         res = res.json()
         assert res == {
             "id": 1,
-            "email": "admin@akvo.org",
+            "email": "super_admin@akvo.org",
             "fullname": "John Doe",
-            "is_admin": 1,
-            "active": 1,
+            "role": UserRole.super_admin.value,
+            "active": True,
             "organisation_detail": {"id": 1, "name": "Akvo"},
             "tags_count": 0,
             "projects_count": 0,
         }
 
     @pytest.mark.asyncio
-    async def test_delete_user_by_admin_cred(
+    async def test_delete_user_by_super_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # delete user by admin
@@ -252,8 +255,8 @@ class TestUserEndpoint():
         assert res.status_code == 200
         res = res.json()
         assert res["fullname"] == "Sample User"
-        assert res["is_admin"] == 0
-        assert res["active"] == 1
+        assert res["role"] == user.role.value
+        assert res["active"] is True
         # test login with new password
         res = await client.post(
             app.url_path_for("user:login"),
@@ -272,12 +275,13 @@ class TestUserEndpoint():
         assert res['user']['email'] == user.email
 
     @pytest.mark.asyncio
-    async def test_invite_user_with_by_admin(
+    async def test_invite_user_by_super_admin(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user_payload = {
-            "fullname": "Invited User",
-            "email": "invited_user@akvo.org",
+            "fullname": "Invited Admin",
+            "email": "admin@akvo.org",
+            "role": UserRole.admin.value,
             "password": None,
             "organisation": 1,
         }
@@ -294,10 +298,10 @@ class TestUserEndpoint():
         res = res.json()
         assert res == {
             "id": 4,
-            "fullname": "Invited User",
-            "email": "invited_user@akvo.org",
+            "fullname": "Invited Admin",
+            "email": "admin@akvo.org",
             "organisation": 1,
-            "is_admin": 0,
+            "role": UserRole.admin.value,
             "active": 0
         }
         user = get_user_by_email(session=session, email=user_payload["email"])
@@ -309,7 +313,7 @@ class TestUserEndpoint():
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user = get_user_by_email(
-            session=session, email="invited_user@akvo.org")
+            session=session, email="admin@akvo.org")
         res = await client.get(
             app.url_path_for(
                 "user:invitation",
@@ -318,14 +322,20 @@ class TestUserEndpoint():
         )
         assert res.status_code == 200
         res = res.json()
-        assert res == user.to_user_invitation
+        assert res == {
+            'id': 4,
+            'email': 'admin@akvo.org',
+            'fullname': 'Invited Admin',
+            'invitation_id': user.invitation_id,
+            'role': UserRole.admin.value,
+        }
 
     @pytest.mark.asyncio
     async def test_register_password_by_invitation_id(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user = get_user_by_email(
-            session=session, email="invited_user@akvo.org")
+            session=session, email="admin@akvo.org")
         res = await client.post(
             app.url_path_for(
                 "user:invitation",
@@ -340,9 +350,9 @@ class TestUserEndpoint():
             'token_type': 'bearer',
             'user': {
                 'id': 4,
-                'fullname': 'Invited User',
-                'email': 'invited_user@akvo.org',
-                'is_admin': 0,
+                'fullname': 'Invited Admin',
+                'email': 'admin@akvo.org',
+                'role': UserRole.admin.value,
                 'active': 1,
                 'organisation_detail': {'id': 1, 'name': 'Akvo'},
                 'tags_count': 0,

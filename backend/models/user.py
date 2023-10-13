@@ -1,5 +1,9 @@
+import enum
 from db.connection import Base
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, SmallInteger
+from sqlalchemy import (
+    Column, Integer, String, DateTime, ForeignKey, SmallInteger,
+    Enum
+)
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
@@ -11,12 +15,25 @@ from models.user_tag import UserTag
 from models.user_project_access import UserProjectAccess
 
 
+class UserRole(enum.Enum):
+    super_admin = "super_admin"
+    admin = "admin"
+    editor = "editor"
+    viewer = "viewer"
+    user = "user"
+
+
+class UserPermission(enum.Enum):
+    edit = "edit"
+    view = "view"
+
+
 class UserWithOrg(TypedDict):
     id: int
     fullname: str
     email: str
-    is_admin: int
-    active: int
+    role: UserRole
+    active: bool
     organisation_detail: OrganisationDict
     tags_count: int
     projects_count: int
@@ -27,8 +44,8 @@ class UserPageDict(TypedDict):
     organisation: int
     email: str
     fullname: str
-    is_admin: int
-    active: int
+    role: UserRole
+    active: bool
     tags_count: int
     projects_count: int
 
@@ -38,14 +55,15 @@ class UserDict(TypedDict):
     organisation: int
     email: str
     fullname: str
-    is_admin: int
-    active: int
+    role: UserRole
+    active: bool
 
 
 class UserInvitation(TypedDict):
     id: int
     fullname: str
     email: str
+    role: UserRole
     invitation_id: str
 
 
@@ -62,12 +80,14 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
-    is_admin = Column(SmallInteger, nullable=False, default=0)
+    role = Column(Enum(UserRole), nullable=False)
+    permission = Column(Enum(UserPermission), nullable=True)
     is_active = Column(SmallInteger, nullable=False, default=0)
     invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
+        DateTime, nullable=False,
+        server_default=func.now(), onupdate=func.now()
     )
 
     user_organisation = relationship(
@@ -94,18 +114,20 @@ class User(Base):
         organisation: int,
         email: str,
         fullname: str,
+        role: UserRole,
         id: Optional[int] = None,
-        is_admin: Optional[int] = 0,
         is_active: Optional[int] = 0,
         invitation_id: Optional[str] = None,
         password: Optional[str] = None,
+        permission: Optional[UserPermission] = None,
     ):
         self.id = id
         self.organisation = organisation
         self.email = email
         self.fullname = fullname
         self.password = password
-        self.is_admin = is_admin
+        self.role = role
+        self.permission = permission
         self.is_active = is_active
         self.invitation_id = invitation_id
 
@@ -119,7 +141,7 @@ class User(Base):
             "organisation": self.organisation,
             "email": self.email,
             "fullname": self.fullname,
-            "is_admin": self.is_admin,
+            "role": self.role,
             "active": self.is_active,
         }
 
@@ -129,7 +151,7 @@ class User(Base):
             "id": self.id,
             "fullname": self.fullname,
             "email": self.email,
-            "is_admin": self.is_admin,
+            "role": self.role,
             "active": self.is_active,
             "organisation_detail": self.user_organisation.serialize,
             "tags_count": len(self.user_tags),
@@ -143,7 +165,7 @@ class User(Base):
             "organisation": self.organisation,
             "email": self.email,
             "fullname": self.fullname,
-            "is_admin": self.is_admin,
+            "role": self.role,
             "active": self.is_active,
             "tags_count": len(self.user_tags),
             "projects_count": len(self.user_project_access),
@@ -155,6 +177,7 @@ class User(Base):
             "id": self.id,
             "fullname": self.fullname,
             "email": self.email,
+            "role": self.role,
             "invitation_id": self.invitation_id,
         }
 
@@ -168,20 +191,19 @@ class UserBase(BaseModel):
     organisation: int
     email: str
     fullname: str
+    role: Optional[UserRole] = UserRole.user
     password: Optional[SecretStr] = None
     projects: Optional[List[int]] = None
     tags: Optional[List[int]] = None
 
-    class Config:
-        from_attributes = True
-
     @classmethod
     def as_form(
         cls,
+        organisation: int = Form(...),
         fullname: str = Form(...),
         email: str = Form(...),
         password: SecretStr = Form(None),
-        organisation: int = Form(...),
+        role: UserRole = Form(None),
         projects: List[int] = Form(None),
         tags: List[int] = Form(None),
     ):
@@ -190,6 +212,7 @@ class UserBase(BaseModel):
             email=email,
             password=password,
             organisation=organisation,
+            role=role,
             projects=projects,
             tags=tags,
         )
@@ -205,7 +228,8 @@ class UserResponse(BaseModel):
 class UserUpdateBase(BaseModel):
     fullname: str
     organisation: int
-    is_admin: Optional[bool] = False
+    role: Optional[UserRole] = None
+    permission: Optional[UserPermission] = None
     is_active: Optional[bool] = False
     password: Optional[SecretStr] = None
     projects: Optional[List[int]] = None
@@ -215,9 +239,10 @@ class UserUpdateBase(BaseModel):
     def as_form(
         cls,
         fullname: str = Form(...),
-        password: SecretStr = Form(None),
         organisation: int = Form(...),
-        is_admin: bool = Form(False),
+        password: SecretStr = Form(None),
+        role: UserRole = Form(None),
+        permission: UserPermission = Form(None),
         is_active: bool = Form(False),
         projects: List[int] = Form(None),
         tags: List[int] = Form(None),
@@ -225,8 +250,9 @@ class UserUpdateBase(BaseModel):
         return cls(
             fullname=fullname,
             password=password,
+            role=role,
+            permission=permission,
             organisation=organisation,
-            is_admin=is_admin,
             is_active=is_active,
             projects=projects,
             tags=tags,
