@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+from core.config import generate_config_file
 from db.connection import Base, engine, SessionLocal
 from utils.truncator import truncatedb
 from sqlalchemy import create_engine
@@ -38,12 +39,23 @@ def seeder_master(session: Session, engine: create_engine):
     )
     commodity_category = commodity_category.drop_duplicates(subset="id").reset_index()
     commodity_category = commodity_category[["id", "name"]]
-    commodity_category.to_sql("commodity_category", con=engine, if_exists="append", index=False)
+    commodity_category.to_sql(
+        "commodity_category", con=engine, if_exists="append", index=False
+    )
     print("[DATABASE UPDATED]: Commodity Category")
     commodities = commodities[["id", "group_id", "name"]]
     commodities = commodities.rename(columns={"group_id": "commodity_category"})
     commodities.to_sql("commodity", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Commodity")
+
+    ## Bussiness Unit
+    truncatedb(session=session, table="business_unit")
+    business_unit = pd.read_csv(MASTER_DIR + "business_unit.csv")
+    business_unit = business_unit[["id", "name"]]
+    business_unit.to_sql("business_unit", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Business Unit")
+
+    generate_config_file()
 
 
 if __name__ == "__main__":
