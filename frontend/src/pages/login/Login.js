@@ -48,8 +48,12 @@ const Login = () => {
           s.id = data.id;
           s.fullname = data.fullname;
           s.email = data.email;
+          s.role = data.role;
           s.active = data.active;
           s.organisation_detail = data.organisation_detail;
+          s.business_unit_detail = data.business_unit_detail;
+          s.tags_count = data.tags_count;
+          s.cases_count = data.cases_count;
         });
         setTimeout(() => {
           navigate("/dashboard");

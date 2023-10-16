@@ -28,20 +28,34 @@ const App = () => {
             s.id = data.id;
             s.fullname = data.fullname;
             s.email = data.email;
+            s.role = data.role;
             s.active = data.active;
             s.organisation_detail = data.organisation_detail;
+            s.business_unit_detail = data.business_unit_detail;
+            s.tags_count = data.tags_count;
+            s.cases_count = data.cases_count;
           });
         })
         .catch(() => {
           UserState.update((s) => {
-            s.id = null;
+            s.id = 0;
             s.fullname = null;
             s.email = null;
+            s.role = null;
             s.active = false;
             s.organisation_detail = {
-              id: null,
+              id: 0,
               name: null,
             };
+            s.business_unit_detail = [
+              {
+                id: 0,
+                name: null,
+                role: null,
+              },
+            ];
+            s.tags_count = 0;
+            s.cases_count = 0;
           });
         });
     }
