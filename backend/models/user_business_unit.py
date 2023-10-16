@@ -52,7 +52,7 @@ class UserBusinessUnit(Base):
         self.id = id
         self.user = user
         self.business_unit = business_unit
-        self.rolse = role
+        self.role = role
 
     def __repr__(self) -> int:
         return f"<UserBusinessUnit {self.id}>"

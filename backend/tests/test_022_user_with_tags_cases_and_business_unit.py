@@ -1,18 +1,21 @@
 import sys
 import pytest
+import json
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 from db.crud_user import get_user_by_email
 from models.user import UserRole
+from models.enum_type import PermissionType
+from models.user_business_unit import UserBusinessUnitRole
 
 sys.path.append("..")
 
 account = Acc(email="super_admin@akvo.org", token=None)
 
 
-class TestUserWithCasesAndTagsEndpoint():
+class TestUserWithTagsCasesAndBusinessUnitEndpoint():
     @pytest.mark.asyncio
     async def test_invite_user_with_cases_n_tags_by_admin(
         self, app: FastAPI, session: Session, client: AsyncClient
@@ -23,8 +26,15 @@ class TestUserWithCasesAndTagsEndpoint():
             "password": None,
             "role": UserRole.user.value,
             "organisation": 1,
-            "cases": [1],
-            "tags": [1]
+            "tags": json.dumps([1]),
+            "cases": json.dumps([{
+                "case": 1,
+                "permission": PermissionType.edit.value,
+            }]),
+            "business_units": json.dumps([{
+                "business_unit": 1,
+                "role": UserBusinessUnitRole.admin.value,
+            }]),
         }
         # with credential
         res = await client.post(
@@ -46,7 +56,7 @@ class TestUserWithCasesAndTagsEndpoint():
             'role': UserRole.user,
             'active': 0,
             'tags_count': 1,
-            'cases_count': 1
+            'cases_count': 1,
         }
 
     @pytest.mark.asyncio
@@ -60,8 +70,15 @@ class TestUserWithCasesAndTagsEndpoint():
             "organisation": user.organisation,
             "role": UserRole.super_admin.value,
             "is_active": user.is_active,
-            "cases": [1],
-            "tags": [1],
+            "tags": json.dumps([1]),
+            "cases": json.dumps([{
+                "case": 1,
+                "permission": PermissionType.view.value,
+            }]),
+            "business_units": json.dumps([{
+                "business_unit": 1,
+                "role": UserBusinessUnitRole.member.value,
+            }]),
         }
         # without cred
         res = await client.put(
@@ -84,11 +101,15 @@ class TestUserWithCasesAndTagsEndpoint():
             'email': 'super_admin@akvo.org',
             'role': UserRole.super_admin.value,
             'active': True,
-            'business_unit_detail': None,
+            'business_unit_detail': [{
+                'id': 2,
+                'name': 'Acme Technologies Sales Division',
+                'role': 'member'
+            }],
             'organisation_detail': {
                 'id': 1,
                 'name': 'Akvo'
             },
             'tags_count': 1,
-            'cases_count': 1
+            'cases_count': 1,
         }

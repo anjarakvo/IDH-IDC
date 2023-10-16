@@ -43,7 +43,7 @@ class UserInfo(TypedDict):
     email: str
     role: UserRole
     active: bool
-    business_unit_detail: Optional[UserBusinessUnitDetailDict]
+    business_unit_detail: Optional[List[UserBusinessUnitDetailDict]]
     organisation_detail: OrganisationDict
     tags_count: int
     cases_count: int
@@ -168,7 +168,7 @@ class User(Base):
             in self.user_business_units
         ]
         business_unit_detail = (
-            business_unit_detail[0] if business_unit_detail else None
+            business_unit_detail if business_unit_detail else None
         )
         return {
             "id": self.id,

@@ -46,7 +46,8 @@ def add_user(
     if payload.business_units:
         for bu in payload.business_units:
             business_unit = UserBusinessUnit(
-                role=bu["role"], business_unit=bu["business_unit"])
+                business_unit=bu["business_unit"],
+                role=bu["role"])
             user.user_business_units.append(business_unit)
     session.add(user)
     session.commit()
