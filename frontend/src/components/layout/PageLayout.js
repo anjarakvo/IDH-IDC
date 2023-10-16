@@ -21,7 +21,7 @@ const PageHeader = ({ isLoggedIn }) => {
         width: "100%",
       }}
     >
-      <Row justify="center" align="middle">
+      <Row justify="center" align="middle" style={{ width: "100%" }}>
         <Col span={14} align="start">
           <div data-testid="logo-container" className="logo" />
           {/* {isLoggedIn ? (
