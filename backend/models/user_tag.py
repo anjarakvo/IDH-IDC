@@ -1,9 +1,8 @@
 from db.connection import Base
-from sqlalchemy import Column, ForeignKey, Integer, Enum
+from sqlalchemy import Column, ForeignKey, Integer
 from sqlalchemy.orm import relationship
 from typing import Optional
 from pydantic import BaseModel
-from models.enum_type import PermissionType
 
 
 class UserTag(Base):
@@ -12,7 +11,6 @@ class UserTag(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     user = Column(Integer, ForeignKey('user.id'), nullable=False)
     tag = Column(Integer, ForeignKey('tag.id'), nullable=False)
-    permission = Column(Enum(PermissionType), nullable=False)
 
     user_tag_detail = relationship(
         'User',
@@ -32,12 +30,10 @@ class UserTag(Base):
         tag: int,
         id: Optional[int] = None,
         user: Optional[int] = None,
-        permission: Optional[PermissionType] = PermissionType.view
     ):
         self.id = id
         self.user = user
         self.tag = tag
-        self.permission = permission
 
     def __repr__(self) -> int:
         return f"<UserTag {self.id}>"
@@ -47,4 +43,3 @@ class UserTagBase(BaseModel):
     id: int
     user: int
     tag: int
-    permission: Optional[PermissionType] = PermissionType.view

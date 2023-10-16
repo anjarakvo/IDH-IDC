@@ -24,13 +24,6 @@ def upgrade() -> None:
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('user', sa.Integer(), sa.ForeignKey('user.id')),
         sa.Column('tag', sa.Integer(), sa.ForeignKey('tag.id')),
-        sa.Column(
-            'permission',
-            sa.Enum(
-                'edit',
-                'view',
-                name='user_tag_permission'
-            ), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['user'], ['user.id'],
@@ -58,4 +51,3 @@ def downgrade() -> None:
         type_='unique'
     )
     op.drop_table('user_tag')
-    op.execute('DROP TYPE user_tag_permission')
