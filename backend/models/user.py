@@ -9,7 +9,9 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
-from pydantic import BaseModel, SecretStr, validator
+from pydantic import (
+    BaseModel, SecretStr, field_validator, ValidationInfo
+)
 from models.organisation import OrganisationDict
 from fastapi import Form
 from models.user_tag import UserTag
@@ -221,16 +223,23 @@ class UserBase(BaseModel):
     cases: Optional[str] = None
     business_units: Optional[str] = None
 
-    @validator("tags")
-    def validate_tags(cls, value) -> str:
+    @field_validator("tags")
+    @classmethod
+    def validate_tags(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("cases")
-    def validate_cases(cls, value) -> str:
+    @field_validator("cases")
+    @classmethod
+    def validate_cases(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("business_units")
-    def validate_business_units(cls, value) -> str:
+    @field_validator("business_units")
+    @classmethod
+    def validate_business_units(cls, value, info: ValidationInfo) -> dict:
+        role = info.data.get("role", None)
+        # business unit required for admin role
+        if role and role.value == UserRole.admin.value and not value:
+            raise ValueError('Business Unit required for admin role')
         return json_load(value=value)
 
     @classmethod
@@ -275,16 +284,23 @@ class UserUpdateBase(BaseModel):
     cases: Optional[str] = None
     business_units: Optional[str] = None
 
-    @validator("tags")
-    def validate_tags(cls, value) -> str:
+    @field_validator("tags")
+    @classmethod
+    def validate_tags(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("cases")
-    def validate_cases(cls, value) -> str:
+    @field_validator("cases")
+    @classmethod
+    def validate_cases(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("business_units")
-    def validate_business_units(cls, value) -> str:
+    @field_validator("business_units")
+    @classmethod
+    def validate_business_units(cls, value, info: ValidationInfo) -> dict:
+        role = info.data.get("role", None)
+        # business unit required for admin role
+        if role and role.value == UserRole.admin.value and not value:
+            raise ValueError('Business Unit required for admin role')
         return json_load(value=value)
 
     @classmethod
