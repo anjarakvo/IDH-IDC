@@ -5,6 +5,7 @@ from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 from models.commodity_category_question import CommodityCategoryQuestion
+from models.commodity_category import CommodityCategory
 
 
 class QuestionGroupParam(TypedDict):
@@ -50,7 +51,7 @@ class Question(Base):
         backref='questions'
     )
     question_commodity_category_detail = relationship(
-        'CommodityCategory',
+        CommodityCategory,
         secondary=CommodityCategoryQuestion.__tablename__,
         cascade="all, delete",
         passive_deletes=True,

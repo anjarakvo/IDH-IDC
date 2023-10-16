@@ -5,7 +5,6 @@ from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 from models.commodity import Commodity, SimplifiedCommodityDict
-from models.question import Question
 from models.commodity_category_question import CommodityCategoryQuestion
 
 
@@ -33,7 +32,7 @@ class CommodityCategory(Base):
         back_populates='commodity_category_detail'
     )
     commodity_category_questions = relationship(
-        Question,
+        'Question',
         secondary=CommodityCategoryQuestion.__tablename__,
         cascade="all, delete",
         passive_deletes=True,

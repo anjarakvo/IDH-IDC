@@ -56,7 +56,7 @@ def update_user(
     user.organisation = payload.organisation
     user.is_active = 1 if payload.is_active else 0
     user.role = payload.role if payload.role else user.role
-    user.permission = payload.permission
+    user.all_cases = 1 if payload.all_cases else 0
     if payload.password:
         try:
             password = payload.password.get_secret_value()

@@ -40,12 +40,10 @@ def upgrade() -> None:
                 name='user_role'
             ), nullable=False),
         sa.Column(
-            'permission',
-            sa.Enum(
-                'edit',
-                'view',
-                name='user_permission'
-            ), nullable=True),
+            'all_cases',
+            sa.SmallInteger(),
+            server_default='0', nullable=False,
+            comment='Whether all cases or only create'),
         sa.Column(
             'is_active', sa.SmallInteger(),
             server_default='0', nullable=False),
@@ -70,4 +68,3 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_user_email'), table_name='user')
     op.drop_table('user')
     op.execute('DROP TYPE user_role')
-    op.execute('DROP TYPE user_permission')

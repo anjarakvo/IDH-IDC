@@ -13,7 +13,6 @@ from models.organisation import OrganisationDict
 from fastapi import Form
 from models.user_tag import UserTag
 from models.user_case_access import UserCaseAccess
-from models.enum_type import PermissionType
 from models.user_business_unit import (
     UserBusinessUnit, UserBusinessUnitDetailDict
 )
@@ -81,7 +80,7 @@ class User(Base):
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
     role = Column(Enum(UserRole), nullable=False)
-    permission = Column(Enum(PermissionType), nullable=True)
+    all_cases = Column(SmallInteger, nullable=False, default=0)
     is_active = Column(SmallInteger, nullable=False, default=0)
     invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
@@ -125,7 +124,7 @@ class User(Base):
         is_active: Optional[int] = 0,
         invitation_id: Optional[str] = None,
         password: Optional[str] = None,
-        permission: Optional[PermissionType] = None,
+        all_cases: Optional[int] = 0,
     ):
         self.id = id
         self.organisation = organisation
@@ -133,7 +132,7 @@ class User(Base):
         self.fullname = fullname
         self.password = password
         self.role = role
-        self.permission = permission
+        self.all_cases = all_cases
         self.is_active = is_active
         self.invitation_id = invitation_id
 
@@ -243,7 +242,7 @@ class UserUpdateBase(BaseModel):
     fullname: str
     organisation: int
     role: Optional[UserRole] = None
-    permission: Optional[PermissionType] = None
+    all_cases: Optional[bool] = False
     is_active: Optional[bool] = False
     password: Optional[SecretStr] = None
     cases: Optional[List[int]] = None
@@ -256,7 +255,7 @@ class UserUpdateBase(BaseModel):
         organisation: int = Form(...),
         password: SecretStr = Form(None),
         role: UserRole = Form(None),
-        permission: PermissionType = Form(None),
+        all_cases: bool = Form(False),
         is_active: bool = Form(False),
         cases: List[int] = Form(None),
         tags: List[int] = Form(None),
@@ -265,7 +264,7 @@ class UserUpdateBase(BaseModel):
             fullname=fullname,
             password=password,
             role=role,
-            permission=permission,
+            all_cases=all_cases,
             organisation=organisation,
             is_active=is_active,
             cases=cases,
