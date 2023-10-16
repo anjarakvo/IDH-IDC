@@ -3,11 +3,10 @@ import db.crud_user as crud_user
 from math import ceil
 from middleware import (
     Token, authenticate_user, create_access_token, verify_user,
-    get_password_hash
-
+    get_password_hash, verify_admin
 )
 from fastapi import (
-    Depends, HTTPException, status, APIRouter, Request, Query, Form
+    Depends, HTTPException, status, APIRouter, Request, Query, Form,
 )
 from fastapi import Response
 from fastapi.security import HTTPBearer
@@ -22,7 +21,6 @@ from models.user import (
 from typing import Optional
 from pydantic import SecretStr
 from http import HTTPStatus
-from middleware import verify_admin
 
 security = HTTPBearer()
 user_route = APIRouter()

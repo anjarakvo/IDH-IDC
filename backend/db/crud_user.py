@@ -9,6 +9,7 @@ from models.user import (
 )
 from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
+from models.user_business_unit import UserBusinessUnit
 
 
 def add_user(
@@ -33,14 +34,20 @@ def add_user(
         role=role,
         invitation_id=str(uuid4()) if invitation_id else None
     )
-    if payload.cases:
-        for proj in payload.cases:
-            case_access = UserCaseAccess(case=proj)
-            user.user_case_access.append(case_access)
     if payload.tags:
         for tag in payload.tags:
             user_tag = UserTag(tag=tag)
             user.user_tags.append(user_tag)
+    if payload.cases:
+        for proj in payload.cases:
+            case_access = UserCaseAccess(
+                case=proj["case"], permission=proj["permission"])
+            user.user_case_access.append(case_access)
+    if payload.business_units:
+        for bu in payload.business_units:
+            business_unit = UserBusinessUnit(
+                role=bu["role"], business_unit=bu["business_unit"])
+            user.user_business_units.append(business_unit)
     session.add(user)
     session.commit()
     session.flush()
@@ -63,15 +70,42 @@ def update_user(
         except AttributeError:
             password = payload.password
         user.password = password
-    if payload.cases:
-        for proj in payload.cases:
-            case_access = UserCaseAccess(
-                user=user.id, case=proj)
-            user.user_case_access.append(case_access)
     if payload.tags:
+        # delete prev user tags before update
+        prev_user_tags = session.query(UserTag).filter(
+            UserTag.user == user.id).all()
+        for ut in prev_user_tags:
+            session.delete(ut)
+        # add new user tags
         for tag in payload.tags:
             user_tag = UserTag(user=user.id, tag=tag)
             user.user_tags.append(user_tag)
+    if payload.cases:
+        # delete prev user cases before update
+        prev_user_cases = session.query(UserCaseAccess).filter(
+            UserCaseAccess.user == user.id).all()
+        for uc in prev_user_cases:
+            session.delete(uc)
+        # add new user case access
+        for proj in payload.cases:
+            case_access = UserCaseAccess(
+                user=user.id,
+                case=proj["case"],
+                permission=proj["permission"])
+            user.user_case_access.append(case_access)
+    if payload.business_units:
+        # delete prev user business units before update
+        prev_user_bus = session.query(UserBusinessUnit).filter(
+            UserBusinessUnit.user == user.id).all()
+        for bu in prev_user_bus:
+            session.delete(bu)
+        # add new user business units
+        for bu in payload.business_units:
+            business_unit = UserBusinessUnit(
+                user=user.id,
+                role=bu["role"],
+                business_unit=bu["business_unit"])
+            user.user_business_units.append(business_unit)
     session.commit()
     session.flush()
     session.refresh(user)
