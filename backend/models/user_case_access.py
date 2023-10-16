@@ -32,7 +32,7 @@ class UserCaseAccess(Base):
         case: int,
         id: Optional[int] = None,
         user: Optional[int] = None,
-        permission: Optional[PermissionType] = PermissionType.view,
+        permission: Optional[PermissionType] = PermissionType.view.value,
     ):
         self.id = id
         self.user = user
@@ -44,7 +44,7 @@ class UserCaseAccess(Base):
 
 
 class UserCaseAccessBase(BaseModel):
-    id: int
-    user: int
     case: int
-    permission: Optional[PermissionType] = PermissionType.view
+    permission: Optional[PermissionType] = PermissionType.view.value
+    id: Optional[int] = None
+    user: Optional[int] = None

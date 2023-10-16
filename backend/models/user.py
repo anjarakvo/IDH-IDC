@@ -1,21 +1,32 @@
 import enum
+import json
 from db.connection import Base
 from sqlalchemy import (
-    Column, Integer, String, DateTime, ForeignKey, SmallInteger,
-    Enum
+    Column, Integer, String, DateTime, ForeignKey,
+    SmallInteger, Enum
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
-from pydantic import BaseModel, SecretStr
+from pydantic import BaseModel, SecretStr, validator
 from models.organisation import OrganisationDict
 from fastapi import Form
 from models.user_tag import UserTag
 from models.user_case_access import UserCaseAccess
 from models.user_business_unit import (
-    UserBusinessUnit, UserBusinessUnitDetailDict
+    UserBusinessUnit, UserBusinessUnitDetailDict,
 )
+
+tags_desc = "JSON stringify of tag ids [1, 2, 3]"
+cases_desc = "JSON stringify of [{'case': 1, 'permission': 'edit/view'}]"
+bus_desc = "JSON stringify of [{'business_unit': 1, 'role': 'admin/member'}]"
+
+
+def json_load(value: Optional[str] = None):
+    if value:
+        return json.loads(value)
+    return value
 
 
 class UserRole(enum.Enum):
@@ -107,7 +118,7 @@ class User(Base):
         passive_deletes=True,
         back_populates="user_case_access_detail",
     )
-    user_business_unit_detail = relationship(
+    user_business_units = relationship(
         UserBusinessUnit,
         cascade="all, delete",
         passive_deletes=True,
@@ -154,7 +165,7 @@ class User(Base):
     def to_user_info(self) -> UserInfo:
         business_unit_detail = [
             bu.to_business_unit_detail for bu
-            in self.user_business_unit_detail
+            in self.user_business_units
         ]
         business_unit_detail = (
             business_unit_detail[0] if business_unit_detail else None
@@ -206,8 +217,21 @@ class UserBase(BaseModel):
     fullname: str
     role: Optional[UserRole] = UserRole.user
     password: Optional[SecretStr] = None
-    cases: Optional[List[int]] = None
-    tags: Optional[List[int]] = None
+    tags: Optional[str] = None
+    cases: Optional[str] = None
+    business_units: Optional[str] = None
+
+    @validator("tags")
+    def validate_tags(cls, value) -> str:
+        return json_load(value=value)
+
+    @validator("cases")
+    def validate_cases(cls, value) -> str:
+        return json_load(value=value)
+
+    @validator("business_units")
+    def validate_business_units(cls, value) -> str:
+        return json_load(value=value)
 
     @classmethod
     def as_form(
@@ -217,8 +241,9 @@ class UserBase(BaseModel):
         email: str = Form(...),
         password: SecretStr = Form(None),
         role: UserRole = Form(None),
-        cases: List[int] = Form(None),
-        tags: List[int] = Form(None),
+        tags: str = Form(None, description=tags_desc),
+        cases: str = Form(None, description=cases_desc),
+        business_units: str = Form(None, description=bus_desc),
     ):
         return cls(
             fullname=fullname,
@@ -226,8 +251,9 @@ class UserBase(BaseModel):
             password=password,
             organisation=organisation,
             role=role,
-            cases=cases,
             tags=tags,
+            cases=cases,
+            business_units=business_units,
         )
 
 
@@ -245,8 +271,21 @@ class UserUpdateBase(BaseModel):
     all_cases: Optional[bool] = False
     is_active: Optional[bool] = False
     password: Optional[SecretStr] = None
-    cases: Optional[List[int]] = None
-    tags: Optional[List[int]] = None
+    tags: Optional[str] = None
+    cases: Optional[str] = None
+    business_units: Optional[str] = None
+
+    @validator("tags")
+    def validate_tags(cls, value) -> str:
+        return json_load(value=value)
+
+    @validator("cases")
+    def validate_cases(cls, value) -> str:
+        return json_load(value=value)
+
+    @validator("business_units")
+    def validate_business_units(cls, value) -> str:
+        return json_load(value=value)
 
     @classmethod
     def as_form(
@@ -257,8 +296,9 @@ class UserUpdateBase(BaseModel):
         role: UserRole = Form(None),
         all_cases: bool = Form(False),
         is_active: bool = Form(False),
-        cases: List[int] = Form(None),
-        tags: List[int] = Form(None),
+        tags: str = Form(None, description=tags_desc),
+        cases: str = Form(None, description=cases_desc),
+        business_units: str = Form(None, description=bus_desc),
     ):
         return cls(
             fullname=fullname,
@@ -267,6 +307,7 @@ class UserUpdateBase(BaseModel):
             all_cases=all_cases,
             organisation=organisation,
             is_active=is_active,
-            cases=cases,
             tags=tags,
+            cases=cases,
+            business_units=business_units,
         )

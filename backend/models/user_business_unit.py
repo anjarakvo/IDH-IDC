@@ -33,7 +33,7 @@ class UserBusinessUnit(Base):
         'User',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='user_business_unit_detail'
+        back_populates='user_business_units'
     )
     business_unit_detail = relationship(
         BusinessUnit,
@@ -67,7 +67,7 @@ class UserBusinessUnit(Base):
 
 
 class UserBusinessUnitBase(BaseModel):
-    id: int
-    user: int
     business_unit: int
     role: UserBusinessUnitRole
+    user: Optional[int] = None
+    id: Optional[int] = None
