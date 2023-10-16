@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+from core.config import generate_config_file
 from db.connection import Base, engine, SessionLocal
 from utils.truncator import truncatedb
 from sqlalchemy import create_engine
@@ -53,6 +54,8 @@ def seeder_master(session: Session, engine: create_engine):
     business_unit = business_unit[["id", "name"]]
     business_unit.to_sql("business_unit", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Business Unit")
+
+    generate_config_file()
 
 
 if __name__ == "__main__":

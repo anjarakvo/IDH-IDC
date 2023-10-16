@@ -3,13 +3,17 @@ from jsmin import jsmin
 from fastapi import FastAPI, Request, Response
 from middleware import decode_token
 from fastapi.responses import FileResponse
-
+from db.connection import SessionLocal
 from routes.user import user_route
 from routes.tag import tag_route
 from routes.case import case_route
 from routes.question import question_route
 from routes.segment import segment_route
 from routes.segment_answer import segment_answer_route
+from models.business_unit import BusinessUnit
+from models.commodity import Commodity
+from models.commodity_category import CommodityCategory
+from models.country import Country
 
 
 app = FastAPI(
@@ -29,6 +33,37 @@ app = FastAPI(
 )
 
 JS_FILE = "./config.min.js"
+
+
+def generate_config_file() -> None:
+    session = SessionLocal()
+    env_js = "var __ENV__={"
+    env_js += 'client_id:"{}"'.format(os.environ["CLIENT_ID"])
+    env_js += ', client_secret:"{}"'.format(os.environ["CLIENT_SECRET"])
+    env_js += "};"
+    min_js = jsmin("".join([env_js, ""]))
+    business_units = session.query(BusinessUnit).all() or []
+    if business_units:
+        business_units = [bu.serialize for bu in business_units]
+    else:
+        business_units = []
+    commodity_categories = session.query(CommodityCategory).all() or []
+    if commodity_categories:
+        commodity_categories = [
+            cc.serialize_with_commodities for cc in commodity_categories
+        ]
+    else:
+        commodity_categories = []
+    min_js += "var master={};".format(
+        str(
+            {
+                "business_units": business_units,
+                "commodity_categories": commodity_categories,
+            }
+        )
+    )
+    with open(JS_FILE, "w") as jsfile:
+        jsfile.write(min_js)
 
 
 # Routes register
@@ -55,25 +90,16 @@ def health_check():
     response_class=FileResponse,
     tags=["Config"],
     name="config.js",
-    description="static javascript config")
+    description="static javascript config",
+)
 async def main(res: Response):
-    # if not os.path.exists(JS_FILE):
-    env_js = "var __ENV__={"
-    env_js += "client_id:\"{}\"".format(os.environ["CLIENT_ID"])
-    env_js += ", client_secret:\"{}\"".format(os.environ["CLIENT_SECRET"])
-    env_js += "};"
-    min_js = jsmin("".join([
-        env_js,
-        ";"
-    ]))
-    open(JS_FILE, 'w').write(min_js)
     res.headers["Content-Type"] = "application/x-javascript; charset=utf-8"
     return JS_FILE
 
 
 @app.middleware("http")
 async def route_middleware(request: Request, call_next):
-    auth = request.headers.get('Authorization')
+    auth = request.headers.get("Authorization")
     if auth:
         auth = decode_token(auth.replace("Bearer ", ""))
         request.state.authenticated = auth
