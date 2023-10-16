@@ -4,6 +4,7 @@ from seeder.master import seeder_master
 from models.commodity_category import CommodityCategory
 from models.country import Country
 from models.commodity import Commodity
+from models.business_unit import BusinessUnit
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from db.connection import get_db_url
@@ -70,3 +71,5 @@ class TestSeederMaster:
         assert commodity_category_count == 3
         commodity_count = session.query(Commodity).count()
         assert commodity_count == 11
+        business_unit_count = session.query(BusinessUnit).count()
+        assert business_unit_count == 5
