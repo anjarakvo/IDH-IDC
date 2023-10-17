@@ -27,7 +27,7 @@
 
     .logo {
       width: 9rem;
-      height: 2.85rem;
+      height: 4rem;
       background-image: url("/assets/images/logo.png");
       background-size: cover;
       background-repeat: no-repeat;
@@ -59,8 +59,33 @@
     }
   }
 
+  .button {
+    border-radius: 20px;
+    font-weight: 600;
+    color: $primary-color;
+    padding: 12px 18px;
+  }
+  .button-yellow {
+    background-color: $yellow-color;
+  }
+  .button-secondary {
+    border: 2px solid $primary-color;
+  }
+
   .ant-breadcrumb {
     padding: 0px $default-padding-size;
+  }
+
+  .search-and-add {
+    margin: 1rem 0px;
+    .search {
+      width: 30vw;
+      button {
+        border-color: $primary-color;
+        background-color: $primary-color;
+        color: #ffffff;
+      }
+    }
   }
 
   aside {

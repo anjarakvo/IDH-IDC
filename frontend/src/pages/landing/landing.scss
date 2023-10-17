@@ -1,13 +1,6 @@
 @import "../../variables.scss";
 
 .landing-container {
-  .button {
-    border-radius: 20px;
-    font-weight: 600;
-    color: $primary-color;
-    padding: 12px 18px;
-  }
-
   .jumbotron-wrapper {
     background-image: url("/assets/images/jumbotron.png") !important;
     background-size: cover;
@@ -30,10 +23,6 @@
       font-weight: 400;
       font-size: 1.9rem;
     }
-
-    .button-learn-more {
-      background-color: $yellow-color;
-    }
   }
 
   .first-section-wrapper {
@@ -52,10 +41,6 @@
       font-size: 1.14rem;
       font-weight: 400;
       line-height: 2.3rem;
-    }
-
-    .button-learn-more {
-      border: 2px solid $primary-color;
     }
   }
 
@@ -101,7 +86,7 @@
   }
 
   .third-section-wrapper {
-    background-color: #ffffff;
+    background-color: #f4f4f4;
     width: 100%;
     padding: 3.75rem $default-padding-size;
 
@@ -122,6 +107,8 @@
       background-size: contain;
       background-repeat: no-repeat;
       background-position: center;
+      background-blend-mode: darken;
+      background-color: #f4f4f4;
       height: 35rem;
     }
   }
