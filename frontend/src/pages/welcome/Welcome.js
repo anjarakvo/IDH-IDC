@@ -1,9 +1,9 @@
 import React from "react";
 import "./welcome.scss";
 import { Row, Col, Card, Button, Image } from "antd";
-import IconCases from "../../assets/icons/icon-cases.png";
-import IconExploreStudies from "../../assets/icons/icon-explore-studies.png";
-import IconAdmin from "../../assets/icons/icon-admin.png";
+import IconCases from "../../assets/icons/icon-cases.svg";
+import IconExploreStudies from "../../assets/icons/icon-explore-studies.svg";
+import IconAdmin from "../../assets/icons/icon-admin.svg";
 import { UserState } from "../../store";
 
 const adminRole = ["super_admin", "admin"];

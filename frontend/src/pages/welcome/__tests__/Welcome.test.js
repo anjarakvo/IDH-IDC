@@ -1,4 +1,4 @@
-import { render, waitFor, fireEvent, act } from "@testing-library/react";
+import { render, act } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import { PageLayout } from "../../../components/layout";
 import Welcome from "../Welcome";
