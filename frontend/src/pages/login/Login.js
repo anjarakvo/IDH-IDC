@@ -112,7 +112,7 @@ const Login = () => {
             >
               <Input.Password
                 size="large"
-                data
+                data-testid="input-password"
                 placeholder="Password (6 digits at least, case sensitive)"
               />
             </Form.Item>
