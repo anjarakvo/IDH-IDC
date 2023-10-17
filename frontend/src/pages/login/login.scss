@@ -1,50 +1,52 @@
 @import "../../variables.scss";
 
-.login-container {
-  background-image: url("/assets/images/bg-login.png") !important;
-  height: 97vh !important;
-
-  .login-form-wrapper {
-    padding: 8% 0 0 8% !important;
-
-    .page-title-container {
-      h1 {
-        color: $primary-color !important;
-      }
-      h3 {
-        color: rgba(0, 0, 0, 0.45);
-      }
-    }
-
-    .form-login {
-      .ant-form-item {
-        margin-bottom: 24px;
-      }
-      .button-login {
-        border: none;
-        box-shadow: none;
-        border-radius: 20px;
-        background-color: $yellow-color;
-        color: $primary-color;
-        font-weight: 700;
-      }
-    }
-  }
-
-  .login-image-wrapper {
+#login {
+  &.content-wrapper {
+    padding: 0px !important;
     background-image: url("/assets/images/login-clip-path.png") !important;
-    background-size: cover;
     background-repeat: no-repeat;
-    background-position: center;
-    margin: -1.5rem -3rem -1.5rem 0;
+    background-position: center right;
+  }
+  .login-container {
+    background-image: url("/assets/images/bg-login.png") !important;
+    height: 97vh !important;
 
-    .ant-image.css-dev-only-do-not-override-relbw9 {
-      float: right !important;
+    .login-form-wrapper {
+      padding: 0 0 0 8% !important;
+
+      .page-title-container {
+        h1 {
+          color: $primary-color !important;
+        }
+        h3 {
+          color: rgba(0, 0, 0, 0.45);
+        }
+      }
+
+      .form-login {
+        .ant-form-item {
+          margin-bottom: 24px;
+        }
+        .button-login {
+          border: none;
+          box-shadow: none;
+          border-radius: 20px;
+          background-color: $yellow-color;
+          color: $primary-color;
+          font-weight: 700;
+        }
+      }
     }
 
-    .login-image {
-      border-radius: 20px 0 0 20px;
-      margin: 10% 0 0 0;
+    .login-image-wrapper {
+      .ant-image.css-dev-only-do-not-override-relbw9 {
+        float: right !important;
+        border-radius: 20px 0 0 20px;
+      }
+
+      .login-image {
+        padding-left: 75px;
+      }
     }
   }
 }

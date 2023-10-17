@@ -3,6 +3,7 @@ import { Breadcrumb, Card } from "antd";
 
 const ContentLayout = ({
   children,
+  wrapperId = "landing",
   breadcrumbItems = [],
   title = null,
   subTitle = null,
@@ -11,7 +12,11 @@ const ContentLayout = ({
   const renderCard = hasBreadcrumb || title;
 
   if (!renderCard) {
-    return <div className="content-wrapper">{children}</div>;
+    return (
+      <div className="content-wrapper" id={wrapperId}>
+        {children}
+      </div>
+    );
   }
 
   return (
@@ -37,7 +42,9 @@ const ContentLayout = ({
           ""
         )}
       </Card>
-      <div className="content-wrapper">{children}</div>
+      <div className="content-wrapper" id={wrapperId}>
+        {children}
+      </div>
     </div>
   );
 };
