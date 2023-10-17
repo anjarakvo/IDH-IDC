@@ -5,6 +5,7 @@ import { FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { UserState } from "../../store";
 import { Link, useLocation } from "react-router-dom";
 
+const pagesWithNoSider = ["/", "/login", "/welcome"];
 const { Header, Content, Sider } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
@@ -98,7 +99,7 @@ const PageLayout = ({ children }) => {
   const location = useLocation();
   const pathname = location?.pathname;
 
-  if (pathname === "/" || pathname === "/login") {
+  if (pagesWithNoSider.includes(pathname)) {
     return (
       <Layout>
         {pathname !== "/login" ? <PageHeader isLoggedIn={isLoggedIn} /> : ""}

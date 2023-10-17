@@ -9,6 +9,7 @@ import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Dashboard } from "./pages/dashboard";
 import { NotFound } from "./pages/not-found";
+import { Welcome } from "./pages/welcome";
 import { UserState } from "./store";
 import { api } from "./lib";
 
@@ -68,6 +69,7 @@ const App = () => {
         <Route element={<PrivateRoutes />}>
           <Route exact path="/home" element={<Home />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
+          <Route exact path="/welcome" element={<Welcome />} />
         </Route>
         <Route exact path="/" element={<Landing />} />
         <Route exact path="/login" element={<Login />} />
