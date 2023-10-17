@@ -12,6 +12,7 @@ from routes.segment import segment_route
 from routes.segment_answer import segment_answer_route
 from models.business_unit import BusinessUnit
 from models.commodity_category import CommodityCategory
+from models.currency import Currency
 
 
 app = FastAPI(
@@ -52,11 +53,17 @@ def generate_config_file() -> None:
         ]
     else:
         commodity_categories = []
+    currencies = session.query(Currency).all() or []
+    if currencies:
+        currencies = [c.serialize for c in currencies]
+    else:
+        currencies = []
     min_js += "var master={};".format(
         str(
             {
                 "business_units": business_units,
                 "commodity_categories": commodity_categories,
+                "currencies": currencies,
             }
         )
     )
