@@ -1,9 +1,10 @@
 import React from "react";
-import { Layout, Menu, Row, Col, Space } from "antd";
+import { Layout, Menu, Row, Col, Space, Image } from "antd";
 import { useCookies } from "react-cookie";
 import { FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { UserState } from "../../store";
 import { Link, useLocation } from "react-router-dom";
+import LogoWhite from "../../assets/images/logo-white.png";
 
 const pagesWithNoSider = ["/", "/login", "/welcome"];
 const { Header, Content, Sider } = Layout;
@@ -24,7 +25,7 @@ const PageHeader = ({ isLoggedIn }) => {
     >
       <Row justify="center" align="middle" style={{ width: "100%" }}>
         <Col span={14} align="start">
-          <div data-testid="logo-container" className="logo" />
+          <Image src={LogoWhite} height={65} preview={false} />
           {/* {isLoggedIn ? (
             <div className="title">
               <h3>Explore Cases</h3>

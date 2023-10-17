@@ -45,15 +45,6 @@
     display: flex;
     align-items: center;
 
-    .logo {
-      width: 9rem;
-      height: 2.85rem;
-      background-image: url("/assets/images/logo.png");
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-position: center;
-    }
-
     .title {
       margin-left: $default-padding-size;
       h3 {
