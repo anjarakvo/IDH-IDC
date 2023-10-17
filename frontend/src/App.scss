@@ -29,6 +29,13 @@
     font-size: 1.5rem;
     font-weight: normal;
   }
+
+  .button-green {
+    border: 2px solid $primary-color;
+    border-radius: 20px;
+    color: $primary-color;
+    font-weight: 700;
+  }
   // EOL global css setting
 
   header {
