@@ -9,9 +9,11 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
-from pydantic import BaseModel, SecretStr, validator
+from pydantic import (
+    BaseModel, SecretStr, field_validator, ValidationInfo
+)
 from models.organisation import OrganisationDict
-from fastapi import Form
+from fastapi import Form, HTTPException, status
 from models.user_tag import UserTag
 from models.user_case_access import UserCaseAccess
 from models.user_business_unit import (
@@ -23,18 +25,31 @@ cases_desc = "JSON stringify of [{'case': 1, 'permission': 'edit/view'}]"
 bus_desc = "JSON stringify of [{'business_unit': 1, 'role': 'admin/member'}]"
 
 
-def json_load(value: Optional[str] = None):
-    if value:
-        return json.loads(value)
-    return value
-
-
 class UserRole(enum.Enum):
     super_admin = "super_admin"
     admin = "admin"
     editor = "editor"
     viewer = "viewer"
     user = "user"
+
+
+def json_load(value: Optional[str] = None):
+    if value:
+        return json.loads(value)
+    return value
+
+
+def validate_business_units(info: ValidationInfo, value: Optional[str] = None):
+    business_units_required = [
+        UserRole.admin.value, UserRole.editor.value, UserRole.viewer.value
+    ]
+    role = info.data.get("role", None)
+    # business unit required for admin role
+    if role and role.value in business_units_required and not value:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"business_units required for {role.value} role")
+    return json_load(value=value)
 
 
 class UserInfo(TypedDict):
@@ -221,17 +236,21 @@ class UserBase(BaseModel):
     cases: Optional[str] = None
     business_units: Optional[str] = None
 
-    @validator("tags")
-    def validate_tags(cls, value) -> str:
+    @field_validator("tags")
+    @classmethod
+    def validate_tags(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("cases")
-    def validate_cases(cls, value) -> str:
+    @field_validator("cases")
+    @classmethod
+    def validate_cases(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("business_units")
-    def validate_business_units(cls, value) -> str:
-        return json_load(value=value)
+    @field_validator("business_units")
+    @classmethod
+    def validate_business_units(cls, value, info: ValidationInfo) -> dict:
+        value = validate_business_units(value=value, info=info)
+        return value
 
     @classmethod
     def as_form(
@@ -275,17 +294,21 @@ class UserUpdateBase(BaseModel):
     cases: Optional[str] = None
     business_units: Optional[str] = None
 
-    @validator("tags")
-    def validate_tags(cls, value) -> str:
+    @field_validator("tags")
+    @classmethod
+    def validate_tags(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("cases")
-    def validate_cases(cls, value) -> str:
+    @field_validator("cases")
+    @classmethod
+    def validate_cases(cls, value) -> dict:
         return json_load(value=value)
 
-    @validator("business_units")
-    def validate_business_units(cls, value) -> str:
-        return json_load(value=value)
+    @field_validator("business_units")
+    @classmethod
+    def validate_business_units(cls, value, info: ValidationInfo) -> dict:
+        value = validate_business_units(value=value, info=info)
+        return value
 
     @classmethod
     def as_form(
