@@ -138,7 +138,7 @@ const Login = () => {
           className="login-image-wrapper"
         >
           <Image
-            height={800}
+            height={700}
             src={ImageRight}
             preview={false}
             className="login-image"
