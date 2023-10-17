@@ -1,7 +1,11 @@
 @import "./variables.scss";
 
 #root {
-  h1,
+  h1 {
+    font-family: "RocGrotesk" !important;
+    font-weight: 700;
+  }
+
   h2 {
     font-family: "TabletGothicBold" !important;
   }

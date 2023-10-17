@@ -20,3 +20,10 @@ $default-padding-size: 5rem;
   font-weight: 700;
   font-style: normal;
 }
+
+@font-face {
+  font-family: "RocGrotesk";
+  src: url("/assets/fonts/RocGrotesk.otf") format("opentype");
+  font-weight: normal;
+  font-style: normal;
+}
