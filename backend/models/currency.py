@@ -12,6 +12,11 @@ class CurrencyDict(TypedDict):
     abbreviation: str
 
 
+class CurrencyDropdown(TypedDict):
+    value: int
+    label: str
+
+
 class Currency(Base):
     __tablename__ = "currency"
 
@@ -36,6 +41,13 @@ class Currency(Base):
             "country": self.country,
             "name": self.name,
             "abbreviation": self.abbreviation,
+        }
+
+    @property
+    def to_dropdown(self) -> CurrencyDropdown:
+        return {
+            "value": self.id,
+            "label": f"{self.name} ({self.abbreviation})",
         }
 
 

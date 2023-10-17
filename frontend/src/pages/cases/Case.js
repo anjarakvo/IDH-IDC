@@ -16,22 +16,82 @@ import {
 import { StepForwardOutlined } from "@ant-design/icons";
 import "./cases.scss";
 
-const commodity_categories = window.master?.commodity_categories || [];
-const commodities = commodity_categories
-  ? commodity_categories.reduce(
+const commodityCategories = window.master?.commodity_categories || [];
+const commodities = commodityCategories
+  ? commodityCategories.reduce(
       (acc, category) => [...acc, ...category.commodities],
       []
     )
   : [];
-
 const commodityOptions = commodities.map((commodity) => ({
   label: commodity.name,
   value: commodity.id,
 }));
 
-const gridStyle = {
-  width: "100%",
+const currencyOptions = window.master?.currencies || [];
+const countryOptions = window.master?.countries || [];
+
+const selectProps = {
+  showSearch: true,
+  allowClear: true,
+  optionFilterProp: "label",
+  style: {
+    width: "100%",
+  },
 };
+
+const yesNoOptions = [
+  {
+    label: "Yes",
+    value: "yes",
+  },
+  {
+    label: "No",
+    value: "no",
+  },
+];
+
+const tagOptions = [
+  {
+    label: "Smallholder",
+    value: "smallholder",
+  },
+  {
+    label: "Large Scale",
+    value: "large-scale",
+  },
+  {
+    label: "Plantation",
+    value: "plantation",
+  },
+  {
+    label: "Processing",
+    value: "processing",
+  },
+  {
+    label: "Trading",
+    value: "trading",
+  },
+  {
+    label: "Retail",
+    value: "retail",
+  },
+  {
+    label: "Other",
+    value: "other",
+  },
+];
+
+const reportingPeriod = [
+  {
+    label: "Per Season",
+    value: "per-season",
+  },
+  {
+    label: "Per Year",
+    value: "per-year",
+  },
+];
 
 const onFinish = (values) => {
   console.info("Success:", values);
@@ -41,38 +101,6 @@ const onFinishFailed = (errorInfo) => {
 };
 
 const CaseForm = () => {
-  const tagOptions = [
-    {
-      label: "Indonesia",
-      value: "Indonesia",
-    },
-    {
-      label: "Malaysia",
-      value: "Malaysia",
-    },
-    {
-      label: "Singapore",
-      value: "Singapore",
-    },
-    {
-      label: "Thailand",
-      value: "Thailand",
-    },
-    {
-      label: "Vietnam",
-      value: "Vietnam",
-    },
-  ];
-  const reportingPeriod = [
-    {
-      label: "Per Season",
-      value: "per-season",
-    },
-    {
-      label: "Per Year",
-      value: "per-year",
-    },
-  ];
   return (
     <>
       <h3>General Information</h3>
@@ -104,10 +132,9 @@ const CaseForm = () => {
       <Form.Item name="tags">
         <Select
           mode="tags"
-          style={gridStyle}
           placeholder="Add Tags"
-          allowClear
           options={tagOptions}
+          {...selectProps}
         />
       </Form.Item>
 
@@ -115,27 +142,27 @@ const CaseForm = () => {
 
       <Form.Item name="country" label="Select Country">
         <Select
-          style={gridStyle}
           placeholder="Select Country"
-          options={tagOptions}
+          options={countryOptions}
+          {...selectProps}
         />
       </Form.Item>
       <Row gutter={[12, 12]}>
         <Col span={12}>
           <Form.Item label="Select Commodity" name="commodity">
             <Select
-              style={gridStyle}
               placeholder="Select Focus Commodity"
               options={commodityOptions}
+              {...selectProps}
             />
           </Form.Item>
         </Col>
         <Col span={12}>
           <Form.Item label="Select Currency" name="currency">
             <Select
-              style={gridStyle}
               placeholder="Select Currency"
-              options={tagOptions}
+              options={currencyOptions}
+              {...selectProps}
             />
           </Form.Item>
         </Col>
@@ -152,18 +179,7 @@ const CaseForm = () => {
         label="Do you have secondary commodity to report on?"
         name="secondary"
       >
-        <Radio.Group
-          options={[
-            {
-              label: "Yes",
-              value: "yes",
-            },
-            {
-              label: "No",
-              value: "no",
-            },
-          ]}
-        />
+        <Radio.Group options={yesNoOptions} />
       </Form.Item>
     </>
   );
@@ -178,30 +194,17 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
       >
         <Select
           mode="tags"
-          style={gridStyle}
           placeholder={`Add your ${indexLabel} Commodity`}
-          allowClear
           disabled={disabled}
           options={commodityOptions}
+          {...selectProps}
         />
       </Form.Item>
       <Form.Item
         name={`${index}-breakdown`}
         label={`Data on income drivers available`}
       >
-        <Radio.Group
-          disabled={disabled}
-          options={[
-            {
-              label: "Yes",
-              value: "yes",
-            },
-            {
-              label: "No",
-              value: "no",
-            },
-          ]}
-        />
+        <Radio.Group disabled={disabled} options={yesNoOptions} />
       </Form.Item>
       <Row gutter={[12, 12]}>
         <Col span={12}>
@@ -209,7 +212,6 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
             <Select
               disabled={disabled}
               placeholder="Select Area Unit"
-              style={gridStyle}
               options={[
                 {
                   label: "Hectares",
@@ -220,6 +222,7 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
                   value: "acres",
                 },
               ]}
+              {...selectProps}
             />
           </Form.Item>
         </Col>
@@ -229,7 +232,6 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
             name={`${index}-measurement-unit`}
           >
             <Select
-              style={gridStyle}
               placeholder="Select Measurement Unit"
               disabled={disabled}
               options={[
@@ -274,6 +276,7 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
                   value: "tons",
                 },
               ]}
+              {...selectProps}
             />
           </Form.Item>
         </Col>
@@ -293,7 +296,7 @@ const Case = () => {
     );
     secondaryValues.forEach((key) => {
       form.setFieldsValue({
-        [key]: undefined,
+        [key]: undefined, // eslint-disable-line no-undefined
       });
     });
     setSecondary(false);
@@ -314,8 +317,8 @@ const Case = () => {
     }
     if (e?.secondary === "no") {
       const secondaryValues = Object.keys(form.getFieldsValue()).filter(
-        (key, value) =>
-          key.startsWith("1-") && form.getFieldsValue()[key] !== undefined
+        (key) =>
+          key.startsWith("1-") && form.getFieldsValue()[key] !== undefined // eslint-disable-line no-undefined
       );
       if (secondaryValues.length > 0) {
         setModalSecondaryShow(true);

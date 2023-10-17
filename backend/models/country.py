@@ -12,22 +12,23 @@ class CountryDict(TypedDict):
     name: str
 
 
+class CountryDropdown(TypedDict):
+    value: int
+    label: str
+
+
 class Country(Base):
-    __tablename__ = 'country'
+    __tablename__ = "country"
 
     id = Column(Integer, primary_key=True)
-    parent = Column(Integer, ForeignKey('country.id'), nullable=True)
+    parent = Column(Integer, ForeignKey("country.id"), nullable=True)
     name = Column(String, nullable=False)
 
     children = relationship("Country")
-    parent_detail = relationship(
-        "Country", remote_side=[id], overlaps="children")
+    parent_detail = relationship("Country", remote_side=[id], overlaps="children")
 
     def __init__(
-        self,
-        name: str,
-        id: Optional[int] = None,
-        parent: Optional[int] = None
+        self, name: str, id: Optional[int] = None, parent: Optional[int] = None
     ):
         self.id = id
         self.parent = parent
@@ -42,7 +43,14 @@ class Country(Base):
             "id": self.id,
             "parent": self.parent,
             "name": self.name,
-            "children": [c.serialize for c in self.children]
+            "children": [c.serialize for c in self.children],
+        }
+
+    @property
+    def to_dropdown(self) -> CountryDropdown:
+        return {
+            "value": self.id,
+            "label": self.name,
         }
 
 
