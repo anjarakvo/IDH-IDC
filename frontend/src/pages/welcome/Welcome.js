@@ -7,6 +7,7 @@ import IconAdmin from "../../assets/icons/icon-admin.png";
 
 const cardMenus = [
   {
+    testid: "card-menu-cases",
     name: "Cases",
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
@@ -15,6 +16,7 @@ const cardMenus = [
     role: null,
   },
   {
+    testid: "card-menu-explore-studies",
     name: "Explore Studies",
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
@@ -23,6 +25,7 @@ const cardMenus = [
     role: null,
   },
   {
+    testid: "card-menu-admin",
     name: "Admin",
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
@@ -52,7 +55,7 @@ const Welcome = () => {
         <Row className="card-menu-wrapper" gutter={[14, 14]}>
           {cardMenus.map((cm, cmi) => {
             return (
-              <Col key={`card-menu-${cmi}`} span={24}>
+              <Col key={`card-menu-${cmi}`} span={24} data-testid={cm.testid}>
                 <Card className="card-container">
                   <Row
                     justify="center"
@@ -61,14 +64,25 @@ const Welcome = () => {
                     className="card-content-wrapper"
                   >
                     <Col span={2} align="center" className="icon-wrapper">
-                      <Image src={cm.icon} height={80} preview={false} />
+                      <Image
+                        src={cm.icon}
+                        preview={false}
+                        data-testid={`${cm.testid}-icon`}
+                      />
                     </Col>
                     <Col span={20} className="text-wrapper">
-                      <h4>{cm.name}</h4>
-                      <p>{cm.description}</p>
+                      <h4 data-testid={`${cm.testid}-name`}>{cm.name}</h4>
+                      <p data-testid={`${cm.testid}-description`}>
+                        {cm.description}
+                      </p>
                     </Col>
-                    <Col span={2}>
-                      <Button className="button-green">Explore</Button>
+                    <Col span={2} className="button-wrapper">
+                      <Button
+                        data-testid={`${cm.testid}-button`}
+                        className="button-green"
+                      >
+                        Explore
+                      </Button>
                     </Col>
                   </Row>
                 </Card>

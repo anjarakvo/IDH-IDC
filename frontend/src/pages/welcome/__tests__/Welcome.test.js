@@ -19,9 +19,29 @@ describe("Welcome page", () => {
     expect(getByTestId("page-subtitle")).toBeInTheDocument();
   });
 
-  it.todo(
-    "should render cases and explore studies card menu for all user role"
-  );
+  it("should render cases and explore studies card menu for all user role", () => {
+    const { getByTestId } = render(
+      <Router>
+        <PageLayout>
+          <Welcome />
+        </PageLayout>
+      </Router>
+    );
+    expect(getByTestId("card-menu-cases")).toBeInTheDocument();
+    expect(getByTestId("card-menu-cases-icon")).toBeInTheDocument();
+    expect(getByTestId("card-menu-cases-name")).toBeInTheDocument();
+    expect(getByTestId("card-menu-cases-description")).toBeInTheDocument();
+    expect(getByTestId("card-menu-cases-button")).toBeInTheDocument();
+
+    expect(getByTestId("card-menu-explore-studies")).toBeInTheDocument();
+    expect(getByTestId("card-menu-explore-studies-icon")).toBeInTheDocument();
+    expect(getByTestId("card-menu-explore-studies-name")).toBeInTheDocument();
+    expect(
+      getByTestId("card-menu-explore-studies-description")
+    ).toBeInTheDocument();
+    expect(getByTestId("card-menu-explore-studies-button")).toBeInTheDocument();
+  });
+
   it.todo("should render admin card menu only for super admin and admin role");
   it.todo("should go to about IDC page if About IDC menu clicked");
   it.todo("should go to cases page if Cases menu clicked");
