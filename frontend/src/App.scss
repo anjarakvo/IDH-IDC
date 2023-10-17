@@ -1,6 +1,8 @@
 @import "./variables.scss";
 
 #root {
+  font-family: "TabletGothic";
+
   h1 {
     font-family: "RocGrotesk";
     font-weight: 700;
@@ -64,12 +66,16 @@
     font-weight: 600;
     color: $primary-color;
     padding: 12px 18px;
+    min-height: 48px;
   }
   .button-yellow {
     background-color: $yellow-color;
   }
   .button-secondary {
     border: 2px solid $primary-color;
+  }
+  .button-submit {
+    margin: 1rem 0px;
   }
 
   .ant-breadcrumb {
@@ -129,7 +135,7 @@
     }
 
     .content-wrapper {
-      padding: 0px $default-padding-size;
+      padding: 0 $default-padding-size 3rem $default-padding-size;
 
       .ant-space {
         width: 100%;
@@ -140,10 +146,37 @@
       }
     }
   }
+  .ant-card {
+    font-family: "TabletGothic" !important;
+    .ant-card-title {
+      font-family: "TabletGothicBold";
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .ant-card-body {
+      font-family: "RocGrotesk" !important;
+    }
+  }
 
   .loading-container {
     display: flex;
     justify-content: center;
     align-content: center;
+  }
+  .ant-timeline {
+    font-family: "RocGrotesk";
+    font-weight: bold;
+    .ant-timeline-item {
+      color: $muted-color;
+    }
+    .ant-timeline-item-content {
+      inset-block-start: -3px;
+    }
+    .ant-timeline-item-head {
+      border-color: $muted-color;
+      background-color: transparent;
+      width: 15px;
+      height: 15px;
+    }
   }
 }

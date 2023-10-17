@@ -20,7 +20,7 @@ const TableContent = ({
               <Search className="search" allowClear {...searchProps} />
             </Col>
             <Col span={12} align="right">
-              <Link className="button button-secondary" to={buttonProps.linkTo}>
+              <Link className="button button-secondary" to={buttonProps.to}>
                 {buttonProps.text}
               </Link>
             </Col>
