@@ -9,6 +9,8 @@
   }
   .login-container {
     background-image: url("/assets/images/bg-login.png") !important;
+    background-size: cover;
+    background-repeat: no-repeat;
     height: 97vh !important;
 
     .login-form-wrapper {
@@ -39,13 +41,15 @@
     }
 
     .login-image-wrapper {
+      padding-left: 75px;
       .ant-image.css-dev-only-do-not-override-relbw9 {
         float: right !important;
-        border-radius: 20px 0 0 20px;
+        width: 98%;
       }
 
       .login-image {
-        padding-left: 75px;
+        border-radius: 20px 0 0 20px !important;
+        border: 1px solid #000000;
       }
     }
   }
