@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ContentLayout } from "../../components/layout";
 import {
   Row,
@@ -10,10 +10,24 @@ import {
   Timeline,
   Card,
   Select,
+  Modal,
   Radio,
 } from "antd";
 import { StepForwardOutlined } from "@ant-design/icons";
 import "./cases.scss";
+
+const commodity_categories = window.master?.commodity_categories || [];
+const commodities = commodity_categories
+  ? commodity_categories.reduce(
+      (acc, category) => [...acc, ...category.commodities],
+      []
+    )
+  : [];
+
+const commodityOptions = commodities.map((commodity) => ({
+  label: commodity.name,
+  value: commodity.id,
+}));
 
 const gridStyle = {
   width: "100%",
@@ -112,7 +126,7 @@ const CaseForm = () => {
             <Select
               style={gridStyle}
               placeholder="Select Focus Commodity"
-              options={tagOptions}
+              options={commodityOptions}
             />
           </Form.Item>
         </Col>
@@ -155,7 +169,7 @@ const CaseForm = () => {
   );
 };
 
-const SecondaryForm = ({ index, indexLabel }) => {
+const SecondaryForm = ({ index, indexLabel, disabled }) => {
   return (
     <>
       <Form.Item
@@ -167,28 +181,8 @@ const SecondaryForm = ({ index, indexLabel }) => {
           style={gridStyle}
           placeholder={`Add your ${indexLabel} Commodity`}
           allowClear
-          options={[
-            {
-              label: "Indonesia",
-              value: "Indonesia",
-            },
-            {
-              label: "Malaysia",
-              value: "Malaysia",
-            },
-            {
-              label: "Singapore",
-              value: "Singapore",
-            },
-            {
-              label: "Thailand",
-              value: "Thailand",
-            },
-            {
-              label: "Vietnam",
-              value: "Vietnam",
-            },
-          ]}
+          disabled={disabled}
+          options={commodityOptions}
         />
       </Form.Item>
       <Form.Item
@@ -196,6 +190,7 @@ const SecondaryForm = ({ index, indexLabel }) => {
         label={`Data on income drivers available`}
       >
         <Radio.Group
+          disabled={disabled}
           options={[
             {
               label: "Yes",
@@ -212,7 +207,9 @@ const SecondaryForm = ({ index, indexLabel }) => {
         <Col span={12}>
           <Form.Item label="Select Area Unit" name={`${index}-area-unit`}>
             <Select
+              disabled={disabled}
               placeholder="Select Area Unit"
+              style={gridStyle}
               options={[
                 {
                   label: "Hectares",
@@ -234,6 +231,7 @@ const SecondaryForm = ({ index, indexLabel }) => {
             <Select
               style={gridStyle}
               placeholder="Select Measurement Unit"
+              disabled={disabled}
               options={[
                 {
                   label: "Kilograms",
@@ -286,9 +284,45 @@ const SecondaryForm = ({ index, indexLabel }) => {
 
 const Case = () => {
   const [form] = Form.useForm();
+  const [secondary, setSecondary] = useState(false);
+  const [modalSecondaryShow, setModalSecondaryShow] = useState(false);
+
+  const handleDeleteSecondary = () => {
+    const secondaryValues = Object.keys(form.getFieldsValue()).filter((key) =>
+      key.startsWith("1-")
+    );
+    secondaryValues.forEach((key) => {
+      form.setFieldsValue({
+        [key]: undefined,
+      });
+    });
+    setSecondary(false);
+    setModalSecondaryShow(false);
+  };
+
+  const handleRestoreSecondary = () => {
+    form.setFieldsValue({
+      secondary: "yes",
+    });
+    setSecondary(true);
+    setModalSecondaryShow(false);
+  };
 
   const onChange = (e) => {
-    console.info(e.target.value || e.target.checked || e);
+    if (e?.secondary === "yes") {
+      setSecondary(true);
+    }
+    if (e?.secondary === "no") {
+      const secondaryValues = Object.keys(form.getFieldsValue()).filter(
+        (key, value) =>
+          key.startsWith("1-") && form.getFieldsValue()[key] !== undefined
+      );
+      if (secondaryValues.length > 0) {
+        setModalSecondaryShow(true);
+      } else {
+        setSecondary(false);
+      }
+    }
   };
 
   return (
@@ -309,7 +343,7 @@ const Case = () => {
           remember: true,
         }}
         onFinish={onFinish}
-        onChange={onChange}
+        onValuesChange={onChange}
         onFinishFailed={onFinishFailed}
         autoComplete="off"
       >
@@ -342,8 +376,12 @@ const Case = () => {
                 </Card>
               </Col>
               <Col span={12}>
-                <Card title="Secondary Crops">
-                  <SecondaryForm index={1} indexLabel="Secondary" />
+                <Card title="Secondary Commodities">
+                  <SecondaryForm
+                    index={1}
+                    indexLabel="Secondary"
+                    disabled={!secondary}
+                  />
                 </Card>
                 <Row>
                   <Col span={12}>
@@ -380,6 +418,14 @@ const Case = () => {
           </Col>
         </Row>
       </Form>
+      <Modal
+        title="Warning"
+        open={modalSecondaryShow}
+        onOk={handleDeleteSecondary}
+        onCancel={handleRestoreSecondary}
+      >
+        You have added secondary commodity. Do you want to remove it?
+      </Modal>
     </ContentLayout>
   );
 };
