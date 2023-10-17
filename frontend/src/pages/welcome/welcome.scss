@@ -1,0 +1,23 @@
+@import "../../variables.scss";
+
+.welcome-container {
+  background-image: url("/assets/images/bg-login.png") !important;
+  min-height: 97vh !important;
+
+  .right-clip-path-wrapper {
+    background-image: url("/assets/images/login-clip-path.png") !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 100%;
+    width: 55%;
+    position: absolute;
+    top: 5rem;
+    right: 0;
+    bottom: 0;
+  }
+
+  .welcome-content-wrapper {
+    padding: 1.5rem $default-padding-size;
+  }
+}

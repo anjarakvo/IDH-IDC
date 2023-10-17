@@ -1,9 +1,11 @@
 @import "./variables.scss";
 
 #root {
+  // global css setting
   h1 {
     font-family: "RocGrotesk" !important;
-    font-weight: 700;
+    font-weight: 700 !important;
+    font-size: 2.7rem;
   }
 
   h2 {
@@ -18,6 +20,17 @@
   a {
     font-family: "TabletGothic" !important;
   }
+
+  .page-title {
+    color: $primary-color !important;
+  }
+  .page-subtitle {
+    color: rgba(0, 0, 0, 0.45);
+    font-size: 1.5rem;
+    font-weight: normal;
+  }
+  // EOL global css setting
+
   header {
     height: 5rem;
     background: $primary-color;
