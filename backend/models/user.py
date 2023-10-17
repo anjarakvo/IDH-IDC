@@ -13,7 +13,7 @@ from pydantic import (
     BaseModel, SecretStr, field_validator, ValidationInfo
 )
 from models.organisation import OrganisationDict
-from fastapi import Form
+from fastapi import Form, HTTPException, status
 from models.user_tag import UserTag
 from models.user_case_access import UserCaseAccess
 from models.user_business_unit import (
@@ -239,7 +239,9 @@ class UserBase(BaseModel):
         role = info.data.get("role", None)
         # business unit required for admin role
         if role and role.value == UserRole.admin.value and not value:
-            raise ValueError('Business Unit required for admin role')
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Business Unit required for admin role")
         return json_load(value=value)
 
     @classmethod
@@ -300,7 +302,9 @@ class UserUpdateBase(BaseModel):
         role = info.data.get("role", None)
         # business unit required for admin role
         if role and role.value == UserRole.admin.value and not value:
-            raise ValueError('Business Unit required for admin role')
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="Business Unit required for admin role")
         return json_load(value=value)
 
     @classmethod

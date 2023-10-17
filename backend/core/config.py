@@ -11,9 +11,7 @@ from routes.question import question_route
 from routes.segment import segment_route
 from routes.segment_answer import segment_answer_route
 from models.business_unit import BusinessUnit
-from models.commodity import Commodity
 from models.commodity_category import CommodityCategory
-from models.country import Country
 
 
 app = FastAPI(

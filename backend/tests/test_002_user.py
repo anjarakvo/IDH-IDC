@@ -1,12 +1,14 @@
 import sys
 import os
 import pytest
+import json
 from fastapi import FastAPI
 from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 from db.crud_user import get_user_by_email
 from models.user import UserRole
+from models.user_business_unit import UserBusinessUnitRole, UserBusinessUnit
 
 sys.path.append("..")
 
@@ -276,7 +278,7 @@ class TestUserEndpoint():
         assert res['user']['email'] == user.email
 
     @pytest.mark.asyncio
-    async def test_invite_user_by_super_admin(
+    async def test_invite_admin_role_by_super_admin_without_business_unit(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         user_payload = {
@@ -285,6 +287,34 @@ class TestUserEndpoint():
             "role": UserRole.admin.value,
             "password": None,
             "organisation": 1,
+        }
+        # with credential
+        res = await client.post(
+            app.url_path_for("user:register"),
+            params={"invitation_id": 1},
+            data=user_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 422
+        res = res.json()
+        assert res == {'detail': 'Business Unit required for admin role'}
+
+    @pytest.mark.asyncio
+    async def test_invite_admin_role_by_super_admin_with_business_unit(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user_payload = {
+            "fullname": "Invited Admin",
+            "email": "admin@akvo.org",
+            "role": UserRole.admin.value,
+            "password": None,
+            "organisation": 1,
+            "business_units": json.dumps([{
+                "business_unit": 1,
+                "role": UserBusinessUnitRole.admin.value
+            }])
         }
         # with credential
         res = await client.post(
@@ -308,6 +338,11 @@ class TestUserEndpoint():
         user = get_user_by_email(session=session, email=user_payload["email"])
         assert user.invitation_id is not None
         assert user.password is None
+        user_bu = session.query(UserBusinessUnit).filter(
+            UserBusinessUnit.user == user.id).all()
+        for ub in user_bu:
+            assert ub.user == user.id
+            assert ub.role.value == UserBusinessUnitRole.admin.value
 
     @pytest.mark.asyncio
     async def test_get_user_by_invitation_id(
@@ -355,7 +390,11 @@ class TestUserEndpoint():
                 'email': 'admin@akvo.org',
                 'role': UserRole.admin.value,
                 'active': 1,
-                'business_unit_detail': None,
+                'business_unit_detail': [{
+                    'id': 1,
+                    'name': 'Acme Technologies Sales Division',
+                    'role': UserBusinessUnitRole.admin.value,
+                }],
                 'organisation_detail': {'id': 1, 'name': 'Akvo'},
                 'tags_count': 0,
                 'cases_count': 0

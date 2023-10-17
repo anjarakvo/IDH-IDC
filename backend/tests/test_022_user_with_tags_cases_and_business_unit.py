@@ -102,7 +102,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
             'role': UserRole.super_admin.value,
             'active': True,
             'business_unit_detail': [{
-                'id': 2,
+                'id': 3,
                 'name': 'Acme Technologies Sales Division',
                 'role': 'member'
             }],
