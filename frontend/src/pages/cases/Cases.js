@@ -58,7 +58,7 @@ const Cases = () => {
       ),
     },
   ];
-  const onSearch = (value, _e) => console.info(value);
+  const onSearch = (value) => console.info(value);
 
   return (
     <ContentLayout
