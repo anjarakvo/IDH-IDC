@@ -12,6 +12,8 @@ from routes.segment import segment_route
 from routes.segment_answer import segment_answer_route
 from models.business_unit import BusinessUnit
 from models.commodity_category import CommodityCategory
+from models.currency import Currency
+from models.country import Country
 
 
 app = FastAPI(
@@ -43,20 +45,26 @@ def generate_config_file() -> None:
     business_units = session.query(BusinessUnit).all() or []
     if business_units:
         business_units = [bu.serialize for bu in business_units]
-    else:
-        business_units = []
     commodity_categories = session.query(CommodityCategory).all() or []
     if commodity_categories:
         commodity_categories = [
             cc.serialize_with_commodities for cc in commodity_categories
         ]
-    else:
-        commodity_categories = []
+    currencies = session.query(Currency).all() or []
+    if currencies:
+        currencies = [c.to_dropdown for c in currencies]
+    countries = (
+        session.query(Country).filter(Country.parent == None).all() or []  # noqa
+    )
+    if countries:
+        countries = [c.to_dropdown for c in countries]
     min_js += "var master={};".format(
         str(
             {
                 "business_units": business_units,
                 "commodity_categories": commodity_categories,
+                "currencies": currencies,
+                "countries": countries,
             }
         )
     )

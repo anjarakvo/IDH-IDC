@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
-    <div className="landing-container">
+    <div className="landing-container" id="landing">
       <Row
         data-testid="jumbotron-wrapper"
         justify="center"
@@ -24,7 +24,7 @@ const Landing = () => {
           </h3>
           <Link
             data-testid="button-learn-more"
-            className="button button-learn-more"
+            className="button button-yellow"
           >
             Learn More
           </Link>
@@ -50,7 +50,7 @@ const Landing = () => {
           </p>
           <Link
             data-testid="button-learn-more-2"
-            className="button button-learn-more"
+            className="button button-secondary"
           >
             Learn More
           </Link>

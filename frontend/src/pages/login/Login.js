@@ -68,8 +68,8 @@ const Login = () => {
   };
 
   return (
-    <ContentLayout>
-      <Row align="center" className="login-container">
+    <ContentLayout wrapperId="login">
+      <Row align="middle" className="login-container">
         <Col span={10} align="start" className="login-form-wrapper">
           <div className="page-title-container">
             <Typography.Title>Income Driver Calculator</Typography.Title>
@@ -138,7 +138,6 @@ const Login = () => {
           className="login-image-wrapper"
         >
           <Image
-            height={800}
             src={ImageRight}
             preview={false}
             className="login-image"

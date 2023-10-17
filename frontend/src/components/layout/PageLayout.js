@@ -1,17 +1,17 @@
-import React from "react";
-import { Layout, Menu, Row, Col, Space, Image } from "antd";
+import React, { useState } from "react";
+import { Layout, Row, Col, Space, Image } from "antd";
 import { useCookies } from "react-cookie";
-import { FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { UserState } from "../../store";
 import { Link, useLocation } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
 import LogoWhite from "../../assets/images/logo-white.png";
 
 const pagesWithNoSider = ["/", "/login", "/welcome"];
-const { Header, Content, Sider } = Layout;
+const { Header, Content } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
-  const location = useLocation();
-  const pathname = location?.pathname;
+  const [loading, setLoading] = useState(false);
+  const [, , removeCookie] = useCookies(["AUTH_TOKEN"]);
 
   const adminRole = ["super_admin", "admin"];
   const allUserRole = [...adminRole, "editor", "viewer", "user"];
@@ -54,63 +54,48 @@ const PageHeader = ({ isLoggedIn }) => {
       }}
     >
       <Row justify="center" align="middle" style={{ width: "100%" }}>
-        <Col span={4} align="start">
-          <Image src={LogoWhite} height={65} preview={false} />
+        <Col span={6} align="start">
+          <Link to="/">
+            <Image src={LogoWhite} height={65} preview={false} />
+          </Link>
         </Col>
-        <Col span={20} align="end" testid="nav-container">
-          {!isLoggedIn || pathname === "/" ? (
-            <Space size="large" className="navigation-container">
-              <Link>About Us</Link>
+        <Col span={18} align="end" testid="nav-container">
+          <Space size="large" className="navigation-container">
+            <Link to="/about">About IDC</Link>
+            {isLoggedIn ? <Link to="/cases">Cases</Link> : ""}
+            <Link to="/explore">Explore Studies</Link>
+            {isLoggedIn ? <Link to="/admin">Admin</Link> : ""}
+            {!isLoggedIn ? (
               <Link className="nav-sign-in" to="/login">
+                {" "}
                 Sign in
               </Link>
-            </Space>
-          ) : (
-            ""
-          )}
+            ) : (
+              <Link
+                className="nav-sign-in"
+                onClick={() => {
+                  removeCookie("AUTH_TOKEN");
+                  setLoading(true);
+                  setTimeout(() => {
+                    window.location.reload();
+                    setLoading(false);
+                  }, 300);
+                }}
+              >
+                {loading ? (
+                  <Space>
+                    <LoadingOutlined />
+                    Sign out
+                  </Space>
+                ) : (
+                  "Sign out"
+                )}
+              </Link>
+            )}
+          </Space>
         </Col>
       </Row>
     </Header>
-  );
-};
-
-const PageSider = () => {
-  const sideMenuItems = [
-    {
-      key: `project`,
-      icon: <FolderOpenOutlined />,
-      label: "Project",
-      // children: new Array(4).fill(null).map((_, j) => {
-      //   const subKey = index * 4 + j + 1;
-      //   return {
-      //     key: subKey,
-      //     label: `option${subKey}`,
-      //   };
-      // }),
-    },
-    {
-      key: `inputs`,
-      icon: <CheckCircleOutlined />,
-      label: "Inputs",
-    },
-    {
-      key: `outputs`,
-      icon: <CheckCircleOutlined />,
-      label: "Outputs",
-    },
-  ];
-
-  return (
-    <Sider testid="layout-sider" width={235}>
-      <Menu
-        testid="menu-container"
-        mode="inline"
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
-        style={{ height: "100%", borderRight: 0 }}
-        items={sideMenuItems}
-      />
-    </Sider>
   );
 };
 
@@ -138,7 +123,6 @@ const PageLayout = ({ children }) => {
     <Layout>
       <PageHeader isLoggedIn={isLoggedIn} />
       <Layout>
-        <PageSider />
         <Layout>
           <Content testid="layout-content" className="content-container">
             {children}

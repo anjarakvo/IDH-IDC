@@ -1,6 +1,5 @@
 from db.connection import Base
 from sqlalchemy import Column, ForeignKey, Integer, String
-from sqlalchemy.orm import relationship
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
@@ -13,28 +12,20 @@ class CurrencyDict(TypedDict):
     abbreviation: str
 
 
+class CurrencyDropdown(TypedDict):
+    value: int
+    label: str
+
+
 class Currency(Base):
-    __tablename__ = 'currency'
+    __tablename__ = "currency"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    country = Column(Integer, ForeignKey('country.id'), nullable=False)
+    country = Column(Integer, ForeignKey("country.id"), nullable=False)
     name = Column(String, nullable=False)
     abbreviation = Column(String, nullable=False)
 
-    country_detail = relationship(
-        'Country',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='country_currency'
-    )
-
-    def __init__(
-        self,
-        id: Optional[int],
-        country: int,
-        name: str,
-        abbreviation: str
-    ):
+    def __init__(self, id: Optional[int], country: int, name: str, abbreviation: str):
         self.id = id
         self.country = country
         self.name = name
@@ -52,9 +43,16 @@ class Currency(Base):
             "abbreviation": self.abbreviation,
         }
 
+    @property
+    def to_dropdown(self) -> CurrencyDropdown:
+        return {
+            "value": self.id,
+            "label": f"{self.name} ({self.abbreviation})",
+        }
+
 
 class CurrencyBase(BaseModel):
     id: int
-    country: id
+    country: int
     name: str
     abbreviation: str

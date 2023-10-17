@@ -7,6 +7,7 @@ import { PageLayout } from "./components/layout";
 import { Home } from "./pages/home";
 import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
+import { Cases, Case } from "./pages/cases";
 import { Dashboard } from "./pages/dashboard";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
@@ -70,6 +71,8 @@ const App = () => {
           <Route exact path="/home" element={<Home />} />
           <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/welcome" element={<Welcome />} />
+          <Route exact path="/cases" element={<Cases />} />
+          <Route exact path="/cases/new" element={<Case />} />
         </Route>
         <Route exact path="/" element={<Landing />} />
         <Route exact path="/login" element={<Login />} />
