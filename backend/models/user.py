@@ -25,18 +25,31 @@ cases_desc = "JSON stringify of [{'case': 1, 'permission': 'edit/view'}]"
 bus_desc = "JSON stringify of [{'business_unit': 1, 'role': 'admin/member'}]"
 
 
-def json_load(value: Optional[str] = None):
-    if value:
-        return json.loads(value)
-    return value
-
-
 class UserRole(enum.Enum):
     super_admin = "super_admin"
     admin = "admin"
     editor = "editor"
     viewer = "viewer"
     user = "user"
+
+
+def json_load(value: Optional[str] = None):
+    if value:
+        return json.loads(value)
+    return value
+
+
+def validate_business_units(info: ValidationInfo, value: Optional[str] = None):
+    business_units_required = [
+        UserRole.admin.value, UserRole.editor.value, UserRole.viewer.value
+    ]
+    role = info.data.get("role", None)
+    # business unit required for admin role
+    if role and role.value in business_units_required and not value:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"business_units required for {role.value} role")
+    return json_load(value=value)
 
 
 class UserInfo(TypedDict):
@@ -236,13 +249,8 @@ class UserBase(BaseModel):
     @field_validator("business_units")
     @classmethod
     def validate_business_units(cls, value, info: ValidationInfo) -> dict:
-        role = info.data.get("role", None)
-        # business unit required for admin role
-        if role and role.value == UserRole.admin.value and not value:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Business Unit required for admin role")
-        return json_load(value=value)
+        value = validate_business_units(value=value, info=info)
+        return value
 
     @classmethod
     def as_form(
@@ -299,13 +307,8 @@ class UserUpdateBase(BaseModel):
     @field_validator("business_units")
     @classmethod
     def validate_business_units(cls, value, info: ValidationInfo) -> dict:
-        role = info.data.get("role", None)
-        # business unit required for admin role
-        if role and role.value == UserRole.admin.value and not value:
-            raise HTTPException(
-                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                detail="Business Unit required for admin role")
-        return json_load(value=value)
+        value = validate_business_units(value=value, info=info)
+        return value
 
     @classmethod
     def as_form(
