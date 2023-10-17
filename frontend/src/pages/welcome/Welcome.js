@@ -77,16 +77,17 @@ const Welcome = () => {
                           data-testid={`${cm.testid}-icon`}
                         />
                       </Col>
-                      <Col span={20} className="text-wrapper">
+                      <Col span={16} className="text-wrapper">
                         <h4 data-testid={`${cm.testid}-name`}>{cm.name}</h4>
                         <p data-testid={`${cm.testid}-description`}>
                           {cm.description}
                         </p>
                       </Col>
-                      <Col span={2} className="button-wrapper">
+                      <Col span={6} className="button-wrapper" align="end">
                         <Button
                           data-testid={`${cm.testid}-button`}
                           className="button-green"
+                          style={{ float: "right", marginRight: 20 }}
                         >
                           Explore
                         </Button>
