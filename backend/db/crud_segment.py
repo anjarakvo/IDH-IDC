@@ -12,7 +12,7 @@ def add_segment(
     for payload in payloads:
         segment = Segment(
             name=payload.name,
-            project=payload.project,
+            case=payload.case,
             target=payload.target,
             household_size=payload.household_size
         )

@@ -1,4 +1,4 @@
-"""create project crop table
+"""create case commodity table
 
 Revision ID: aabb56bb921a
 Revises: 718e76de8207
@@ -20,40 +20,40 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'project_crop',
+        'case_commodity',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
-        sa.Column('crop', sa.Integer(), sa.ForeignKey('crop.id')),
+        sa.Column('case', sa.Integer(), sa.ForeignKey('case.id')),
+        sa.Column('commodity', sa.Integer(), sa.ForeignKey('commodity.id')),
         sa.Column(
-            'focus_crop', sa.SmallInteger(),
+            'focus_commodity', sa.SmallInteger(),
             server_default='0', nullable=False),
         sa.Column(
             'breakdown', sa.SmallInteger(),
             server_default='0', nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['project'], ['project.id'],
-            name='project_crop_project_constraint',
+            ['case'], ['case.id'],
+            name='case_commodity_case_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
-            ['crop'], ['crop.id'],
-            name='project_crop_crop_constraint',
+            ['commodity'], ['commodity.id'],
+            name='case_commodity_commodity_constraint',
             ondelete='CASCADE'),
         sa.UniqueConstraint(
-            'project', 'crop',
-            name='project_crop_unique')
+            'case', 'commodity',
+            name='case_commodity_unique')
     )
     op.create_index(
-        op.f('ix_project_crop_id'), 'project_crop',
+        op.f('ix_case_commodity_id'), 'case_commodity',
         ['id'], unique=True)
 
 
 def downgrade() -> None:
     op.drop_index(
-        op.f('ix_project_crop_id'), table_name='project_crop')
+        op.f('ix_case_commodity_id'), table_name='case_commodity')
     op.drop_constraint(
-        'project_crop_unique',
-        'project_crop',
+        'case_commodity_unique',
+        'case_commodity',
         type_='unique'
     )
-    op.drop_table('project_crop')
+    op.drop_table('case_commodity')

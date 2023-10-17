@@ -8,7 +8,7 @@ from pydantic import BaseModel
 
 class SegmentDict(TypedDict):
     id: int
-    project: int
+    case: int
     name: str
     target: Optional[float]
     household_size: Optional[float]
@@ -25,28 +25,28 @@ class Segment(Base):
     __tablename__ = 'segment'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    project = Column(Integer, ForeignKey('project.id'))
+    case = Column(Integer, ForeignKey('case.id'))
     name = Column(String, nullable=False)
     target = Column(Float, nullable=True)
     household_size = Column(Float, nullable=True)
 
-    project_detail = relationship(
-        'Project',
+    case_detail = relationship(
+        'Case',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='project_segments'
+        back_populates='case_segments'
     )
 
     def __init__(
         self,
         name: str,
-        project: int,
+        case: int,
         target: Optional[float] = None,
         household_size: Optional[float] = None,
         id: Optional[int] = None,
     ):
         self.id = id
-        self.project = project
+        self.case = case
         self.name = name
         self.target = target
         self.household_size = household_size
@@ -58,7 +58,7 @@ class Segment(Base):
     def serialize(self) -> SegmentDict:
         return {
             "id": self.id,
-            "project": self.project,
+            "case": self.case,
             "name": self.name,
             "target": self.target,
             "household_size": self.household_size,
@@ -76,6 +76,6 @@ class Segment(Base):
 
 class SegmentBase(BaseModel):
     name: str
-    project: int
+    case: int
     target: Optional[float] = None
     household_size: Optional[float] = None

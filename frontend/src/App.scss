@@ -18,6 +18,8 @@
     height: 5rem;
     background: $primary-color;
     padding: 0.5rem $default-padding-size;
+    display: flex;
+    align-items: center;
 
     .logo {
       width: 9rem;

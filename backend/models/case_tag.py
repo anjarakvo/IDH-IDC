@@ -5,41 +5,41 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class ProjectTag(Base):
-    __tablename__ = 'project_tag'
+class CaseTag(Base):
+    __tablename__ = 'case_tag'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    project = Column(Integer, ForeignKey('project.id'), nullable=False)
+    case = Column(Integer, ForeignKey('case.id'), nullable=False)
     tag = Column(Integer, ForeignKey('tag.id'), nullable=False)
 
-    # project_detail = relationship(
-    #     'Project',
+    # case_detail = relationship(
+    #     'Case',
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     backref='project_tag'
+    #     backref='case_tag'
     # )
-    project_tag_detail = relationship(
+    case_tag_detail = relationship(
         'Tag',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='tag_projects'
+        back_populates='tag_cases'
     )
 
     def __init__(
         self,
-        project: int,
+        case: int,
         tag: Optional[int] = None,
         id: Optional[int] = None,
     ):
         self.id = id
-        self.project = project
+        self.case = case
         self.tag = tag
 
     def __repr__(self) -> int:
-        return f"<ProjectTag {self.id}>"
+        return f"<CaseTag {self.id}>"
 
 
-class ProjectTagBase(BaseModel):
+class CaseTagBase(BaseModel):
     id: int
-    project: int
+    case: int
     tag: int

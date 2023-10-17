@@ -21,17 +21,17 @@ question_route = APIRouter()
 @question_route.post(
     "/questions",
     response_model=List[QuestionGroupListDict],
-    summary="get question by crop ID",
-    name="question:get_by_crops",
+    summary="get question by commodity ID",
+    name="question:get_by_commodities",
     tags=["Question"]
 )
-def get_question_by_crop_id(
+def get_question_by_commodity_id(
     req: Request,
     payload: List[QuestionGroupParam] = Body(),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    questions = crud_question.get_question_by_crop(
+    questions = crud_question.get_question_by_commodity(
         session=session, params=payload
     )
     return questions

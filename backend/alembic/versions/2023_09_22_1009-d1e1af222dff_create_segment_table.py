@@ -22,18 +22,18 @@ def upgrade() -> None:
     op.create_table(
         'segment',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
+        sa.Column('case', sa.Integer(), sa.ForeignKey('case.id')),
         sa.Column('name', sa.String(), nullable=False),
         sa.Column('target', sa.Float(), nullable=True),
         sa.Column('household_size', sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['project'], ['project.id'],
-            name='segment_project_constraint',
+            ['case'], ['case.id'],
+            name='segment_case_constraint',
             ondelete='CASCADE'),
         sa.UniqueConstraint(
-            'project', 'name',
-            name='project_segment_name_unique')
+            'case', 'name',
+            name='case_segment_name_unique')
     )
     op.create_index(
         op.f('ix_segment_id'), 'segment',
@@ -44,7 +44,7 @@ def downgrade() -> None:
     op.drop_index(
         op.f('ix_segment_id'), table_name='segment')
     op.drop_constraint(
-        'project_segment_name_unique',
+        'case_segment_name_unique',
         'segment',
         type_='unique'
     )

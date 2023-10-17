@@ -1,4 +1,4 @@
-"""create user project access table
+"""create user case access table
 
 Revision ID: 718e76de8207
 Revises: 76e7ed4bab85
@@ -20,34 +20,42 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'user_project_access',
+        'user_case_access',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('user', sa.Integer(), sa.ForeignKey('user.id')),
-        sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
+        sa.Column('case', sa.Integer(), sa.ForeignKey('case.id')),
+        sa.Column(
+            'permission',
+            sa.Enum(
+                'edit',
+                'view',
+                name='user_case_access_permission'
+            ), nullable=False),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
             ['user'], ['user.id'],
-            name='user_project_access_user_constraint',
+            name='user_case_access_user_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
-            ['project'], ['project.id'],
-            name='user_project_access_project_constraint',
+            ['case'], ['case.id'],
+            name='user_case_access_case_constraint',
             ondelete='CASCADE'),
         sa.UniqueConstraint(
-            'user', 'project',
-            name='user_project_access_unique')
+            'user', 'case',
+            name='user_case_access_unique')
     )
     op.create_index(
-        op.f('ix_user_project_access_id'), 'user_project_access',
+        op.f('ix_user_case_access_id'), 'user_case_access',
         ['id'], unique=True)
 
 
 def downgrade() -> None:
     op.drop_index(
-        op.f('ix_user_project_access_id'), table_name='user_project_access')
+        op.f('ix_user_case_access_id'), table_name='user_case_access')
     op.drop_constraint(
-        'user_project_access_unique',
-        'user_project_access',
+        'user_case_access_unique',
+        'user_case_access',
         type_='unique'
     )
-    op.drop_table('user_project_access')
+    op.drop_table('user_case_access')
+    op.execute('DROP TYPE user_case_access_permission')

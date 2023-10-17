@@ -6,39 +6,39 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel
 
 
-class OrganisationDict(TypedDict):
+class BusinessUnitDict(TypedDict):
     id: int
     name: str
 
 
-class Organisation(Base):
-    __tablename__ = 'organisation'
+class BusinessUnit(Base):
+    __tablename__ = 'business_unit'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
 
-    users = relationship(
-        'User',
+    business_unit_users = relationship(
+        'UserBusinessUnit',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='user_organisation'
+        back_populates="business_unit_detail"
     )
 
-    def __init__(self, id: Optional[int], name: str):
+    def __init__(self, name: str, id: Optional[int] = None):
         self.id = id
         self.name = name
 
     def __repr__(self) -> int:
-        return f"<Organisation {self.id}>"
+        return f"<BusinessUnit {self.id}>"
 
     @property
-    def serialize(self) -> OrganisationDict:
+    def serialize(self) -> BusinessUnitDict:
         return {
             "id": self.id,
-            "name": self.name
+            "name": self.name,
         }
 
 
-class OrganisationBase(BaseModel):
+class BusinessUnitBase(BaseModel):
     id: int
     name: str
