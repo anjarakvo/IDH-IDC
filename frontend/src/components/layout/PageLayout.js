@@ -13,6 +13,36 @@ const PageHeader = ({ isLoggedIn }) => {
   const location = useLocation();
   const pathname = location?.pathname;
 
+  const adminRole = ["super_admin", "admin"];
+  const allUserRole = [...adminRole, "editor", "viewer", "user"];
+
+  const menus = [
+    {
+      testid: "nav-menu-about",
+      name: "About IDC",
+      path: null,
+      role: allUserRole,
+    },
+    {
+      testid: "nav-menu-cases",
+      name: "Cases",
+      path: null,
+      role: allUserRole,
+    },
+    {
+      testid: "nav-menu-explore-studies",
+      name: "Explore Studies",
+      path: null,
+      role: allUserRole,
+    },
+    {
+      testid: "nav-menu-admin",
+      name: "Admin",
+      path: null,
+      role: allUserRole,
+    },
+  ];
+
   return (
     <Header
       testid="layout-header"
@@ -24,17 +54,10 @@ const PageHeader = ({ isLoggedIn }) => {
       }}
     >
       <Row justify="center" align="middle" style={{ width: "100%" }}>
-        <Col span={14} align="start">
+        <Col span={4} align="start">
           <Image src={LogoWhite} height={65} preview={false} />
-          {/* {isLoggedIn ? (
-            <div className="title">
-              <h3>Explore Cases</h3>
-            </div>
-          ) : (
-            ""
-          )} */}
         </Col>
-        <Col span={10} align="end" testid="nav-container">
+        <Col span={20} align="end" testid="nav-container">
           {!isLoggedIn || pathname === "/" ? (
             <Space size="large" className="navigation-container">
               <Link>About Us</Link>
