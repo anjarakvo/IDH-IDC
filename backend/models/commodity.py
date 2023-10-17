@@ -6,54 +6,54 @@ from typing_extensions import TypedDict
 from pydantic import BaseModel
 
 
-class CropDict(TypedDict):
+class CommodityDict(TypedDict):
     id: int
-    crop_category: int
+    commodity_category: int
     name: str
 
 
-class SimplifiedCropDict(TypedDict):
+class SimplifiedCommodityDict(TypedDict):
     id: int
     name: str
 
 
-class Crop(Base):
-    __tablename__ = 'crop'
+class Commodity(Base):
+    __tablename__ = 'commodity'
 
     id = Column(Integer, primary_key=True)
-    crop_category = Column(Integer, ForeignKey('crop_category.id'))
+    commodity_category = Column(Integer, ForeignKey('commodity_category.id'))
     name = Column(String, nullable=False, unique=True)
 
-    crop_category_detail = relationship(
-        'CropCategory',
+    commodity_category_detail = relationship(
+        'CommodityCategory',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='crops'
+        back_populates='commodities'
     )
 
     def __init__(
         self,
         name: str,
-        crop_category: Optional[int] = None,
+        commodity_category: Optional[int] = None,
         id: Optional[int] = None,
     ):
         self.id = id
-        self.crop_category = crop_category
+        self.commodity_category = commodity_category
         self.name = name
 
     def __repr__(self) -> int:
-        return f"<Crop {self.id}>"
+        return f"<Commodity {self.id}>"
 
     @property
-    def serialize(self) -> CropDict:
+    def serialize(self) -> CommodityDict:
         return {
             "id": self.id,
-            "crop_category": self.crop_category,
+            "commodity_category": self.commodity_category,
             "name": self.name,
         }
 
     @property
-    def simplify(self) -> SimplifiedCropDict:
+    def simplify(self) -> SimplifiedCommodityDict:
         return {
             "id": self.id,
             "name": self.name,
@@ -61,14 +61,15 @@ class Crop(Base):
 
     @property
     def to_question_list(self):
+        questions = self.commodity_category_detail.commodity_category_questions
         return {
-            "crop_id": self.id,
-            "crop_name": self.name,
-            "questions": self.crop_category_detail.crop_category_questions,
+            "commodity_id": self.id,
+            "commodity_name": self.name,
+            "questions": questions,
         }
 
 
-class CropBase(BaseModel):
+class CommodityBase(BaseModel):
     id: int
-    crop_category: int
+    commodity_category: int
     name: str

@@ -34,6 +34,18 @@ describe("Login page", () => {
     expect(getByTestId("button-login")).toBeInTheDocument();
   });
 
+  it("should have right image", () => {
+    const { getByTestId } = render(
+      <Router>
+        <PageLayout>
+          <Login />
+        </PageLayout>
+      </Router>
+    );
+    expect(getByTestId("login-image-wrapper")).toBeInTheDocument();
+    expect(getByTestId("login-image")).toBeInTheDocument();
+  });
+
   it("should validate email & password input", async () => {
     const { getByTestId, getByText } = render(
       <Router>

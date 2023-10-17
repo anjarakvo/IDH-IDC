@@ -15,7 +15,7 @@ class ReferenceDataType(enum.Enum):
 class ReferenceDataDict(TypedDict):
     id: int
     country: int
-    crop: int
+    commodity: int
     type: ReferenceDataType
     year: int
     farmer_production: Optional[float]
@@ -29,7 +29,7 @@ class ReferenceData(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     country = Column(Integer, ForeignKey("country.id"))
-    crop = Column(Integer, ForeignKey("crop.id"))
+    commodity = Column(Integer, ForeignKey("commodity.id"))
     type = Column(Enum(ReferenceDataType), nullable=False)
     year = Column(Integer, nullable=True)
     farm_size = Column(
@@ -50,18 +50,18 @@ class ReferenceData(Base):
         passive_deletes=True,
         backref='country_reference_data'
     )
-    crop_detail = relationship(
-        'Crop',
+    commodity_detail = relationship(
+        'Commodity',
         cascade="all, delete",
         passive_deletes=True,
-        backref='crop_reference_data'
+        backref='commodity_reference_data'
     )
 
     def __init__(
         self,
         id: Optional[int],
         country: int,
-        crop: int,
+        commodity: int,
         type: ReferenceDataType,
         year: int,
         farmer_production: Optional[float],
@@ -71,7 +71,7 @@ class ReferenceData(Base):
     ):
         self.id = id
         self.country = country
-        self.crop = crop
+        self.commodity = commodity
         self.type = type
         self.year = year
         self.farmer_production = farmer_production
@@ -87,7 +87,7 @@ class ReferenceData(Base):
         return {
             "id": self.id,
             "country": self.country,
-            "crop": self.crop,
+            "commodity": self.commodity,
             "type": self.type,
             "year": self.year,
             "farmer_production": self.farmer_production,
@@ -100,13 +100,10 @@ class ReferenceData(Base):
 class ReferenceDataBase(BaseModel):
     id: int
     country: int
-    crop: int
+    commodity: int
     type: ReferenceDataType
     year: int
     farmer_production: Optional[float] = None
     farmgate_price: Optional[float] = None
     farmer_expenses: Optional[float] = None
     diversified_income: Optional[float] = None
-
-    class Config:
-        from_attributes = True

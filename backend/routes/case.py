@@ -1,4 +1,4 @@
-import db.crud_project as crud_project
+import db.crud_case as crud_case
 
 from math import ceil
 from fastapi import (
@@ -10,105 +10,105 @@ from fastapi.security import (
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
-from models.project import (
-    ProjectBase, ProjectDict, PaginatedProjectResponse,
-    ProjectDetailDict
+from models.case import (
+    CaseBase, CaseDict, PaginatedCaseResponse,
+    CaseDetailDict
 )
 from middleware import verify_admin
 
 security = HTTPBearer()
-project_route = APIRouter()
+case_route = APIRouter()
 
 
-@project_route.post(
-    "/project",
-    response_model=ProjectDict,
-    summary="create project",
-    name="project:create",
-    tags=["Project"]
+@case_route.post(
+    "/case",
+    response_model=CaseDict,
+    summary="create case",
+    name="case:create",
+    tags=["Case"]
 )
-def create_project(
+def create_case(
     req: Request,
-    payload: ProjectBase,
+    payload: CaseBase,
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
     user = verify_admin(session=session, authenticated=req.state.authenticated)
-    project = crud_project.add_project(
+    case = crud_case.add_case(
         session=session, payload=payload, user=user)
-    return project.serialize
+    return case.serialize
 
 
-@project_route.get(
-    "/project",
-    response_model=PaginatedProjectResponse,
-    summary="get all project",
-    name="project:get_all",
-    tags=["Project"]
+@case_route.get(
+    "/case",
+    response_model=PaginatedCaseResponse,
+    summary="get all case",
+    name="case:get_all",
+    tags=["Case"]
 )
-def get_all_project(
+def get_all_case(
     req: Request,
     page: int = 1,
     limit: int = 10,
     search: Optional[str] = None,
     tags: Optional[List[int]] = Query(None),
-    focus_crop: Optional[List[int]] = Query(None),
+    focus_commodity: Optional[List[int]] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    projects = crud_project.get_all_project(
+    cases = crud_case.get_all_case(
         session=session, search=search,
-        tags=tags, focus_crops=focus_crop,
+        tags=tags, focus_commodities=focus_commodity,
         skip=(limit * (page - 1)), limit=limit
     )
-    if not projects:
+    if not cases:
         raise HTTPException(status_code=404, detail="Not found")
-    total = projects["count"]
-    projects = [project.to_project_list for project in projects["data"]]
+    total = cases["count"]
+    cases = [case.to_case_list for case in cases["data"]]
     total_page = ceil(total / limit) if total > 0 else 0
     if total_page < page:
         raise HTTPException(status_code=404, detail="Not found")
     return {
         'current': page,
-        'data': projects,
+        'data': cases,
         'total': total,
         'total_page': total_page
     }
 
 
-@project_route.put(
-    "/project/{project_id:path}",
-    response_model=ProjectDict,
-    summary="update project by id",
-    name="project:update",
-    tags=["Project"]
+@case_route.put(
+    "/case/{case_id:path}",
+    response_model=CaseDict,
+    summary="update case by id",
+    name="case:update",
+    tags=["Case"]
 )
-def update_Project(
+def update_Case(
     req: Request,
-    project_id: int,
-    payload: ProjectBase,
+    case_id: int,
+    payload: CaseBase,
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
     verify_admin(session=session, authenticated=req.state.authenticated)
-    project = crud_project.update_project(
-        session=session, id=project_id, payload=payload)
-    return project.serialize
+    case = crud_case.update_case(
+        session=session, id=case_id, payload=payload)
+    return case.serialize
 
 
-@project_route.get(
-    "/project/{project_id:path}",
-    response_model=ProjectDetailDict,
-    summary="get project by id",
-    name="project:get_by_id",
-    tags=["Project"]
+@case_route.get(
+    "/case/{case_id:path}",
+    response_model=CaseDetailDict,
+    summary="get case by id",
+    name="case:get_by_id",
+    tags=["Case"]
 )
-def get_project_by_id(
+def get_case_by_id(
     req: Request,
-    project_id: int,
+    case_id: int,
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
     verify_admin(session=session, authenticated=req.state.authenticated)
-    project = crud_project.get_project_by_id(session=session, id=project_id)
-    return project.to_project_detail
+    case = crud_case.get_case_by_id(session=session, id=case_id)
+    return case.to_case_detail

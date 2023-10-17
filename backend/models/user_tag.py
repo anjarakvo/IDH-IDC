@@ -43,6 +43,3 @@ class UserTagBase(BaseModel):
     id: int
     user: int
     tag: int
-
-    class Config:
-        from_attributes = True

@@ -8,7 +8,7 @@ from tests.test_000_main import Acc
 sys.path.append("..")
 
 non_admin_account = Acc(email="support@akvo.org", token=None)
-admin_account = Acc(email="admin@akvo.org", token=None)
+admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestTagRoute():
@@ -26,7 +26,7 @@ class TestTagRoute():
         assert res.status_code == 404
 
     @pytest.mark.asyncio
-    async def test_create_tag_without_project_list(
+    async def test_create_tag_without_case_list(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = {
@@ -58,11 +58,11 @@ class TestTagRoute():
             "id": 1,
             "name": "Tag 1",
             "description": "Lorem ipsum...",
-            "projects_count": 0
+            "cases_count": 0
         }
 
     @pytest.mark.asyncio
-    async def test_get_all_tag_without_project_list(
+    async def test_get_all_tag_without_case_list(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # with normal user cred
@@ -84,14 +84,14 @@ class TestTagRoute():
                 "id": 1,
                 "name": "Tag 1",
                 "description": "Lorem ipsum...",
-                "projects_count": 0
+                "cases_count": 0
             }],
             "total": 1,
             "total_page": 1,
         }
 
     @pytest.mark.asyncio
-    async def test_get_tag_by_id_without_project_list(
+    async def test_get_tag_by_id_without_case_list(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # without cred
@@ -120,11 +120,11 @@ class TestTagRoute():
             "id": 1,
             "name": "Tag 1",
             "description": "Lorem ipsum...",
-            "projects_count": 0
+            "cases_count": 0
         }
 
     @pytest.mark.asyncio
-    async def test_update_tag_without_project_list(
+    async def test_update_tag_without_case_list(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = {
@@ -156,5 +156,5 @@ class TestTagRoute():
             "id": 1,
             "name": "Tag Name",
             "description": "Tag Description",
-            "projects_count": 0
+            "cases_count": 0
         }

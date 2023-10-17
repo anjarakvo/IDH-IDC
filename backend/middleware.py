@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from typing import Optional
 from sqlalchemy.orm import Session
 
-from models.user import UserWithOrg
+from models.user import UserInfo, UserRole
 from db import crud_user
 
 # to get a string like this run:
@@ -28,7 +28,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 class Token(BaseModel):
     access_token: str
     token_type: str
-    user: UserWithOrg
+    user: UserInfo
 
 
 class TokenData(BaseModel):
@@ -98,9 +98,20 @@ def verify_user(session: Session, authenticated):
     return user
 
 
+def verify_super_admin(session: Session, authenticated):
+    user = verify_user(session=session, authenticated=authenticated)
+    if user.role != UserRole.super_admin:
+        raise HTTPException(
+            status_code=403,
+            detail="You don't have data access")
+    return user
+
+
 def verify_admin(session: Session, authenticated):
     user = verify_user(session=session, authenticated=authenticated)
-    if not user.is_admin:
+    if user.role == UserRole.super_admin:
+        return user
+    if user.role != UserRole.admin:
         raise HTTPException(
             status_code=403,
             detail="You don't have data access")

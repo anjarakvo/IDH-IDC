@@ -5,7 +5,7 @@ from sqlalchemy.sql import func
 from typing_extensions import TypedDict
 from typing import Optional, List
 from pydantic import BaseModel
-from models.project_tag import ProjectTag
+from models.case_tag import CaseTag
 
 
 class TagDict(TypedDict):
@@ -19,7 +19,7 @@ class TagListDict(TypedDict):
     id: int
     name: str
     description: Optional[str]
-    projects_count: int
+    cases_count: int
 
 
 class Tag(Base):
@@ -41,11 +41,11 @@ class Tag(Base):
         passive_deletes=True,
         backref='Tags'
     )
-    tag_projects = relationship(
-        ProjectTag,
+    tag_cases = relationship(
+        CaseTag,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='project_tag_detail'
+        back_populates='case_tag_detail'
     )
 
     def __init__(
@@ -75,7 +75,7 @@ class Tag(Base):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "projects_count": len(self.tag_projects)
+            "cases_count": len(self.tag_cases)
         }
 
 
@@ -83,13 +83,13 @@ class TagBase(BaseModel):
     name: str
     id: Optional[int] = None
     description: Optional[str] = None
-    projects: Optional[List[int]] = None
+    cases: Optional[List[int]] = None
 
 
 class UpdateTagBase(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
-    projects: Optional[List[int]] = None
+    cases: Optional[List[int]] = None
 
 
 class PaginatedTagResponse(BaseModel):

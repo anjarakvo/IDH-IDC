@@ -3,9 +3,13 @@ import { ContentLayout } from "../../components/layout";
 
 const Dashboard = () => {
   return (
-    <ContentLayout breadcrumbItems={[{ title: "Dashboard" }]}>
-      <h1>Dashboard</h1>
-    </ContentLayout>
+    <ContentLayout
+      breadcrumbItems={[
+        { title: "Home", href: "/dashboard" },
+        { title: "Dashboard" },
+      ]}
+      title="Dashboard"
+    ></ContentLayout>
   );
 };
 

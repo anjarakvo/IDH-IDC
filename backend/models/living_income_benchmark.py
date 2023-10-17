@@ -70,6 +70,3 @@ class LivingIncomeBenchmarkBase(BaseModel):
     currency: int
     year: int
     value: float
-
-    class Config:
-        from_attributes = True

@@ -1,4 +1,5 @@
 $primary-color: #26605f;
+$muted-color: #b3b3b3;
 $bg-color-grey: #f0f2f5;
 $bg-color-white: #ffffff;
 $yellow-color: #ffc505;
@@ -18,5 +19,12 @@ $default-padding-size: 5rem;
   font-family: "TabletGothicBold";
   src: url("/assets/fonts/TabletGothic-Bold.woff2") format("woff2");
   font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "RocGrotesk";
+  src: url("/assets/fonts/RocGrotesk.otf") format("opentype");
+  font-weight: normal;
   font-style: normal;
 }

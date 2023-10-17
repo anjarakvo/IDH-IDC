@@ -1,7 +1,13 @@
 @import "./variables.scss";
 
 #root {
-  h1,
+  font-family: "TabletGothic";
+
+  h1 {
+    font-family: "RocGrotesk";
+    font-weight: 700;
+  }
+
   h2 {
     font-family: "TabletGothicBold" !important;
   }
@@ -18,10 +24,12 @@
     height: 5rem;
     background: $primary-color;
     padding: 0.5rem $default-padding-size;
+    display: flex;
+    align-items: center;
 
     .logo {
       width: 9rem;
-      height: 2.85rem;
+      height: 4rem;
       background-image: url("/assets/images/logo.png");
       background-size: cover;
       background-repeat: no-repeat;
@@ -53,6 +61,39 @@
     }
   }
 
+  .button {
+    border-radius: 20px;
+    font-weight: 600;
+    color: $primary-color;
+    padding: 12px 18px;
+    min-height: 48px;
+  }
+  .button-yellow {
+    background-color: $yellow-color;
+  }
+  .button-secondary {
+    border: 2px solid $primary-color;
+  }
+  .button-submit {
+    margin: 1rem 0px;
+  }
+
+  .ant-breadcrumb {
+    padding: 0px $default-padding-size;
+  }
+
+  .search-and-add {
+    margin: 1rem 0px;
+    .search {
+      width: 30vw;
+      button {
+        border-color: $primary-color;
+        background-color: $primary-color;
+        color: #ffffff;
+      }
+    }
+  }
+
   aside {
     ul.ant-menu.ant-menu-root.ant-menu-inline.ant-menu-light.css-dev-only-do-not-override-relbw9 {
       padding-top: 12px;
@@ -66,27 +107,35 @@
   }
 
   .content-container {
-    min-height: 100vh;
+    min-height: calc(100vh - 80px);
     background: $bg-color-grey;
 
     .content-card-container {
       .ant-card-body {
-        padding-bottom: 1.5rem;
+        padding: 1.5rem 0px;
+
+        .ant-breadcrumb-link {
+          font-family: "TabletGothic" !important;
+          font-size: 0.95rem;
+          font-weight: 600;
+          color: #8c8c8c;
+        }
 
         .title {
+          padding: 0 $default-padding-size;
           font-size: 1.5rem;
           font-weight: 600;
           padding-top: 4px;
         }
 
         .subTitle {
-          padding-top: 4px;
+          padding: 0 $default-padding-size;
         }
       }
     }
 
     .content-wrapper {
-      padding: $default-space-size !important;
+      padding: 0 $default-padding-size 3rem $default-padding-size;
 
       .ant-space {
         width: 100%;
@@ -97,10 +146,37 @@
       }
     }
   }
+  .ant-card {
+    font-family: "TabletGothic" !important;
+    .ant-card-title {
+      font-family: "TabletGothicBold";
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+    .ant-card-body {
+      font-family: "RocGrotesk" !important;
+    }
+  }
 
   .loading-container {
     display: flex;
     justify-content: center;
     align-content: center;
+  }
+  .ant-timeline {
+    font-family: "RocGrotesk";
+    font-weight: bold;
+    .ant-timeline-item {
+      color: $muted-color;
+    }
+    .ant-timeline-item-content {
+      inset-block-start: -3px;
+    }
+    .ant-timeline-item-head {
+      border-color: $muted-color;
+      background-color: transparent;
+      width: 15px;
+      height: 15px;
+    }
   }
 }

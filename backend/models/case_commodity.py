@@ -6,63 +6,63 @@ from pydantic import BaseModel
 from typing_extensions import TypedDict
 
 
-class SimplifiedProjectCropDict(TypedDict):
+class SimplifiedCaseCommodityDict(TypedDict):
     id: int
-    crop: int
+    commodity: int
     breakdown: bool
 
 
-class ProjectCrop(Base):
-    __tablename__ = 'project_crop'
+class CaseCommodity(Base):
+    __tablename__ = 'case_commodity'
 
     id = Column(Integer, primary_key=True, nullable=False)
-    project = Column(Integer, ForeignKey('project.id'))
-    crop = Column(Integer, ForeignKey('crop.id'))
-    focus_crop = Column(SmallInteger, nullable=False, default=0)
+    case = Column(Integer, ForeignKey('case.id'))
+    commodity = Column(Integer, ForeignKey('commodity.id'))
+    focus_commodity = Column(SmallInteger, nullable=False, default=0)
     breakdown = Column(SmallInteger, nullable=False, default=0)
 
-    project_detail = relationship(
-        'Project',
+    case_detail = relationship(
+        'Case',
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='project_crops'
+        back_populates='case_commodities'
     )
-    # crop_detail = relationship(
-    #     'Project',
+    # commodity_detail = relationship(
+    #     'Case',
     #     cascade="all, delete",
     #     passive_deletes=True,
-    #     backref='crop_detail_project_crop'
+    #     backref='commodity_detail_case_commodity'
     # )
 
     def __init__(
         self,
-        crop: int,
-        project: Optional[int] = None,
+        commodity: int,
+        case: Optional[int] = None,
         id: Optional[int] = None,
-        focus_crop: Optional[int] = 0,
+        focus_commodity: Optional[int] = 0,
         breakdown: Optional[int] = 0,
     ):
         self.id = id
-        self.project = project
-        self.crop = crop
-        self.focus_crop = focus_crop
+        self.case = case
+        self.commodity = commodity
+        self.focus_commodity = focus_commodity
         self.breakdown = breakdown
 
     def __repr__(self) -> int:
-        return f"<ProjectCrop {self.id}>"
+        return f"<CaseCommodity {self.id}>"
 
     @property
     def simplify(self):
         return {
             "id": self.id,
-            "crop": self.crop,
+            "commodity": self.commodity,
             "breakdown": self.breakdown
         }
 
 
-class ProjectCropBase(BaseModel):
+class CaseCommodityBase(BaseModel):
     id: int
-    project: int
-    crop: int
-    focus_crop: Optional[int] = 0
+    case: int
+    commodity: int
+    focus_commodity: Optional[int] = 0
     breakdown: Optional[int] = 0

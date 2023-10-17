@@ -4,16 +4,36 @@ import UserState from "../user";
 describe("UserState", () => {
   it("should initialize with the correct default state", () => {
     const { result } = renderHook(() => UserState.useState());
-    const { id, fullname, email, active, organisation_detail } = result.current;
+    const {
+      id,
+      fullname,
+      email,
+      role,
+      active,
+      organisation_detail,
+      business_unit_detail,
+      tags_count,
+      cases_count,
+    } = result.current;
 
-    expect(id).toBe(null);
+    expect(id).toBe(0);
     expect(fullname).toBe(null);
     expect(email).toBe(null);
-    expect(active).toBe(0);
+    expect(role).toBe(null);
+    expect(active).toBe(false);
     expect(organisation_detail).toEqual({
       id: null,
       name: null,
     });
+    expect(business_unit_detail).toEqual([
+      {
+        id: 0,
+        name: null,
+        role: null,
+      },
+    ]);
+    expect(tags_count).toBe(0);
+    expect(cases_count).toBe(0);
   });
 
   it("should updating the state correctly", () => {
@@ -22,23 +42,53 @@ describe("UserState", () => {
       UserState.update((s) => {
         s.id = 1;
         s.fullname = "John Doe";
-        s.email = "test@test.com";
-        s.active = 1;
+        s.email = "admin@akvo.com";
+        s.role = "admin";
+        s.active = true;
         s.organisation_detail = {
           id: 1,
           name: "Akvo",
         };
+        s.business_unit_detail = [
+          {
+            id: 1,
+            name: "Meat Guy",
+            role: "admin",
+          },
+        ];
+        s.tags_count = 2;
+        s.cases_count = 1;
       });
     });
-    const { id, fullname, email, active, organisation_detail } = result.current;
+    const {
+      id,
+      fullname,
+      email,
+      role,
+      active,
+      organisation_detail,
+      business_unit_detail,
+      tags_count,
+      cases_count,
+    } = result.current;
 
     expect(id).toBe(1);
     expect(fullname).toBe("John Doe");
-    expect(email).toBe("test@test.com");
-    expect(active).toBe(1);
+    expect(email).toBe("admin@akvo.com");
+    expect(role).toBe("admin");
+    expect(active).toBe(true);
     expect(organisation_detail).toEqual({
       id: 1,
       name: "Akvo",
     });
+    expect(business_unit_detail).toEqual([
+      {
+        id: 1,
+        name: "Meat Guy",
+        role: "admin",
+      },
+    ]);
+    expect(tags_count).toBe(2);
+    expect(cases_count).toBe(1);
   });
 });

@@ -1,19 +1,56 @@
 @import "../../variables.scss";
 
-// .content-container {
-// }
+#login {
+  &.content-wrapper {
+    padding: 0px !important;
+    background-image: url("/assets/images/login-clip-path.png") !important;
+    background-repeat: no-repeat;
+    background-position: top right;
+  }
+  .login-container {
+    background-image: url("/assets/images/bg-login.png") !important;
+    background-size: cover;
+    background-repeat: no-repeat;
+    height: 97vh !important;
 
-.login-container {
-  background-image: url("/assets/images/bg-login.png") !important;
-  padding-top: 125px;
-  height: 97vh !important;
+    .login-form-wrapper {
+      padding: 0 0 0 8% !important;
 
-  .page-title-container {
-    h1 {
-      color: $primary-color !important;
+      .page-title-container {
+        h1 {
+          color: $primary-color !important;
+        }
+        h3 {
+          color: rgba(0, 0, 0, 0.45);
+        }
+      }
+
+      .form-login {
+        .ant-form-item {
+          margin-bottom: 24px;
+        }
+        .button-login {
+          border: none;
+          box-shadow: none;
+          border-radius: 20px;
+          background-color: $yellow-color;
+          color: $primary-color;
+          font-weight: 700;
+        }
+      }
     }
-    h3 {
-      color: rgba(0, 0, 0, 0.45);
+
+    .login-image-wrapper {
+      padding-left: 75px;
+      .ant-image.css-dev-only-do-not-override-relbw9 {
+        float: right !important;
+        width: 98%;
+      }
+
+      .login-image {
+        border-radius: 20px 0 0 20px !important;
+        box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      }
     }
   }
 }

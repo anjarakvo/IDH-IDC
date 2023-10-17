@@ -1,4 +1,4 @@
-"""create project tag table
+"""create case tag table
 
 Revision ID: 4acf424dcf01
 Revises: d029ee3fcb2c
@@ -20,34 +20,34 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'project_tag',
+        'case_tag',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
+        sa.Column('case', sa.Integer(), sa.ForeignKey('case.id')),
         sa.Column('tag', sa.Integer(), sa.ForeignKey('tag.id')),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['project'], ['project.id'],
-            name='project_tag_project_constraint',
+            ['case'], ['case.id'],
+            name='case_tag_case_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
             ['tag'], ['tag.id'],
-            name='project_tag_tag_constraint',
+            name='case_tag_tag_constraint',
             ondelete='CASCADE'),
         sa.UniqueConstraint(
-            'project', 'tag',
-            name='project_tag_unique')
+            'case', 'tag',
+            name='case_tag_unique')
     )
     op.create_index(
-        op.f('ix_project_tag_id'), 'project_tag',
+        op.f('ix_case_tag_id'), 'case_tag',
         ['id'], unique=True)
 
 
 def downgrade() -> None:
     op.drop_index(
-        op.f('ix_project_tag_id'), table_name='project_tag')
+        op.f('ix_case_tag_id'), table_name='case_tag')
     op.drop_constraint(
-        'project_tag_unique',
-        'project_tag',
+        'case_tag_unique',
+        'case_tag',
         type_='unique'
     )
-    op.drop_table('project_tag')
+    op.drop_table('case_tag')

@@ -4,10 +4,12 @@ from typing import Optional, List
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from models.user import (
-    User, UserDict, UserBase, UserUpdateBase, UserInvitation
+    User, UserDict, UserBase, UserUpdateBase, UserInvitation,
+    UserRole
 )
-from models.user_project_access import UserProjectAccess
+from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
+from models.user_business_unit import UserBusinessUnit
 
 
 def add_user(
@@ -19,21 +21,34 @@ def add_user(
         password = payload.password.get_secret_value()
     except AttributeError:
         password = payload.password
+    role = (
+        payload.role
+        if invitation_id or payload.role
+        else UserRole.user
+    )
     user = User(
         fullname=payload.fullname,
         email=payload.email,
         password=password if not invitation_id else None,
         organisation=payload.organisation,
+        role=role,
         invitation_id=str(uuid4()) if invitation_id else None
     )
-    if payload.projects:
-        for proj in payload.projects:
-            project_access = UserProjectAccess(project=proj)
-            user.user_project_access.append(project_access)
     if payload.tags:
         for tag in payload.tags:
             user_tag = UserTag(tag=tag)
             user.user_tags.append(user_tag)
+    if payload.cases:
+        for proj in payload.cases:
+            case_access = UserCaseAccess(
+                case=proj["case"], permission=proj["permission"])
+            user.user_case_access.append(case_access)
+    if payload.business_units:
+        for bu in payload.business_units:
+            business_unit = UserBusinessUnit(
+                business_unit=bu["business_unit"],
+                role=bu["role"])
+            user.user_business_units.append(business_unit)
     session.add(user)
     session.commit()
     session.flush()
@@ -47,23 +62,51 @@ def update_user(
     user = get_user_by_id(session=session, id=id)
     user.fullname = payload.fullname
     user.organisation = payload.organisation
-    user.is_admin = 1 if payload.is_admin else 0
     user.is_active = 1 if payload.is_active else 0
+    user.role = payload.role if payload.role else user.role
+    user.all_cases = 1 if payload.all_cases else 0
     if payload.password:
         try:
             password = payload.password.get_secret_value()
         except AttributeError:
             password = payload.password
         user.password = password
-    if payload.projects:
-        for proj in payload.projects:
-            project_access = UserProjectAccess(
-                user=user.id, project=proj)
-            user.user_project_access.append(project_access)
     if payload.tags:
+        # delete prev user tags before update
+        prev_user_tags = session.query(UserTag).filter(
+            UserTag.user == user.id).all()
+        for ut in prev_user_tags:
+            session.delete(ut)
+        # add new user tags
         for tag in payload.tags:
             user_tag = UserTag(user=user.id, tag=tag)
             user.user_tags.append(user_tag)
+    if payload.cases:
+        # delete prev user cases before update
+        prev_user_cases = session.query(UserCaseAccess).filter(
+            UserCaseAccess.user == user.id).all()
+        for uc in prev_user_cases:
+            session.delete(uc)
+        # add new user case access
+        for proj in payload.cases:
+            case_access = UserCaseAccess(
+                user=user.id,
+                case=proj["case"],
+                permission=proj["permission"])
+            user.user_case_access.append(case_access)
+    if payload.business_units:
+        # delete prev user business units before update
+        prev_user_bus = session.query(UserBusinessUnit).filter(
+            UserBusinessUnit.user == user.id).all()
+        for bu in prev_user_bus:
+            session.delete(bu)
+        # add new user business units
+        for bu in payload.business_units:
+            business_unit = UserBusinessUnit(
+                user=user.id,
+                role=bu["role"],
+                business_unit=bu["business_unit"])
+            user.user_business_units.append(business_unit)
     session.commit()
     session.flush()
     session.refresh(user)

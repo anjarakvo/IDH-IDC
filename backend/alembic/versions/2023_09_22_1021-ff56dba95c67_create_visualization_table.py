@@ -23,7 +23,7 @@ def upgrade() -> None:
     op.create_table(
         'visualization',
         sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('project', sa.Integer(), sa.ForeignKey('project.id')),
+        sa.Column('case', sa.Integer(), sa.ForeignKey('case.id')),
         sa.Column('segment', sa.Integer(), sa.ForeignKey('segment.id')),
         sa.Column(
             'tab',
@@ -36,8 +36,8 @@ def upgrade() -> None:
         sa.Column('config', pg.JSONB()),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
-            ['project'], ['project.id'],
-            name='visualization_project_constraint',
+            ['case'], ['case.id'],
+            name='visualization_case_constraint',
             ondelete='CASCADE'),
         sa.ForeignKeyConstraint(
             ['segment'], ['segment.id'],
@@ -47,7 +47,7 @@ def upgrade() -> None:
             'segment', 'tab', name='visualization_segment_tab_unique')
     )
     op.create_index(
-        op.f('ix_visualization_id'), 'project', ['id'], unique=True)
+        op.f('ix_visualization_id'), 'case', ['id'], unique=True)
 
 
 def downgrade() -> None:

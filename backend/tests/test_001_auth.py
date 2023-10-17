@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from db import crud_organisation
 from middleware import verify_token
 from tests.test_000_main import Acc
+from models.user import UserRole
 
 sys.path.append("..")
 
@@ -27,7 +28,7 @@ class TestUserAuthentication():
         assert res.status_code == 401
 
     def test_token_verification(self):
-        account = Acc(email="admin@akvo.org", token=None)
+        account = Acc(email="super_admin@akvo.org", token=None)
         assert account.token != ""
         assert account.decoded == account.data
         verify = verify_token(account.decoded)
@@ -45,10 +46,9 @@ class TestUserAuthentication():
     async def test_user_register(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        # create organisation
         user_payload = {
             "fullname": "John Doe",
-            "email": "admin@akvo.org",
+            "email": "super_admin@akvo.org",
             "password": "test",
             "organisation": 1,
         }
@@ -64,21 +64,20 @@ class TestUserAuthentication():
         res = res.json()
         assert res == {
             "id": 1,
-            "email": "admin@akvo.org",
+            "email": "super_admin@akvo.org",
             "fullname": "John Doe",
             "organisation": 1,
-            "active": 0,
-            "is_admin": 0
+            "active": False,
+            "role": UserRole.user.value
         }
 
     @pytest.mark.asyncio
     async def test_user_register_with_same_email(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        # create organisation
         user_payload = {
             "fullname": "John Doe",
-            "email": "admin@akvo.org",
+            "email": "super_admin@akvo.org",
             "password": "test",
             "organisation": 1,
         }
@@ -101,7 +100,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "admin@akvo.org",
+                "username": "super_admin@akvo.org",
                 "password": "wrong_password",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -131,7 +130,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "admin@akvo.org",
+                "username": "super_admin@akvo.org",
                 "password": "test",
                 "grant_type": "email",
                 "scopes": ["openid", "email"],
@@ -144,7 +143,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "admin@akvo.org",
+                "username": "super_admin@akvo.org",
                 "password": "test",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -157,7 +156,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "admin@akvo.org",
+                "username": "super_admin@akvo.org",
                 "password": "test",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -175,7 +174,7 @@ class TestUserAuthentication():
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
             data={
-                "username": "admin@akvo.org",
+                "username": "super_admin@akvo.org",
                 "password": "test",
                 "grant_type": "password",
                 "scopes": ["openid", "email"],
@@ -185,7 +184,7 @@ class TestUserAuthentication():
         assert res.status_code == 200
         res = res.json()
         assert res['access_token'] is not None
-        account = Acc(email="admin@akvo.org", token=res['access_token'])
+        account = Acc(email="super_admin@akvo.org", token=res['access_token'])
         assert account.token == res['access_token']
         assert res == {
             "access_token": res["access_token"],
@@ -193,15 +192,16 @@ class TestUserAuthentication():
             "user": {
                 "id": 1,
                 "fullname": "John Doe",
-                "email": "admin@akvo.org",
-                "active": 0,
-                "is_admin": 0,
+                "email": "super_admin@akvo.org",
+                "active": False,
+                "role": UserRole.user.value,
+                "business_unit_detail": None,
                 "organisation_detail": {
                     "id": 1,
                     "name": "Akvo"
                 },
                 "tags_count": 0,
-                "projects_count": 0
+                "cases_count": 0
             }
         }
 
@@ -209,7 +209,7 @@ class TestUserAuthentication():
     async def test_get_user_me(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        account = Acc(email="admin@akvo.org", token=None)
+        account = Acc(email="super_admin@akvo.org", token=None)
         res = await client.get(
             app.url_path_for("user:me"),
             headers={"Authorization": f"Bearer {account.token}"})
@@ -218,13 +218,14 @@ class TestUserAuthentication():
         assert res == {
             "id": 1,
             "fullname": "John Doe",
-            "email": "admin@akvo.org",
-            "active": 0,
-            "is_admin": 0,
+            "email": "super_admin@akvo.org",
+            "active": False,
+            "role": UserRole.user.value,
+            "business_unit_detail": None,
             "organisation_detail": {
                 "id": 1,
                 "name": "Akvo"
             },
             "tags_count": 0,
-            "projects_count": 0
+            "cases_count": 0
         }

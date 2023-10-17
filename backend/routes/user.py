@@ -3,11 +3,10 @@ import db.crud_user as crud_user
 from math import ceil
 from middleware import (
     Token, authenticate_user, create_access_token, verify_user,
-    get_password_hash
-
+    get_password_hash, verify_admin
 )
 from fastapi import (
-    Depends, HTTPException, status, APIRouter, Request, Query, Form
+    Depends, HTTPException, status, APIRouter, Request, Query, Form,
 )
 from fastapi import Response
 from fastapi.security import HTTPBearer
@@ -16,13 +15,12 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from db.connection import get_session
 from models.user import (
-    UserDict, UserBase, UserResponse, UserWithOrg, UserUpdateBase,
+    UserDict, UserBase, UserResponse, UserInfo, UserUpdateBase,
     UserInvitation
 )
 from typing import Optional
 from pydantic import SecretStr
 from http import HTTPStatus
-from middleware import verify_admin
 
 security = HTTPBearer()
 user_route = APIRouter()
@@ -64,7 +62,7 @@ def login(
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": user.to_user_with_org
+        "user": user.to_user_info
     }
 
 
@@ -111,7 +109,7 @@ def get_all(
 
 @user_route.get(
     "/user/me",
-    response_model=UserWithOrg,
+    response_model=UserInfo,
     summary="get account information",
     name="user:me",
     tags=["User"]
@@ -122,7 +120,7 @@ def get_me(
     credentials: credentials = Depends(security)
 ):
     user = verify_user(session=session, authenticated=req.state.authenticated)
-    return user.to_user_with_org
+    return user.to_user_info
 
 
 # user register by admin (user invitation)
@@ -203,13 +201,13 @@ def change_password(
     return {
         "access_token": access_token,
         "token_type": "bearer",
-        "user": user.to_user_with_org
+        "user": user.to_user_info
     }
 
 
 @user_route.get(
     "/user/{user_id:path}",
-    response_model=UserWithOrg,
+    response_model=UserInfo,
     summary="get user detail by id",
     name="user:get_by_id",
     tags=["User"])
@@ -221,12 +219,12 @@ def get_user_by_id(
 ):
     verify_admin(session=session, authenticated=req.state.authenticated)
     user = crud_user.get_user_by_id(session=session, id=user_id)
-    return user.to_user_with_org
+    return user.to_user_info
 
 
 @user_route.put(
     "/user/{user_id:path}",
-    response_model=UserWithOrg,
+    response_model=UserInfo,
     summary="update user by id",
     name="user:update",
     tags=["User"])
@@ -242,7 +240,7 @@ def update_user_by_id(
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
     user = crud_user.update_user(session=session, id=user_id, payload=payload)
-    return user.to_user_with_org
+    return user.to_user_info
 
 
 @user_route.delete(

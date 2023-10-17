@@ -4,7 +4,7 @@ from typing_extensions import TypedDict
 from fastapi import HTTPException, status
 
 from models.tag import Tag, TagListDict, TagBase, UpdateTagBase
-from models.project_tag import ProjectTag
+from models.case_tag import CaseTag
 
 
 class PaginatedTagData(TypedDict):
@@ -33,10 +33,10 @@ def add_tag(session: Session, payload: TagBase) -> TagListDict:
         name=payload.name,
         description=payload.description
     )
-    if payload.projects:
-        for proj in payload.projects:
-            project_tag = ProjectTag(project=proj)
-            tag.tag_projects.append(project_tag)
+    if payload.cases:
+        for proj in payload.cases:
+            case_tag = CaseTag(case=proj)
+            tag.tag_cases.append(case_tag)
     session.add(tag)
     session.commit()
     session.flush()
@@ -60,12 +60,12 @@ def update_tag(
     tag = get_tag_by_id(session=session, id=id)
     tag.name = payload.name
     tag.description = payload.description
-    if payload.projects:
-        # delete previous project tag then add new tag
-        session.query(ProjectTag).filter(ProjectTag.tag == tag.id).delete()
-        for proj in payload.projects:
-            project_tag = ProjectTag(project=proj, tag=tag.id)
-            tag.tag_projects.append(project_tag)
+    if payload.cases:
+        # delete previous case tag then add new tag
+        session.query(CaseTag).filter(CaseTag.tag == tag.id).delete()
+        for proj in payload.cases:
+            case_tag = CaseTag(case=proj, tag=tag.id)
+            tag.tag_cases.append(case_tag)
     session.commit()
     session.flush()
     session.refresh(tag)
