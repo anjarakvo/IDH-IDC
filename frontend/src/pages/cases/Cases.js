@@ -51,6 +51,8 @@ const Cases = () => {
     },
     {
       key: "action",
+      width: "5%",
+      align: "center",
       render: (text, record) => (
         <Link to={`/cases/${record.key}`}>
           <EditOutlined />
