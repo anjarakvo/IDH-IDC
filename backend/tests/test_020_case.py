@@ -29,7 +29,7 @@ class TestCaseRoute():
         assert res.status_code == 404
 
     @pytest.mark.asyncio
-    async def test_create_case(
+    async def test_create_not_private_case(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         payload = {
@@ -94,7 +94,74 @@ class TestCaseRoute():
                 'id': 2,
                 'commodity': 3,
                 'breakdown': True
-            }]
+            }],
+            'private': False,
+        }
+
+    @pytest.mark.asyncio
+    async def test_create_private_case(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        payload = {
+            "name": "Bali Coffee Production (Private)",
+            "date": "2023-10-03",
+            "year": 2023,
+            "country": 2,
+            "focus_commodity": 1,
+            "currency": "USD",
+            "area_size_unit": "hectare",
+            "volume_measurement_unit": "liters",
+            "cost_of_production_unit": "Per-area",
+            "reporting_period": "Per-season",
+            "segmentation": False,
+            "living_income_study": LivingIncomeStudyEnum.better_income.value,
+            "multiple_commodities": False,
+            "private": True,
+        }
+        # without cred
+        res = await client.post(
+            app.url_path_for("case:create"),
+            json=payload,
+        )
+        assert res.status_code == 403
+        # with normal user cred
+        res = await client.post(
+            app.url_path_for("case:create"),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 401
+        # with admin user cred
+        res = await client.post(
+            app.url_path_for("case:create"),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'id': 2,
+            'name': 'Bali Coffee Production (Private)',
+            'date': '2023-10-03',
+            'year': 2023,
+            'country': 2,
+            'focus_commodity': 1,
+            'currency': 'USD',
+            'area_size_unit': 'hectare',
+            'volume_measurement_unit': 'liters',
+            'cost_of_production_unit': 'Per-area',
+            'reporting_period': 'Per-season',
+            'segmentation': False,
+            'living_income_study': 'better_income',
+            'multiple_commodities': False,
+            'logo': None,
+            'created_by': 1,
+            'case_commodities': [{
+                'id': 3,
+                'commodity': 1,
+                'breakdown': True
+            }],
+            'private': True,
         }
 
     @pytest.mark.asyncio
@@ -195,7 +262,8 @@ class TestCaseRoute():
                 'id': 2,
                 'commodity': 3,
                 'breakdown': False
-            }]
+            }],
+            'private': False,
         }
 
     @pytest.mark.asyncio
@@ -253,7 +321,8 @@ class TestCaseRoute():
                 'id': 2,
                 'commodity': 3,
                 'breakdown': False
-            }]
+            }],
+            'private': False,
         }
 
     # TODO :: test_get_case_by_id_with_segments

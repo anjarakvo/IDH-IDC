@@ -59,6 +59,7 @@ def add_case(
 
 def get_all_case(
     session: Session,
+    show_private: Optional[bool] = 0,
     search: Optional[str] = None,
     tags: Optional[int] = None,
     focus_commodities: Optional[int] = None,
@@ -66,6 +67,8 @@ def get_all_case(
     limit: int = 10
 ) -> List[CaseListDict]:
     case = session.query(Case)
+    if not show_private:
+        case = case.filter(Case.private == 0)
     if search:
         case = case.filter(
             Case.name.ilike("%{}%".format(search.lower().strip()))

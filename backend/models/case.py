@@ -47,6 +47,7 @@ class CaseDict(TypedDict):
     logo: Optional[str]
     created_by: int
     case_commodities: List[SimplifiedCaseCommodityDict]
+    private: bool
 
 
 class CaseDetailDict(TypedDict):
@@ -69,6 +70,7 @@ class CaseDetailDict(TypedDict):
     updated_at: Optional[str]
     segments: Optional[List[SimplifiedSegmentDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
+    private: bool
 
 
 class Case(Base):
@@ -191,6 +193,7 @@ class Case(Base):
             "logo": self.logo,
             "created_by": self.created_by,
             "case_commodities": [pc.simplify for pc in self.case_commodities],
+            "private": self.private,
         }
 
     @property
@@ -233,6 +236,7 @@ class Case(Base):
             "updated_at": self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
             "segments": [ps.simplify for ps in self.case_segments],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
+            "private": self.private,
         }
 
 
