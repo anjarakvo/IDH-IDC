@@ -1,16 +1,15 @@
-import React from "react";
-import { Layout, Menu, Row, Col, Space } from "antd";
+import React, { useState } from "react";
+import { Layout, Row, Col, Space } from "antd";
 import { useCookies } from "react-cookie";
-import { FolderOpenOutlined, CheckCircleOutlined } from "@ant-design/icons";
 import { UserState } from "../../store";
 import { Link, useLocation } from "react-router-dom";
+import { LoadingOutlined } from "@ant-design/icons";
 
-const { Header, Content, Sider } = Layout;
+const { Header, Content } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
-  const location = useLocation();
-  const pathname = location?.pathname;
-  const [cookies, setCookie, removeCookie] = useCookies(["AUTH_TOKEN"]);
+  const [loading, setLoading] = useState(false);
+  const [, , removeCookie] = useCookies(["AUTH_TOKEN"]);
 
   return (
     <Header
@@ -23,12 +22,12 @@ const PageHeader = ({ isLoggedIn }) => {
       }}
     >
       <Row justify="center" align="middle" style={{ width: "100%" }}>
-        <Col span={14} align="start">
+        <Col span={6} align="start">
           <Link to="/">
             <div data-testid="logo-container" className="logo" />
           </Link>
         </Col>
-        <Col span={10} align="end" testid="nav-container">
+        <Col span={18} align="end" testid="nav-container">
           <Space size="large" className="navigation-container">
             <Link to="/about">About IDC</Link>
             {isLoggedIn ? <Link to="/cases">Cases</Link> : ""}
@@ -42,13 +41,23 @@ const PageHeader = ({ isLoggedIn }) => {
             ) : (
               <Link
                 className="nav-sign-in"
-                to="/"
                 onClick={() => {
                   removeCookie("AUTH_TOKEN");
+                  setLoading(true);
+                  setTimeout(() => {
+                    window.location.reload();
+                    setLoading(false);
+                  }, 300);
                 }}
               >
-                {" "}
-                Sign out
+                {loading ? (
+                  <Space>
+                    <LoadingOutlined />
+                    Sign out
+                  </Space>
+                ) : (
+                  "Sign out"
+                )}
               </Link>
             )}
           </Space>

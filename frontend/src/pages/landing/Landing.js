@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   return (
-    <div className="landing-container">
+    <div className="landing-container" id="landing">
       <Row
         data-testid="jumbotron-wrapper"
         justify="center"
