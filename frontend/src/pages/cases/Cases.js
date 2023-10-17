@@ -1,16 +1,16 @@
 import React from "react";
 import { ContentLayout } from "../../components/layout";
 
-const Dashboard = () => {
+const Cases = () => {
   return (
     <ContentLayout
       breadcrumbItems={[
         { title: "Home", href: "/dashboard" },
-        { title: "Dashboard" },
+        { title: "Cases", href: "/cases" },
       ]}
-      title="Dashboard"
+      title="Cases"
     ></ContentLayout>
   );
 };
 
-export default Dashboard;
+export default Cases;

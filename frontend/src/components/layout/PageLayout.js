@@ -10,6 +10,7 @@ const { Header, Content, Sider } = Layout;
 const PageHeader = ({ isLoggedIn }) => {
   const location = useLocation();
   const pathname = location?.pathname;
+  const [cookies, setCookie, removeCookie] = useCookies(["AUTH_TOKEN"]);
 
   return (
     <Header
@@ -23,69 +24,37 @@ const PageHeader = ({ isLoggedIn }) => {
     >
       <Row justify="center" align="middle" style={{ width: "100%" }}>
         <Col span={14} align="start">
-          <div data-testid="logo-container" className="logo" />
-          {/* {isLoggedIn ? (
-            <div className="title">
-              <h3>Explore Cases</h3>
-            </div>
-          ) : (
-            ""
-          )} */}
+          <Link to="/">
+            <div data-testid="logo-container" className="logo" />
+          </Link>
         </Col>
         <Col span={10} align="end" testid="nav-container">
-          {!isLoggedIn || pathname === "/" ? (
-            <Space size="large" className="navigation-container">
-              <Link>About Us</Link>
+          <Space size="large" className="navigation-container">
+            <Link to="/about">About IDC</Link>
+            {isLoggedIn ? <Link to="/cases">Cases</Link> : ""}
+            <Link to="/explore">Explore Studies</Link>
+            {isLoggedIn ? <Link to="/admin">Admin</Link> : ""}
+            {!isLoggedIn ? (
               <Link className="nav-sign-in" to="/login">
+                {" "}
                 Sign in
               </Link>
-            </Space>
-          ) : (
-            ""
-          )}
+            ) : (
+              <Link
+                className="nav-sign-in"
+                to="/"
+                onClick={() => {
+                  removeCookie("AUTH_TOKEN");
+                }}
+              >
+                {" "}
+                Sign out
+              </Link>
+            )}
+          </Space>
         </Col>
       </Row>
     </Header>
-  );
-};
-
-const PageSider = () => {
-  const sideMenuItems = [
-    {
-      key: `project`,
-      icon: <FolderOpenOutlined />,
-      label: "Project",
-      // children: new Array(4).fill(null).map((_, j) => {
-      //   const subKey = index * 4 + j + 1;
-      //   return {
-      //     key: subKey,
-      //     label: `option${subKey}`,
-      //   };
-      // }),
-    },
-    {
-      key: `inputs`,
-      icon: <CheckCircleOutlined />,
-      label: "Inputs",
-    },
-    {
-      key: `outputs`,
-      icon: <CheckCircleOutlined />,
-      label: "Outputs",
-    },
-  ];
-
-  return (
-    <Sider testid="layout-sider" width={235}>
-      <Menu
-        testid="menu-container"
-        mode="inline"
-        defaultSelectedKeys={["1"]}
-        defaultOpenKeys={["sub1"]}
-        style={{ height: "100%", borderRight: 0 }}
-        items={sideMenuItems}
-      />
-    </Sider>
   );
 };
 
@@ -113,7 +82,6 @@ const PageLayout = ({ children }) => {
     <Layout>
       <PageHeader isLoggedIn={isLoggedIn} />
       <Layout>
-        <PageSider />
         <Layout>
           <Content testid="layout-content" className="content-container">
             {children}
