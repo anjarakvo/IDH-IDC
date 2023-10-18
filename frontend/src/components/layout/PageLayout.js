@@ -5,6 +5,7 @@ import { UserState } from "../../store";
 import { Link, useLocation } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
 import LogoWhite from "../../assets/images/logo-white.png";
+import { adminRole, allUserRole } from "../../store/static";
 
 const pagesWithNoSider = ["/", "/login", "/welcome"];
 const { Header, Content } = Layout;
@@ -13,9 +14,6 @@ const PageHeader = ({ isLoggedIn }) => {
   const [loading, setLoading] = useState(false);
   const [, , removeCookie] = useCookies(["AUTH_TOKEN"]);
   const userRole = UserState.useState((s) => s.role);
-
-  const adminRole = ["super_admin", "admin"];
-  const allUserRole = [...adminRole, "editor", "viewer", "user"];
 
   const menus = [
     {

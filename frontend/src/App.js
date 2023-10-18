@@ -14,8 +14,7 @@ import { Welcome } from "./pages/welcome";
 import { Users } from "./pages/admin";
 import { UserState } from "./store";
 import { api } from "./lib";
-
-const adminRole = ["super_admin", "admin"];
+import { adminRole } from "./store/static";
 
 const App = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);

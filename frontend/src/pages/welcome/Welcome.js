@@ -6,9 +6,7 @@ import IconExploreStudies from "../../assets/icons/icon-explore-studies.svg";
 import IconAdmin from "../../assets/icons/icon-admin.svg";
 import { UserState } from "../../store";
 import { useNavigate } from "react-router-dom";
-
-const adminRole = ["super_admin", "admin"];
-const allUserRole = [...adminRole, "editor", "viewer", "user"];
+import { adminRole, allUserRole } from "../../store/static";
 
 const cardMenus = [
   {
