@@ -10,7 +10,7 @@ import { Login } from "./pages/login";
 import { Cases, Case } from "./pages/cases";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
-import { Users } from "./pages/admin";
+import { Users, UserForm } from "./pages/admin";
 import { UserState } from "./store";
 import { api } from "./lib";
 import { adminRole } from "./store/static";
@@ -78,6 +78,7 @@ const App = () => {
         {adminRole.includes(userRole) ? (
           <Route element={<PrivateRoutes />}>
             <Route exact path="/admin/users" element={<Users />} />
+            <Route exact path="/admin/user/new" element={<UserForm />} />
           </Route>
         ) : (
           ""
