@@ -343,9 +343,11 @@ const Case = () => {
     if (e?.name) {
       setCaseTitle(e.name);
     }
+    /* eslint-disable no-undefined */
     if (e.name === undefined || e.name === "" || e.name === null) {
       setCaseTitle("New Case");
     }
+    /* eslint-enable */
   };
 
   return (
