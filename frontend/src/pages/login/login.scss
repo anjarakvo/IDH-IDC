@@ -9,9 +9,9 @@
   }
   .login-container {
     background-image: url("/assets/images/bg-login.png") !important;
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
-    height: 97vh !important;
+    height: 100vh;
 
     .login-form-wrapper {
       padding: 0 0 0 8% !important;

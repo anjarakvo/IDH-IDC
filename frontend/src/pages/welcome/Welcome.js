@@ -5,6 +5,7 @@ import IconCases from "../../assets/icons/icon-cases.svg";
 import IconExploreStudies from "../../assets/icons/icon-explore-studies.svg";
 import IconAdmin from "../../assets/icons/icon-admin.svg";
 import { UserState } from "../../store";
+import { useNavigate } from "react-router-dom";
 
 const adminRole = ["super_admin", "admin"];
 const allUserRole = [...adminRole, "editor", "viewer", "user"];
@@ -16,7 +17,7 @@ const cardMenus = [
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
     icon: IconCases,
-    path: null,
+    path: "/cases",
     role: allUserRole,
   },
   {
@@ -25,7 +26,7 @@ const cardMenus = [
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
     icon: IconExploreStudies,
-    path: null,
+    path: "/explore",
     role: allUserRole,
   },
   {
@@ -34,13 +35,18 @@ const cardMenus = [
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
     icon: IconAdmin,
-    path: null,
+    path: "/admin",
     role: adminRole,
   },
 ];
 
 const Welcome = () => {
+  const navigate = useNavigate();
   const userRole = UserState.useState((s) => s.role);
+
+  const handleOnClickButtonExplore = (val) => {
+    navigate(val.path);
+  };
 
   return (
     <Row className="welcome-container">
@@ -88,6 +94,7 @@ const Welcome = () => {
                           data-testid={`${cm.testid}-button`}
                           className="button-green"
                           style={{ float: "right", marginRight: 20 }}
+                          onClick={() => handleOnClickButtonExplore(cm)}
                         >
                           Explore
                         </Button>
