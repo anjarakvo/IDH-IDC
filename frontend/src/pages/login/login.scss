@@ -3,15 +3,15 @@
 #login {
   &.content-wrapper {
     padding: 0px !important;
-    background-image: url("/assets/images/login-clip-path.png") !important;
+    background-image: url("/assets/images/login-clip-path.svg") !important;
     background-repeat: no-repeat;
     background-position: top right;
   }
   .login-container {
     background-image: url("/assets/images/bg-login.png") !important;
-    background-size: cover;
+    background-size: contain;
     background-repeat: no-repeat;
-    height: 97vh !important;
+    height: 100vh;
 
     .login-form-wrapper {
       padding: 0 0 0 8% !important;

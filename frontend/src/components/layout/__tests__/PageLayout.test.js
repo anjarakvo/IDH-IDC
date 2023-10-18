@@ -12,7 +12,7 @@ test("it renders correctly", async () => {
   );
   waitFor(() => {
     expect(wrapper.getAllByTestId("layout-header")).toBeInTheDocument();
-    expect(wrapper.getAllByTestId("logo-container")).toBeInTheDocument();
+    expect(wrapper.getAllByTestId("logo-image")).toBeInTheDocument();
     expect(wrapper.getAllByTestId("menu-container")).toBeInTheDocument();
     expect(wrapper.getAllByTestId("layout-content")).toBeInTheDocument();
     expect(wrapper.getAllByTestId("layout-sider").toBeInTheDocument());
