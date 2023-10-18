@@ -43,11 +43,11 @@ const selectProps = {
 const yesNoOptions = [
   {
     label: "Yes",
-    value: "yes",
+    value: 1,
   },
   {
     label: "No",
-    value: "no",
+    value: 0,
   },
 ];
 
@@ -100,6 +100,93 @@ const onFinishFailed = (errorInfo) => {
   console.info("Failed:", errorInfo);
 };
 
+const AreaUnitFields = ({ disabled = true, index = 0 }) => {
+  return (
+    <Row gutter={[12, 12]}>
+      <Col span={12}>
+        <Form.Item
+          label="Select Area Unit"
+          name={index ? `${index}-area_size_unit` : "area_size_unit"}
+        >
+          <Select
+            disabled={disabled}
+            placeholder="Select Area Unit"
+            options={[
+              {
+                label: "Hectares",
+                value: "hectares",
+              },
+              {
+                label: "Acres",
+                value: "acres",
+              },
+            ]}
+            {...selectProps}
+          />
+        </Form.Item>
+      </Col>
+      <Col span={12}>
+        <Form.Item
+          label="Select Measurement Unit"
+          name={
+            index
+              ? `${index}-volume_measurement_unit`
+              : "volume_measurement_unit"
+          }
+        >
+          <Select
+            placeholder="Select Measurement Unit"
+            disabled={disabled}
+            options={[
+              {
+                label: "Kilograms",
+                value: "kilograms",
+              },
+              {
+                label: "Grams",
+                value: "grams",
+              },
+              {
+                label: "Litres",
+                value: "litres",
+              },
+              {
+                label: "Kilolitres",
+                value: "kilolitres",
+              },
+              {
+                label: "Barrels",
+                value: "barrels",
+              },
+              {
+                label: "Cubic Metres",
+                value: "cubic-metres",
+              },
+              {
+                label: "Cubic Feet",
+                value: "cubic-feet",
+              },
+              {
+                label: "Cubic Yards",
+                value: "cubic-yards",
+              },
+              {
+                label: "Bags",
+                value: "bags",
+              },
+              {
+                label: "Tons",
+                value: "tons",
+              },
+            ]}
+            {...selectProps}
+          />
+        </Form.Item>
+      </Col>
+    </Row>
+  );
+};
+
 const CaseForm = () => {
   return (
     <>
@@ -149,7 +236,7 @@ const CaseForm = () => {
       </Form.Item>
       <Row gutter={[12, 12]}>
         <Col span={12}>
-          <Form.Item label="Select Commodity" name="commodity">
+          <Form.Item label="Select Commodity" name="focus_commodity">
             <Select
               placeholder="Select Focus Commodity"
               options={commodityOptions}
@@ -167,7 +254,8 @@ const CaseForm = () => {
           </Form.Item>
         </Col>
       </Row>
-      <Form.Item label="Reporting Period" name="reporting">
+      <AreaUnitFields disabled={false} />
+      <Form.Item label="Reporting Period" name="reporting_period">
         <Radio.Group
           options={reportingPeriod}
           optionType="button"
@@ -177,7 +265,7 @@ const CaseForm = () => {
 
       <Form.Item
         label="Do you have secondary commodity to report on?"
-        name="secondary"
+        name="multiple_commodities"
       >
         <Radio.Group options={yesNoOptions} />
       </Form.Item>
@@ -193,7 +281,6 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
         label={`Select ${indexLabel} Commodity`}
       >
         <Select
-          mode="tags"
           placeholder={`Add your ${indexLabel} Commodity`}
           disabled={disabled}
           options={commodityOptions}
@@ -206,81 +293,7 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
       >
         <Radio.Group disabled={disabled} options={yesNoOptions} />
       </Form.Item>
-      <Row gutter={[12, 12]}>
-        <Col span={12}>
-          <Form.Item label="Select Area Unit" name={`${index}-area-unit`}>
-            <Select
-              disabled={disabled}
-              placeholder="Select Area Unit"
-              options={[
-                {
-                  label: "Hectares",
-                  value: "hectares",
-                },
-                {
-                  label: "Acres",
-                  value: "acres",
-                },
-              ]}
-              {...selectProps}
-            />
-          </Form.Item>
-        </Col>
-        <Col span={12}>
-          <Form.Item
-            label="Select Measurement Unit"
-            name={`${index}-measurement-unit`}
-          >
-            <Select
-              placeholder="Select Measurement Unit"
-              disabled={disabled}
-              options={[
-                {
-                  label: "Kilograms",
-                  value: "kilograms",
-                },
-                {
-                  label: "Grams",
-                  value: "grams",
-                },
-                {
-                  label: "Litres",
-                  value: "litres",
-                },
-                {
-                  label: "Kilolitres",
-                  value: "kilolitres",
-                },
-                {
-                  label: "Barrels",
-                  value: "barrels",
-                },
-                {
-                  label: "Cubic Metres",
-                  value: "cubic-metres",
-                },
-                {
-                  label: "Cubic Feet",
-                  value: "cubic-feet",
-                },
-                {
-                  label: "Cubic Yards",
-                  value: "cubic-yards",
-                },
-                {
-                  label: "Bags",
-                  value: "bags",
-                },
-                {
-                  label: "Tons",
-                  value: "tons",
-                },
-              ]}
-              {...selectProps}
-            />
-          </Form.Item>
-        </Col>
-      </Row>
+      <AreaUnitFields disabled={disabled} index={index} />
     </>
   );
 };
@@ -288,6 +301,7 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
 const Case = () => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(false);
+  const [caseTitle, setCaseTitle] = useState("New Case");
   const [modalSecondaryShow, setModalSecondaryShow] = useState(false);
 
   const handleDeleteSecondary = () => {
@@ -305,17 +319,17 @@ const Case = () => {
 
   const handleRestoreSecondary = () => {
     form.setFieldsValue({
-      secondary: "yes",
+      secondary: 1,
     });
     setSecondary(true);
     setModalSecondaryShow(false);
   };
 
   const onChange = (e) => {
-    if (e?.secondary === "yes") {
+    if (e?.multiple_commodities === 1) {
       setSecondary(true);
     }
-    if (e?.secondary === "no") {
+    if (e?.multiple_commodities === 0) {
       const secondaryValues = Object.keys(form.getFieldsValue()).filter(
         (key) =>
           key.startsWith("1-") && form.getFieldsValue()[key] !== undefined // eslint-disable-line no-undefined
@@ -326,6 +340,12 @@ const Case = () => {
         setSecondary(false);
       }
     }
+    if (e?.name) {
+      setCaseTitle(e.name);
+    }
+    if (e.name === undefined || e.name === "" || e.name === null) {
+      setCaseTitle("New Case");
+    }
   };
 
   return (
@@ -335,7 +355,7 @@ const Case = () => {
         { title: "Cases", href: "/cases" },
         { title: "New" },
       ]}
-      title="New Case"
+      title={caseTitle}
       wrapperId="case"
     >
       <Form

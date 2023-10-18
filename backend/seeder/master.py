@@ -55,6 +55,20 @@ def seeder_master(session: Session, engine: create_engine):
     business_unit.to_sql("business_unit", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Business Unit")
 
+    ## organization
+    truncatedb(session=session, table="organisation")
+    organisation = pd.read_csv(MASTER_DIR + "organisation.csv")
+    organisation = organisation[["id", "name"]]
+    organisation.to_sql("organisation", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Organisation")
+
+    ## tags
+    truncatedb(session=session, table="tag")
+    tags = pd.read_csv(MASTER_DIR + "tags.csv")
+    tags = tags[["id", "name", "description"]]
+    tags.to_sql("tag", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Tag")
+
     generate_config_file()
 
 
