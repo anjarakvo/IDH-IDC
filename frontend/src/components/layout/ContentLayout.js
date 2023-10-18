@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Breadcrumb, Card, Tabs } from "antd";
+import { Breadcrumb, Card, Tabs, Affix } from "antd";
 import { adminRole } from "../../store/static";
 import { UserState } from "../../store";
 import { useNavigate } from "react-router-dom";
@@ -47,42 +47,44 @@ const ContentLayout = ({
 
   return (
     <div>
-      <Card className="content-card-container" bordered={false}>
-        {hasBreadcrumb ? (
-          <Breadcrumb
-            data-testid="breadcrumb"
-            items={breadcrumbItems.map((x) => ({ key: x.href, ...x }))}
+      <Affix offsetTop={80}>
+        <Card className="content-card-container" bordered={false}>
+          {hasBreadcrumb ? (
+            <Breadcrumb
+              data-testid="breadcrumb"
+              items={breadcrumbItems.map((x) => ({ key: x.href, ...x }))}
+            />
+          ) : (
+            ""
+          )}
+          {title ? (
+            <div data-testid="title" className="title">
+              {title}
+            </div>
+          ) : (
+            ""
+          )}
+          {subTitle ? (
+            <div data-testid="subTitle" className="subTitle">
+              {subTitle}
+            </div>
+          ) : (
+            ""
+          )}
+        </Card>
+        {currentPath.includes("/admin/") && adminRole.includes(userRole) ? (
+          <Tabs
+            data-testid="admin-tabs-menu"
+            activeKey={currentPath}
+            items={tabItems}
+            tabBarGutter={48}
+            onChange={handleOnClickTab}
+            className="admin-tab-menu-container"
           />
         ) : (
           ""
         )}
-        {title ? (
-          <div data-testid="title" className="title">
-            {title}
-          </div>
-        ) : (
-          ""
-        )}
-        {subTitle ? (
-          <div data-testid="subTitle" className="subTitle">
-            {subTitle}
-          </div>
-        ) : (
-          ""
-        )}
-      </Card>
-      {currentPath.includes("/admin/") && adminRole.includes(userRole) ? (
-        <Tabs
-          data-testid="admin-tabs-menu"
-          activeKey={currentPath}
-          items={tabItems}
-          tabBarGutter={48}
-          onChange={handleOnClickTab}
-          className="admin-tab-menu-container"
-        />
-      ) : (
-        ""
-      )}
+      </Affix>
       <div className="content-wrapper" id={wrapperId}>
         {children}
       </div>

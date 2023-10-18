@@ -20,4 +20,17 @@
     padding: 0px 24px 10px;
     font-weight: normal;
   }
+  .ant-timeline-item {
+    cursor: pointer;
+  }
+  .ant-tabs-nav-wrap {
+    background: #fff;
+    padding: 10px 1.5rem 0px;
+    .ant-tabs-tab-btn {
+      font-family: "RocGrotesk";
+      font-size: 1rem;
+      font-weight: 700;
+      background: #fff;
+    }
+  }
 }

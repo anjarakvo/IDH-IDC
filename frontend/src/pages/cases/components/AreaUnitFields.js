@@ -9,6 +9,12 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
         <Form.Item
           label="Select Area Unit"
           name={index ? `${index}-area_size_unit` : "area_size_unit"}
+          rules={[
+            {
+              required: !disabled,
+              message: "Area Unit is required",
+            },
+          ]}
         >
           <Select
             disabled={disabled}
@@ -35,6 +41,12 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
               ? `${index}-volume_measurement_unit`
               : "volume_measurement_unit"
           }
+          rules={[
+            {
+              required: !disabled,
+              message: "Measurement Unit is required",
+            },
+          ]}
         >
           <Select
             placeholder="Select Measurement Unit"
