@@ -49,7 +49,7 @@ const PageHeader = ({ isLoggedIn }) => {
       }}
     >
       <Row justify="center" align="middle" style={{ width: "100%" }}>
-        <Col span={6} align="start">
+        <Col span={6} align="start" style={{ width: "100%" }}>
           <Link to="/">
             <Image
               src={LogoWhite}
