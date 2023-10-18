@@ -1,7 +1,12 @@
 import React from "react";
+import "./user.scss";
 import { ContentLayout } from "../../../components/layout";
+import { Form, Input, Card, Row, Col, Button } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 
 const UserForm = () => {
+  const [form] = Form.useForm();
+
   return (
     <ContentLayout
       breadcrumbItems={[
@@ -12,7 +17,224 @@ const UserForm = () => {
       title="Add User"
       wrapperId="user"
     >
-      <h1>User Form</h1>
+      <Form
+        form={form}
+        name="user-form"
+        layout="vertical"
+        // initialValues={formData}
+        // onFinish={onFinish}
+        // onFinishFailed={onFinishFailed}
+        autoComplete="off"
+        className="user-form-container"
+      >
+        {/* User Information */}
+        <Card title="User Information">
+          <Row gutter={[16, 16]}>
+            <Col span={12}>
+              <Form.Item
+                label="Fullname"
+                name="fullname"
+                rules={[
+                  {
+                    required: true,
+                    message: "Fullname is required",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Email"
+                name="email"
+                rules={[
+                  {
+                    type: "email",
+                    message: "The input is not valid Email",
+                  },
+                  {
+                    required: true,
+                    message: "Email is required",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item
+                label="Role"
+                name="role"
+                rules={[
+                  {
+                    required: true,
+                    message: "Role is required",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+              <Form.Item
+                label="Organisation"
+                name="organisation"
+                rules={[
+                  {
+                    required: true,
+                    message: "Organisation is required",
+                  },
+                ]}
+              >
+                <Input />
+              </Form.Item>
+            </Col>
+          </Row>
+        </Card>
+        {/* EOL User Information */}
+
+        {/* Other Inputs */}
+        <Card title="Tags">
+          <Form.Item label="Tags" name="tags" required={false}>
+            <Input />
+          </Form.Item>
+        </Card>
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Card title="Business Units">
+              <Form.List
+                name="business_units"
+                rules={[
+                  {
+                    validator: async (_) => {
+                      console.log(_);
+                      // return Promise.reject(new Error('At least 2 passengers'));
+                    },
+                  },
+                ]}
+              >
+                {(fields, { add, remove }, { errors }) => {
+                  return (
+                    <>
+                      {fields.map((field) => {
+                        return (
+                          <Form.Item key={field.key} required={false}>
+                            <Row gutter={[16, 16]} align="middle">
+                              <Col span={10}>
+                                <Form.Item
+                                  {...field}
+                                  label="Business Unit"
+                                  name="business_unit"
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col span={10}>
+                                <Form.Item
+                                  {...field}
+                                  label="Business Unit Role"
+                                  name="role"
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col span={4}>
+                                {fields.length > 0 ? (
+                                  <MinusCircleOutlined
+                                    onClick={() => remove(field.name)}
+                                  />
+                                ) : (
+                                  ""
+                                )}
+                              </Col>
+                            </Row>
+                          </Form.Item>
+                        );
+                      })}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          style={{
+                            width: "100%",
+                          }}
+                          icon={<PlusOutlined />}
+                        >
+                          Add Business Unit
+                        </Button>
+                      </Form.Item>
+                    </>
+                  );
+                }}
+              </Form.List>
+            </Card>
+          </Col>
+
+          <Col span={12}>
+            <Card title="Cases">
+              <Form.List
+                name="cases"
+                rules={[
+                  {
+                    validator: async (_) => {
+                      console.log(_);
+                      // return Promise.reject(new Error('At least 2 passengers'));
+                    },
+                  },
+                ]}
+              >
+                {(fields, { add, remove }, { errors }) => {
+                  return (
+                    <>
+                      {fields.map((field) => {
+                        return (
+                          <Form.Item key={field.key} required={false}>
+                            <Row gutter={[16, 16]} align="middle">
+                              <Col span={10}>
+                                <Form.Item {...field} label="Case" name="case">
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col span={10}>
+                                <Form.Item
+                                  {...field}
+                                  label="Permission"
+                                  name="permission"
+                                >
+                                  <Input />
+                                </Form.Item>
+                              </Col>
+                              <Col span={4}>
+                                {fields.length > 0 ? (
+                                  <MinusCircleOutlined
+                                    onClick={() => remove(field.name)}
+                                  />
+                                ) : (
+                                  ""
+                                )}
+                              </Col>
+                            </Row>
+                          </Form.Item>
+                        );
+                      })}
+                      <Form.Item>
+                        <Button
+                          type="dashed"
+                          onClick={() => add()}
+                          style={{
+                            width: "100%",
+                          }}
+                          icon={<PlusOutlined />}
+                        >
+                          Add Cases
+                        </Button>
+                      </Form.Item>
+                    </>
+                  );
+                }}
+              </Form.List>
+            </Card>
+          </Col>
+        </Row>
+        {/* EOL Other Inputs */}
+      </Form>
     </ContentLayout>
   );
 };
