@@ -31,7 +31,7 @@ const PageHeader = ({ isLoggedIn }) => {
     {
       testid: "nav-menu-admin",
       name: "Admin",
-      path: "/admin",
+      path: "/admin/users",
       role: adminRole,
     },
   ];

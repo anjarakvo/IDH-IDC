@@ -33,7 +33,7 @@ const cardMenus = [
     description:
       "Data Entry is an important interactive way to retrieve information of objects since users will frequently add, change or delete information.",
     icon: IconAdmin,
-    path: "/admin",
+    path: "/admin/users",
     role: adminRole,
   },
 ];

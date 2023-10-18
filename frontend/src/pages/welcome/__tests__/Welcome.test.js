@@ -258,6 +258,6 @@ describe("Welcome page", () => {
 
     const adminCardMenuButton = getByTestId("card-menu-admin-button");
     fireEvent.click(adminCardMenuButton);
-    expect(mockedUseNavigate).toHaveBeenCalledWith("/admin");
+    expect(mockedUseNavigate).toHaveBeenCalledWith("/admin/users");
   });
 });
