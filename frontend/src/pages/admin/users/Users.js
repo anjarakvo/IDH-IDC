@@ -6,17 +6,18 @@ import upperFirst from "lodash/upperFirst";
 import { api } from "../../../lib";
 
 const perPage = 10;
+const defData = {
+  current: 1,
+  data: [],
+  total: 0,
+  total_page: 1,
+};
 
 const Users = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(null);
-  const [data, setData] = useState({
-    current: 1,
-    data: [],
-    total: 1,
-    total_page: 1,
-  });
+  const [data, setData] = useState(defData);
 
   useEffect(() => {
     setLoading(true);
@@ -30,7 +31,11 @@ const Users = () => {
         setData(res.data);
       })
       .catch((e) => {
-        console.error(e);
+        console.error(e.response);
+        const { status } = e.response;
+        if (status === 404) {
+          setData(defData);
+        }
       })
       .finally(() => {
         setLoading(false);
