@@ -12,34 +12,29 @@ const { Header, Content } = Layout;
 const PageHeader = ({ isLoggedIn }) => {
   const [loading, setLoading] = useState(false);
   const [, , removeCookie] = useCookies(["AUTH_TOKEN"]);
+  const userRole = UserState.useState((s) => s.role);
 
   const adminRole = ["super_admin", "admin"];
   const allUserRole = [...adminRole, "editor", "viewer", "user"];
 
   const menus = [
     {
-      testid: "nav-menu-about",
-      name: "About IDC",
-      path: null,
-      role: allUserRole,
-    },
-    {
       testid: "nav-menu-cases",
       name: "Cases",
-      path: null,
+      path: "/cases",
       role: allUserRole,
     },
     {
       testid: "nav-menu-explore-studies",
       name: "Explore Studies",
-      path: null,
+      path: "/explore",
       role: allUserRole,
     },
     {
       testid: "nav-menu-admin",
       name: "Admin",
-      path: null,
-      role: allUserRole,
+      path: "/admin",
+      role: adminRole,
     },
   ];
 
@@ -56,15 +51,30 @@ const PageHeader = ({ isLoggedIn }) => {
       <Row justify="center" align="middle" style={{ width: "100%" }}>
         <Col span={6} align="start">
           <Link to="/">
-            <Image src={LogoWhite} height={65} preview={false} />
+            <Image
+              src={LogoWhite}
+              height={65}
+              preview={false}
+              data-testid="logo-image"
+            />
           </Link>
         </Col>
         <Col span={18} align="end" testid="nav-container">
           <Space size="large" className="navigation-container">
             <Link to="/about">About IDC</Link>
-            {isLoggedIn ? <Link to="/cases">Cases</Link> : ""}
-            <Link to="/explore">Explore Studies</Link>
-            {isLoggedIn ? <Link to="/admin">Admin</Link> : ""}
+            {isLoggedIn
+              ? menus
+                  .filter((x) => x.role.includes(userRole))
+                  .map((x, xi) => (
+                    <Link
+                      key={`nav-menu-${xi}`}
+                      data-testid={x.testid}
+                      to={x.path}
+                    >
+                      {x.name}
+                    </Link>
+                  ))
+              : ""}
             {!isLoggedIn ? (
               <Link className="nav-sign-in" to="/login">
                 {" "}
