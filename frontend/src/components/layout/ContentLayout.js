@@ -40,7 +40,7 @@ const ContentLayout = ({
     navigate(key);
   };
 
-  const activeTabMenu = tabItems.find(x => currentPath.includes(x.value));
+  const activeTabMenu = tabItems.find((x) => currentPath.includes(x.value));
 
   if (!renderCard) {
     return (

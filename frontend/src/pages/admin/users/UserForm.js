@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useState, useMemo } from "react";
 import "./user.scss";
 import { ContentLayout } from "../../../components/layout";
 import { Form, Input, Card, Row, Col, Button, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
+  adminRole,
   allUserRole,
   businessUnitRole,
   casePermission,
@@ -23,6 +24,8 @@ const transformToSelectOptions = (values) => {
 
 const UserForm = () => {
   const [form] = Form.useForm();
+  const [selectedRole, setSelectedRole] = useState(null);
+
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
@@ -40,6 +43,11 @@ const UserForm = () => {
   const onFinish = (values) => {
     console.info(values);
   };
+
+  const isBusinessUnitRequired = useMemo(
+    () => adminRole.includes(selectedRole),
+    [selectedRole]
+  );
 
   return (
     <ContentLayout
@@ -111,6 +119,7 @@ const UserForm = () => {
                   optionFilterProp="children"
                   filterOption={filterOption}
                   options={roleOptions}
+                  onChange={setSelectedRole}
                 />
               </Form.Item>
               <Form.Item
@@ -151,29 +160,28 @@ const UserForm = () => {
         <Row gutter={[16, 16]}>
           <Col span={12}>
             <Card title="Business Units">
-              <Form.List
-                name="business_units"
-                rules={[
-                  {
-                    validator: async (_) => {
-                      console.info(_);
-                      // return Promise.reject(new Error('At least 2 passengers'));
-                    },
-                  },
-                ]}
-              >
+              <Form.List name="business_units">
                 {(fields, { add, remove }) => {
                   return (
                     <>
                       {fields.map((field) => {
                         return (
-                          <Form.Item key={field.key} required={false}>
+                          <Form.Item
+                            key={field.key}
+                            required={isBusinessUnitRequired}
+                          >
                             <Row gutter={[16, 16]} align="middle">
                               <Col span={10}>
                                 <Form.Item
                                   {...field}
                                   label="Business Unit"
                                   name={[field.name, "business_unit"]}
+                                  rules={[
+                                    {
+                                      required: isBusinessUnitRequired,
+                                      message: "Business Unit is required",
+                                    },
+                                  ]}
                                 >
                                   <Select
                                     showSearch
@@ -189,6 +197,12 @@ const UserForm = () => {
                                   {...field}
                                   label="Business Unit Role"
                                   name={[field.name, "role"]}
+                                  rules={[
+                                    {
+                                      required: isBusinessUnitRequired,
+                                      message: "Business Unit Role is required",
+                                    },
+                                  ]}
                                 >
                                   <Select
                                     showSearch
@@ -233,17 +247,7 @@ const UserForm = () => {
 
           <Col span={12}>
             <Card title="Cases">
-              <Form.List
-                name="cases"
-                rules={[
-                  {
-                    validator: async (_) => {
-                      console.info(_);
-                      // return Promise.reject(new Error('At least 2 passengers'));
-                    },
-                  },
-                ]}
-              >
+              <Form.List name="cases">
                 {(fields, { add, remove } /*{ errors }*/) => {
                   return (
                     <>
