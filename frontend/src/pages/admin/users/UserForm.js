@@ -1,16 +1,18 @@
 import React, { useState, useMemo } from "react";
 import "./user.scss";
+import { useNavigate } from "react-router-dom";
 import { ContentLayout } from "../../../components/layout";
 import { Form, Input, Card, Row, Col, Button, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
-  adminRole,
   allUserRole,
   businessUnitRole,
   casePermission,
+  businessUnitRequiredForRole,
 } from "../../../store/static";
 import upperFirst from "lodash/upperFirst";
 import { UIState } from "../../../store";
+import { api } from "../../../lib";
 
 const transformToSelectOptions = (values) => {
   return values.map((x) => ({
@@ -23,8 +25,10 @@ const transformToSelectOptions = (values) => {
 };
 
 const UserForm = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [selectedRole, setSelectedRole] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -41,11 +45,41 @@ const UserForm = () => {
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   const onFinish = (values) => {
-    console.info(values);
+    setSubmitting(true);
+    const { fullname, email, role, organisation, tags, business_units, cases } =
+      values;
+    const payload = new FormData();
+    payload.append("fullname", fullname);
+    payload.append("email", email);
+    payload.append("role", role);
+    payload.append("organisation", organisation);
+    if (tags && tags?.length) {
+      const tagVal = Array.isArray(tags) ? tags : [tags];
+      payload.append("tags", JSON.stringify(tagVal));
+    }
+    if (business_units && business_units?.length) {
+      payload.append("business_units", JSON.stringify(business_units));
+    }
+    if (cases && cases?.length) {
+      payload.append("cases", JSON.stringify(cases));
+    }
+    api
+      .post("user/register", payload)
+      .then(() => {
+        setTimeout(() => {
+          navigate("/admin/users");
+        }, 500);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
   };
 
   const isBusinessUnitRequired = useMemo(
-    () => adminRole.includes(selectedRole),
+    () => businessUnitRequiredForRole.includes(selectedRole),
     [selectedRole]
   );
 
@@ -326,6 +360,7 @@ const UserForm = () => {
             className="button button-secondary"
             htmlType="submit"
             style={{ width: "200px", float: "right" }}
+            loading={submitting}
           >
             Save User
           </Button>
