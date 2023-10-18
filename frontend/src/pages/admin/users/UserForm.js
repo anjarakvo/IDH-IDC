@@ -3,19 +3,36 @@ import "./user.scss";
 import { ContentLayout } from "../../../components/layout";
 import { Form, Input, Card, Row, Col, Button, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
-import { allUserRole } from "../../../store/static";
+import {
+  allUserRole,
+  businessUnitRole,
+  casePermission,
+} from "../../../store/static";
 import upperFirst from "lodash/upperFirst";
+import { UIState } from "../../../store";
 
-const UserForm = () => {
-  const [form] = Form.useForm();
-
-  const roleOptions = allUserRole.map((x) => ({
+const transformToSelectOptions = (values) => {
+  return values.map((x) => ({
     value: x,
     label: x
       .split("_")
       .map((y) => upperFirst(y))
       .join(" "),
   }));
+};
+
+const UserForm = () => {
+  const [form] = Form.useForm();
+  const organisationOptions = UIState.useState((s) => s.organisationOptions);
+  const tagOptions = UIState.useState((s) => s.tagOptions);
+
+  const businessUnitOptions = window.master.business_units?.map((x) => ({
+    label: x.name,
+    value: x.id,
+  }));
+  const roleOptions = transformToSelectOptions(allUserRole);
+  const businessUnitRoleOptions = transformToSelectOptions(businessUnitRole);
+  const casePermissionOptions = transformToSelectOptions(casePermission);
 
   const filterOption = (input, option) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
@@ -107,7 +124,7 @@ const UserForm = () => {
                   allowClear
                   optionFilterProp="children"
                   filterOption={filterOption}
-                  options={[]}
+                  options={organisationOptions}
                 />
               </Form.Item>
             </Col>
@@ -118,7 +135,13 @@ const UserForm = () => {
         {/* Other Inputs */}
         <Card title="Tags">
           <Form.Item label="Tags" name="tags" required={false}>
-            <Input />
+            <Select
+              showSearch
+              mode="tags"
+              optionFilterProp="children"
+              filterOption={filterOption}
+              options={tagOptions}
+            />
           </Form.Item>
         </Card>
         <Row gutter={[16, 16]}>
@@ -129,13 +152,13 @@ const UserForm = () => {
                 rules={[
                   {
                     validator: async (_) => {
-                      console.log(_);
+                      console.info(_);
                       // return Promise.reject(new Error('At least 2 passengers'));
                     },
                   },
                 ]}
               >
-                {(fields, { add, remove }, { errors }) => {
+                {(fields, { add, remove }) => {
                   return (
                     <>
                       {fields.map((field) => {
@@ -148,7 +171,13 @@ const UserForm = () => {
                                   label="Business Unit"
                                   name="business_unit"
                                 >
-                                  <Input />
+                                  <Select
+                                    showSearch
+                                    allowClear
+                                    optionFilterProp="children"
+                                    filterOption={filterOption}
+                                    options={businessUnitOptions}
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col span={10}>
@@ -157,7 +186,13 @@ const UserForm = () => {
                                   label="Business Unit Role"
                                   name="role"
                                 >
-                                  <Input />
+                                  <Select
+                                    showSearch
+                                    allowClear
+                                    optionFilterProp="children"
+                                    filterOption={filterOption}
+                                    options={businessUnitRoleOptions}
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col span={4}>
@@ -199,13 +234,13 @@ const UserForm = () => {
                 rules={[
                   {
                     validator: async (_) => {
-                      console.log(_);
+                      console.info(_);
                       // return Promise.reject(new Error('At least 2 passengers'));
                     },
                   },
                 ]}
               >
-                {(fields, { add, remove }, { errors }) => {
+                {(fields, { add, remove } /*{ errors }*/) => {
                   return (
                     <>
                       {fields.map((field) => {
@@ -214,7 +249,14 @@ const UserForm = () => {
                             <Row gutter={[16, 16]} align="middle">
                               <Col span={10}>
                                 <Form.Item {...field} label="Case" name="case">
-                                  <Input />
+                                  <Select
+                                    showSearch
+                                    allowClear
+                                    optionFilterProp="children"
+                                    filterOption={filterOption}
+                                    options={[]}
+                                    disabled
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col span={10}>
@@ -223,7 +265,14 @@ const UserForm = () => {
                                   label="Permission"
                                   name="permission"
                                 >
-                                  <Input />
+                                  <Select
+                                    showSearch
+                                    allowClear
+                                    optionFilterProp="children"
+                                    filterOption={filterOption}
+                                    options={casePermissionOptions}
+                                    disabled
+                                  />
                                 </Form.Item>
                               </Col>
                               <Col span={4}>
