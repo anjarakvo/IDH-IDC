@@ -93,6 +93,7 @@ const Users = () => {
         { title: "Users", href: "/admin/users" },
       ]}
       title="Users"
+      wrapperId="user"
     >
       <TableContent
         title="All Users"
