@@ -77,7 +77,7 @@ const Users = () => {
       width: "5%",
       align: "center",
       render: (text, record) => (
-        <Link to={`/admin/user/${record.key}`}>
+        <Link to={`/admin/user/${record.id}`}>
           <EditOutlined />
         </Link>
       ),

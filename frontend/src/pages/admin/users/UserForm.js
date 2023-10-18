@@ -1,6 +1,6 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./user.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ContentLayout } from "../../../components/layout";
 import { Form, Input, Card, Row, Col, Button, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
@@ -26,9 +26,11 @@ const transformToSelectOptions = (values) => {
 
 const UserForm = () => {
   const navigate = useNavigate();
+  const { userId } = useParams();
   const [form] = Form.useForm();
   const [selectedRole, setSelectedRole] = useState(null);
   const [submitting, setSubmitting] = useState(false);
+  const [initValues, setInitValues] = useState({});
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -40,6 +42,20 @@ const UserForm = () => {
   const roleOptions = transformToSelectOptions(allUserRole);
   const businessUnitRoleOptions = transformToSelectOptions(businessUnitRole);
   const casePermissionOptions = transformToSelectOptions(casePermission);
+
+  useEffect(() => {
+    if (userId) {
+      api
+        .get(`user/${userId}`)
+        .then((res) => {
+          setInitValues(res.data);
+        })
+        .catch((e) => {
+          console.error(e);
+        });
+    }
+  }, [userId]);
+  console.log(initValues);
 
   const filterOption = (input, option) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());

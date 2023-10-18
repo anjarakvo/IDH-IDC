@@ -96,6 +96,7 @@ const App = () => {
           <Route element={<PrivateRoutes />}>
             <Route exact path="/admin/users" element={<Users />} />
             <Route exact path="/admin/user/new" element={<UserForm />} />
+            <Route path="/admin/user/:userId" element={<UserForm />} />
           </Route>
         ) : (
           ""
