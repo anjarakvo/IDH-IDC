@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import upperFirst from "lodash/upperFirst";
 import { api } from "../../../lib";
+import { Checkbox } from "antd";
 
 const perPage = 10;
 const defData = {
@@ -18,10 +19,11 @@ const Users = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(null);
   const [data, setData] = useState(defData);
+  const [showApprovedUser, setShowApprovedUser] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    let url = `/user?page=${currentPage}&limit=${perPage}`;
+    let url = `/user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
     if (search) {
       url = `${url}&search=${search}`;
     }
@@ -40,7 +42,7 @@ const Users = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [currentPage, perPage, search]);
+  }, [currentPage, search, showApprovedUser]);
 
   const columns = [
     {
@@ -93,6 +95,18 @@ const Users = () => {
       title="Users"
     >
       <TableContent
+        title="All Users"
+        filterComponent={
+          <>
+            <Checkbox
+              checked={showApprovedUser}
+              onChange={(e) => setShowApprovedUser(e.target.checked)}
+            >
+              {" "}
+              Show Approved User
+            </Checkbox>
+          </>
+        }
         dataSource={data.data}
         columns={columns}
         searchProps={{

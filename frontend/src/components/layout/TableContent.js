@@ -5,6 +5,8 @@ import { Link } from "react-router-dom";
 const { Search } = Input;
 
 const TableContent = ({
+  title = "Data",
+  filterComponent = null,
   dataSource = [],
   columns = [],
   loading = true,
@@ -29,6 +31,18 @@ const TableContent = ({
         </Card>
       </Col>
       <Col span={24}>
+        <Row align="middle" style={{ background: "#fff", padding: "6px 24px" }}>
+          <Col span={4}>
+            <h4>{title}</h4>
+          </Col>
+          <Col span={20} align="end">
+            {filterComponent ? (
+              <div style={{ float: "right" }}>{filterComponent}</div>
+            ) : (
+              ""
+            )}
+          </Col>
+        </Row>
         <Table
           rowKey="id"
           dataSource={dataSource}
