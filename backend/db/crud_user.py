@@ -142,7 +142,8 @@ def filter_user(
     approved: Optional[bool] = True,
     organisation: Optional[int] = None
 ):
-    user = session.query(User).filter(User.is_active == 1 if approved else 0)
+    is_active = 1 if approved else 0
+    user = session.query(User).filter(User.is_active == is_active)
     if search:
         user = user.filter(
             or_(
@@ -150,7 +151,7 @@ def filter_user(
                 User.email.ilike("%{}%".format(search.lower().strip())),
             ))
     if organisation:
-        user = user.filter(User.organisation.in_(organisation))
+        user = user.filter(User.organisation.in_([organisation]))
     return user
 
 
