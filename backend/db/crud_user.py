@@ -139,29 +139,33 @@ def get_user_by_id(session: Session, id: int) -> UserDict:
 def filter_user(
     session: Session,
     search: Optional[str] = None,
+    approved: Optional[bool] = True,
     organisation: Optional[int] = None
 ):
-    user = session.query(User)
+    is_active = 1 if approved else 0
+    user = session.query(User).filter(User.is_active == is_active)
     if search:
         user = user.filter(
             or_(
-                User.name.ilike("%{}%".format(search.lower().strip())),
+                User.fullname.ilike("%{}%".format(search.lower().strip())),
                 User.email.ilike("%{}%".format(search.lower().strip())),
             ))
     if organisation:
-        user = user.filter(User.organisation.in_(organisation))
+        user = user.filter(User.organisation.in_([organisation]))
     return user
 
 
 def get_all_user(
     session: Session,
     search: Optional[str] = None,
+    approved: Optional[bool] = True,
     organisation: Optional[List[int]] = None,
     skip: int = 0,
     limit: int = 10
 ) -> List[UserDict]:
     user = filter_user(
-        session=session, search=search, organisation=organisation)
+        session=session, search=search,
+        organisation=organisation, approved=approved)
     user = user.order_by(User.id.desc()).offset(skip).limit(limit).all()
     return user
 
@@ -169,10 +173,12 @@ def get_all_user(
 def count(
     session: Session,
     search: Optional[str] = None,
+    approved: Optional[bool] = True,
     organisation: Optional[int] = None
 ) -> int:
     user = filter_user(
-        session=session, search=search, organisation=organisation)
+        session=session, search=search,
+        organisation=organisation, approved=approved)
     return user.count()
 
 

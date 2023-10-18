@@ -321,12 +321,39 @@ class TestUserEndpoint():
         assert res["active"] is True
 
     @pytest.mark.asyncio
-    async def test_get_all_user_by_super_admin_cred(
+    async def test_get_all_approved_user_by_super_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         # with admin credential
         res = await client.get(
             app.url_path_for("user:get_all"),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "current": 1,
+            "data": [{
+                "id": 1,
+                "organisation": 1,
+                "email": "super_admin@akvo.org",
+                "fullname": "John Doe",
+                "role": UserRole.super_admin.value,
+                "active": True,
+                "tags_count": 0,
+                "cases_count": 0,
+            }],
+            "total": 1,
+            "total_page": 1
+        }
+
+    @pytest.mark.asyncio
+    async def test_get_all_not_approved_user_by_super_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # with admin credential
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"approved": False},
             headers={"Authorization": f"Bearer {account.token}"})
         assert res.status_code == 200
         res = res.json()
@@ -350,19 +377,21 @@ class TestUserEndpoint():
                 "active": False,
                 "tags_count": 0,
                 "cases_count": 0,
-            }, {
-                "id": 1,
-                "organisation": 1,
-                "email": "super_admin@akvo.org",
-                "fullname": "John Doe",
-                "role": UserRole.super_admin.value,
-                "active": True,
-                "tags_count": 0,
-                "cases_count": 0,
             }],
-            "total": 3,
+            "total": 2,
             "total_page": 1
         }
+
+    @pytest.mark.asyncio
+    async def test_get_all_user_by_super_admin_cred_with_filter(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # with admin credential
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"organisation": 1, "search": "Wayan"},
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 404
 
     @pytest.mark.asyncio
     async def test_get_user_by_id_by_super_admin_cred(
