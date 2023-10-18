@@ -223,7 +223,7 @@ const CaseProfile = ({
         </Col>
         <Col span={12}>
           <Card
-            title="Secondary Commodities"
+            title="Secondary Commodity"
             extra={<Switch onChange={setSecondary} />}
             style={{
               marginBottom: "16px",
@@ -237,7 +237,7 @@ const CaseProfile = ({
             />
           </Card>
           <Card
-            title="Teritary Commodities"
+            title="Teritary Commodity"
             extra={<Switch onChange={setTertiary} disabled={!secondary} />}
             style={{
               backgroundColor: !tertiary ? "#f5f5f5" : "white",
