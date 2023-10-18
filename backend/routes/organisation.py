@@ -4,7 +4,7 @@ from fastapi import (
     APIRouter, Request, Depends
 )
 from fastapi.security import (
-    HTTPBearer, HTTPBasicCredentials as credentials
+    HTTPBearer
 )
 from sqlalchemy.orm import Session
 from typing import List
