@@ -43,6 +43,18 @@ class TestUserAuthentication():
         assert org.name == "Akvo"
 
     @pytest.mark.asyncio
+    async def test_get_organisation_options(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.get(app.url_path_for("organisation:get_options"))
+        assert res.status_code == 200
+        res = res.json()
+        for r in res:
+            assert "label" in r
+            assert "value" in r
+
+    @pytest.mark.asyncio
     async def test_user_register(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:

@@ -22,6 +22,11 @@ class TagListDict(TypedDict):
     cases_count: int
 
 
+class TagOption(TypedDict):
+    label: str
+    value: int
+
+
 class Tag(Base):
     __tablename__ = 'tag'
 
@@ -76,6 +81,13 @@ class Tag(Base):
             "name": self.name,
             "description": self.description,
             "cases_count": len(self.tag_cases)
+        }
+
+    @property
+    def to_option(self) -> TagOption:
+        return {
+            "label": self.name,
+            "value": self.id,
         }
 
 

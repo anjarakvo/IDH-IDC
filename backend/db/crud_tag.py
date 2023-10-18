@@ -3,7 +3,7 @@ from typing import Optional, List
 from typing_extensions import TypedDict
 from fastapi import HTTPException, status
 
-from models.tag import Tag, TagListDict, TagBase, UpdateTagBase
+from models.tag import Tag, TagListDict, TagBase, UpdateTagBase, TagDict
 from models.case_tag import CaseTag
 
 
@@ -70,3 +70,7 @@ def update_tag(
     session.flush()
     session.refresh(tag)
     return tag
+
+
+def get_all_tag_options(session: Session) -> List[TagDict]:
+    return session.query(Tag).all()
