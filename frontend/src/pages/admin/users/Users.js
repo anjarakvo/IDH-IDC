@@ -23,7 +23,7 @@ const Users = () => {
 
   useEffect(() => {
     setLoading(true);
-    let url = `/user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
+    let url = `user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
     if (search) {
       url = `${url}&search=${search}`;
     }

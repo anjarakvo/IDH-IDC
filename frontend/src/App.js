@@ -11,15 +11,32 @@ import { Cases, Case } from "./pages/cases";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
 import { Users, UserForm } from "./pages/admin";
-import { UserState } from "./store";
+import { UserState, UIState } from "./store";
 import { api } from "./lib";
 import { adminRole } from "./store/static";
+
+const optionRoutes = ["organisation/options", "tag/options"];
 
 const App = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
   const authTokenAvailable =
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
   const userRole = UserState.useState((s) => s.role);
+
+  useEffect(() => {
+    const optionApiCalls = optionRoutes.map((url) => api.get(url));
+    Promise.all(optionApiCalls)
+      .then((res) => {
+        const [orgRes, tagRes] = res;
+        UIState.update((s) => {
+          s.organisationOptions = orgRes.data;
+          s.tagOptions = tagRes.data;
+        });
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  });
 
   useEffect(() => {
     if (authTokenAvailable) {
