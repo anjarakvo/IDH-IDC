@@ -1,11 +1,24 @@
 import React from "react";
 import "./user.scss";
 import { ContentLayout } from "../../../components/layout";
-import { Form, Input, Card, Row, Col, Button } from "antd";
+import { Form, Input, Card, Row, Col, Button, Select } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
+import { allUserRole } from "../../../store/static";
+import upperFirst from "lodash/upperFirst";
 
 const UserForm = () => {
   const [form] = Form.useForm();
+
+  const roleOptions = allUserRole.map((x) => ({
+    value: x,
+    label: x
+      .split("_")
+      .map((y) => upperFirst(y))
+      .join(" "),
+  }));
+
+  const filterOption = (input, option) =>
+    (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   return (
     <ContentLayout
@@ -71,7 +84,13 @@ const UserForm = () => {
                   },
                 ]}
               >
-                <Input />
+                <Select
+                  showSearch
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={filterOption}
+                  options={roleOptions}
+                />
               </Form.Item>
               <Form.Item
                 label="Organisation"
@@ -83,7 +102,13 @@ const UserForm = () => {
                   },
                 ]}
               >
-                <Input />
+                <Select
+                  showSearch
+                  allowClear
+                  optionFilterProp="children"
+                  filterOption={filterOption}
+                  options={[]}
+                />
               </Form.Item>
             </Col>
           </Row>
