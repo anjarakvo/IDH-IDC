@@ -49,7 +49,10 @@ const ContentLayout = ({
     <div>
       <Card className="content-card-container" bordered={false}>
         {hasBreadcrumb ? (
-          <Breadcrumb data-testid="breadcrumb" items={breadcrumbItems} />
+          <Breadcrumb
+            data-testid="breadcrumb"
+            items={breadcrumbItems.map((x) => ({ key: x.href, ...x }))}
+          />
         ) : (
           ""
         )}

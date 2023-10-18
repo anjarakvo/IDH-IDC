@@ -1,4 +1,4 @@
-import { render, waitFor, act, fireEvent } from "@testing-library/react";
+import { render, waitFor, act } from "@testing-library/react";
 import { BrowserRouter as Router } from "react-router-dom";
 import ContentLayout from "../ContentLayout";
 import { UserState } from "../../../store";
