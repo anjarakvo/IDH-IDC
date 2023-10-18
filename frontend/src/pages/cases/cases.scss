@@ -33,4 +33,17 @@
       background: #fff;
     }
   }
+  .anticon {
+    &.finished-dot {
+      font-size: 15px;
+      position: absolute;
+      width: 15px;
+      height: 15px;
+      left: 2px;
+      bottom: -2px;
+      color: $primary-color;
+      border: 1px solid $primary-color;
+      border-radius: 100%;
+    }
+  }
 }
