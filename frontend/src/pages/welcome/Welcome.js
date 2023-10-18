@@ -49,7 +49,7 @@ const Welcome = () => {
   };
 
   return (
-    <Row className="welcome-container">
+    <Row className="welcome-container" id="welcome">
       <div className="right-clip-path-wrapper" />
       <Col span={24} className="welcome-content-wrapper">
         {/* Page Title */}

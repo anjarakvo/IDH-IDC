@@ -1,61 +1,63 @@
 @import "../../variables.scss";
 
-.welcome-container {
-  background-image: url("/assets/images/bg-login.png") !important;
-  min-height: 100vh;
+#welcome {
+  .welcome-container {
+    background-image: url("/assets/images/bg-login.png") !important;
+    min-height: 100vh;
 
-  .right-clip-path-wrapper {
-    background-image: url("/assets/images/login-clip-path.svg") !important;
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: top right;
-    height: 100%;
-    width: 50%;
-    position: absolute;
-    top: 5rem;
-    right: 0;
-    bottom: 0;
-  }
+    .right-clip-path-wrapper {
+      background-image: url("/assets/images/login-clip-path.svg") !important;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: top right;
+      height: 100%;
+      width: 50%;
+      position: absolute;
+      top: 5rem;
+      right: 0;
+      bottom: 0;
+    }
 
-  .welcome-content-wrapper {
-    padding: 1.5rem $default-padding-size;
+    .welcome-content-wrapper {
+      padding: 1.5rem $default-padding-size;
 
-    .card-menu-wrapper {
-      .card-container {
-        background-color: rgba(255, 255, 255, 1);
-        border-radius: 8px;
-        box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+      .card-menu-wrapper {
+        .card-container {
+          background-color: rgba(255, 255, 255, 1);
+          border-radius: 8px;
+          box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
 
-        .ant-card-body {
-          padding: 0 !important;
-        }
-
-        .card-content-wrapper {
-          .ant-image .ant-image-img {
-            height: 5.25rem !important;
+          .ant-card-body {
+            padding: 0 !important;
           }
 
-          .icon-wrapper {
-            background: rgba(38, 96, 95, 0.3);
-            padding: 1.5rem 1.25rem;
-            border-radius: 8px 0 0 8px;
-            border: none;
-          }
-
-          .text-wrapper {
-            padding: 0 1.25rem 0 2rem;
-            h4 {
-              font-size: 1.5rem;
-              color: $primary-color;
-              margin: 0.3rem 0;
+          .card-content-wrapper {
+            .ant-image .ant-image-img {
+              height: 5.25rem !important;
             }
-            p {
-              margin: 0;
-            }
-          }
 
-          .button-wrapper {
-            padding-top: 2rem;
+            .icon-wrapper {
+              background: rgba(38, 96, 95, 0.3);
+              padding: 1.5rem 1.25rem;
+              border-radius: 8px 0 0 8px;
+              border: none;
+            }
+
+            .text-wrapper {
+              padding: 0 1.25rem 0 2rem;
+              h4 {
+                font-size: 1.5rem;
+                color: $primary-color;
+                margin: 0.3rem 0;
+              }
+              p {
+                margin: 0;
+              }
+            }
+
+            .button-wrapper {
+              padding-top: 2rem;
+            }
           }
         }
       }

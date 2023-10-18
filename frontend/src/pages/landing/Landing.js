@@ -89,11 +89,13 @@ const Landing = () => {
             Use the Calculator
           </Link>
         </Col>
-        <Col span={12}>
-          <div
-            data-testid="second-section-image"
-            className="image-wrapper"
-          ></div>
+        <Col
+          span={12}
+          data-testid="second-section-image"
+          className="image-wrapper"
+        >
+          <div className="image-clip-path-wrapper" />
+          <div className="image-farmer-wrapper" />
         </Col>
       </Row>
       <Row
