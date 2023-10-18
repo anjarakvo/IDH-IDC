@@ -12,7 +12,7 @@ const TableContent = ({
   buttonProps = {},
 }) => {
   return (
-    <Row>
+    <Row data-testid="table-content">
       <Col span={24}>
         <Card className="search-and-add">
           <Row align="middle">

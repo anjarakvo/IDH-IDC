@@ -157,8 +157,22 @@
         width: 30vw;
       }
     }
+
+    .admin-tab-menu-container {
+      padding: 0 $default-padding-size;
+      background: #ffffff;
+      .ant-tabs-nav {
+        margin: 0;
+      }
+      .ant-tabs-tab-active {
+        font-family: "TabletGothic" !important;
+        font-weight: 600;
+      }
+    }
   }
   .ant-card {
+    box-shadow: none;
+    border: none;
     font-family: "TabletGothic" !important;
     .ant-card-title {
       font-family: "TabletGothicBold";
