@@ -8,7 +8,6 @@ import { Home } from "./pages/home";
 import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Cases, Case } from "./pages/cases";
-import { Dashboard } from "./pages/dashboard";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
 import { Users } from "./pages/admin";
@@ -72,7 +71,6 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
         <Route element={<PrivateRoutes />}>
           <Route exact path="/home" element={<Home />} />
-          <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/welcome" element={<Welcome />} />
           <Route exact path="/cases" element={<Cases />} />
           <Route exact path="/cases/new" element={<Case />} />

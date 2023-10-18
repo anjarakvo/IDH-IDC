@@ -26,7 +26,7 @@ const Case = () => {
   return (
     <ContentLayout
       breadcrumbItems={[
-        { title: "Home", href: "/dashboard" },
+        { title: "Home", href: "/welcome" },
         { title: "Cases", href: "/cases" },
         { title: caseTitle },
       ]}
