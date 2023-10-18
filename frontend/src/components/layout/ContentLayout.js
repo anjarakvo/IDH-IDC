@@ -1,5 +1,5 @@
 import React from "react";
-import { Breadcrumb, Card } from "antd";
+import { Breadcrumb, Card, Affix } from "antd";
 
 const ContentLayout = ({
   children,
@@ -21,27 +21,29 @@ const ContentLayout = ({
 
   return (
     <div>
-      <Card className="content-card-container">
-        {hasBreadcrumb ? (
-          <Breadcrumb testid="breadcrumb" items={breadcrumbItems} />
-        ) : (
-          ""
-        )}
-        {title ? (
-          <div testid="title" className="title">
-            {title}
-          </div>
-        ) : (
-          ""
-        )}
-        {subTitle ? (
-          <div testid="subTitle" className="subTitle">
-            {subTitle}
-          </div>
-        ) : (
-          ""
-        )}
-      </Card>
+      <Affix offsetTop={80}>
+        <Card className="content-card-container">
+          {hasBreadcrumb ? (
+            <Breadcrumb testid="breadcrumb" items={breadcrumbItems} />
+          ) : (
+            ""
+          )}
+          {title ? (
+            <div testid="title" className="title">
+              {title}
+            </div>
+          ) : (
+            ""
+          )}
+          {subTitle ? (
+            <div testid="subTitle" className="subTitle">
+              {subTitle}
+            </div>
+          ) : (
+            ""
+          )}
+        </Card>
+      </Affix>
       <div className="content-wrapper" id={wrapperId}>
         {children}
       </div>

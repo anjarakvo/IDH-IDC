@@ -1,12 +1,3 @@
-export const selectProps = {
-  showSearch: true,
-  allowClear: true,
-  optionFilterProp: "label",
-  style: {
-    width: "100%",
-  },
-};
-
 const commodityCategories = window.master?.commodity_categories || [];
 const commodities = commodityCategories
   ? commodityCategories.reduce(
@@ -75,4 +66,16 @@ export const reportingPeriod = [
   },
 ];
 
+export const selectProps = {
+  showSearch: true,
+  allowClear: true,
+  optionFilterProp: "label",
+  style: {
+    width: "100%",
+  },
+};
+
 export { default as AreaUnitFields } from "./AreaUnitFields";
+export { default as SideMenu } from "./SideMenu";
+export { default as CaseProfile } from "./CaseProfile";
+export { default as IncomeDriverDataEntry } from "./IncomeDriverDataEntry";
