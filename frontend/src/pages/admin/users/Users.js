@@ -5,6 +5,7 @@ import { EditOutlined } from "@ant-design/icons";
 import upperFirst from "lodash/upperFirst";
 import { api } from "../../../lib";
 import { Checkbox } from "antd";
+import "./users.scss";
 
 const perPage = 10;
 const defData = {

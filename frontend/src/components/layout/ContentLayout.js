@@ -71,19 +71,19 @@ const ContentLayout = ({
           ) : (
             ""
           )}
+          {currentPath.includes("/admin/") && adminRole.includes(userRole) ? (
+            <Tabs
+              data-testid="admin-tabs-menu"
+              activeKey={currentPath}
+              items={tabItems}
+              tabBarGutter={48}
+              onChange={handleOnClickTab}
+              className="admin-tab-menu-container"
+            />
+          ) : (
+            ""
+          )}
         </Card>
-        {currentPath.includes("/admin/") && adminRole.includes(userRole) ? (
-          <Tabs
-            data-testid="admin-tabs-menu"
-            activeKey={currentPath}
-            items={tabItems}
-            tabBarGutter={48}
-            onChange={handleOnClickTab}
-            className="admin-tab-menu-container"
-          />
-        ) : (
-          ""
-        )}
       </Affix>
       <div className="content-wrapper" id={wrapperId}>
         {children}

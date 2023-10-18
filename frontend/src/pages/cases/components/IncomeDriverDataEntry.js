@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { Row, Col, Card, Tabs } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
 
-const DataFields = () => {
+const DataFields = ({ segment }) => {
   return (
     <Row>
       <Col span={12}>
-        <Card title="Segment Inputs">Test</Card>
+        <Card title="Segment Inputs">Segment {segment}</Card>
       </Col>
       <Col span={12}></Col>
     </Row>
@@ -37,7 +37,7 @@ const IncomeDriverDataEntry = () => {
       newItems.splice(newItems.length - 1, 0, {
         key: newKey.toString(),
         label: `Segment ${newKey}`,
-        children: <DataFields />,
+        children: <DataFields segment={newKey} />,
       });
       setItems(newItems);
       setActiveKey(newKey.toString());
