@@ -1,22 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ContentLayout, TableContent } from "../../../components/layout";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import upperFirst from "lodash/upperFirst";
+import { api } from "../../../lib";
+
+const perPage = 10;
 
 const Users = () => {
-  const dataSource = [
-    {
-      id: 1,
-      organisation: 1,
-      email: "galih@akvo.org",
-      fullname: "Galih Pratama",
-      role: "super_admin",
-      active: true,
-      tags_count: 0,
-      cases_count: 0,
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState(null);
+  const [data, setData] = useState({
+    current: 1,
+    data: [],
+    total: 1,
+    total_page: 1,
+  });
+
+  useEffect(() => {
+    setLoading(true);
+    let url = `/user?page=${currentPage}&limit=${perPage}`;
+    if (search) {
+      url = `${url}&search=${search}`;
+    }
+    api
+      .get(url)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [currentPage, perPage, search]);
 
   const columns = [
     {
@@ -57,7 +76,8 @@ const Users = () => {
       ),
     },
   ];
-  const onSearch = (value) => console.info(value);
+
+  const onSearch = (value) => setSearch(value);
 
   return (
     <ContentLayout
@@ -68,7 +88,7 @@ const Users = () => {
       title="Users"
     >
       <TableContent
-        dataSource={dataSource}
+        dataSource={data.data}
         columns={columns}
         searchProps={{
           placeholder: "Find User",
@@ -79,7 +99,13 @@ const Users = () => {
           text: "Add User",
           to: "/admin/user/new",
         }}
-        loading={false}
+        loading={loading}
+        paginationProps={{
+          current: currentPage,
+          pageSize: perPage,
+          total: data.total,
+          onChange: (page) => setCurrentPage(page),
+        }}
       />
     </ContentLayout>
   );

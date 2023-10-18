@@ -145,7 +145,7 @@ def filter_user(
     if search:
         user = user.filter(
             or_(
-                User.name.ilike("%{}%".format(search.lower().strip())),
+                User.fullname.ilike("%{}%".format(search.lower().strip())),
                 User.email.ilike("%{}%".format(search.lower().strip())),
             ))
     if organisation:

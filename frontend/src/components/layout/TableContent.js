@@ -10,6 +10,7 @@ const TableContent = ({
   loading = true,
   searchProps = {},
   buttonProps = {},
+  paginationProps = {},
 }) => {
   return (
     <Row data-testid="table-content">
@@ -28,7 +29,13 @@ const TableContent = ({
         </Card>
       </Col>
       <Col span={24}>
-        <Table dataSource={dataSource} columns={columns} loading={loading} />
+        <Table
+          rowKey="id"
+          dataSource={dataSource}
+          columns={columns}
+          loading={loading}
+          pagination={paginationProps}
+        />
       </Col>
     </Row>
   );
