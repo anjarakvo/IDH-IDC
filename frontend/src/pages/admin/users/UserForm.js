@@ -37,6 +37,10 @@ const UserForm = () => {
   const filterOption = (input, option) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
+  const onFinish = (values) => {
+    console.info(values);
+  };
+
   return (
     <ContentLayout
       breadcrumbItems={[
@@ -52,7 +56,7 @@ const UserForm = () => {
         name="user-form"
         layout="vertical"
         // initialValues={formData}
-        // onFinish={onFinish}
+        onFinish={onFinish}
         // onFinishFailed={onFinishFailed}
         autoComplete="off"
         className="user-form-container"
@@ -169,7 +173,7 @@ const UserForm = () => {
                                 <Form.Item
                                   {...field}
                                   label="Business Unit"
-                                  name="business_unit"
+                                  name={[field.name, "business_unit"]}
                                 >
                                   <Select
                                     showSearch
@@ -184,7 +188,7 @@ const UserForm = () => {
                                 <Form.Item
                                   {...field}
                                   label="Business Unit Role"
-                                  name="role"
+                                  name={[field.name, "role"]}
                                 >
                                   <Select
                                     showSearch
@@ -248,7 +252,11 @@ const UserForm = () => {
                           <Form.Item key={field.key} required={false}>
                             <Row gutter={[16, 16]} align="middle">
                               <Col span={10}>
-                                <Form.Item {...field} label="Case" name="case">
+                                <Form.Item
+                                  {...field}
+                                  label="Case"
+                                  name={[field.name, "case"]}
+                                >
                                   <Select
                                     showSearch
                                     allowClear
@@ -263,7 +271,7 @@ const UserForm = () => {
                                 <Form.Item
                                   {...field}
                                   label="Permission"
-                                  name="permission"
+                                  name={[field.name, "permission"]}
                                 >
                                   <Select
                                     showSearch
@@ -308,6 +316,16 @@ const UserForm = () => {
           </Col>
         </Row>
         {/* EOL Other Inputs */}
+
+        <Form.Item>
+          <Button
+            className="button button-secondary"
+            htmlType="submit"
+            style={{ width: "200px", float: "right" }}
+          >
+            Save User
+          </Button>
+        </Form.Item>
       </Form>
     </ContentLayout>
   );
