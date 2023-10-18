@@ -56,7 +56,7 @@ const Login = () => {
           s.cases_count = data.cases_count;
         });
         setTimeout(() => {
-          navigate("/dashboard");
+          navigate("/welcome");
         }, 100);
       })
       .catch(() => {

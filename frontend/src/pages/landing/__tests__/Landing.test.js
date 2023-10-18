@@ -13,7 +13,7 @@ describe("Landing page", () => {
       </Router>
     );
 
-    expect(wrapper.getByTestId("logo-container")).toBeInTheDocument();
+    expect(wrapper.getByTestId("logo-image")).toBeInTheDocument();
     expect(wrapper.getByText("About IDC")).toBeInTheDocument();
     expect(wrapper.getByText("Sign in")).toBeInTheDocument();
   });
