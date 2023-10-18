@@ -190,5 +190,22 @@
       width: 15px;
       height: 15px;
     }
+    .ant-timeline-item-tail {
+      inset-inline-start: 7.5px;
+    }
+  }
+  .ant-form {
+    input {
+      font-family: "TabletGothic";
+    }
+    .ant-form-item {
+      .ant-form-item-explain-error {
+        font-family: "TabletGothic";
+      }
+    }
+  }
+  .ant-select-selection-placeholder,
+  .ant-form-item-label {
+    font-family: "TabletGothic";
   }
 }
