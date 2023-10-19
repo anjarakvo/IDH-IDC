@@ -1,7 +1,7 @@
-id,parent,text,description,unit,default_value
-1,,Income,"Crop, Aquaculture, Livestock",currency,(3*4*5) - 6 + 7
+id,parent,text,description,unit,default_value,type
+1,,Income,"Crop, Aquaculture, Livestock",currency,(3*4*5) - 6 + 7,aggregator
 2,1,Area,"Crop, Aquaculture",area_size_unit,
-3,1,Volume,"Crop, Aquaculture",volume_measurement_unit / area_unit,8-9
+3,1,Volume,"Crop, Aquaculture",volume_measurement_unit / area_unit,8-9,
 4,1,Price,"Crop, Aquaculture",currency,
 5,1,Cost of Production,"Crop, Aquaculture,Livestock",currency,
 6,2,Land Size,Crop,currency,
@@ -28,3 +28,7 @@ id,parent,text,description,unit,default_value
 27,22,Marketing Costs,Crop,currency,
 28,22,Certification Costs,Crop,currency,
 29,22,Cost of Capital,Crop,currency,
+30,,Income from livestock,"",currency,,diversified
+31,,Income from off-farm activities,"",currency,,diversified
+32,,Investment and cash transfer,"",currency,,diversified
+33,,Other income,"",currency,,diversified

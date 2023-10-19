@@ -191,6 +191,7 @@ const CaseProfile = ({
   setFormData,
   finished,
   setFinished,
+  setCommodityList,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(false);
@@ -201,6 +202,31 @@ const CaseProfile = ({
     setPage("Income Driver Data Entry");
     const completed = finished.filter((item) => item !== "Case Profile");
     setFinished([...completed, "Case Profile"]);
+    let commodities = [
+      {
+        commodity: values.focus_commodity,
+        breakdown: true,
+      },
+    ];
+    if (secondary) {
+      commodities = [
+        ...commodities,
+        {
+          commodity: values["1-commodity"],
+          breakdown: values["1-breakdown"] === "yes" ? true : false,
+        },
+      ];
+    }
+    if (tertiary) {
+      commodities = [
+        ...commodities,
+        {
+          commodity: values["2-commodity"],
+          breakdown: values["2-breakdown"] === "yes" ? true : false,
+        },
+      ];
+    }
+    setCommodityList(commodities);
   };
 
   const onFinishFailed = () => {
