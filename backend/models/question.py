@@ -90,7 +90,7 @@ class Question(Base):
 
     @property
     def serialize_with_child(self) -> QuestionDict:
-        childrens = [c.serialize for c in self.children]
+        childrens = [c.serialize_with_child for c in self.children]
         return {
             "id": self.id,
             "parent": self.parent,

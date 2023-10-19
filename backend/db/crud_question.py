@@ -16,6 +16,7 @@ def get_question_by_commodity(
         commodity = commodity.to_question_list
         questions = commodity["questions"]
         if param["breakdown"]:
+            questions = [q for q in questions if not q.parent]
             commodity["questions"] = [q.serialize_with_child for q in questions]
         else:
             commodity["questions"] = [q.serialize for q in questions]
