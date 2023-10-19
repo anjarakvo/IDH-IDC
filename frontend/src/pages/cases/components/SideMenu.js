@@ -1,5 +1,5 @@
 import React from "react";
-import { Col, Affix, Timeline } from "antd";
+import { Col, Timeline } from "antd";
 import { CheckCircleFilled } from "@ant-design/icons";
 
 const activeStyle = {
@@ -21,7 +21,7 @@ const menuList = [
 const SideMenu = ({ active, setActive, finished }) => {
   return (
     <Col flex="200px">
-      <Affix offsetTop={220}>
+      <div className="timeline-container">
         <Timeline
           items={menuList.map((item) => {
             const isFinished = finished.includes(item.name);
@@ -47,7 +47,7 @@ const SideMenu = ({ active, setActive, finished }) => {
             return result;
           })}
         />
-      </Affix>
+      </div>
     </Col>
   );
 };
