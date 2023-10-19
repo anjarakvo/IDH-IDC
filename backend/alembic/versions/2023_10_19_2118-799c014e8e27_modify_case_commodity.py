@@ -45,6 +45,19 @@ def upgrade() -> None:
         ["case", "commodity", "commodity_type"],
     )
     op.drop_constraint("case_commodity_unique", "case_commodity", type_="unique")
+    op.drop_constraint(
+        "case_commodity_commodity_constraint", "case_commodity", type_="foreignkey"
+    )
+    op.drop_constraint(
+        "case_commodity_commodity_fkey", "case_commodity", type_="foreignkey"
+    )
+    op.alter_column(
+        "case_commodity",
+        "commodity",
+        existing_type=sa.INTEGER(),
+        nullable=True,
+        existing_server_default=sa.text("NULL"),
+    )
     op.drop_column("case_commodity", "focus_commodity")
 
 
@@ -65,5 +78,25 @@ def downgrade() -> None:
     op.drop_column("case_commodity", "commodity_type")
     commodity_type_enum = postgresql.ENUM(
         "focus", "secondary", "tertiary", "diversified", name="case_commodity_type_enum"
+    )
+    op.create_foreign_key(
+        "case_commodity_commodity_constraint",
+        "case_commodity",
+        "commodity",
+        ["commodity"],
+        ["id"],
+    )
+    op.create_foreign_key(
+        "case_commodity_commodity_fkey",
+        "case_commodity",
+        "commodity",
+        ["commodity"],
+        ["id"],
+    )
+    op.alter_column(
+        "case_commodity",
+        "commodity",
+        existing_type=sa.INTEGER(),
+        nullable=False,
     )
     commodity_type_enum.drop(op.get_bind())
