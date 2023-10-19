@@ -20,7 +20,7 @@ class QuestionDict(TypedDict):
     text: str
     description: Optional[str]
     default_value: Optional[str]
-    created_by: int
+    created_by: Optional[int] = None
     childrens: Optional[List]
 
 
@@ -31,31 +31,27 @@ class QuestionGroupListDict(TypedDict):
 
 
 class Question(Base):
-    __tablename__ = 'question'
+    __tablename__ = "question"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    parent = Column(Integer, ForeignKey('question.id'))
+    parent = Column(Integer, ForeignKey("question.id"))
     code = Column(String, nullable=True)
     text = Column(String, nullable=False)
     description = Column(String, nullable=True)
     default_value = Column(String, nullable=True)
-    created_by = Column(Integer, ForeignKey('user.id'))
+    created_by = Column(Integer, ForeignKey("user.id"), nullable=True)
 
     children = relationship("Question")
-    parent_detail = relationship(
-        "Question", remote_side=[id], overlaps="children")
+    parent_detail = relationship("Question", remote_side=[id], overlaps="children")
     created_by_user = relationship(
-        'User',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='questions'
+        "User", cascade="all, delete", passive_deletes=True, backref="questions"
     )
     question_commodity_category_detail = relationship(
         CommodityCategory,
         secondary=CommodityCategoryQuestion.__tablename__,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='commodity_category_questions'
+        back_populates="commodity_category_questions",
     )
 
     def __init__(
@@ -114,4 +110,4 @@ class QuestionBase(BaseModel):
     text: str
     description: Optional[str] = None
     default_value: Optional[str] = None
-    created_by: int
+    created_by: Optional[int] = None
