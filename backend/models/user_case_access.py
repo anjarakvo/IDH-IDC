@@ -2,8 +2,14 @@ from db.connection import Base
 from sqlalchemy import Column, ForeignKey, Integer, Enum
 from sqlalchemy.orm import relationship
 from typing import Optional
+from typing_extensions import TypedDict
 from pydantic import BaseModel
 from models.enum_type import PermissionType
+
+
+class UserCasePermissionDict(TypedDict):
+    case: int
+    permission: PermissionType
 
 
 class UserCaseAccess(Base):
@@ -41,6 +47,13 @@ class UserCaseAccess(Base):
 
     def __repr__(self) -> int:
         return f"<UserCaseAccess {self.id}>"
+
+    @property
+    def to_case_permission(self) -> UserCasePermissionDict:
+        return {
+            "case": self.case,
+            "permission": self.permission
+        }
 
 
 class UserCaseAccessBase(BaseModel):

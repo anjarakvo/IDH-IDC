@@ -83,6 +83,26 @@ const PageHeader = ({ isLoggedIn }) => {
                 className="nav-sign-in"
                 onClick={() => {
                   removeCookie("AUTH_TOKEN");
+                  UserState.update((s) => {
+                    s.id = 0;
+                    s.fullname = null;
+                    s.email = null;
+                    s.role = null;
+                    s.active = false;
+                    s.organisation_detail = {
+                      id: 0,
+                      name: null,
+                    };
+                    s.business_unit_detail = [
+                      {
+                        id: 0,
+                        name: null,
+                        role: null,
+                      },
+                    ];
+                    s.tags_count = 0;
+                    s.cases_count = 0;
+                  });
                   setLoading(true);
                   setTimeout(() => {
                     window.location.reload();

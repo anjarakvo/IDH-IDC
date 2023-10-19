@@ -15,9 +15,9 @@ from pydantic import (
 from models.organisation import OrganisationDict
 from fastapi import Form, HTTPException, status
 from models.user_tag import UserTag
-from models.user_case_access import UserCaseAccess
+from models.user_case_access import UserCaseAccess, UserCasePermissionDict
 from models.user_business_unit import (
-    UserBusinessUnit, UserBusinessUnitDetailDict,
+    UserBusinessUnit, UserBusinessUnitDetailDict, UserBusinessUnitRoleDict
 )
 
 tags_desc = "JSON stringify of tag ids [1, 2, 3]"
@@ -62,6 +62,17 @@ class UserInfo(TypedDict):
     organisation_detail: OrganisationDict
     tags_count: int
     cases_count: int
+
+
+class UserDetailDict(TypedDict):
+    id: int
+    fullname: str
+    organisation: int
+    email: str
+    role: UserRole
+    tags: Optional[List[int]]
+    business_units: Optional[List[UserBusinessUnitRoleDict]]
+    cases: Optional[List[UserCasePermissionDict]]
 
 
 class UserPageDict(TypedDict):
@@ -195,6 +206,32 @@ class User(Base):
             "organisation_detail": self.user_organisation.serialize,
             "tags_count": len(self.user_tags),
             "cases_count": len(self.user_case_access),
+        }
+
+    @property
+    def to_user_detail(self) -> UserDetailDict:
+        tags = []
+        business_units = []
+        cases = []
+        if self.user_business_units:
+            business_units = [
+                bu.to_business_unit_role for bu
+                in self.user_business_units
+            ]
+        if self.user_tags:
+            tags = [t.tag for t in self.user_tags]
+        if self.user_case_access:
+            cases = [c.to_case_permission for c in self.user_case_access]
+        return {
+            "id": self.id,
+            "fullname": self.fullname,
+            "email": self.email,
+            "role": self.role,
+            "active": self.is_active,
+            "organisation": self.organisation,
+            "tags": tags,
+            "business_units": business_units,
+            "cases": cases,
         }
 
     @property

@@ -20,6 +20,11 @@ class UserBusinessUnitDetailDict(TypedDict):
     role: UserBusinessUnitRole
 
 
+class UserBusinessUnitRoleDict(TypedDict):
+    business_unit: int
+    role: UserBusinessUnitRole
+
+
 class UserBusinessUnit(Base):
     __tablename__ = 'user_business_unit'
 
@@ -56,6 +61,13 @@ class UserBusinessUnit(Base):
 
     def __repr__(self) -> int:
         return f"<UserBusinessUnit {self.id}>"
+
+    @property
+    def to_business_unit_role(self) -> UserBusinessUnitRoleDict:
+        return {
+            "business_unit": self.business_unit,
+            "role": self.role
+        }
 
     @property
     def to_business_unit_detail(self) -> UserBusinessUnitDetailDict:

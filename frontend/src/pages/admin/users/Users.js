@@ -24,7 +24,7 @@ const Users = () => {
 
   useEffect(() => {
     setLoading(true);
-    let url = `/user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
+    let url = `user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
     if (search) {
       url = `${url}&search=${search}`;
     }
@@ -78,7 +78,7 @@ const Users = () => {
       width: "5%",
       align: "center",
       render: (text, record) => (
-        <Link to={`/admin/user/${record.key}`}>
+        <Link to={`/admin/user/${record.id}`}>
           <EditOutlined />
         </Link>
       ),

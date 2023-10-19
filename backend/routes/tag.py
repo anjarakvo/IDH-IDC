@@ -8,11 +8,12 @@ from fastapi.security import (
     HTTPBearer, HTTPBasicCredentials as credentials
 )
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 
 from db.connection import get_session
 from models.tag import (
-    PaginatedTagResponse, TagListDict, TagBase, UpdateTagBase
+    PaginatedTagResponse, TagListDict, TagBase, UpdateTagBase,
+    TagOption
 )
 from middleware import verify_admin
 
@@ -72,6 +73,21 @@ def create_tag(
     verify_admin(session=session, authenticated=req.state.authenticated)
     tag = crud_tag.add_tag(session=session, payload=payload)
     return tag.to_tag_list
+
+
+@tag_route.get(
+    "/tag/options",
+    response_model=List[TagOption],
+    summary="get tag options",
+    name="tag:get_options",
+    tags=["Tag"]
+)
+def get_tag_options(
+    req: Request,
+    session: Session = Depends(get_session),
+):
+    tags = crud_tag.get_all_tag_options(session=session)
+    return [t.to_option for t in tags]
 
 
 @tag_route.get(

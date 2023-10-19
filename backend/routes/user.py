@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from db.connection import get_session
 from models.user import (
     UserDict, UserBase, UserResponse, UserInfo, UserUpdateBase,
-    UserInvitation
+    UserInvitation, UserDetailDict
 )
 from typing import Optional
 from pydantic import SecretStr
@@ -210,7 +210,7 @@ def change_password(
 
 @user_route.get(
     "/user/{user_id:path}",
-    response_model=UserInfo,
+    response_model=UserDetailDict,
     summary="get user detail by id",
     name="user:get_by_id",
     tags=["User"])
@@ -222,7 +222,7 @@ def get_user_by_id(
 ):
     verify_admin(session=session, authenticated=req.state.authenticated)
     user = crud_user.get_user_by_id(session=session, id=user_id)
-    return user.to_user_info
+    return user.to_user_detail
 
 
 @user_route.put(

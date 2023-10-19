@@ -8,14 +8,17 @@ const tabItems = [
   {
     key: "/admin/users",
     label: "Manage Users",
+    value: "user",
   },
   {
     key: "/admin/cases",
     label: "Manage Cases",
+    value: "case",
   },
   {
     key: "/admin/tags",
     label: "Manage Tags",
+    value: "tag",
   },
 ];
 
@@ -36,6 +39,8 @@ const ContentLayout = ({
     setCurrentPath(key);
     navigate(key);
   };
+
+  const activeTabMenu = tabItems.find((x) => currentPath.includes(x.value));
 
   if (!renderCard) {
     return (
@@ -74,7 +79,7 @@ const ContentLayout = ({
           {currentPath.includes("/admin/") && adminRole.includes(userRole) ? (
             <Tabs
               data-testid="admin-tabs-menu"
-              activeKey={currentPath}
+              activeKey={activeTabMenu.key}
               items={tabItems}
               tabBarGutter={48}
               onChange={handleOnClickTab}
