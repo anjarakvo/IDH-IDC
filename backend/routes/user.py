@@ -52,10 +52,13 @@ def login(
             raise HTTPException(status_code=404, detail="Scope Not Found")
     user = authenticate_user(
         session=session, email=payload.username, password=payload.password)
-    if not user:
+    if not user or not user.is_active:
         raise HTTPException(
+            detail=(
+                "Incorrect email or password." if not user else
+                "You can't login until your account is approved."
+            ),
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect email or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token = create_access_token(data={"email": user.email})

@@ -465,7 +465,25 @@ class TestUserEndpoint():
         assert res.status_code == 200
         res = res.json()
         assert res['access_token'] is not None
-        assert res['user']['email'] == user.email
+        assert res['token_type'] == "bearer"
+        assert res['user'] == {
+            'id': 2,
+            'fullname': 'Sample User',
+            'email': 'test_user@akvo.org',
+            'role': 'viewer',
+            'active': True,
+            'business_unit_detail': [{
+                'id': 1,
+                'name': 'Acme Technologies Sales Division',
+                'role': 'member'
+            }],
+            'organisation_detail': {
+                'id': 1,
+                'name': 'Akvo'
+            },
+            'tags_count': 0,
+            'cases_count': 0
+        }
 
     @pytest.mark.asyncio
     async def test_invite_admin_role_by_super_admin_without_business_unit(
