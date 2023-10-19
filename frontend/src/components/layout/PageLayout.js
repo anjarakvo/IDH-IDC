@@ -7,7 +7,8 @@ import { LoadingOutlined } from "@ant-design/icons";
 import LogoWhite from "../../assets/images/logo-white.png";
 import { adminRole, allUserRole } from "../../store/static";
 
-const pagesWithNoSider = ["/", "/login", "/welcome"];
+const pagesWithNoSider = ["/", "/login", "/welcome", "/register"];
+const pagesWithNoHeader = ["/login", "/register"];
 const { Header, Content } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
@@ -119,7 +120,11 @@ const PageLayout = ({ children }) => {
   if (pagesWithNoSider.includes(pathname)) {
     return (
       <Layout>
-        {pathname !== "/login" ? <PageHeader isLoggedIn={isLoggedIn} /> : ""}
+        {!pagesWithNoHeader.includes(pathname) ? (
+          <PageHeader isLoggedIn={isLoggedIn} />
+        ) : (
+          ""
+        )}
         <Content testid="layout-content" className="content-container">
           {children}
         </Content>
