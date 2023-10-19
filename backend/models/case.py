@@ -2,8 +2,14 @@ import enum
 from datetime import date as date_format
 from db.connection import Base
 from sqlalchemy import (
-    Column, Integer, String, Date,
-    SmallInteger, Enum, ForeignKey, DateTime
+    Column,
+    Integer,
+    String,
+    Date,
+    SmallInteger,
+    Enum,
+    ForeignKey,
+    DateTime,
 )
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -74,14 +80,14 @@ class CaseDetailDict(TypedDict):
 
 
 class Case(Base):
-    __tablename__ = 'case'
+    __tablename__ = "case"
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     date = Column(Date, nullable=False)
     year = Column(Integer, nullable=False)
-    country = Column(Integer, ForeignKey('country.id'))
-    focus_commodity = Column(Integer, ForeignKey('commodity.id'))
+    country = Column(Integer, ForeignKey("country.id"))
+    focus_commodity = Column(Integer, ForeignKey("commodity.id"))
     currency = Column(String, nullable=False)
     area_size_unit = Column(String, nullable=False)
     volume_measurement_unit = Column(String, nullable=False)
@@ -92,26 +98,23 @@ class Case(Base):
     multiple_commodities = Column(SmallInteger, nullable=False, default=0)
     private = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
-    created_by = Column(Integer, ForeignKey('user.id'))
+    created_by = Column(Integer, ForeignKey("user.id"))
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime,
-        nullable=False,
-        server_default=func.now(),
-        onupdate=func.now()
+        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
     case_commodities = relationship(
         CaseCommodity,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='case_detail'
+        back_populates="case_detail",
     )
     case_segments = relationship(
         Segment,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='case_detail'
+        back_populates="case_detail",
     )
     # country_detail = relationship(
     #     'Country',
@@ -126,10 +129,7 @@ class Case(Base):
     #     backref='cases'
     # )
     created_by_user = relationship(
-        'User',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='cases'
+        "User", cascade="all, delete", passive_deletes=True, backref="cases"
     )
 
     def __init__(
@@ -178,7 +178,7 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "date": self.date.strftime('%Y-%m-%d'),
+            "date": self.date.strftime("%Y-%m-%d"),
             "year": self.year,
             "country": self.country,
             "focus_commodity": self.focus_commodity,
@@ -200,7 +200,8 @@ class Case(Base):
     def to_case_list(self) -> CaseListDict:
         # filter diversified count by !equal to focus commodity
         diversified_count = [
-            val for val in self.case_commodities
+            val
+            for val in self.case_commodities
             if val.commodity != self.focus_commodity
         ]
         return {
@@ -209,7 +210,7 @@ class Case(Base):
             "country": self.country,
             "focus_commodity": self.focus_commodity,
             "diversified_commodities_count": len(diversified_count),
-            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "created_by": self.created_by_user.email,
         }
 
@@ -218,7 +219,7 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "date": self.date.strftime('%Y-%m-%d'),
+            "date": self.date.strftime("%Y-%m-%d"),
             "year": self.year,
             "country": self.country,
             "focus_commodity": self.focus_commodity,
@@ -232,8 +233,8 @@ class Case(Base):
             "multiple_commodities": self.multiple_commodities,
             "logo": self.logo,
             "created_by": self.created_by_user.email,
-            "created_at": self.created_at.strftime('%Y-%m-%d %H:%M:%S'),
-            "updated_at": self.updated_at.strftime('%Y-%m-%d %H:%M:%S'),
+            "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             "segments": [ps.simplify for ps in self.case_segments],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
@@ -243,6 +244,8 @@ class Case(Base):
 class OtherCommoditysBase(BaseModel):
     commodity: int
     breakdown: bool
+    area_size_unit: str
+    volume_measurement_unit: str
 
 
 class CaseBase(BaseModel):

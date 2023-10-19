@@ -50,9 +50,9 @@ def generate_config_file() -> None:
         commodity_categories = [
             cc.serialize_with_commodities for cc in commodity_categories
         ]
-    currencies = session.query(Currency).all() or []
+    currencies = session.query(Currency.abbreviation).distinct() or []
     if currencies:
-        currencies = [c.to_dropdown for c in currencies]
+        currencies = [{"value": c[0], "label": c[0]} for c in currencies]
     countries = (
         session.query(Country).filter(Country.parent == None).all() or []  # noqa
     )
