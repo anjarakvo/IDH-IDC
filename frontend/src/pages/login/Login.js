@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import "./login.scss";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import {
   Row,
@@ -128,6 +128,12 @@ const Login = () => {
               >
                 Sign in
               </Button>
+            </Form.Item>
+            <Form.Item noStyle>
+              <p>
+                Don&apos;t have an account?{" "}
+                <Link to="/register">Register here.</Link>
+              </p>
             </Form.Item>
           </Form>
         </Col>
