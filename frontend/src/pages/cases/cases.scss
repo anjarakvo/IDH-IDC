@@ -14,7 +14,7 @@
       padding-bottom: 0px;
     }
     .timeline-container {
-      padding: 0 1.5rem;
+      padding: 1.5rem 0px;
     }
   }
   h3 {
@@ -30,23 +30,21 @@
     background: #fff;
     padding: 10px 1.5rem 0px;
     .ant-tabs-tab-btn {
-      font-family: "RocGrotesk";
+      font-family: "TabletGothicBold";
       font-size: 1rem;
-      font-weight: 700;
       background: #fff;
+      text-shadow: none;
     }
   }
   .anticon {
     &.finished-dot {
-      font-size: 15px;
+      font-size: 20px;
       position: absolute;
-      width: 15px;
-      height: 15px;
-      left: 2px;
-      bottom: -2px;
-      color: $primary-color;
-      border: 1px solid $primary-color;
-      border-radius: 100%;
+      width: 20px;
+      height: 20px;
+      left: 1px;
+      bottom: -4px;
+      color: #26605f;
     }
   }
 }

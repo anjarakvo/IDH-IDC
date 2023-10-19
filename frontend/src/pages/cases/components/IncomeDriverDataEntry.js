@@ -1,10 +1,16 @@
 import React, { useState } from "react";
 import { Row, Col, Card, Tabs, Button } from "antd";
-import { PlusCircleFilled, DeleteOutlined } from "@ant-design/icons";
+import { PlusCircleFilled, DeleteTwoTone } from "@ant-design/icons";
 
 const DataFields = ({ segment, onDelete }) => {
   const extra = onDelete ? (
-    <Button size="small" icon={<DeleteOutlined />} onClick={onDelete} />
+    <Button
+      size="small"
+      shape="circle"
+      type="secondary"
+      icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+      onClick={onDelete}
+    />
   ) : null;
   return (
     <Row>
@@ -35,8 +41,6 @@ const IncomeDriverDataEntry = () => {
       ),
     },
   ]);
-
-  console.log(items);
 
   const onDelete = (segmentKey) => {
     const newItems = items.filter((item) => item.key !== segmentKey);
