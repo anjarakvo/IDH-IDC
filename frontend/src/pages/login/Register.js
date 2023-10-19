@@ -21,20 +21,31 @@ import ImageRight from "../../assets/images/login-right-img.png";
 const Register = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const [messageApi, contextHolder] = message.useMessage();
+
+  const organisationOptions = UIState.useState((s) => s.organisationOptions);
+  const businessUnitOptions = window.master.business_units?.map((x) => ({
+    label: x.name,
+    value: x.id,
+  }));
 
   const filterOption = (input, option) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
   const onFinish = (values) => {
     setLoading(true);
-    const { fullname, email, password, organisation } = values;
+    const { fullname, email, password, organisation, business_units } = values;
+    const businessUnitValues = business_units.map((x) => ({
+      business_unit: x,
+      role: "member",
+    }));
+
     const payload = new FormData();
     payload.append("fullname", fullname);
     payload.append("email", email);
     payload.append("password", password);
     payload.append("organisation", organisation);
+    payload.append("business_units", JSON.stringify(businessUnitValues));
 
     api
       .post("user/register", payload)
@@ -155,6 +166,26 @@ const Register = () => {
                 optionFilterProp="children"
                 filterOption={filterOption}
                 options={organisationOptions}
+              />
+            </Form.Item>
+            <Form.Item
+              name="business_units"
+              rules={[
+                {
+                  required: true,
+                  message: "Please select your Business Unit!",
+                },
+              ]}
+            >
+              <Select
+                data-testid="input-business-unit"
+                placeholder="Business Units"
+                showSearch
+                allowClear
+                mode="multiple"
+                optionFilterProp="children"
+                filterOption={filterOption}
+                options={businessUnitOptions}
               />
             </Form.Item>
             <Form.Item>
