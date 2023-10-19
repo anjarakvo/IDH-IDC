@@ -11,6 +11,7 @@ import {
   Divider,
   Typography,
   Image,
+  message,
 } from "antd";
 import { useCookies } from "react-cookie";
 import { api } from "../../lib";
@@ -25,6 +26,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [cookies, setCookie, removeCookie] = useCookies(["AUTH_TOKEN"]);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = (values) => {
     setLoading(true);
@@ -59,8 +61,16 @@ const Login = () => {
           navigate("/welcome");
         }, 100);
       })
-      .catch(() => {
-        console.info("error");
+      .catch((e) => {
+        const { status, data } = e.response;
+        let errorMessage = "Please contact an admin.";
+        if (status === 401) {
+          errorMessage = data.detail;
+        }
+        messageApi.open({
+          type: "error",
+          content: `Login failed. ${errorMessage}`,
+        });
       })
       .finally(() => {
         setLoading(false);
@@ -69,6 +79,7 @@ const Login = () => {
 
   return (
     <ContentLayout wrapperId="login">
+      {contextHolder}
       <Row align="middle" className="login-container">
         <Col span={10} align="start" className="login-form-wrapper">
           <div className="page-title-container">
@@ -89,6 +100,10 @@ const Login = () => {
             <Form.Item
               name="email"
               rules={[
+                {
+                  type: "email",
+                  message: "The input is not valid Email",
+                },
                 {
                   required: true,
                   message: "Please input your email!",
