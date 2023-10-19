@@ -24,13 +24,19 @@ const transformToSelectOptions = (values) => {
   }));
 };
 
+const defFormListValue = {
+  business_units: [{ business_unit: null, role: null }],
+  cases: [{ case: null, permission: null }],
+};
+
 const UserForm = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [form] = Form.useForm();
   const [submitting, setSubmitting] = useState(false);
-  const [initValues, setInitValues] = useState({});
+  const [initValues, setInitValues] = useState({ ...defFormListValue });
   const [loading, setLoading] = useState(false);
+  const [selectedRole, setSelectedRole] = useState(null);
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -49,7 +55,7 @@ const UserForm = () => {
       api
         .get(`user/${userId}`)
         .then((res) => {
-          setInitValues(res.data);
+          setInitValues({ ...defFormListValue, ...res.data });
         })
         .catch((e) => {
           console.error(e);
@@ -76,10 +82,13 @@ const UserForm = () => {
       const tagVal = Array.isArray(tags) ? tags : [tags];
       payload.append("tags", JSON.stringify(tagVal));
     }
-    if (business_units && business_units?.length) {
+    if (
+      business_units &&
+      business_units?.filter((x) => x.business_unit && x.role)?.length
+    ) {
       payload.append("business_units", JSON.stringify(business_units));
     }
-    if (cases && cases?.length) {
+    if (cases && cases?.filter((x) => x.case && x.permission)?.length) {
       payload.append("cases", JSON.stringify(cases));
     }
     if (userId) {
@@ -104,8 +113,8 @@ const UserForm = () => {
   };
 
   const isBusinessUnitRequired = useMemo(
-    () => businessUnitRequiredForRole.includes(form.getFieldValue("role")),
-    [form]
+    () => businessUnitRequiredForRole.includes(selectedRole),
+    [selectedRole]
   );
 
   return (
@@ -113,9 +122,12 @@ const UserForm = () => {
       breadcrumbItems={[
         { title: "Home", href: "/welcome" },
         { title: "Users", href: "/admin/users" },
-        { title: "Add User", href: "/admin/user/new" },
+        {
+          title: `${userId ? "Edit" : "Add"} User`,
+          href: `/admin/user/${userId ? userId : "new"}`,
+        },
       ]}
-      title="Add User"
+      title={`${userId ? "Edit" : "Add"} User`}
       wrapperId="user"
     >
       {loading ? (
@@ -181,6 +193,7 @@ const UserForm = () => {
                     optionFilterProp="children"
                     filterOption={filterOption}
                     options={roleOptions}
+                    onChange={setSelectedRole}
                   />
                 </Form.Item>
                 <Form.Item
@@ -276,7 +289,7 @@ const UserForm = () => {
                                   </Form.Item>
                                 </Col>
                                 <Col span={4}>
-                                  {fields.length > 0 ? (
+                                  {fields.length > 1 ? (
                                     <MinusCircleOutlined
                                       onClick={() => remove(field.name)}
                                     />
@@ -350,7 +363,7 @@ const UserForm = () => {
                                   </Form.Item>
                                 </Col>
                                 <Col span={4}>
-                                  {fields.length > 0 ? (
+                                  {fields.length > 1 ? (
                                     <MinusCircleOutlined
                                       onClick={() => remove(field.name)}
                                     />
