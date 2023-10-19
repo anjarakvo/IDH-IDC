@@ -17,7 +17,7 @@ import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   allUserRole,
   nonAdminRole,
-  businessUnitRole,
+  adminRole,
   casePermission,
   businessUnitRequiredForRole,
 } from "../../../store/static";
@@ -36,7 +36,7 @@ const transformToSelectOptions = (values) => {
 };
 
 const defFormListValue = {
-  business_units: [{ business_unit: null, role: null }],
+  business_units: [{ business_unit: null }],
   cases: [{ case: null, permission: null }],
 };
 
@@ -61,7 +61,6 @@ const UserForm = () => {
   const roleOptions = transformToSelectOptions(
     userRole === "super_admin" ? allUserRole : nonAdminRole
   );
-  const businessUnitRoleOptions = transformToSelectOptions(businessUnitRole);
   const casePermissionOptions = transformToSelectOptions(casePermission);
 
   useEffect(() => {
@@ -111,9 +110,13 @@ const UserForm = () => {
     }
     if (
       business_units &&
-      business_units?.filter((x) => x.business_unit && x.role)?.length
+      business_units?.filter((x) => x.business_unit)?.length
     ) {
-      payload.append("business_units", JSON.stringify(business_units));
+      const businessUnitsVal = business_units.map((bu) => ({
+        ...bu,
+        role: adminRole.includes(role) ? "admin" : "member",
+      }));
+      payload.append("business_units", JSON.stringify(businessUnitsVal));
     }
     if (cases && cases?.filter((x) => x.case && x.permission)?.length) {
       payload.append("cases", JSON.stringify(cases));
@@ -281,7 +284,7 @@ const UserForm = () => {
                               required={isBusinessUnitRequired}
                             >
                               <Row gutter={[16, 16]} align="middle">
-                                <Col span={10}>
+                                <Col span={20}>
                                   <Form.Item
                                     {...field}
                                     label="Business Unit"
@@ -299,28 +302,6 @@ const UserForm = () => {
                                       optionFilterProp="children"
                                       filterOption={filterOption}
                                       options={businessUnitOptions}
-                                    />
-                                  </Form.Item>
-                                </Col>
-                                <Col span={10}>
-                                  <Form.Item
-                                    {...field}
-                                    label="Business Unit Role"
-                                    name={[field.name, "role"]}
-                                    rules={[
-                                      {
-                                        required: isBusinessUnitRequired,
-                                        message:
-                                          "Business Unit Role is required",
-                                      },
-                                    ]}
-                                  >
-                                    <Select
-                                      showSearch
-                                      allowClear
-                                      optionFilterProp="children"
-                                      filterOption={filterOption}
-                                      options={businessUnitRoleOptions}
                                     />
                                   </Form.Item>
                                 </Col>
