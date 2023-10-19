@@ -13,6 +13,9 @@
     .ant-card-body {
       padding-bottom: 0px;
     }
+    .timeline-container {
+      padding: 1.5rem 0px;
+    }
   }
   h3 {
     border-bottom: 1px solid #e8e8e8;
@@ -27,10 +30,21 @@
     background: #fff;
     padding: 10px 1.5rem 0px;
     .ant-tabs-tab-btn {
-      font-family: "RocGrotesk";
+      font-family: "TabletGothicBold";
       font-size: 1rem;
-      font-weight: 700;
       background: #fff;
+      text-shadow: none;
+    }
+  }
+  .anticon {
+    &.finished-dot {
+      font-size: 20px;
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      left: 1px;
+      bottom: -4px;
+      color: #26605f;
     }
   }
 }

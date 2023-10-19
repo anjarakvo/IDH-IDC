@@ -77,7 +77,8 @@ def get_all(
     req: Request,
     page: int = 1,
     limit: int = 10,
-    search: Optional[str] = None,
+    search: Optional[str] = Query(None),
+    approved: Optional[bool] = Query(True),
     organisation: Optional[int] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
@@ -87,6 +88,7 @@ def get_all(
         session=session,
         search=search,
         organisation=organisation,
+        approved=approved,
         skip=(limit * (page - 1)),
         limit=limit
     )
@@ -94,7 +96,8 @@ def get_all(
         raise HTTPException(status_code=404, detail="Not found")
     # count total user
     total = crud_user.count(
-        session=session, search=search, organisation=organisation)
+        session=session, search=search,
+        organisation=organisation, approved=approved)
     user = [u.to_user_list for u in user]
     total_page = ceil(total / limit) if total > 0 else 0
     if total_page < page:

@@ -189,7 +189,8 @@ const CaseProfile = ({
   setPage,
   formData,
   setFormData,
-  setCompleted,
+  finished,
+  setFinished,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(false);
@@ -198,11 +199,12 @@ const CaseProfile = ({
   const onFinish = (values) => {
     setFormData(values);
     setPage("Income Driver Data Entry");
-    setCompleted(true);
+    const completed = finished.filter((item) => item !== "Case Profile");
+    setFinished([...completed, "Case Profile"]);
   };
 
   const onFinishFailed = () => {
-    setCompleted(false);
+    setFinished(finished.filter((item) => item !== "Case Profile"));
   };
 
   return (

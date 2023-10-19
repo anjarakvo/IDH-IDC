@@ -8,16 +8,18 @@ import { Home } from "./pages/home";
 import { Landing } from "./pages/landing";
 import { Login } from "./pages/login";
 import { Cases, Case } from "./pages/cases";
-import { Dashboard } from "./pages/dashboard";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
+import { Users } from "./pages/admin";
 import { UserState } from "./store";
 import { api } from "./lib";
+import { adminRole } from "./store/static";
 
 const App = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
   const authTokenAvailable =
     cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+  const userRole = UserState.useState((s) => s.role);
 
   useEffect(() => {
     if (authTokenAvailable) {
@@ -69,11 +71,17 @@ const App = () => {
         <Route path="*" element={<NotFound />} />
         <Route element={<PrivateRoutes />}>
           <Route exact path="/home" element={<Home />} />
-          <Route exact path="/dashboard" element={<Dashboard />} />
           <Route exact path="/welcome" element={<Welcome />} />
           <Route exact path="/cases" element={<Cases />} />
           <Route exact path="/cases/new" element={<Case />} />
         </Route>
+        {adminRole.includes(userRole) ? (
+          <Route element={<PrivateRoutes />}>
+            <Route exact path="/admin/users" element={<Users />} />
+          </Route>
+        ) : (
+          ""
+        )}
         <Route exact path="/" element={<Landing />} />
         <Route exact path="/login" element={<Login />} />
       </Routes>

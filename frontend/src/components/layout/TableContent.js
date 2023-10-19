@@ -5,14 +5,17 @@ import { Link } from "react-router-dom";
 const { Search } = Input;
 
 const TableContent = ({
+  title = "Data",
+  filterComponent = null,
   dataSource = [],
   columns = [],
   loading = true,
   searchProps = {},
   buttonProps = {},
+  paginationProps = {},
 }) => {
   return (
-    <Row>
+    <Row data-testid="table-content">
       <Col span={24}>
         <Card className="search-and-add">
           <Row align="middle">
@@ -28,7 +31,25 @@ const TableContent = ({
         </Card>
       </Col>
       <Col span={24}>
-        <Table dataSource={dataSource} columns={columns} loading={loading} />
+        <Row align="middle" style={{ background: "#fff", padding: "6px 24px" }}>
+          <Col span={4}>
+            <h4>{title}</h4>
+          </Col>
+          <Col span={20} align="end">
+            {filterComponent ? (
+              <div style={{ float: "right" }}>{filterComponent}</div>
+            ) : (
+              ""
+            )}
+          </Col>
+        </Row>
+        <Table
+          rowKey="id"
+          dataSource={dataSource}
+          columns={columns}
+          loading={loading}
+          pagination={paginationProps}
+        />
       </Col>
     </Row>
   );

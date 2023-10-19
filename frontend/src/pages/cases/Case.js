@@ -4,29 +4,34 @@ import { SideMenu, CaseProfile, IncomeDriverDataEntry } from "./components";
 import { Row, Col } from "antd";
 import "./cases.scss";
 
+const pageDependencies = {
+  "Income Driver Data Entry": ["Case Profile"],
+  "Income Driver Dashboard": ["Case Profile", "Income Driver Data Entry"],
+};
+
 const Case = () => {
   const [caseTitle, setCaseTitle] = useState("New Case");
   const [page, setPage] = useState("Case Profile");
   const [formData, setFormData] = useState({});
-  const [completed, setCompleted] = useState(false);
+  const [finished, setFinished] = useState([]);
 
   const setActive = (selected) => {
-    if (
-      selected === "Income Driver Data Entry" ||
-      selected === "Income Driver Dashboard"
-    ) {
-      if (completed) {
-        setPage(selected);
-      }
+    if (finished.includes(selected)) {
+      setPage(selected);
     } else {
-      setPage("Case Profile");
+      const dependencies = pageDependencies[selected];
+      if (dependencies) {
+        if (dependencies.every((dependency) => finished.includes(dependency))) {
+          setPage(selected);
+        }
+      }
     }
   };
 
   return (
     <ContentLayout
       breadcrumbItems={[
-        { title: "Home", href: "/dashboard" },
+        { title: "Home", href: "/welcome" },
         { title: "Cases", href: "/cases" },
         { title: caseTitle },
       ]}
@@ -34,14 +39,15 @@ const Case = () => {
       wrapperId="case"
     >
       <Row gutter={[16, 16]} className="case-content">
-        <SideMenu active={page} setActive={setActive} />
+        <SideMenu active={page} setActive={setActive} finished={finished} />
         <Col flex="auto">
           {page === "Case Profile" && (
             <CaseProfile
               setCaseTitle={setCaseTitle}
               formData={formData}
               setFormData={setFormData}
-              setCompleted={setCompleted}
+              finished={finished}
+              setFinished={setFinished}
               setPage={setPage}
             />
           )}

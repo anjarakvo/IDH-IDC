@@ -1,12 +1,23 @@
 import React, { useState } from "react";
-import { Row, Col, Card, Tabs } from "antd";
-import { PlusCircleFilled } from "@ant-design/icons";
+import { Row, Col, Card, Tabs, Button } from "antd";
+import { PlusCircleFilled, DeleteTwoTone } from "@ant-design/icons";
 
-const DataFields = () => {
+const DataFields = ({ segment, onDelete }) => {
+  const extra = onDelete ? (
+    <Button
+      size="small"
+      shape="circle"
+      type="secondary"
+      icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+      onClick={onDelete}
+    />
+  ) : null;
   return (
     <Row>
       <Col span={12}>
-        <Card title="Segment Inputs">Test</Card>
+        <Card title="Segment Inputs" extra={extra}>
+          Segment {segment}
+        </Card>
       </Col>
       <Col span={12}></Col>
     </Row>
@@ -19,7 +30,7 @@ const IncomeDriverDataEntry = () => {
     {
       key: "1",
       label: "Segment 1",
-      children: <DataFields />,
+      children: <DataFields segment={1} />,
     },
     {
       key: "add",
@@ -30,6 +41,14 @@ const IncomeDriverDataEntry = () => {
       ),
     },
   ]);
+
+  const onDelete = (segmentKey) => {
+    const newItems = items.filter((item) => item.key !== segmentKey);
+    setItems(newItems);
+    const newActiveKey = segmentKey - 1;
+    setActiveKey(newActiveKey.toString());
+  };
+
   const onChange = (activeKey) => {
     if (activeKey === "add") {
       const newKey = items.length;
@@ -37,10 +56,17 @@ const IncomeDriverDataEntry = () => {
       newItems.splice(newItems.length - 1, 0, {
         key: newKey.toString(),
         label: `Segment ${newKey}`,
-        children: <DataFields />,
+        children: (
+          <DataFields segment={newKey} onDelete={() => onDelete(newKey)} />
+        ),
       });
       setItems(newItems);
       setActiveKey(newKey.toString());
+      // remove add tab after 5 segments
+      if (newKey === 5) {
+        newItems.splice(newItems.length - 1, 1);
+        setItems(newItems);
+      }
     } else {
       setActiveKey(activeKey);
     }

@@ -3,14 +3,13 @@
 #welcome {
   &.welcome-container {
     background-image: url("/assets/images/bg-login.png") !important;
-    min-height: 100vh;
 
     .right-clip-path-wrapper {
       background-image: url("/assets/images/login-clip-path.svg") !important;
       background-size: cover;
       background-repeat: no-repeat;
       background-position: top right;
-      height: 100%;
+      height: calc(100% - 5rem);
       width: 50%;
       position: absolute;
       top: 5rem;
