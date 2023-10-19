@@ -2,16 +2,27 @@ import React, { useState, useMemo, useEffect } from "react";
 import "./user.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { ContentLayout } from "../../../components/layout";
-import { Form, Input, Card, Row, Col, Button, Select, Spin } from "antd";
+import {
+  Form,
+  Input,
+  Card,
+  Row,
+  Col,
+  Button,
+  Select,
+  Spin,
+  message,
+} from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
   allUserRole,
+  nonAdminRole,
   businessUnitRole,
   casePermission,
   businessUnitRequiredForRole,
 } from "../../../store/static";
 import upperFirst from "lodash/upperFirst";
-import { UIState } from "../../../store";
+import { UIState, UserState } from "../../../store";
 import { api } from "../../../lib";
 
 const transformToSelectOptions = (values) => {
@@ -33,10 +44,12 @@ const UserForm = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
   const [form] = Form.useForm();
+  const userRole = UserState.useState((s) => s.role);
   const [submitting, setSubmitting] = useState(false);
-  const [initValues, setInitValues] = useState({ ...defFormListValue });
+  const [initValues, setInitValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -45,7 +58,9 @@ const UserForm = () => {
     label: x.name,
     value: x.id,
   }));
-  const roleOptions = transformToSelectOptions(allUserRole);
+  const roleOptions = transformToSelectOptions(
+    userRole === "super_admin" ? allUserRole : nonAdminRole
+  );
   const businessUnitRoleOptions = transformToSelectOptions(businessUnitRole);
   const casePermissionOptions = transformToSelectOptions(casePermission);
 
@@ -55,14 +70,26 @@ const UserForm = () => {
       api
         .get(`user/${userId}`)
         .then((res) => {
-          setInitValues({ ...defFormListValue, ...res.data });
+          const { data } = res;
+          setSelectedRole(data?.role || null);
+          setInitValues({
+            ...data,
+            cases: data?.cases?.length ? data.cases : defFormListValue.cases,
+            business_units: data?.business_units?.length
+              ? data.business_units
+              : defFormListValue.business_units,
+          });
         })
         .catch((e) => {
           console.error(e);
         })
         .finally(() => {
-          setLoading(false);
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
         });
+    } else {
+      setInitValues(defFormListValue);
     }
   }, [userId]);
 
@@ -99,6 +126,10 @@ const UserForm = () => {
       : api.post("/user/register?invitation_id=true", payload);
     apiCall
       .then(() => {
+        messageApi.open({
+          type: "success",
+          content: "User saved successfully.",
+        });
         setTimeout(() => {
           form.resetFields();
           navigate("/admin/users");
@@ -106,6 +137,10 @@ const UserForm = () => {
       })
       .catch((e) => {
         console.error(e);
+        messageApi.open({
+          type: "error",
+          content: "Failed! Something went wrong.",
+        });
       })
       .finally(() => {
         setSubmitting(false);
@@ -130,6 +165,7 @@ const UserForm = () => {
       title={`${userId ? "Edit" : "Add"} User`}
       wrapperId="user"
     >
+      {contextHolder}
       {loading ? (
         <div className="loading-container">
           <Spin />
