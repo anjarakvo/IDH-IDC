@@ -51,17 +51,12 @@ const Questions = ({
                 paddingLeft: childrens.length === 0 ? indent + 32 : indent,
               }}
             >
-              {text}
-              <small className="unit">{unitName}</small>
+              {text} <small>({unitName})</small>
             </h4>
           </Space>
         </Col>
         <Col span={5}>
-          <Form.Item
-            name={`current-${id}`}
-            rules={[{ required: true }]}
-            className="current-feasible-field"
-          >
+          <Form.Item name={`current-${id}`} className="current-feasible-field">
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
@@ -87,6 +82,48 @@ const Questions = ({
 
 const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
   const [form] = Form.useForm();
+  const flattenQuestionList = group.questions.reduce((acc, question) => {
+    acc.push(question);
+    if (question.childrens.length > 0) {
+      acc = [...acc, ...question.childrens];
+      acc = acc.reduce((acc, q) => {
+        if (q.childrens.length > 0) {
+          acc = [...acc, ...q.childrens];
+        }
+        return acc;
+      }, []);
+    }
+    return acc;
+  }, []);
+
+  const onValuesChange = (value, currentValues) => {
+    const id = Object.keys(value)[0];
+    const dataType = id.split("-")[0];
+    const questionId = id.split("-")[1];
+    const question = flattenQuestionList.find(
+      (q) => q.id === parseInt(questionId)
+    );
+    const parentQuestion = flattenQuestionList.find(
+      (q) => q.id === question.parent
+    );
+    const allChildrens = flattenQuestionList.filter(
+      (q) => q.parent === question.parent
+    );
+    const allChildrensIds = allChildrens.map((q) => `${dataType}-${q.id}`);
+    const allChildrensValues = allChildrensIds.reduce((acc, id) => {
+      const value = currentValues?.[id];
+      if (value) {
+        acc = acc + value;
+      }
+      return acc;
+    }, 0);
+    const parentQuestionId = `${dataType}-${question.parent}`;
+    if (parentQuestion) {
+      form.setFieldsValue({
+        [parentQuestionId]: allChildrensValues,
+      });
+    }
+  };
   return (
     <Card.Grid
       style={{
@@ -119,7 +156,12 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
           </Col>
         </Row>
       )}
-      <Form name={`drivers-income-${groupIndex}`} layout="vertical" form={form}>
+      <Form
+        name={`drivers-income-${groupIndex}`}
+        layout="vertical"
+        form={form}
+        onValuesChange={onValuesChange}
+      >
         {group.questions.map((question) => (
           <Questions
             key={question.id}
