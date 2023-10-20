@@ -110,11 +110,11 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
           style={{ borderBottom: "1px solid #f0f0f0" }}
           align="middle"
         >
-          <Col span={12}></Col>
-          <Col span={6}>
+          <Col span={14}></Col>
+          <Col span={5}>
             <h4>Current</h4>
           </Col>
-          <Col span={6}>
+          <Col span={5}>
             <h4>Feasible</h4>
           </Col>
         </Row>
