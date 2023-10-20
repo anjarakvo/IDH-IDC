@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Space, Card, Tabs, Button, InputNumber, Form } from "antd";
+import {
+  Row,
+  Col,
+  Space,
+  Card,
+  Tabs,
+  Button,
+  InputNumber,
+  Form,
+  Switch,
+} from "antd";
 import {
   PlusCircleFilled,
   DeleteTwoTone,
@@ -19,11 +29,13 @@ const Questions = ({
   indent = 0,
 }) => {
   const [collapsed, setCollapsed] = useState(question_type !== "aggregator");
+  const [disabled, setDisabled] = useState(childrens.length > 0);
   const unitName = unit
     .split("/")
     .map((u) => u.trim())
     .map((u) => units?.[u])
     .join(" / ");
+
   return (
     <>
       <Row
@@ -31,7 +43,7 @@ const Questions = ({
         style={{ borderBottom: "1px solid #f0f0f0" }}
         align="middle"
       >
-        <Col span={14}>
+        <Col span={12}>
           <Space size="small">
             {childrens.length > 0 && question_type !== "aggregator" && (
               <Button
@@ -55,14 +67,19 @@ const Questions = ({
             </h4>
           </Space>
         </Col>
+        <Col span={2}>
+          {childrens.length > 0 ? (
+            <Switch size="small" onChange={() => setDisabled(!disabled)} />
+          ) : null}
+        </Col>
         <Col span={5}>
           <Form.Item name={`current-${id}`} className="current-feasible-field">
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} disabled={disabled} />
           </Form.Item>
         </Col>
         <Col span={5}>
           <Form.Item name={`feasible-${id}`} className="current-feasible-field">
-            <InputNumber style={{ width: "100%" }} />
+            <InputNumber style={{ width: "100%" }} disabled={disabled} />
           </Form.Item>
         </Col>
       </Row>
