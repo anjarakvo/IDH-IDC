@@ -158,3 +158,15 @@ class TestTagRoute():
             "description": "Tag Description",
             "cases_count": 0
         }
+
+    @pytest.mark.asyncio
+    async def test_get_tag_options(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.get(app.url_path_for("tag:get_options"))
+        assert res.status_code == 200
+        res = res.json()
+        for r in res:
+            assert "label" in r
+            assert "value" in r

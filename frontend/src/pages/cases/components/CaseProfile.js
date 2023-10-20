@@ -191,6 +191,7 @@ const CaseProfile = ({
   setFormData,
   finished,
   setFinished,
+  setCommodityList,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(false);
@@ -201,6 +202,40 @@ const CaseProfile = ({
     setPage("Income Driver Data Entry");
     const completed = finished.filter((item) => item !== "Case Profile");
     setFinished([...completed, "Case Profile"]);
+    let commodities = [
+      {
+        commodity: values.focus_commodity,
+        breakdown: true,
+        currency: values.currency,
+        area_size_unit: values.area_size_unit,
+        volume_measurement_unit: values.volume_measurement_unit,
+      },
+    ];
+    if (secondary) {
+      commodities = [
+        ...commodities,
+        {
+          commodity: values["1-commodity"],
+          breakdown: values["1-breakdown"] ? true : false,
+          currency: values.currency,
+          area_size_unit: values["1-area_size_unit"],
+          volume_measurement_unit: values["1-volume_measurement_unit"],
+        },
+      ];
+    }
+    if (tertiary) {
+      commodities = [
+        ...commodities,
+        {
+          commodity: values["2-commodity"],
+          breakdown: values["2-breakdown"] ? true : false,
+          currency: values.currency,
+          area_size_unit: values["2-area_size_unit"],
+          volume_measurement_unit: values["2-volume_measurement_unit"],
+        },
+      ];
+    }
+    setCommodityList(commodities);
   };
 
   const onFinishFailed = () => {

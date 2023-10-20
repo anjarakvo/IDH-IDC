@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, List
 from sqlalchemy.orm import Session
 from fastapi import HTTPException, status
 from models.organisation import Organisation, OrganisationDict
@@ -32,3 +32,7 @@ def get_organisation_by_id(session: Session, id: int) -> OrganisationDict:
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"organisation {id} not found")
     return org
+
+
+def get_all_organisation(session: Session) -> List[OrganisationDict]:
+    return session.query(Organisation).all()

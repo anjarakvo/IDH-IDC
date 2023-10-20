@@ -16,7 +16,11 @@ from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.case_commodity import CaseCommodity, SimplifiedCaseCommodityDict
+from models.case_commodity import (
+    CaseCommodity,
+    SimplifiedCaseCommodityDict,
+    CaseCommodityType,
+)
 from models.segment import Segment, SimplifiedSegmentDict
 
 
@@ -38,6 +42,7 @@ class CaseListDict(TypedDict):
 class CaseDict(TypedDict):
     id: Optional[int]
     name: str
+    description: Optional[str]
     date: str
     year: int
     country: int
@@ -59,6 +64,7 @@ class CaseDict(TypedDict):
 class CaseDetailDict(TypedDict):
     id: int
     name: str
+    description: Optional[str]
     date: str
     year: int
     country: int
@@ -84,6 +90,7 @@ class Case(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
     date = Column(Date, nullable=False)
     year = Column(Integer, nullable=False)
     country = Column(Integer, ForeignKey("country.id"))
@@ -94,7 +101,9 @@ class Case(Base):
     cost_of_production_unit = Column(String, nullable=False)
     reporting_period = Column(String, nullable=False)
     segmentation = Column(SmallInteger, nullable=False, default=0)
-    living_income_study = Column(Enum(LivingIncomeStudyEnum), nullable=True)
+    living_income_study = Column(
+        Enum(LivingIncomeStudyEnum, name="case_living_income_study"), nullable=True
+    )
     multiple_commodities = Column(SmallInteger, nullable=False, default=0)
     private = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
@@ -146,6 +155,7 @@ class Case(Base):
         reporting_period: str,
         segmentation: int,
         living_income_study: Optional[str],
+        description: Optional[str],
         multiple_commodities: int,
         logo: Optional[str],
         created_by: int,
@@ -153,6 +163,7 @@ class Case(Base):
         id: Optional[int] = None,
     ):
         self.id = id
+        self.description = description
         self.name = name
         self.date = date
         self.year = year
@@ -178,6 +189,7 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "description": self.description,
             "date": self.date.strftime("%Y-%m-%d"),
             "year": self.year,
             "country": self.country,
@@ -219,6 +231,7 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "description": self.description,
             "date": self.date.strftime("%Y-%m-%d"),
             "year": self.year,
             "country": self.country,
@@ -244,12 +257,14 @@ class Case(Base):
 class OtherCommoditysBase(BaseModel):
     commodity: int
     breakdown: bool
+    commodity_type: CaseCommodityType
     area_size_unit: str
     volume_measurement_unit: str
 
 
 class CaseBase(BaseModel):
     name: str
+    description: Optional[str] = None
     date: date_format
     year: int
     country: int

@@ -20,26 +20,32 @@ class UserBusinessUnitDetailDict(TypedDict):
     role: UserBusinessUnitRole
 
 
+class UserBusinessUnitRoleDict(TypedDict):
+    business_unit: int
+    role: UserBusinessUnitRole
+
+
 class UserBusinessUnit(Base):
-    __tablename__ = 'user_business_unit'
+    __tablename__ = "user_business_unit"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    user = Column(Integer, ForeignKey('user.id'), nullable=False)
-    business_unit = Column(
-        Integer, ForeignKey('business_unit.id'), nullable=False)
-    role = Column(Enum(UserBusinessUnitRole), nullable=False)
+    user = Column(Integer, ForeignKey("user.id"), nullable=False)
+    business_unit = Column(Integer, ForeignKey("business_unit.id"), nullable=False)
+    role = Column(
+        Enum(UserBusinessUnitRole, name="user_business_unit_role"), nullable=False
+    )
 
     user_business_unit_user_detail = relationship(
-        'User',
+        "User",
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='user_business_units'
+        back_populates="user_business_units",
     )
     business_unit_detail = relationship(
         BusinessUnit,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='business_unit_users'
+        back_populates="business_unit_users",
     )
 
     def __init__(
@@ -58,11 +64,15 @@ class UserBusinessUnit(Base):
         return f"<UserBusinessUnit {self.id}>"
 
     @property
+    def to_business_unit_role(self) -> UserBusinessUnitRoleDict:
+        return {"business_unit": self.business_unit, "role": self.role}
+
+    @property
     def to_business_unit_detail(self) -> UserBusinessUnitDetailDict:
         return {
             "id": self.id,
             "name": self.business_unit_detail.name,
-            "role": self.role
+            "role": self.role,
         }
 
 

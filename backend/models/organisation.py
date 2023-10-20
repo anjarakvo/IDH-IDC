@@ -11,6 +11,11 @@ class OrganisationDict(TypedDict):
     name: str
 
 
+class OrganisationOption(TypedDict):
+    label: str
+    value: int
+
+
 class Organisation(Base):
     __tablename__ = 'organisation'
 
@@ -36,6 +41,13 @@ class Organisation(Base):
         return {
             "id": self.id,
             "name": self.name
+        }
+
+    @property
+    def to_option(self) -> OrganisationOption:
+        return {
+            "label": self.name,
+            "value": self.id,
         }
 
 

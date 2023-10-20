@@ -12,7 +12,7 @@ non_admin_account = Acc(email="support@akvo.org", token=None)
 admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
-class TestCaseWithFilterRoute():
+class TestCaseWithFilterRoute:
     @pytest.mark.asyncio
     async def test_get_case_filter_by_search(
         self, app: FastAPI, session: Session, client: AsyncClient
@@ -33,18 +33,20 @@ class TestCaseWithFilterRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == {
-            'current': 1,
-            'data': [{
-                'id': 1,
-                'name': 'Bali Rice and Corn Production',
-                'country': 2,
-                'focus_commodity': 2,
-                'diversified_commodities_count': 1,
-                'created_at': res["data"][0]["created_at"],
-                'created_by': 'super_admin@akvo.org'
-            }],
-            'total': 1,
-            'total_page': 1
+            "current": 1,
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Bali Rice and Corn Production",
+                    "country": 2,
+                    "focus_commodity": 2,
+                    "diversified_commodities_count": 2,
+                    "created_at": res["data"][0]["created_at"],
+                    "created_by": "super_admin@akvo.org",
+                }
+            ],
+            "total": 1,
+            "total_page": 1,
         }
 
     @pytest.mark.asyncio
@@ -67,18 +69,20 @@ class TestCaseWithFilterRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == {
-            'current': 1,
-            'data': [{
-                'id': 1,
-                'name': 'Bali Rice and Corn Production',
-                'country': 2,
-                'focus_commodity': 2,
-                'diversified_commodities_count': 1,
-                'created_at': res["data"][0]["created_at"],
-                'created_by': 'super_admin@akvo.org'
-            }],
-            'total': 1,
-            'total_page': 1
+            "current": 1,
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Bali Rice and Corn Production",
+                    "country": 2,
+                    "focus_commodity": 2,
+                    "diversified_commodities_count": 2,
+                    "created_at": res["data"][0]["created_at"],
+                    "created_by": "super_admin@akvo.org",
+                }
+            ],
+            "total": 1,
+            "total_page": 1,
         }
 
     @pytest.mark.asyncio
@@ -101,18 +105,20 @@ class TestCaseWithFilterRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == {
-            'current': 1,
-            'data': [{
-                'id': 1,
-                'name': 'Bali Rice and Corn Production',
-                'country': 2,
-                'focus_commodity': 2,
-                'diversified_commodities_count': 1,
-                'created_at': res["data"][0]["created_at"],
-                'created_by': 'super_admin@akvo.org'
-            }],
-            'total': 1,
-            'total_page': 1
+            "current": 1,
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Bali Rice and Corn Production",
+                    "country": 2,
+                    "focus_commodity": 2,
+                    "diversified_commodities_count": 2,
+                    "created_at": res["data"][0]["created_at"],
+                    "created_by": "super_admin@akvo.org",
+                }
+            ],
+            "total": 1,
+            "total_page": 1,
         }
 
     @pytest.mark.asyncio
@@ -122,37 +128,31 @@ class TestCaseWithFilterRoute():
         # test invalid search
         res = await client.get(
             app.url_path_for("case:get_all"),
-            params={
-                "search": "Rice",
-                "tags": [1],
-                "focus_commodity": [100]
-            },
+            params={"search": "Rice", "tags": [1], "focus_commodity": [100]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 404
         # test valid search
         res = await client.get(
             app.url_path_for("case:get_all"),
-            params={
-                "search": "Rice",
-                "tags": [1],
-                "focus_commodity": [2]
-            },
+            params={"search": "Rice", "tags": [1], "focus_commodity": [2]},
             headers={"Authorization": f"Bearer {admin_account.token}"},
         )
         assert res.status_code == 200
         res = res.json()
         assert res == {
-            'current': 1,
-            'data': [{
-                'id': 1,
-                'name': 'Bali Rice and Corn Production',
-                'country': 2,
-                'focus_commodity': 2,
-                'diversified_commodities_count': 1,
-                'created_at': res["data"][0]["created_at"],
-                'created_by': 'super_admin@akvo.org'
-            }],
-            'total': 1,
-            'total_page': 1
+            "current": 1,
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Bali Rice and Corn Production",
+                    "country": 2,
+                    "focus_commodity": 2,
+                    "diversified_commodities_count": 2,
+                    "created_at": res["data"][0]["created_at"],
+                    "created_by": "super_admin@akvo.org",
+                }
+            ],
+            "total": 1,
+            "total_page": 1,
         }

@@ -1,23 +1,20 @@
 import enum
 import json
 from db.connection import Base
-from sqlalchemy import (
-    Column, Integer, String, DateTime, ForeignKey,
-    SmallInteger, Enum
-)
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, SmallInteger, Enum
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
-from pydantic import (
-    BaseModel, SecretStr, field_validator, ValidationInfo
-)
+from pydantic import BaseModel, SecretStr, field_validator, ValidationInfo
 from models.organisation import OrganisationDict
 from fastapi import Form, HTTPException, status
 from models.user_tag import UserTag
-from models.user_case_access import UserCaseAccess
+from models.user_case_access import UserCaseAccess, UserCasePermissionDict
 from models.user_business_unit import (
-    UserBusinessUnit, UserBusinessUnitDetailDict,
+    UserBusinessUnit,
+    UserBusinessUnitDetailDict,
+    UserBusinessUnitRoleDict,
 )
 
 tags_desc = "JSON stringify of tag ids [1, 2, 3]"
@@ -41,14 +38,17 @@ def json_load(value: Optional[str] = None):
 
 def validate_business_units(info: ValidationInfo, value: Optional[str] = None):
     business_units_required = [
-        UserRole.admin.value, UserRole.editor.value, UserRole.viewer.value
+        UserRole.admin.value,
+        UserRole.editor.value,
+        UserRole.viewer.value,
     ]
     role = info.data.get("role", None)
     # business unit required for admin role
     if role and role.value in business_units_required and not value:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail=f"business_units required for {role.value} role")
+            detail=f"business_units required for {role.value} role",
+        )
     return json_load(value=value)
 
 
@@ -62,6 +62,17 @@ class UserInfo(TypedDict):
     organisation_detail: OrganisationDict
     tags_count: int
     cases_count: int
+
+
+class UserDetailDict(TypedDict):
+    id: int
+    fullname: str
+    organisation: int
+    email: str
+    role: UserRole
+    tags: Optional[List[int]]
+    business_units: Optional[List[UserBusinessUnitRoleDict]]
+    cases: Optional[List[UserCasePermissionDict]]
 
 
 class UserPageDict(TypedDict):
@@ -105,14 +116,13 @@ class User(Base):
     email = Column(String, nullable=False, unique=True)
     fullname = Column(String, nullable=False)
     password = Column(String, nullable=True)
-    role = Column(Enum(UserRole), nullable=False)
+    role = Column(Enum(UserRole, name="user_role"), nullable=False)
     all_cases = Column(SmallInteger, nullable=False, default=0)
     is_active = Column(SmallInteger, nullable=False, default=0)
     invitation_id = Column(String, nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime, nullable=False,
-        server_default=func.now(), onupdate=func.now()
+        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
     user_organisation = relationship(
@@ -137,7 +147,7 @@ class User(Base):
         UserBusinessUnit,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates="user_business_unit_user_detail"
+        back_populates="user_business_unit_user_detail",
     )
 
     def __init__(
@@ -179,12 +189,9 @@ class User(Base):
     @property
     def to_user_info(self) -> UserInfo:
         business_unit_detail = [
-            bu.to_business_unit_detail for bu
-            in self.user_business_units
+            bu.to_business_unit_detail for bu in self.user_business_units
         ]
-        business_unit_detail = (
-            business_unit_detail if business_unit_detail else None
-        )
+        business_unit_detail = business_unit_detail if business_unit_detail else None
         return {
             "id": self.id,
             "fullname": self.fullname,
@@ -195,6 +202,31 @@ class User(Base):
             "organisation_detail": self.user_organisation.serialize,
             "tags_count": len(self.user_tags),
             "cases_count": len(self.user_case_access),
+        }
+
+    @property
+    def to_user_detail(self) -> UserDetailDict:
+        tags = []
+        business_units = []
+        cases = []
+        if self.user_business_units:
+            business_units = [
+                bu.to_business_unit_role for bu in self.user_business_units
+            ]
+        if self.user_tags:
+            tags = [t.tag for t in self.user_tags]
+        if self.user_case_access:
+            cases = [c.to_case_permission for c in self.user_case_access]
+        return {
+            "id": self.id,
+            "fullname": self.fullname,
+            "email": self.email,
+            "role": self.role,
+            "active": self.is_active,
+            "organisation": self.organisation,
+            "tags": tags,
+            "business_units": business_units,
+            "cases": cases,
         }
 
     @property

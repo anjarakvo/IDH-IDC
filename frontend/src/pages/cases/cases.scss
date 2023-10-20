@@ -7,6 +7,43 @@
       font-family: "TabletGothicBold";
       font-size: 1.5rem;
     }
+
+    .segment-group {
+      h3 {
+        background: #e6f7ff;
+        font-size: 18px;
+        margin: 0px;
+        padding: 10px 24px;
+        position: relative;
+        small {
+          position: absolute;
+          right: 24px;
+          top: calc(50% - 9px);
+        }
+      }
+      .ant-card-body {
+        padding: 0px;
+        .ant-card-grid {
+          padding: 0px 24px;
+          h3 {
+            background: #ffffff;
+            font-size: 14px;
+            padding: 10px 24px;
+            font-weight: bold;
+            margin: 0px -24px;
+          }
+          h4 {
+            small {
+              &.unit {
+                position: absolute;
+                right: 0;
+                top: 22px;
+              }
+            }
+          }
+        }
+      }
+    }
     .card-subtitle {
       padding: 10px 0;
     }
@@ -46,5 +83,12 @@
       bottom: -4px;
       color: #26605f;
     }
+  }
+  .current-feasible-field {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  .data-fields-title {
+    background: $primary-color;
   }
 }
