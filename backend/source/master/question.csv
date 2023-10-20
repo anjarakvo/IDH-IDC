@@ -4,7 +4,7 @@ id,parent,text,description,unit,default_value,question_type
 3,1,Volume,"Crop, Aquaculture",volume_measurement_unit / area_size_unit,8-9,question
 4,1,Price,"Crop, Aquaculture",currency,,question
 5,1,Cost of Production,"Crop, Aquaculture,Livestock",currency,,question
-6,2,Land Size,Crop,currency,,question
+6,2,Land Size,Crop,area_size_unit,,question
 7,2,Area Under Production,Aquaculture,currency,,question
 8,3,Yield,"Crop, Aquaculture",volume_measurement_unit / area_size_unit,,question
 9,3,Loss,"Crop, Aquaculture",volume_measurement_unit / area_size_unit,,question
