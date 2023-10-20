@@ -24,6 +24,7 @@ def seeder_question(session: Session, engine: create_engine):
     ## Commodity Categories Questions
     commodities = pd.read_csv(MASTER_DIR + "commodities.csv")
     commodity_group = commodities[["group_id", "group_name"]]
+    data = data.dropna(subset=["description"])
     data["commodity_group_names"] = data["description"].apply(
         lambda x: [i.strip() for i in x.split(",")]
     )
