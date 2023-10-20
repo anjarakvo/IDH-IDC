@@ -4,7 +4,7 @@ import pytest
 from httpx import AsyncClient
 from fastapi import FastAPI
 from sqlalchemy.orm import Session
-from models.question import Question
+from models.question import Question, QuestionType
 from models.commodity_category_question import CommodityCategoryQuestion
 from db.crud_user import get_user_by_email
 
@@ -24,22 +24,25 @@ class TestAddMasterDataDedenpentToUser:
                 "id": 1,
                 "parent_id": None,
                 "code": "Q1",
+                "question_type": QuestionType.aggregator,
                 "text": "Net Income per day",
                 "description": None,
                 "default_value": "function() { return #Q2 * #Q3 / 30; }",
             },
             {
                 "id": 2,
-                "parent_id": None,
+                "parent_id": 1,
                 "code": "Q2",
+                "question_type": QuestionType.question,
                 "text": "Income from Commodity / Month",
                 "description": None,
                 "default_value": None,
             },
             {
                 "id": 3,
-                "parent_id": None,
+                "parent_id": 1,
                 "code": "Q3",
+                "question_type": QuestionType.question,
                 "text": "Cost of Production / Month",
                 "description": None,
                 "default_value": None,
@@ -49,6 +52,7 @@ class TestAddMasterDataDedenpentToUser:
             question = Question(
                 id=val["id"],
                 parent=val["parent_id"],
+                question_type=val["question_type"],
                 code=val["code"],
                 text=val["text"],
                 description=val["description"],
@@ -77,6 +81,7 @@ class TestAddMasterDataDedenpentToUser:
                 "id": 1,
                 "parent": None,
                 "code": "Q1",
+                "question_type": "aggregator",
                 "text": "Net Income per day",
                 "description": None,
                 "default_value": "function() { return #Q2 * #Q3 / 30; }",
@@ -85,8 +90,9 @@ class TestAddMasterDataDedenpentToUser:
             },
             {
                 "id": 2,
-                "parent": None,
+                "parent": 1,
                 "code": "Q2",
+                "question_type": "question",
                 "text": "Income from Commodity / Month",
                 "description": None,
                 "default_value": None,
@@ -95,8 +101,9 @@ class TestAddMasterDataDedenpentToUser:
             },
             {
                 "id": 3,
-                "parent": None,
+                "parent": 1,
                 "code": "Q3",
+                "question_type": "question",
                 "text": "Cost of Production / Month",
                 "description": None,
                 "default_value": None,

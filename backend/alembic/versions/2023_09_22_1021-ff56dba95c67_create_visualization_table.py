@@ -57,4 +57,4 @@ def downgrade() -> None:
         "visualization_segment_tab_unique", "visualization", type_="unique"
     )
     op.drop_table("visualization")
-    op.execute("DROP TYPE visualization_tab_enum")
+    op.execute("DROP TYPE visualization_tab")
