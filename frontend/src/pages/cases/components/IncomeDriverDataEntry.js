@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Card, Tabs, Button, InputNumber, Form } from "antd";
+import { Row, Col, Space, Card, Tabs, Button, InputNumber, Form } from "antd";
 import {
   PlusCircleFilled,
   DeleteTwoTone,
   InfoCircleFilled,
+  CaretRightOutlined,
+  CaretDownOutlined,
 } from "@ant-design/icons";
 import { api } from "../../../lib";
 
-const Questions = ({ id, text, unit, units, childrens, indent = 0 }) => {
+const Questions = ({
+  id,
+  question_type,
+  text,
+  unit,
+  units,
+  childrens,
+  indent = 0,
+}) => {
+  const [collapsed, setCollapsed] = useState(question_type !== "aggregator");
   const unitName = unit
     .split("/")
     .map((u) => u.trim())
@@ -20,18 +31,32 @@ const Questions = ({ id, text, unit, units, childrens, indent = 0 }) => {
         style={{ borderBottom: "1px solid #f0f0f0" }}
         align="middle"
       >
-        <Col span={12}>
-          <h4
-            style={{
-              paddingLeft: indent,
-              paddingRight: indent,
-            }}
-          >
-            {text}
-            <small className="unit">{unitName}</small>
-          </h4>
+        <Col span={14}>
+          <Space size="small">
+            {childrens.length > 0 && question_type !== "aggregator" && (
+              <Button
+                type="link"
+                onClick={() => setCollapsed(!collapsed)}
+                icon={
+                  collapsed ? (
+                    <CaretRightOutlined color="black" />
+                  ) : (
+                    <CaretDownOutlined color="black" />
+                  )
+                }
+              />
+            )}
+            <h4
+              style={{
+                paddingLeft: childrens.length === 0 ? indent + 32 : indent,
+              }}
+            >
+              {text}
+              <small className="unit">{unitName}</small>
+            </h4>
+          </Space>
         </Col>
-        <Col span={6}>
+        <Col span={5}>
           <Form.Item
             name={`current-${id}`}
             rules={[{ required: true }]}
@@ -40,20 +65,22 @@ const Questions = ({ id, text, unit, units, childrens, indent = 0 }) => {
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={5}>
           <Form.Item name={`feasible-${id}`} className="current-feasible-field">
             <InputNumber style={{ width: "100%" }} />
           </Form.Item>
         </Col>
       </Row>
-      {childrens.map((child) => (
-        <Questions
-          key={child.id}
-          units={units}
-          {...child}
-          indent={indent + 24}
-        />
-      ))}
+      {!collapsed
+        ? childrens.map((child) => (
+            <Questions
+              key={child.id}
+              units={units}
+              {...child}
+              indent={indent + 24}
+            />
+          ))
+        : null}
     </>
   );
 };
@@ -199,6 +226,7 @@ const IncomeDriverDataEntry = ({ commodityList }) => {
             segment={newKey}
             onDelete={() => onDelete(newKey)}
             questionGroups={questionGroups}
+            commodityList={commodityList}
           />
         ),
       });

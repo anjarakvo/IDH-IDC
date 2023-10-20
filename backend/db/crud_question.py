@@ -37,9 +37,11 @@ def get_question_by_commodity(
         )
         questions = [question.serialize for question in questions]
         if not param["breakdown"]:
-            questions = filter(
-                lambda question: question["id"] == 1 or question["parent"] == 1,
-                questions,
+            questions = list(
+                filter(
+                    lambda question: question["id"] == 1 or question["parent"] == 1,
+                    questions,
+                )
             )
         commodity["questions"] = build_tree(questions)
         res.append(commodity)
