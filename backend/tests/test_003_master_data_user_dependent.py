@@ -23,7 +23,7 @@ class TestAddMasterDataDedenpentToUser:
             {
                 "id": 1,
                 "parent_id": None,
-                "code": "Q1",
+                "unit": "Q1",
                 "question_type": QuestionType.aggregator,
                 "text": "Net Income per day",
                 "description": None,
@@ -32,7 +32,7 @@ class TestAddMasterDataDedenpentToUser:
             {
                 "id": 2,
                 "parent_id": 1,
-                "code": "Q2",
+                "unit": "Q2",
                 "question_type": QuestionType.question,
                 "text": "Income from Commodity / Month",
                 "description": None,
@@ -41,7 +41,7 @@ class TestAddMasterDataDedenpentToUser:
             {
                 "id": 3,
                 "parent_id": 1,
-                "code": "Q3",
+                "unit": "Q3",
                 "question_type": QuestionType.question,
                 "text": "Cost of Production / Month",
                 "description": None,
@@ -53,7 +53,7 @@ class TestAddMasterDataDedenpentToUser:
                 id=val["id"],
                 parent=val["parent_id"],
                 question_type=val["question_type"],
-                code=val["code"],
+                unit=val["unit"],
                 text=val["text"],
                 description=val["description"],
                 default_value=val["default_value"],
@@ -80,7 +80,7 @@ class TestAddMasterDataDedenpentToUser:
             {
                 "id": 1,
                 "parent": None,
-                "code": "Q1",
+                "unit": "Q1",
                 "question_type": "aggregator",
                 "text": "Net Income per day",
                 "description": None,
@@ -91,7 +91,7 @@ class TestAddMasterDataDedenpentToUser:
             {
                 "id": 2,
                 "parent": 1,
-                "code": "Q2",
+                "unit": "Q2",
                 "question_type": "question",
                 "text": "Income from Commodity / Month",
                 "description": None,
@@ -102,7 +102,7 @@ class TestAddMasterDataDedenpentToUser:
             {
                 "id": 3,
                 "parent": 1,
-                "code": "Q3",
+                "unit": "Q3",
                 "question_type": "question",
                 "text": "Cost of Production / Month",
                 "description": None,

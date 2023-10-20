@@ -16,7 +16,15 @@ def seeder_question(session: Session, engine: create_engine):
     truncatedb(session=session, table="question")
     data = pd.read_csv(MASTER_DIR + "question.csv")
     question = data[
-        ["id", "parent", "text", "description", "question_type", "default_value"]
+        [
+            "id",
+            "parent",
+            "text",
+            "unit",
+            "description",
+            "question_type",
+            "default_value",
+        ]
     ]
     question.to_sql("question", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Question")

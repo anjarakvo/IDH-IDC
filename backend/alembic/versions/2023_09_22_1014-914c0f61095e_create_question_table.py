@@ -34,7 +34,7 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("code", sa.String(), nullable=True),
+        sa.Column("unit", sa.String(), nullable=True),
         sa.Column("text", sa.String(), nullable=False),
         sa.Column("description", sa.String(), nullable=True),
         sa.Column("default_value", sa.String(), nullable=True),

@@ -23,7 +23,7 @@ class QuestionGroupParam(TypedDict):
 class QuestionDict(TypedDict):
     id: int
     parent: Optional[int]
-    code: Optional[str]
+    unit: Optional[str]
     question_type: QuestionType
     text: str
     description: Optional[str]
@@ -48,7 +48,7 @@ class Question(Base):
         nullable=False,
         default=QuestionType.question.value,
     )
-    code = Column(String, nullable=True)
+    unit = Column(String, nullable=True)
     text = Column(String, nullable=False)
     description = Column(String, nullable=True)
     default_value = Column(String, nullable=True)
@@ -73,14 +73,14 @@ class Question(Base):
         created_by: int,
         id: Optional[int] = None,
         parent: Optional[int] = None,
-        code: Optional[str] = None,
+        unit: Optional[str] = None,
         question_type: Optional[QuestionType] = QuestionType.question,
         description: Optional[str] = None,
         default_value: Optional[str] = None,
     ):
         self.id = id
         self.parent = parent
-        self.code = code
+        self.unit = unit
         self.question_type = question_type
         self.text = text
         self.description = description
@@ -95,7 +95,7 @@ class Question(Base):
         return {
             "id": self.id,
             "parent": self.parent,
-            "code": self.code,
+            "unit": self.unit,
             "question_type": self.question_type.value,
             "text": self.text,
             "description": self.description,
@@ -110,7 +110,7 @@ class Question(Base):
         return {
             "id": self.id,
             "parent": self.parent,
-            "code": self.code,
+            "unit": self.unit,
             "question_type": self.question_type,
             "text": self.text,
             "description": self.description,
@@ -123,7 +123,7 @@ class Question(Base):
 class QuestionBase(BaseModel):
     id: int
     parent: Optional[int] = None
-    code: Optional[str] = None
+    unit: Optional[str] = None
     text: str
     description: Optional[str] = None
     default_value: Optional[str] = None
