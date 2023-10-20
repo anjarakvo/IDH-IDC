@@ -16,7 +16,7 @@ class CaseCommodityType(enum.Enum):
 
 class SimplifiedCaseCommodityDict(TypedDict):
     id: int
-    commodity: int
+    commodity: Optional[int]
     breakdown: bool
     commodity_type: CaseCommodityType
     area_size_unit: str
@@ -27,7 +27,7 @@ class CaseCommodity(Base):
     __tablename__ = "case_commodity"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    case = Column(Integer, ForeignKey("case.id"))
+    case = Column(Integer, ForeignKey("case.id"), nullable=True)
     commodity = Column(Integer, ForeignKey("commodity.id"))
     breakdown = Column(SmallInteger, nullable=False, default=0)
     commodity_type = Column(
@@ -43,21 +43,15 @@ class CaseCommodity(Base):
         passive_deletes=True,
         back_populates="case_commodities",
     )
-    # commodity_detail = relationship(
-    #     'Case',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='commodity_detail_case_commodity'
-    # )
 
     def __init__(
         self,
-        commodity: int,
         area_size_unit: str,
         volume_measurement_unit: str,
         commodity_type: CaseCommodityType,
         case: Optional[int] = None,
         id: Optional[int] = None,
+        commodity: Optional[int] = None,
         breakdown: Optional[int] = 0,
     ):
         self.id = id
@@ -86,7 +80,7 @@ class CaseCommodity(Base):
 class CaseCommodityBase(BaseModel):
     id: int
     case: int
-    commodity: int
+    commodity: Optional[int]
     commodity_type: CaseCommodityType
     breakdown: Optional[int] = 0
     area_size_unit: str

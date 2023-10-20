@@ -35,15 +35,15 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
         private=1 if payload.private else 0,
         created_by=user.id,
     )
-    # store to case_commodity by default using focus_commodity & breakdown true
-    def_case_commodity = CaseCommodity(
+    # store focus to case_commodity by default
+    def_focus_commodity = CaseCommodity(
         commodity=payload.focus_commodity,
         breakdown=1,
         commodity_type=CaseCommodityType.focus.value,
         area_size_unit=payload.area_size_unit,
         volume_measurement_unit=payload.volume_measurement_unit,
     )
-    case.case_commodities.append(def_case_commodity)
+    case.case_commodities.append(def_focus_commodity)
     # store other commodities
     if payload.other_commodities:
         for val in payload.other_commodities:
@@ -55,6 +55,14 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
                 volume_measurement_unit=val.volume_measurement_unit,
             )
             case.case_commodities.append(case_commodity)
+    # store diversified to case_commodity by default
+    def_diversified_commodity = CaseCommodity(
+        breakdown=1,
+        commodity_type=CaseCommodityType.diversified.value,
+        area_size_unit=payload.area_size_unit,
+        volume_measurement_unit=payload.volume_measurement_unit,
+    )
+    case.case_commodities.append(def_diversified_commodity)
     session.add(case)
     session.commit()
     session.flush()

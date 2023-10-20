@@ -114,6 +114,14 @@ class TestCaseRoute:
                     "volume_measurement_unit": "liters",
                     "area_size_unit": "hectare",
                 },
+                {
+                    "id": 3,
+                    "commodity": None,
+                    "breakdown": True,
+                    "commodity_type": CaseCommodityType.diversified.value,
+                    "volume_measurement_unit": "liters",
+                    "area_size_unit": "hectare",
+                },
             ],
             "private": False,
         }
@@ -179,13 +187,21 @@ class TestCaseRoute:
             "created_by": 1,
             "case_commodities": [
                 {
-                    "id": 3,
+                    "id": 4,
                     "commodity": 1,
                     "breakdown": True,
                     "commodity_type": CaseCommodityType.focus.value,
                     "volume_measurement_unit": "liters",
                     "area_size_unit": "hectare",
-                }
+                },
+                {
+                    "id": 5,
+                    "commodity": None,
+                    "breakdown": True,
+                    "commodity_type": CaseCommodityType.diversified.value,
+                    "volume_measurement_unit": "liters",
+                    "area_size_unit": "hectare",
+                },
             ],
             "private": True,
         }
@@ -215,7 +231,7 @@ class TestCaseRoute:
                     "name": "Bali Rice and Corn Production Comparison",
                     "country": 2,
                     "focus_commodity": 2,
-                    "diversified_commodities_count": 1,
+                    "diversified_commodities_count": 2,
                     "created_at": res["data"][0]["created_at"],
                     "created_by": "super_admin@akvo.org",
                 }
@@ -308,6 +324,14 @@ class TestCaseRoute:
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
                 },
+                {
+                    "id": 3,
+                    "commodity": None,
+                    "breakdown": True,
+                    "commodity_type": CaseCommodityType.diversified.value,
+                    "volume_measurement_unit": "liters",
+                    "area_size_unit": "hectare",
+                },
             ],
             "private": False,
         }
@@ -374,6 +398,14 @@ class TestCaseRoute:
                     "commodity_type": CaseCommodityType.secondary.value,
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
+                },
+                {
+                    "id": 3,
+                    "commodity": None,
+                    "breakdown": True,
+                    "commodity_type": CaseCommodityType.diversified.value,
+                    "volume_measurement_unit": "liters",
+                    "area_size_unit": "hectare",
                 },
             ],
             "private": False,
