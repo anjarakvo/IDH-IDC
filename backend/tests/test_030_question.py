@@ -73,6 +73,7 @@ class TestQuestionRoute:
                                 "parent": 1,
                                 "code": "Q2",
                                 "question_type": "question",
+                                "question_type": "question",
                                 "text": "Income from Commodity / Month",
                                 "description": None,
                                 "default_value": None,
@@ -83,6 +84,7 @@ class TestQuestionRoute:
                                 "id": 3,
                                 "parent": 1,
                                 "code": "Q3",
+                                "question_type": "question",
                                 "text": "Cost of Production / Month",
                                 "description": None,
                                 "default_value": None,
@@ -110,6 +112,7 @@ class TestQuestionRoute:
                             {
                                 "id": 2,
                                 "parent": 1,
+                                "question_type": "question",
                                 "code": "Q2",
                                 "question_type": "question",
                                 "text": "Income from Commodity / Month",
@@ -121,6 +124,7 @@ class TestQuestionRoute:
                             {
                                 "id": 3,
                                 "parent": 1,
+                                "question_type": "question",
                                 "code": "Q3",
                                 "question_type": "question",
                                 "text": "Cost of Production / Month",
