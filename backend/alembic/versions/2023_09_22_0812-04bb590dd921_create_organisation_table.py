@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '04bb590dd921'
+revision: str = "04bb590dd921"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -20,15 +20,14 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'organisation',
-        sa.Column('id', sa.Integer(), nullable=False),
-        sa.Column('name', sa.String(), nullable=False),
-        sa.PrimaryKeyConstraint('id'),
+        "organisation",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("name", sa.String(), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
     )
-    op.create_index(
-        op.f('ix_organisation_id'), 'organisation', ['id'], unique=True)
+    op.create_index(op.f("ix_organisation_id"), "organisation", ["id"], unique=True)
 
 
 def downgrade() -> None:
-    op.drop_index(op.f('ix_organisation_id'), table_name='organisation')
-    op.drop_table('organisation')
+    op.drop_index(op.f("ix_organisation_id"), table_name="organisation")
+    op.drop_table("organisation")

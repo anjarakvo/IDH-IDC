@@ -26,11 +26,20 @@
         .ant-card-grid {
           padding: 0px 24px;
           h3 {
-            background: #e8e8e8;
+            background: #ffffff;
             font-size: 14px;
             padding: 10px 24px;
             font-weight: bold;
             margin: 0px -24px;
+          }
+          h4 {
+            small {
+              &.unit {
+                position: absolute;
+                right: 0;
+                top: 22px;
+              }
+            }
           }
         }
       }

@@ -1,10 +1,20 @@
 from sqlalchemy.orm import Session
 from typing import List
 
-from models.question import (
-    QuestionGroupParam, QuestionGroupListDict
-)
+from models.question import Question, QuestionGroupParam, QuestionGroupListDict
 from models.commodity import Commodity
+from models.commodity_category_question import CommodityCategoryQuestion
+
+
+def build_tree(data, parent=None):
+    tree = []
+    for item in data:
+        if item["parent"] == parent:
+            children = build_tree(data, item["id"])
+            if children:
+                item["childrens"] = children
+            tree.append(item)
+    return tree
 
 
 def get_question_by_commodity(
@@ -12,13 +22,25 @@ def get_question_by_commodity(
 ) -> List[QuestionGroupListDict]:
     res = []
     for param in params:
-        commodity = session.query(Commodity).filter(Commodity.id == param["commodity"]).first()
+        commodity = (
+            session.query(Commodity).filter(Commodity.id == param["commodity"]).first()
+        )
         commodity = commodity.to_question_list
-        questions = commodity["questions"]
-        if param["breakdown"]:
-            questions = [q for q in questions if not q.parent]
-            commodity["questions"] = [q.serialize_with_child for q in questions]
-        else:
-            commodity["questions"] = [q.serialize for q in questions]
+        commodity_category_id = commodity["commodity_category_id"]
+        questions = (
+            session.query(Question)
+            .join(CommodityCategoryQuestion)
+            .filter(
+                CommodityCategoryQuestion.commodity_category == commodity_category_id,
+            )
+            .all()
+        )
+        questions = [question.serialize for question in questions]
+        if not param["breakdown"]:
+            questions = filter(
+                lambda question: question["id"] == 1 or question["parent"] == 1,
+                questions,
+            )
+        commodity["questions"] = build_tree(questions)
         res.append(commodity)
     return res

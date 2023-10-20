@@ -15,13 +15,24 @@ def seeder_question(session: Session, engine: create_engine):
     truncatedb(session=session, table="commodity_category_question")
     truncatedb(session=session, table="question")
     data = pd.read_csv(MASTER_DIR + "question.csv")
-    question = data[["id", "parent", "text", "description", "default_value"]]
+    question = data[
+        [
+            "id",
+            "parent",
+            "text",
+            "unit",
+            "description",
+            "question_type",
+            "default_value",
+        ]
+    ]
     question.to_sql("question", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Question")
 
     ## Commodity Categories Questions
     commodities = pd.read_csv(MASTER_DIR + "commodities.csv")
     commodity_group = commodities[["group_id", "group_name"]]
+    data = data.dropna(subset=["description"])
     data["commodity_group_names"] = data["description"].apply(
         lambda x: [i.strip() for i in x.split(",")]
     )

@@ -25,23 +25,25 @@ class Visualization(Base):
     __tablename__ = "visualization"
 
     id = Column(Integer, primary_key=True, index=True, nullable=True)
-    case = Column(Integer, ForeignKey('case.id'))
-    segment = Column(Integer, ForeignKey('segment.id'))
+    case = Column(Integer, ForeignKey("case.id"))
+    segment = Column(Integer, ForeignKey("segment.id"))
     tab = Column(
-        Enum(VisualizationTab), default=VisualizationTab.sensitivity_analysis)
+        Enum(VisualizationTab, name="visualization_tab"),
+        default=VisualizationTab.sensitivity_analysis,
+    )
     config = Column(pg.JSONB, nullable=False)
 
     case_detail = relationship(
-        'Case',
+        "Case",
         cascade="all, delete",
         passive_deletes=True,
-        backref='case_visualization'
+        backref="case_visualization",
     )
     segment_detail = relationship(
-        'Segment',
+        "Segment",
         cascade="all, delete",
         passive_deletes=True,
-        backref='segment_visualization'
+        backref="segment_visualization",
     )
 
     def __init__(
@@ -68,7 +70,7 @@ class Visualization(Base):
             "case": self.case,
             "segment": self.segment,
             "tab": self.tab,
-            "config": self.config
+            "config": self.config,
         }
 
 

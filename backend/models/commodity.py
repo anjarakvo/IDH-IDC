@@ -18,17 +18,17 @@ class SimplifiedCommodityDict(TypedDict):
 
 
 class Commodity(Base):
-    __tablename__ = 'commodity'
+    __tablename__ = "commodity"
 
     id = Column(Integer, primary_key=True)
-    commodity_category = Column(Integer, ForeignKey('commodity_category.id'))
+    commodity_category = Column(Integer, ForeignKey("commodity_category.id"))
     name = Column(String, nullable=False, unique=True)
 
     commodity_category_detail = relationship(
-        'CommodityCategory',
+        "CommodityCategory",
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='commodities'
+        back_populates="commodities",
     )
 
     def __init__(
@@ -61,11 +61,10 @@ class Commodity(Base):
 
     @property
     def to_question_list(self):
-        questions = self.commodity_category_detail.commodity_category_questions
         return {
             "commodity_id": self.id,
             "commodity_name": self.name,
-            "questions": questions,
+            "commodity_category_id": self.commodity_category,
         }
 
 

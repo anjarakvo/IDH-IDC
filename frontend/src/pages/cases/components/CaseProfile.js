@@ -206,6 +206,9 @@ const CaseProfile = ({
       {
         commodity: values.focus_commodity,
         breakdown: true,
+        currency: values.currency,
+        area_size_unit: values.area_size_unit,
+        volume_measurement_unit: values.volume_measurement_unit,
       },
     ];
     if (secondary) {
@@ -213,7 +216,10 @@ const CaseProfile = ({
         ...commodities,
         {
           commodity: values["1-commodity"],
-          breakdown: values["1-breakdown"] === "yes" ? true : false,
+          breakdown: values["1-breakdown"] ? true : false,
+          currency: values.currency,
+          area_size_unit: values["1-area_size_unit"],
+          volume_measurement_unit: values["1-volume_measurement_unit"],
         },
       ];
     }
@@ -222,7 +228,10 @@ const CaseProfile = ({
         ...commodities,
         {
           commodity: values["2-commodity"],
-          breakdown: values["2-breakdown"] === "yes" ? true : false,
+          breakdown: values["2-breakdown"] ? true : false,
+          currency: values.currency,
+          area_size_unit: values["2-area_size_unit"],
+          volume_measurement_unit: values["2-volume_measurement_unit"],
         },
       ];
     }
