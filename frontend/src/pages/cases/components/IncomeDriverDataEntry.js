@@ -41,7 +41,7 @@ const Questions = ({ id, text, childrens, indent = 0 }) => {
         </Col>
       </Row>
       {childrens.map((child) => (
-        <Questions key={child.id} {...child} indent={indent + 20} />
+        <Questions key={child.id} {...child} indent={indent + 24} />
       ))}
     </>
   );
@@ -50,8 +50,20 @@ const Questions = ({ id, text, childrens, indent = 0 }) => {
 const IncomeDriversForm = ({ group, groupIndex }) => {
   const [form] = Form.useForm();
   return (
-    <Card.Grid style={{ width: "100%" }} hoverable={false}>
-      <h3>
+    <Card.Grid
+      style={{
+        width: "100%",
+        backgroundColor: groupIndex ? "#ececec" : "",
+      }}
+      hoverable={false}
+    >
+      {groupIndex === 1 && <h3>Diversified Income</h3>}
+      <h3
+        style={{
+          paddingLeft: !groupIndex ? 24 : 48,
+          backgroundColor: groupIndex ? "#f0f0f0" : "",
+        }}
+      >
         {groupIndex === 0 ? "Focus Commodity:" : ""} {group.commodity_name}
       </h3>
       {!groupIndex && (
@@ -71,7 +83,11 @@ const IncomeDriversForm = ({ group, groupIndex }) => {
       )}
       <Form name={`drivers-income-${groupIndex}`} layout="vertical" form={form}>
         {group.questions.map((question) => (
-          <Questions key={question.id} {...question} />
+          <Questions
+            key={question.id}
+            indent={!groupIndex ? 0 : 48}
+            {...question}
+          />
         ))}
       </Form>
     </Card.Grid>

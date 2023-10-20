@@ -213,7 +213,7 @@ const CaseProfile = ({
         ...commodities,
         {
           commodity: values["1-commodity"],
-          breakdown: values["1-breakdown"] === "yes" ? true : false,
+          breakdown: values["1-breakdown"] ? true : false,
         },
       ];
     }
@@ -222,7 +222,7 @@ const CaseProfile = ({
         ...commodities,
         {
           commodity: values["2-commodity"],
-          breakdown: values["2-breakdown"] === "yes" ? true : false,
+          breakdown: values["2-breakdown"] ? true : false,
         },
       ];
     }
