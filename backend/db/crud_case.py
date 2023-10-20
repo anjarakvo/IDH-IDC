@@ -6,7 +6,7 @@ from fastapi import HTTPException, status
 
 from models.user import User
 from models.case import Case, CaseBase, CaseDict, CaseListDict
-from models.case_commodity import CaseCommodity
+from models.case_commodity import CaseCommodity, CaseCommodityType
 from models.case_tag import CaseTag
 
 
@@ -18,6 +18,7 @@ class PaginatedCaseData(TypedDict):
 def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
     case = Case(
         name=payload.name,
+        description=payload.description,
         date=payload.date,
         year=payload.year,
         country=payload.country,
@@ -38,6 +39,7 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
     def_case_commodity = CaseCommodity(
         commodity=payload.focus_commodity,
         breakdown=1,
+        commodity_type=CaseCommodityType.focus.value,
         area_size_unit=payload.area_size_unit,
         volume_measurement_unit=payload.volume_measurement_unit,
     )
@@ -48,6 +50,7 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
             case_commodity = CaseCommodity(
                 commodity=val.commodity,
                 breakdown=1 if val.breakdown else 0,
+                commodity_type=val.commodity_type.value,
                 area_size_unit=val.area_size_unit,
                 volume_measurement_unit=val.volume_measurement_unit,
             )
@@ -96,6 +99,8 @@ def get_case_by_id(session: Session, id: int) -> CaseDict:
 def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     case = get_case_by_id(session=session, id=id)
     case.name = payload.name
+    if payload.description is not None:
+        case.description = payload.description
     case.date = payload.date
     case.year = payload.year
     case.country = payload.country
@@ -132,6 +137,7 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
             if prev_case_commodity:
                 # update breakdown value
                 prev_case_commodity.breakdown = breakdown
+                prev_case_commodity.commodity_type = val.commodity_type.value
                 session.commit()
                 session.flush()
                 session.refresh(prev_case_commodity)
@@ -139,6 +145,7 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
                 case_commodity = CaseCommodity(
                     commodity=val.commodity,
                     breakdown=breakdown,
+                    commodity_type=val.commodity_type.value,
                     area_size_unit=val.area_size_unit,
                     volume_measurement_unit=val.volume_measurement_unit,
                 )

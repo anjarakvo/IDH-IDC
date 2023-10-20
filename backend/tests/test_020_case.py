@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 
 from models.case import LivingIncomeStudyEnum
+from models.case_commodity import CaseCommodityType
 
 sys.path.append("..")
 
@@ -34,6 +35,7 @@ class TestCaseRoute:
     ) -> None:
         payload = {
             "name": "Bali Rice and Corn Production Comparison",
+            "description": "This is a description",
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
@@ -50,6 +52,7 @@ class TestCaseRoute:
                 {
                     "commodity": 3,
                     "breakdown": True,
+                    "commodity_type": CaseCommodityType.secondary.value,
                     "volume_measurement_unit": "liters",
                     "area_size_unit": "hectare",
                 }
@@ -79,6 +82,7 @@ class TestCaseRoute:
         assert res == {
             "id": 1,
             "name": "Bali Rice and Corn Production Comparison",
+            "description": "This is a description",
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
@@ -98,6 +102,7 @@ class TestCaseRoute:
                     "id": 1,
                     "commodity": 2,
                     "breakdown": True,
+                    "commodity_type": CaseCommodityType.focus.value,
                     "volume_measurement_unit": "liters",
                     "area_size_unit": "hectare",
                 },
@@ -105,6 +110,7 @@ class TestCaseRoute:
                     "id": 2,
                     "commodity": 3,
                     "breakdown": True,
+                    "commodity_type": CaseCommodityType.secondary.value,
                     "volume_measurement_unit": "liters",
                     "area_size_unit": "hectare",
                 },
@@ -156,6 +162,7 @@ class TestCaseRoute:
         assert res == {
             "id": 2,
             "name": "Bali Coffee Production (Private)",
+            "description": None,
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
@@ -175,6 +182,7 @@ class TestCaseRoute:
                     "id": 3,
                     "commodity": 1,
                     "breakdown": True,
+                    "commodity_type": CaseCommodityType.focus.value,
                     "volume_measurement_unit": "liters",
                     "area_size_unit": "hectare",
                 }
@@ -238,6 +246,7 @@ class TestCaseRoute:
                 {
                     "commodity": 3,
                     "breakdown": False,
+                    "commodity_type": CaseCommodityType.secondary.value,
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
                 }
@@ -267,6 +276,7 @@ class TestCaseRoute:
         assert res == {
             "id": 1,
             "name": "Bali Rice and Corn Production",
+            "description": "This is a description",
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
@@ -286,6 +296,7 @@ class TestCaseRoute:
                     "id": 1,
                     "commodity": 2,
                     "breakdown": True,
+                    "commodity_type": CaseCommodityType.focus.value,
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
                 },
@@ -293,6 +304,7 @@ class TestCaseRoute:
                     "id": 2,
                     "commodity": 3,
                     "breakdown": False,
+                    "commodity_type": CaseCommodityType.secondary.value,
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
                 },
@@ -329,6 +341,7 @@ class TestCaseRoute:
         assert res == {
             "id": 1,
             "name": "Bali Rice and Corn Production",
+            "description": "This is a description",
             "date": "2023-10-03",
             "year": 2023,
             "country": 2,
@@ -350,6 +363,7 @@ class TestCaseRoute:
                     "id": 1,
                     "commodity": 2,
                     "breakdown": True,
+                    "commodity_type": CaseCommodityType.focus.value,
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
                 },
@@ -357,6 +371,7 @@ class TestCaseRoute:
                     "id": 2,
                     "commodity": 3,
                     "breakdown": False,
+                    "commodity_type": CaseCommodityType.secondary.value,
                     "area_size_unit": "hectare",
                     "volume_measurement_unit": "liters",
                 },
