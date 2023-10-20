@@ -7,7 +7,12 @@ import {
 } from "@ant-design/icons";
 import { api } from "../../../lib";
 
-const Questions = ({ id, text, childrens, indent = 0 }) => {
+const Questions = ({ id, text, unit, units, childrens, indent = 0 }) => {
+  const unitName = unit
+    .split("/")
+    .map((u) => u.trim())
+    .map((u) => units?.[u])
+    .join(" / ");
   return (
     <>
       <Row
@@ -23,6 +28,7 @@ const Questions = ({ id, text, childrens, indent = 0 }) => {
             }}
           >
             {text}
+            <small className="unit">{unitName}</small>
           </h4>
         </Col>
         <Col span={6}>
@@ -41,13 +47,18 @@ const Questions = ({ id, text, childrens, indent = 0 }) => {
         </Col>
       </Row>
       {childrens.map((child) => (
-        <Questions key={child.id} {...child} indent={indent + 24} />
+        <Questions
+          key={child.id}
+          units={units}
+          {...child}
+          indent={indent + 24}
+        />
       ))}
     </>
   );
 };
 
-const IncomeDriversForm = ({ group, groupIndex }) => {
+const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
   const [form] = Form.useForm();
   return (
     <Card.Grid
@@ -86,6 +97,7 @@ const IncomeDriversForm = ({ group, groupIndex }) => {
           <Questions
             key={question.id}
             indent={!groupIndex ? 0 : 48}
+            units={commodity}
             {...question}
           />
         ))}
@@ -94,7 +106,7 @@ const IncomeDriversForm = ({ group, groupIndex }) => {
   );
 };
 
-const DataFields = ({ segment, onDelete, questionGroups }) => {
+const DataFields = ({ segment, onDelete, questionGroups, commodityList }) => {
   const extra = onDelete ? (
     <Button
       size="small"
@@ -122,6 +134,7 @@ const DataFields = ({ segment, onDelete, questionGroups }) => {
             <IncomeDriversForm
               group={group}
               groupIndex={groupIndex}
+              commodity={commodityList[groupIndex]}
               key={groupIndex}
             />
           ))}
@@ -147,7 +160,13 @@ const IncomeDriverDataEntry = ({ commodityList }) => {
         {
           key: "1",
           label: "Segment 1",
-          children: <DataFields segment={1} questionGroups={res.data} />,
+          children: (
+            <DataFields
+              segment={1}
+              questionGroups={res.data}
+              commodityList={commodityList}
+            />
+          ),
         },
         {
           key: "add",

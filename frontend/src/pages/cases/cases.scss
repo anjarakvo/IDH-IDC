@@ -32,6 +32,15 @@
             font-weight: bold;
             margin: 0px -24px;
           }
+          h4 {
+            small {
+              &.unit {
+                position: absolute;
+                right: 0;
+                top: 22px;
+              }
+            }
+          }
         }
       }
     }
