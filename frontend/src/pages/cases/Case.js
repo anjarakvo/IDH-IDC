@@ -39,7 +39,7 @@ const Case = () => {
           const focusCommodityValue = {
             name: data.name,
             description: data.description,
-            tags: [],
+            tags: data?.tags || [],
             country: data.country,
             focus_commodity: data.focus_commodity,
             currency: data.currency,
