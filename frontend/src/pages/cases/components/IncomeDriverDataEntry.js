@@ -21,12 +21,16 @@ import {
 } from "@ant-design/icons";
 import { api } from "../../../lib";
 
+const indentSize = 37.5;
+
 const Questions = ({
   id,
   question_type,
   text,
   unit,
   units,
+  form,
+  refresh,
   childrens,
   indent = 0,
 }) => {
@@ -49,6 +53,15 @@ const Questions = ({
     }
   }, [currentValue, feasibleValue, setPercentage]);
 
+  useEffect(() => {
+    const current = form.getFieldValue(`current-${id}`);
+    const feasible = form.getFieldValue(`feasible-${id}`);
+    if (current && feasible) {
+      setCurrentValue(current);
+      setFeasibleValue(feasible);
+    }
+  }, [form, refresh]);
+
   return (
     <>
       <Row
@@ -56,7 +69,12 @@ const Questions = ({
         style={{ borderBottom: "1px solid #f0f0f0" }}
         align="middle"
       >
-        <Col span={12}>
+        <Col
+          span={12}
+          style={{
+            paddingLeft: indent,
+          }}
+        >
           <Space size="small">
             {childrens.length > 0 && question_type !== "aggregator" && (
               <Button
@@ -71,11 +89,7 @@ const Questions = ({
                 }
               />
             )}
-            <h4
-              style={{
-                paddingLeft: childrens.length === 0 ? indent + 32 : indent,
-              }}
-            >
+            <h4>
               {text} <small>({unitName})</small>
             </h4>
           </Space>
@@ -132,8 +146,10 @@ const Questions = ({
             <Questions
               key={child.id}
               units={units}
+              form={form}
+              refresh={refresh}
               {...child}
-              indent={indent + 24}
+              indent={indent + indentSize}
             />
           ))
         : null}
@@ -143,6 +159,8 @@ const Questions = ({
 
 const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
   const [form] = Form.useForm();
+  const [refresh, setRefresh] = useState(false);
+
   const flattenQuestionList = group.questions.reduce((acc, question) => {
     acc.push(question);
     if (question.childrens.length > 0) {
@@ -184,7 +202,9 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
         [parentQuestionId]: allChildrensValues,
       });
     }
+    setRefresh(!refresh);
   };
+
   return (
     <Card.Grid
       style={{
@@ -226,8 +246,10 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
         {group.questions.map((question) => (
           <Questions
             key={question.id}
-            indent={!groupIndex ? 0 : 48}
+            indent={!groupIndex ? 0 : indentSize}
             units={commodity}
+            form={form}
+            refresh={refresh}
             {...question}
           />
         ))}

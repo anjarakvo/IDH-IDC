@@ -28,8 +28,6 @@ id,parent,text,description,unit,default_value,question_type
 27,22,Marketing Costs,Crop,currency,,question
 28,22,Certification Costs,Crop,currency,,question
 29,22,Cost of Capital,Crop,currency,,question
-30,,Diversified Income,"",currency,,diversified
-31,30,Income from livestock,"",currency,,diversified
-32,30,Income from off-farm activities,"",currency,,diversified
-33,30,Investment and cash transfer,"",currency,,diversified
-34,30,Other income,"",currency,,diversified
+31,,Income from livestock,"",currency,,diversified
+32,,Income from off-farm activities,"",currency,,diversified
+33,,Investment and cash transfer,"",currency,,diversified
