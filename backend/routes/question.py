@@ -35,3 +35,22 @@ def get_question_by_commodity_id(
         session=session, params=payload
     )
     return questions
+
+
+@question_route.get(
+    "/questions/{case_id:path}",
+    response_model=List[QuestionGroupListDict],
+    summary="get questions by case id",
+    name="question:get_by_case_id",
+    tags=["Question"]
+)
+def get_question_by_case_id(
+    req: Request,
+    case_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    questions = crud_question.get_question_by_case(
+        session=session, case_id=case_id
+    )
+    return questions
