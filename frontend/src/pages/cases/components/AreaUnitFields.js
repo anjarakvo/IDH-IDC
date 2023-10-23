@@ -35,7 +35,7 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
       </Col>
       <Col span={12}>
         <Form.Item
-          label="Select Measurement Unit"
+          label="Select Weight Measurement Unit"
           name={
             index
               ? `${index}-volume_measurement_unit`
