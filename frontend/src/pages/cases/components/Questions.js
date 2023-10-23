@@ -11,6 +11,7 @@ import { indentSize } from "./";
 const Questions = ({
   id,
   question_type,
+  commodityName,
   text,
   unit,
   units,
@@ -79,7 +80,11 @@ const Questions = ({
               />
             )}
             <h4>
-              {text} <small>({unitName})</small>
+              {text}{" "}
+              {question_type === "aggregator" && commodityName
+                ? ` from ${commodityName} `
+                : ""}
+              <small>({unitName})</small>
             </h4>
           </Space>
         </Col>
@@ -128,6 +133,7 @@ const Questions = ({
               key={child.id}
               units={units}
               form={form}
+              commodityName={commodityName}
               refresh={refresh}
               {...child}
               indent={indent + indentSize}

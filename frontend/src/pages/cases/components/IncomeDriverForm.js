@@ -15,6 +15,9 @@ const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
     const question = flattenQuestionList.find(
       (q) => q.id === parseInt(questionId)
     );
+    if (!question.parent) {
+      return;
+    }
     const parentQuestion = flattenQuestionList.find(
       (q) => q.id === question.parent
     );
@@ -94,6 +97,7 @@ const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
             units={commodity}
             form={form}
             refresh={refresh}
+            commodityName={group?.commodity_name}
             {...question}
           />
         ))}
