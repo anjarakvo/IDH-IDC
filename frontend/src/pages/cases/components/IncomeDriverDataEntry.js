@@ -104,12 +104,20 @@ const Questions = ({
         </Col>
         <Col span={2}>
           <Space>
-            {percentage > 0 ? (
+            {percentage === 0 ? null : percentage > 0 ? (
               <CaretUpFilled className="ceret-up" />
             ) : (
               <CaretDownFilled className="ceret-down" />
             )}
-            <div className={percentage > 0 ? "ceret-up" : "ceret-down"}>
+            <div
+              className={
+                percentage === 0
+                  ? ""
+                  : percentage > 0
+                  ? "ceret-up"
+                  : "ceret-down"
+              }
+            >
               {feasibleValue < currentValue
                 ? -percentage.toFixed(0)
                 : percentage.toFixed(0)}

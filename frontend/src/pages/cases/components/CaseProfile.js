@@ -11,6 +11,7 @@ import {
   Button,
   Space,
   message,
+  DatePicker,
 } from "antd";
 import { StepForwardOutlined } from "@ant-design/icons";
 import {
@@ -59,6 +60,7 @@ const CaseForm = ({ setCaseTitle }) => {
 
       <Form.Item
         name="tags"
+        label="Tags"
         rules={[
           {
             required: true,
@@ -72,6 +74,19 @@ const CaseForm = ({ setCaseTitle }) => {
           options={tagOptions}
           {...selectProps}
         />
+      </Form.Item>
+
+      <Form.Item
+        name="year"
+        label="Year"
+        rules={[
+          {
+            required: true,
+            message: "Select year",
+          },
+        ]}
+      >
+        <DatePicker picker="year" />
       </Form.Item>
 
       <h3>Driver Details</h3>
