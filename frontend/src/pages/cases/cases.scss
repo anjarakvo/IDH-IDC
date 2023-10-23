@@ -9,19 +9,37 @@
     }
 
     .segment-group {
-      h3 {
-        background: #e6f7ff;
-        font-size: 18px;
-        margin: 0px;
-        padding: 10px 24px;
-        position: relative;
-        small {
-          position: absolute;
-          right: 24px;
-          top: calc(50% - 9px);
+      .ant-card-head {
+        padding: 0px;
+        h3 {
+          font-size: 24px;
+          margin: -1px;
+          padding: 10px 24px;
+          small {
+            position: absolute;
+            right: 24px;
+            top: 16px;
+            cursor: pointer;
+          }
+        }
+        margin-bottom: 0px;
+        .ant-card-extra {
+          padding: 10px 24px;
         }
       }
       .ant-card-body {
+        h3 {
+          background: #e6f7ff;
+          font-size: 18px;
+          margin: 0px;
+          padding: 10px 24px;
+          position: relative;
+          small {
+            position: absolute;
+            right: 24px;
+            top: calc(50% - 9px);
+          }
+        }
         padding: 0px;
         .ant-card-grid {
           padding: 0px 24px;

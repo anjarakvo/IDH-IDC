@@ -6,9 +6,11 @@ import {
   Card,
   Tabs,
   Button,
+  Input,
   InputNumber,
   Form,
   Switch,
+  Popover,
 } from "antd";
 import {
   PlusCircleFilled,
@@ -18,6 +20,9 @@ import {
   CaretDownOutlined,
   CaretUpFilled,
   CaretDownFilled,
+  CheckCircleTwoTone,
+  EditTwoTone,
+  CloseCircleTwoTone,
 } from "@ant-design/icons";
 import { flatten } from "./";
 import { api } from "../../../lib";
@@ -251,21 +256,104 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
   );
 };
 
-const DataFields = ({ segment, onDelete, questionGroups, commodityList }) => {
-  const extra = onDelete ? (
+const DataFields = ({
+  segment,
+  segmentLabel,
+  onDelete,
+  questionGroups,
+  commodityList,
+  renameItem,
+}) => {
+  const [confimationModal, setConfimationModal] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [newName, setNewName] = useState(segmentLabel);
+
+  const finishEditing = () => {
+    renameItem(segment, newName);
+    setEditing(false);
+  };
+  const cancelEditing = () => {
+    setNewName(segmentLabel);
+    setEditing(false);
+  };
+
+  const ButtonEdit = () => (
     <Button
       size="small"
       shape="circle"
       type="secondary"
-      icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
-      onClick={onDelete}
+      icon={
+        editing ? (
+          <CheckCircleTwoTone twoToneColor="#52c41a" />
+        ) : (
+          <EditTwoTone twoToneColor="" />
+        )
+      }
+      onClick={editing ? finishEditing : () => setEditing(true)}
     />
-  ) : null;
+  );
+
+  const ButtonCancelEdit = () => (
+    <Button
+      size="small"
+      shape="circle"
+      type="secondary"
+      icon={<CloseCircleTwoTone twoToneColor="#eb2f96" />}
+      onClick={cancelEditing}
+    />
+  );
+
+  const extra = onDelete ? (
+    <Space>
+      <ButtonEdit />
+      {editing && <ButtonCancelEdit />}
+      <Popover
+        content={
+          <Space align="end">
+            <Button type="primary" onClick={() => setConfimationModal(false)}>
+              Close
+            </Button>
+            <Button onClick={onDelete} danger>
+              Delete
+            </Button>
+          </Space>
+        }
+        title="Are you sure want to delete this segment?"
+        trigger="click"
+        open={confimationModal}
+        onOpenChange={(e) => setConfimationModal(e)}
+      >
+        <Button
+          size="small"
+          shape="circle"
+          type="secondary"
+          icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+        />
+      </Popover>
+    </Space>
+  ) : (
+    <Space>
+      <ButtonEdit />
+      {editing && <ButtonCancelEdit />}
+    </Space>
+  );
+
   return (
     <Row>
       <Col span={16}>
         <Card
-          title={`Segment-${segment}`}
+          title={
+            <h3>
+              {editing ? (
+                <Input
+                  defaultValue={segmentLabel}
+                  onChange={(e) => setNewName(e.target.value)}
+                />
+              ) : (
+                segmentLabel
+              )}
+            </h3>
+          }
           extra={extra}
           className="segment-group"
         >
@@ -305,13 +393,6 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         {
           key: "1",
           label: "Segment 1",
-          children: (
-            <DataFields
-              segment={1}
-              questionGroups={res.data}
-              commodityList={commodityList}
-            />
-          ),
         },
         {
           key: "add",
@@ -323,13 +404,34 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         },
       ]);
     });
-  }, [commodityList, setItems, setQuestionGroups, currentCaseId]);
+  }, [commodityList, setQuestionGroups, currentCaseId]);
 
   const onDelete = (segmentKey) => {
     const newItems = items.filter((item) => item.key !== segmentKey);
     setItems(newItems);
     const newActiveKey = segmentKey - 1;
     setActiveKey(newActiveKey.toString());
+  };
+
+  const renameItem = (activeKey, newLabel) => {
+    const newItem = items.map((item, itemIndex) => {
+      if (item.key === activeKey.toString()) {
+        item.label = newLabel;
+        item.children = (
+          <DataFields
+            segment={activeKey}
+            segmentLabel={newLabel}
+            questionGroups={questionGroups}
+            onDelete={itemIndex ? onDelete(activeKey) : false}
+            commodityList={commodityList}
+            renameItem={renameItem}
+          />
+        );
+      }
+      return item;
+    });
+    setItems(newItem);
+    setActiveKey(activeKey.toString());
   };
 
   const onChange = (activeKey) => {
@@ -339,14 +441,6 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       newItems.splice(newItems.length - 1, 0, {
         key: newKey.toString(),
         label: `Segment ${newKey}`,
-        children: (
-          <DataFields
-            segment={newKey}
-            onDelete={() => onDelete(newKey)}
-            questionGroups={questionGroups}
-            commodityList={commodityList}
-          />
-        ),
       });
       setItems(newItems);
       setActiveKey(newKey.toString());
@@ -359,10 +453,28 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       setActiveKey(activeKey);
     }
   };
+
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
-        <Tabs activeKey={activeKey} items={items} onChange={onChange} />
+        <Tabs
+          onChange={onChange}
+          activeKey={activeKey}
+          items={items.map((item, itemIndex) => ({
+            ...item,
+            children:
+              item.key === "add" ? null : (
+                <DataFields
+                  segment={item.key}
+                  segmentLabel={item.label}
+                  onDelete={itemIndex ? () => onDelete(item.key) : false}
+                  questionGroups={questionGroups}
+                  commodityList={commodityList}
+                  renameItem={renameItem}
+                />
+              ),
+          }))}
+        />
       </Col>
     </Row>
   );
