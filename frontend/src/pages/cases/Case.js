@@ -7,6 +7,7 @@ import "./cases.scss";
 import { api } from "../../lib";
 import { UserState } from "../../store";
 import dayjs from "dayjs";
+import isEmpty from "lodash/isEmpty";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
@@ -56,11 +57,15 @@ const Case = () => {
           const secondaryCommodityTmp = data.case_commodities.find(
             (val) => val.commodity_type === "secondary"
           );
-          if (secondaryCommodityTmp) {
+          if (!isEmpty(secondaryCommodityTmp)) {
             Object.keys(secondaryCommodityTmp).forEach((key) => {
+              let val = secondaryCommodityTmp[key];
+              if (key === "breakdown") {
+                val = val ? 1 : 0;
+              }
               secondaryCommodityValue = {
                 ...secondaryCommodityValue,
-                [`1-${key}`]: secondaryCommodityTmp[key],
+                [`1-${key}`]: val,
               };
             });
           }
@@ -69,11 +74,15 @@ const Case = () => {
           const tertiaryCommodityTmp = data.case_commodities.find(
             (val) => val.commodity_type === "tertiary"
           );
-          if (tertiaryCommodityTmp) {
+          if (!isEmpty(tertiaryCommodityTmp)) {
             Object.keys(tertiaryCommodityTmp).forEach((key) => {
+              let val = tertiaryCommodityValue[key];
+              if (key === "breakdown") {
+                val = val ? 1 : 0;
+              }
               tertiaryCommodityValue = {
                 ...tertiaryCommodityValue,
-                [`1-${key}`]: tertiaryCommodityValue[key],
+                [`2-${key}`]: val,
               };
             });
           }
