@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -25,6 +25,9 @@ import {
 } from "./";
 import { api } from "../../../lib";
 import { UIState } from "../../../store";
+import isEmpty from "lodash/isEmpty";
+import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 const CaseForm = ({ setCaseTitle }) => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -214,12 +217,29 @@ const CaseProfile = ({
   setCommodityList,
   currentCaseId,
   setCurrentCaseId,
+  initialOtherCommodityTypes,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(commodityList.length > 2);
   const [tertiary, setTertiary] = useState(commodityList.length > 3);
   const [isSaving, setIsSaving] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const { caseId } = useParams();
+
+  useEffect(() => {
+    // initial case profile value
+    if (!isEmpty(formData)) {
+      const completed = finished.filter((item) => item !== "Case Profile");
+      if (initialOtherCommodityTypes?.includes("secondary")) {
+        setSecondary(true);
+      }
+      if (initialOtherCommodityTypes?.includes("tertiary")) {
+        setTertiary(true);
+      }
+      setFinished([...completed, "Case Profile"]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
   const onFinish = (values) => {
     setIsSaving(true);
@@ -281,12 +301,12 @@ const CaseProfile = ({
     }
     // diversified_commodities
     commodities = [...commodities, initial_commodities];
-
     const payload = {
       name: values.name,
       description: values.description,
       country: values.country,
       focus_commodity: values.focus_commodity,
+      year: dayjs(values.year).year(),
       currency: values.currency,
       area_size_unit: values.area_size_unit,
       volume_measurement_unit: values.volume_measurement_unit,
@@ -304,9 +324,11 @@ const CaseProfile = ({
 
     setCommodityList(commodities);
 
-    const apiCall = currentCaseId
-      ? api.put(`case/${currentCaseId}`, payload)
-      : api.post("case", payload);
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    const apiCall =
+      currentCaseId || caseId
+        ? api.put(`case/${paramCaseId}`, payload)
+        : api.post("case", payload);
     apiCall
       .then((res) => {
         setCurrentCaseId(res?.data?.id);
@@ -349,9 +371,7 @@ const CaseProfile = ({
         <Col span={12}>
           <Card
             title="Secondary Commodity"
-            extra={
-              <Switch defaultChecked={secondary} onChange={setSecondary} />
-            }
+            extra={<Switch checked={secondary} onChange={setSecondary} />}
             style={{
               marginBottom: "16px",
               backgroundColor: !secondary ? "#f5f5f5" : "white",
@@ -367,7 +387,7 @@ const CaseProfile = ({
             title="Teritary Commodity"
             extra={
               <Switch
-                defaultChecked={tertiary}
+                checked={tertiary}
                 onChange={setTertiary}
                 disabled={!secondary}
               />

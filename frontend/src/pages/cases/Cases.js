@@ -1,25 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ContentLayout, TableContent } from "../../components/layout";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
+import { api } from "../../lib";
+import { UIState, UserState } from "../../store";
+
+const perPage = 10;
+const defData = {
+  current: 1,
+  data: [],
+  total: 0,
+  total_page: 1,
+};
 
 const Cases = () => {
-  const dataSource = [
-    {
-      key: "1",
-      country: "China",
-      case: "Case 1",
-      tags: "Tag 1",
-      date: "2020",
-    },
-    {
-      key: "2",
-      country: "Indonesia",
-      case: "Case 2",
-      tags: "Tag 2",
-      date: "2021",
-    },
-  ];
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [search, setSearch] = useState(null);
+  const [data, setData] = useState(defData);
+  const tagOptions = UIState.useState((s) => s.tagOptions);
+  const userID = UserState.useState((s) => s.id);
+
+  useEffect(() => {
+    if (userID) {
+      setLoading(true);
+      let url = `case?page=${currentPage}&limit=${perPage}`;
+      if (search) {
+        url = `${url}&search=${search}`;
+      }
+      api
+        .get(url)
+        .then((res) => {
+          setData(res.data);
+        })
+        .catch((e) => {
+          console.error(e.response);
+          const { status } = e.response;
+          if (status === 404) {
+            setData(defData);
+          }
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [currentPage, search, userID]);
 
   const columns = [
     {
@@ -32,35 +57,45 @@ const Cases = () => {
     },
     {
       title: "Case Name",
-      dataIndex: "case",
+      dataIndex: "name",
       key: "case",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.case.localeCompare(b.case),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Tags",
-      dataIndex: "tags",
       key: "tags",
+      render: (record) => {
+        const tags = record.tags.map((tag_id) => {
+          const findTag = tagOptions.find((x) => x.value === tag_id);
+          return findTag.label;
+        });
+        if (!tags.length) {
+          return "-";
+        }
+        return tags.join(", ");
+      },
     },
     {
       title: "Year",
-      dataIndex: "date",
-      key: "date",
+      dataIndex: "year",
+      key: "year",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.date - b.date,
+      sorter: (a, b) => a.year - b.year,
     },
     {
       key: "action",
       width: "5%",
       align: "center",
       render: (text, record) => (
-        <Link to={`/cases/${record.key}`}>
+        <Link to={`/cases/${record.id}`}>
           <EditOutlined />
         </Link>
       ),
     },
   ];
-  const onSearch = (value) => console.info(value);
+
+  const onSearch = (value) => setSearch(value);
 
   return (
     <ContentLayout
@@ -71,18 +106,25 @@ const Cases = () => {
       title="Cases"
     >
       <TableContent
-        dataSource={dataSource}
+        title="All Cases"
+        dataSource={data.data}
         columns={columns}
         searchProps={{
-          placeholder: "Cases",
-          style: { width: 200 },
+          placeholder: "Find Case",
+          style: { width: 400 },
           onSearch: onSearch,
         }}
         buttonProps={{
           text: "New Case",
           to: "/cases/new",
         }}
-        loading={false}
+        loading={loading}
+        paginationProps={{
+          current: currentPage,
+          pageSize: perPage,
+          total: data.total,
+          onChange: (page) => setCurrentPage(page),
+        }}
       />
     </ContentLayout>
   );
