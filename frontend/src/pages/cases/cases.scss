@@ -4,7 +4,7 @@
   .case-content {
     margin-top: 2rem;
     .ant-card-head-title {
-      font-family: "TabletGothicBold";
+      font-family: "TabletGothic";
       font-size: 1.5rem;
     }
 
@@ -65,6 +65,9 @@
           .ceret-down {
             color: red;
           }
+        }
+        .ant-input-number-disabled {
+          color: #666;
         }
       }
     }

@@ -91,6 +91,29 @@ export const flatten = (data, parent = null) => {
 
 export const indentSize = 37.5;
 
+export const regexQuestionId = /#(\d+)/;
+
+export const getFunctionDefaultValue = (question, prefix, values = {}) => {
+  const function_name = question.default_value.split(" ");
+  const getFunction = function_name.reduce((acc, fn) => {
+    const questionValue = fn.match(regexQuestionId);
+    if (questionValue) {
+      const valueName = `${prefix}-${questionValue[1]}`;
+      const value = values.find((v) => v.id === valueName)?.value;
+      if (!value) {
+        acc.push(0);
+        return acc;
+      }
+      acc.push(value.toString());
+    } else {
+      acc.push(fn);
+    }
+    return acc;
+  }, []);
+  const finalFunction = getFunction.join("");
+  return eval(finalFunction);
+};
+
 export { default as AreaUnitFields } from "./AreaUnitFields";
 export { default as SideMenu } from "./SideMenu";
 export { default as CaseProfile } from "./CaseProfile";

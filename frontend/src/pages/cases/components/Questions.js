@@ -1,17 +1,55 @@
 import React, { useEffect, useState } from "react";
-import { Button, Col, Form, InputNumber, Row, Space, Switch } from "antd";
+import {
+  Button,
+  Col,
+  Form,
+  InputNumber,
+  Row,
+  Space,
+  Switch,
+  Popover,
+} from "antd";
 import {
   CaretDownFilled,
   CaretDownOutlined,
   CaretRightOutlined,
   CaretUpFilled,
+  InfoCircleTwoTone,
 } from "@ant-design/icons";
-import { indentSize } from "./";
+import { indentSize, regexQuestionId } from "./";
+
+const getQuestionFunctionInfo = (allQuestions, fnString) => {
+  const fn = fnString.split(" ");
+  const fnName = fn.reduce((acc, f) => {
+    const id = f.match(regexQuestionId);
+    const question = allQuestions.find((q) => q.id.toString() === id?.[1]);
+    if (question) {
+      acc.push(question.text);
+      return acc;
+    }
+    if (id) {
+      return acc;
+    }
+    if (f === "*") {
+      acc.push("x");
+      return acc;
+    }
+    acc.push(f);
+    return acc;
+  }, []);
+  // remove if last element is *+-
+  if (["*", "+", "-"].includes(fnName[fnName.length - 1])) {
+    fnName.pop();
+  }
+  return fnName.join(" ");
+};
 
 const Questions = ({
   id,
   question_type,
+  default_value,
   commodityName,
+  allQuestions,
   text,
   unit,
   units,
@@ -20,6 +58,7 @@ const Questions = ({
   childrens,
   indent = 0,
 }) => {
+  const [infoText, setInfoText] = useState("");
   const [currentValue, setCurrentValue] = useState(0);
   const [feasibleValue, setFeasibleValue] = useState(0);
   const [percentage, setPercentage] = useState(0);
@@ -31,6 +70,13 @@ const Questions = ({
     .map((u) => u.trim())
     .map((u) => units?.[u])
     .join(" / ");
+
+  useEffect(() => {
+    if (default_value) {
+      const fnText = getQuestionFunctionInfo(allQuestions, default_value);
+      setInfoText(fnText);
+    }
+  }, [default_value, allQuestions]);
 
   useEffect(() => {
     if (currentValue && feasibleValue) {
@@ -86,6 +132,11 @@ const Questions = ({
                 : ""}
               <small>({unitName})</small>
             </h4>
+            {infoText.length ? (
+              <Popover content={<div className="fn-info">{infoText}</div>}>
+                <InfoCircleTwoTone twoToneColor="#1677ff" />
+              </Popover>
+            ) : null}
           </Space>
         </Col>
         <Col span={2}>
@@ -135,6 +186,7 @@ const Questions = ({
               form={form}
               commodityName={commodityName}
               refresh={refresh}
+              allQuestions={allQuestions}
               {...child}
               indent={indent + indentSize}
             />
