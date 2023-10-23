@@ -226,7 +226,7 @@ const CaseProfile = ({
     const completed = finished.filter((item) => item !== "Case Profile");
 
     let other_commodities = [];
-    let initial_commodities = {
+    const initial_commodities = {
       commodity: values.focus_commodity,
       breakdown: true,
       currency: values.currency,
