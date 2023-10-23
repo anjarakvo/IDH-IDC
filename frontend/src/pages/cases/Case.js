@@ -15,6 +15,7 @@ const Case = () => {
   const [formData, setFormData] = useState({});
   const [finished, setFinished] = useState([]);
   const [commodityList, setCommodityList] = useState([]);
+  const [currentCaseId, setCurrentCaseId] = useState(null);
 
   const setActive = (selected) => {
     if (finished.includes(selected)) {
@@ -51,10 +52,16 @@ const Case = () => {
               setFinished={setFinished}
               setPage={setPage}
               setCommodityList={setCommodityList}
+              currentCaseId={currentCaseId}
+              setCurrentCaseId={setCurrentCaseId}
             />
           )}
           {page === "Income Driver Data Entry" && (
-            <IncomeDriverDataEntry commodityList={commodityList} />
+            <IncomeDriverDataEntry
+              commodityList={commodityList}
+              currentCaseId={currentCaseId}
+              setCurrentCaseId={setCurrentCaseId}
+            />
           )}
         </Col>
       </Row>

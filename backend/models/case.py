@@ -22,6 +22,7 @@ from models.case_commodity import (
     CaseCommodityType,
 )
 from models.segment import Segment, SimplifiedSegmentDict
+from models.case_tag import CaseTag
 
 
 class LivingIncomeStudyEnum(enum.Enum):
@@ -121,6 +122,12 @@ class Case(Base):
     )
     case_segments = relationship(
         Segment,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates="case_detail",
+    )
+    case_tags = relationship(
+        CaseTag,
         cascade="all, delete",
         passive_deletes=True,
         back_populates="case_detail",
@@ -265,8 +272,8 @@ class OtherCommoditysBase(BaseModel):
 class CaseBase(BaseModel):
     name: str
     description: Optional[str] = None
-    date: date_format
-    year: int
+    date: Optional[date_format] = None
+    year: Optional[int] = None
     country: int
     focus_commodity: int
     currency: str
@@ -280,6 +287,7 @@ class CaseBase(BaseModel):
     logo: Optional[str] = None
     private: Optional[bool] = False
     other_commodities: Optional[List[OtherCommoditysBase]] = None
+    tags: Optional[List[int]] = None
 
 
 class PaginatedCaseResponse(BaseModel):
