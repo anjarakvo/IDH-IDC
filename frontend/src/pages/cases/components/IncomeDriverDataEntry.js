@@ -72,7 +72,7 @@ const Questions = ({
         <Col
           span={12}
           style={{
-            paddingLeft: indent,
+            paddingLeft: indent ? indent : 10,
           }}
         >
           <Space size="small">

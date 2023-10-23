@@ -5,7 +5,6 @@ import { SideMenu, CaseProfile, IncomeDriverDataEntry } from "./components";
 import { Row, Col, Spin } from "antd";
 import "./cases.scss";
 import { api } from "../../lib";
-import { UserState } from "../../store";
 import dayjs from "dayjs";
 import isEmpty from "lodash/isEmpty";
 
@@ -15,20 +14,19 @@ const pageDependencies = {
 };
 
 const Case = () => {
+  const { caseId } = useParams();
   const [caseTitle, setCaseTitle] = useState("New Case");
   const [page, setPage] = useState("Case Profile");
   const [formData, setFormData] = useState({});
   const [finished, setFinished] = useState([]);
   const [commodityList, setCommodityList] = useState([]);
   const [currentCaseId, setCurrentCaseId] = useState(null);
-  const { caseId } = useParams();
-  const userID = UserState.useState((s) => s.id);
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
 
-  // initial case profile value
   useEffect(() => {
-    if (userID && caseId) {
+    if (caseId && isEmpty(formData) && !loading) {
+      setCurrentCaseId(caseId);
       setLoading(true);
       api
         .get(`case/${caseId}`)
@@ -39,6 +37,12 @@ const Case = () => {
           setInitialCommodityTypes(
             data.case_commodities.map((x) => x.commodity_type)
           );
+          // set commodity list
+          const commodities = data.case_commodities.map((x) => ({
+            ...x,
+            currency: data.currency,
+          }));
+          setCommodityList(commodities);
           // focus commodity
           const focusCommodityValue = {
             name: data.name,
@@ -57,7 +61,7 @@ const Case = () => {
           const secondaryCommodityTmp = data.case_commodities.find(
             (val) => val.commodity_type === "secondary"
           );
-          if (!isEmpty(secondaryCommodityTmp)) {
+          if (secondaryCommodityTmp) {
             Object.keys(secondaryCommodityTmp).forEach((key) => {
               let val = secondaryCommodityTmp[key];
               if (key === "breakdown") {
@@ -74,7 +78,7 @@ const Case = () => {
           const tertiaryCommodityTmp = data.case_commodities.find(
             (val) => val.commodity_type === "tertiary"
           );
-          if (!isEmpty(tertiaryCommodityTmp)) {
+          if (tertiaryCommodityTmp) {
             Object.keys(tertiaryCommodityTmp).forEach((key) => {
               let val = tertiaryCommodityTmp[key];
               if (key === "breakdown") {
@@ -93,14 +97,15 @@ const Case = () => {
             ...tertiaryCommodityValue,
           });
         })
-        .then((e) => {
-          console.error(e);
+        .catch((e) => {
+          console.error("Error fetching case profile data", e);
         })
         .finally(() => {
           setLoading(false);
+          setFinished(["Case Profile"]);
         });
     }
-  }, [userID, caseId]);
+  }, [caseId, formData, loading]);
 
   const setActive = (selected) => {
     if (finished.includes(selected)) {
