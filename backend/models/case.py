@@ -85,6 +85,7 @@ class CaseDetailDict(TypedDict):
     segments: Optional[List[SimplifiedSegmentDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
     private: bool
+    tags: Optional[List[int]] = []
 
 
 class Case(Base):
@@ -260,6 +261,7 @@ class Case(Base):
             "segments": [ps.simplify for ps in self.case_segments],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
+            "tags": [ct.tag for ct in self.case_tags],
         }
 
 

@@ -412,6 +412,7 @@ class TestCaseRoute:
                 },
             ],
             "private": False,
+            "tags": [1],
         }
 
     # TODO :: test_get_case_by_id_with_segments
