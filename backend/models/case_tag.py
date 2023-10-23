@@ -12,12 +12,12 @@ class CaseTag(Base):
     case = Column(Integer, ForeignKey('case.id'), nullable=False)
     tag = Column(Integer, ForeignKey('tag.id'), nullable=False)
 
-    # case_detail = relationship(
-    #     'Case',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='case_tag'
-    # )
+    case_detail = relationship(
+        'Case',
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates='case_tags'
+    )
     case_tag_detail = relationship(
         'Tag',
         cascade="all, delete",
@@ -27,7 +27,7 @@ class CaseTag(Base):
 
     def __init__(
         self,
-        case: int,
+        case: Optional[int] = None,
         tag: Optional[int] = None,
         id: Optional[int] = None,
     ):
