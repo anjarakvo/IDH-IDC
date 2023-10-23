@@ -2,7 +2,10 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from models.question import (
-    Question, QuestionGroupParam, QuestionGroupListDict, QuestionType
+    Question,
+    QuestionGroupParam,
+    QuestionGroupListDict,
+    QuestionType,
 )
 from models.commodity import Commodity
 from models.commodity_category_question import CommodityCategoryQuestion
@@ -12,6 +15,7 @@ from models.case_commodity import CaseCommodity
 def build_tree(data, parent=None):
     tree = []
     for item in data:
+        print(item["default_value"])
         if item["parent"] == parent:
             children = build_tree(data, item["id"])
             if children:
@@ -51,13 +55,9 @@ def get_question_by_commodity(
     return res
 
 
-def get_question_by_case(
-    session: Session, case_id: int
-) -> List[QuestionGroupListDict]:
+def get_question_by_case(session: Session, case_id: int) -> List[QuestionGroupListDict]:
     case_commodity = (
-        session.query(CaseCommodity)
-        .filter(CaseCommodity.case == case_id)
-        .all()
+        session.query(CaseCommodity).filter(CaseCommodity.case == case_id).all()
     )
     commodities = (
         session.query(Commodity)
@@ -86,9 +86,11 @@ def get_question_by_case(
         .all()
     )
     diversified_qs = [dqs.serialize for dqs in diversified_qs]
-    res.append({
-        "commodity_id": None,
-        "commodity_name": "Diversified Income",
-        "questions": build_tree(diversified_qs)
-    })
+    res.append(
+        {
+            "commodity_id": None,
+            "commodity_name": "Diversified Income",
+            "questions": build_tree(diversified_qs),
+        }
+    )
     return res

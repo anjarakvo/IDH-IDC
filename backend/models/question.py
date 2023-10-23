@@ -27,7 +27,7 @@ class QuestionDict(TypedDict):
     question_type: QuestionType
     text: str
     description: Optional[str]
-    default_value: Optional[str]
+    default_value: Optional[str] = None
     created_by: Optional[int] = None
     childrens: Optional[List]
 

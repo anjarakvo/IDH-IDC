@@ -2,6 +2,31 @@ import React, { useState } from "react";
 import { Card, Form, Row, Col } from "antd";
 import { Questions, flatten, indentSize } from "./";
 
+// example question id = #1
+// example question function_name = #1 + #2 + #3
+const regexQuestionId = /#(\d+)/;
+
+const getFunctionDefaultValue = (question, prefix, values = {}) => {
+  const function_name = question.default_value.split(" ");
+  const getFunction = function_name.reduce((acc, fn) => {
+    const questionValue = fn.match(regexQuestionId);
+    if (questionValue) {
+      const valueName = `${prefix}-${questionValue[1]}`;
+      const value = values.find((v) => v.id === valueName)?.value;
+      if (!value) {
+        acc.push(0);
+        return acc;
+      }
+      acc.push(value.toString());
+    } else {
+      acc.push(fn);
+    }
+    return acc;
+  }, []);
+  const finalFunction = getFunction.join("");
+  return eval(finalFunction);
+};
+
 const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
@@ -21,6 +46,7 @@ const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
     const parentQuestion = flattenQuestionList.find(
       (q) => q.id === question.parent
     );
+
     const allChildrens = flattenQuestionList.filter(
       (q) => q.parent === question.parent
     );
@@ -28,19 +54,35 @@ const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
     const allChildrensValues = allChildrensIds.reduce((acc, id) => {
       const value = currentValues?.[id];
       if (value) {
-        acc = acc + value;
+        acc.push({ id: id, value: value });
       }
       return acc;
-    }, 0);
+    }, []);
+
+    let sumAllChildrensValues = 0;
+
+    if (!parentQuestion.default_value) {
+      sumAllChildrensValues = allChildrensValues.reduce(
+        (acc, { value }) => acc + value,
+        0
+      );
+    } else {
+      sumAllChildrensValues = getFunctionDefaultValue(
+        parentQuestion,
+        dataType,
+        allChildrensValues
+      );
+    }
+
     const parentQuestionId = `${dataType}-${question.parent}`;
     if (parentQuestion) {
       form.setFieldsValue({
-        [parentQuestionId]: allChildrensValues,
+        [parentQuestionId]: sumAllChildrensValues,
       });
     }
     if (parentQuestion.parent) {
       onValuesChange(
-        { [parentQuestionId]: allChildrensValues },
+        { [parentQuestionId]: sumAllChildrensValues },
         form.getFieldsValue()
       );
     }
