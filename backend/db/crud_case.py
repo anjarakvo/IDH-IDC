@@ -64,12 +64,12 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
         area_size_unit=payload.area_size_unit,
         volume_measurement_unit=payload.volume_measurement_unit,
     )
+    case.case_commodities.append(def_diversified_commodity)
     # store tags
     if payload.tags:
         for tag_id in payload.tags:
             tag = CaseTag(tag=tag_id)
             case.case_tags.append(tag)
-    case.case_commodities.append(def_diversified_commodity)
     session.add(case)
     session.commit()
     session.flush()
