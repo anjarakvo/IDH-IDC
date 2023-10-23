@@ -226,15 +226,14 @@ const CaseProfile = ({
     const completed = finished.filter((item) => item !== "Case Profile");
 
     let other_commodities = [];
-    let commodities = [
-      {
-        commodity: values.focus_commodity,
-        breakdown: true,
-        currency: values.currency,
-        area_size_unit: values.area_size_unit,
-        volume_measurement_unit: values.volume_measurement_unit,
-      },
-    ];
+    let initial_commodities = {
+      commodity: values.focus_commodity,
+      breakdown: true,
+      currency: values.currency,
+      area_size_unit: values.area_size_unit,
+      volume_measurement_unit: values.volume_measurement_unit,
+    };
+    let commodities = [initial_commodities];
     if (secondary) {
       commodities = [
         ...commodities,
@@ -279,6 +278,8 @@ const CaseProfile = ({
         },
       ];
     }
+    // diversified_commodities
+    commodities = [...commodities, initial_commodities];
 
     const payload = {
       name: values.name,
