@@ -187,6 +187,9 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
         [parentQuestionId]: allChildrensValues,
       });
     }
+    if (parentQuestion.parent) {
+      onValuesChange({ [parentQuestionId]: allChildrensValues }, currentValues);
+    }
     setRefresh(!refresh);
   };
 
