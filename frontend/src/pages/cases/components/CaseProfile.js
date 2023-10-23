@@ -26,6 +26,8 @@ import {
 import { api } from "../../../lib";
 import { UIState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
+import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 const CaseForm = ({ setCaseTitle }) => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -221,15 +223,16 @@ const CaseProfile = ({
   const [tertiary, setTertiary] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const { caseId } = useParams();
 
   useEffect(() => {
     // initial case profile value
     if (!isEmpty(formData)) {
       const completed = finished.filter((item) => item !== "Case Profile");
-      if (initialOtherCommodityTypes.includes("secondary")) {
+      if (initialOtherCommodityTypes?.includes("secondary")) {
         setSecondary(true);
       }
-      if (initialOtherCommodityTypes.includes("tertiary")) {
+      if (initialOtherCommodityTypes?.includes("tertiary")) {
         setTertiary(true);
       }
       setFinished([...completed, "Case Profile"]);
@@ -297,12 +300,12 @@ const CaseProfile = ({
     }
     // diversified_commodities
     commodities = [...commodities, initial_commodities];
-
     const payload = {
       name: values.name,
       description: values.description,
       country: values.country,
       focus_commodity: values.focus_commodity,
+      year: dayjs(values.year).year(),
       currency: values.currency,
       area_size_unit: values.area_size_unit,
       volume_measurement_unit: values.volume_measurement_unit,
@@ -320,9 +323,10 @@ const CaseProfile = ({
 
     setCommodityList(commodities);
 
-    const apiCall = currentCaseId
-      ? api.put(`case/${currentCaseId}`, payload)
-      : api.post("case", payload);
+    const apiCall =
+      currentCaseId || caseId
+        ? api.put(`case/${caseId}`, payload)
+        : api.post("case", payload);
     apiCall
       .then((res) => {
         setCurrentCaseId(res?.data?.id);

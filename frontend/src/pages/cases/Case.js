@@ -6,6 +6,7 @@ import { Row, Col, Spin } from "antd";
 import "./cases.scss";
 import { api } from "../../lib";
 import { UserState } from "../../store";
+import dayjs from "dayjs";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
@@ -43,6 +44,7 @@ const Case = () => {
             tags: data?.tags || [],
             country: data.country,
             focus_commodity: data.focus_commodity,
+            year: dayjs(String(data.year)),
             currency: data.currency,
             area_size_unit: data.area_size_unit,
             volume_measurement_unit: data.volume_measurement_unit,
@@ -139,7 +141,6 @@ const Case = () => {
               <IncomeDriverDataEntry
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
-                setCurrentCaseId={setCurrentCaseId}
               />
             )}
           </Col>
