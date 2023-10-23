@@ -150,7 +150,6 @@ class TestQuestionRoute:
         )
         assert res.status_code == 200
         res = res.json()
-        print(res)
         assert res == [{
             'commodity_id': 2,
             'commodity_name': 'Rice',
