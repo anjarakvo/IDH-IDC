@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.scss";
 import { useCookies } from "react-cookie";
 import { Routes, Route } from "react-router-dom";
@@ -19,8 +19,7 @@ const optionRoutes = ["organisation/options", "tag/options"];
 
 const App = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
-  const authTokenAvailable =
-    cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+  const [authTokenAvailable, setAuthTokenAvailable] = useState(false);
   const userRole = UserState.useState((s) => s.role);
 
   useEffect(() => {
@@ -36,11 +35,17 @@ const App = () => {
       .catch((e) => {
         console.error(e);
       });
-  });
+  }, []);
 
   useEffect(() => {
-    if (authTokenAvailable) {
-      api.setToken(cookies?.AUTH_TOKEN);
+    setAuthTokenAvailable(
+      cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined"
+    );
+    api.setToken(cookies?.AUTH_TOKEN);
+  }, [cookies]);
+
+  useEffect(() => {
+    if (authTokenAvailable && userRole === null) {
       api
         .get("user/me")
         .then((res) => {
@@ -80,19 +85,24 @@ const App = () => {
           });
         });
     }
-  }, [authTokenAvailable, cookies?.AUTH_TOKEN]);
+  }, [authTokenAvailable, userRole]);
 
   return (
     <PageLayout testid="page-layout">
       <Routes>
         <Route path="*" element={<NotFound />} />
-        <Route element={<PrivateRoutes />}>
-          <Route exact path="/home" element={<Home />} />
-          <Route exact path="/welcome" element={<Welcome />} />
-          <Route exact path="/cases" element={<Cases />} />
-          <Route exact path="/cases/new" element={<Case />} />
-          <Route exact path="/cases/:caseId" element={<Case />} />
-        </Route>
+        {userRole !== null ? (
+          <Route element={<PrivateRoutes />}>
+            <Route exact path="/welcome" element={<Welcome />} />
+            <Route exact path="/home" element={<Home />} />
+            <Route exact path="/welcome" element={<Welcome />} />
+            <Route exact path="/cases" element={<Cases />} />
+            <Route exact path="/cases/new" element={<Case />} />
+            <Route exact path="/cases/:caseId" element={<Case />} />
+          </Route>
+        ) : (
+          ""
+        )}
         {adminRole.includes(userRole) ? (
           <Route element={<PrivateRoutes />}>
             <Route exact path="/admin/users" element={<Users />} />
