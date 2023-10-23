@@ -33,7 +33,7 @@ class QuestionDict(TypedDict):
 
 
 class QuestionGroupListDict(TypedDict):
-    commodity_id: int
+    commodity_id: Optional[int]
     commodity_name: str
     questions: List[QuestionDict]
 

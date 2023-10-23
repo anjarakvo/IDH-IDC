@@ -36,7 +36,7 @@ class TestQuestionRoute:
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
         )
         assert res.status_code == 200
-        # test valid search
+        # admin cred
         res = await client.post(
             app.url_path_for("question:get_by_commodities"),
             json=[
@@ -139,3 +139,88 @@ class TestQuestionRoute:
                 ],
             },
         ]
+
+    @pytest.mark.asyncio
+    async def test_get_question_by_case_id(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        res = await client.get(
+            app.url_path_for("question:get_by_case_id", case_id=1),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        print(res)
+        assert res == [{
+            'commodity_id': 2,
+            'commodity_name': 'Rice',
+            'questions': [{
+                'id': 1,
+                'parent': None,
+                'unit': 'Q1',
+                'question_type': 'aggregator',
+                'text': 'Net Income per day',
+                'description': None,
+                'default_value': 'function() { return #Q2 * #Q3 / 30; }',
+                'created_by': 1,
+                'childrens': [{
+                    'id': 2,
+                    'parent': 1,
+                    'unit': 'Q2',
+                    'question_type': 'question',
+                    'text': 'Income from Commodity / Month',
+                    'description': None,
+                    'default_value': None,
+                    'created_by': 1,
+                    'childrens': []
+                }, {
+                    'id': 3,
+                    'parent': 1,
+                    'unit': 'Q3',
+                    'question_type': 'question',
+                    'text': 'Cost of Production / Month',
+                    'description': None,
+                    'default_value': None,
+                    'created_by': 1,
+                    'childrens': []
+                }]
+            }]
+        }, {
+            'commodity_id': 3,
+            'commodity_name': 'Corn',
+            'questions': [{
+                'id': 1,
+                'parent': None,
+                'unit': 'Q1',
+                'question_type': 'aggregator',
+                'text': 'Net Income per day',
+                'description': None,
+                'default_value': 'function() { return #Q2 * #Q3 / 30; }',
+                'created_by': 1,
+                'childrens': [{
+                    'id': 2,
+                    'parent': 1,
+                    'unit': 'Q2',
+                    'question_type': 'question',
+                    'text': 'Income from Commodity / Month',
+                    'description': None,
+                    'default_value': None,
+                    'created_by': 1,
+                    'childrens': []
+                }, {
+                    'id': 3,
+                    'parent': 1,
+                    'unit': 'Q3',
+                    'question_type': 'question',
+                    'text': 'Cost of Production / Month',
+                    'description': None,
+                    'default_value': None,
+                    'created_by': 1,
+                    'childrens': []
+                }]
+            }]
+        }, {
+            'commodity_id': None,
+            'commodity_name': 'Diversified Income',
+            'questions': []
+        }]
