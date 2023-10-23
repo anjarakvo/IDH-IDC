@@ -161,7 +161,7 @@ const Questions = ({
   );
 };
 
-const IncomeDriversForm = ({ group, groupIndex, commodity, last }) => {
+const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
 
@@ -295,7 +295,6 @@ const DataFields = ({ segment, onDelete, questionGroups, commodityList }) => {
             <IncomeDriversForm
               group={group}
               groupIndex={groupIndex}
-              last={groupIndex === questionGroups.length - 1}
               commodity={commodityList[groupIndex]}
               key={groupIndex}
             />
