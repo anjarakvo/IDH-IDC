@@ -107,7 +107,7 @@ const PageHeader = ({ isLoggedIn }) => {
                   setLoading(true);
                   setTimeout(() => {
                     setLoading(false);
-                    navigate('/');
+                    navigate("/");
                   }, 300);
                 }}
               >
