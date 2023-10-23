@@ -16,6 +16,8 @@ import {
   InfoCircleFilled,
   CaretRightOutlined,
   CaretDownOutlined,
+  CaretUpFilled,
+  CaretDownFilled,
 } from "@ant-design/icons";
 import { api } from "../../../lib";
 
@@ -28,6 +30,9 @@ const Questions = ({
   childrens,
   indent = 0,
 }) => {
+  const [currentValue, setCurrentValue] = useState(0);
+  const [feasibleValue, setFeasibleValue] = useState(0);
+  const [percentage, setPercentage] = useState(0);
   const [collapsed, setCollapsed] = useState(question_type !== "aggregator");
   const [disabled, setDisabled] = useState(childrens.length > 0);
   const unitName = unit
@@ -35,6 +40,13 @@ const Questions = ({
     .map((u) => u.trim())
     .map((u) => units?.[u])
     .join(" / ");
+
+  useEffect(() => {
+    if (currentValue && feasibleValue) {
+      const percent = (feasibleValue / currentValue - 1) * 100;
+      setPercentage(percent);
+    }
+  }, [currentValue, feasibleValue, setPercentage]);
 
   return (
     <>
@@ -72,15 +84,38 @@ const Questions = ({
             <Switch size="small" onChange={() => setDisabled(!disabled)} />
           ) : null}
         </Col>
-        <Col span={5}>
+        <Col span={4}>
           <Form.Item name={`current-${id}`} className="current-feasible-field">
-            <InputNumber style={{ width: "100%" }} disabled={disabled} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={disabled}
+              onChange={setCurrentValue}
+            />
           </Form.Item>
         </Col>
-        <Col span={5}>
+        <Col span={4}>
           <Form.Item name={`feasible-${id}`} className="current-feasible-field">
-            <InputNumber style={{ width: "100%" }} disabled={disabled} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={disabled}
+              onChange={setFeasibleValue}
+            />
           </Form.Item>
+        </Col>
+        <Col span={2}>
+          <Space>
+            {percentage > 0 ? (
+              <CaretUpFilled className="ceret-up" />
+            ) : (
+              <CaretDownFilled className="ceret-down" />
+            )}
+            <div className={percentage > 0 ? "ceret-up" : "ceret-down"}>
+              {feasibleValue < currentValue
+                ? -percentage.toFixed(0)
+                : percentage.toFixed(0)}
+              %
+            </div>
+          </Space>
         </Col>
       </Row>
       {!collapsed
