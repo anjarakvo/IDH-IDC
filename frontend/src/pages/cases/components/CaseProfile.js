@@ -207,7 +207,6 @@ const CaseProfile = ({
     setIsSaving(true);
     setFormData(values);
     const completed = finished.filter((item) => item !== "Case Profile");
-    setFinished([...completed, "Case Profile"]);
 
     let other_commodities = [];
     let commodities = [
@@ -271,7 +270,7 @@ const CaseProfile = ({
       focus_commodity: values.focus_commodity,
       currency: values.currency,
       area_size_unit: values.area_size_unit,
-      volume_measurement_unit: values.area_size_unit,
+      volume_measurement_unit: values.volume_measurement_unit,
       reporting_period: values.reporting_period,
       multiple_commodities: secondary || tertiary,
       // need to handle below value correctly
@@ -291,6 +290,7 @@ const CaseProfile = ({
     apiCall
       .then((res) => {
         setCurrentCaseId(res?.data?.id);
+        setFinished([...completed, "Case Profile"]);
         setPage("Income Driver Data Entry");
       })
       .catch((e) => {
