@@ -11,6 +11,7 @@ import {
   Button,
   Space,
   message,
+  DatePicker,
 } from "antd";
 import { StepForwardOutlined } from "@ant-design/icons";
 import {
@@ -60,6 +61,7 @@ const CaseForm = ({ setCaseTitle }) => {
 
       <Form.Item
         name="tags"
+        label="Tags"
         rules={[
           {
             required: true,
@@ -73,6 +75,19 @@ const CaseForm = ({ setCaseTitle }) => {
           options={tagOptions}
           {...selectProps}
         />
+      </Form.Item>
+
+      <Form.Item
+        name="year"
+        label="Year"
+        rules={[
+          {
+            required: true,
+            message: "Select year",
+          },
+        ]}
+      >
+        <DatePicker picker="year" />
       </Form.Item>
 
       <h3>Driver Details</h3>
@@ -228,15 +243,14 @@ const CaseProfile = ({
     const completed = finished.filter((item) => item !== "Case Profile");
 
     let other_commodities = [];
-    let commodities = [
-      {
-        commodity: values.focus_commodity,
-        breakdown: true,
-        currency: values.currency,
-        area_size_unit: values.area_size_unit,
-        volume_measurement_unit: values.volume_measurement_unit,
-      },
-    ];
+    const initial_commodities = {
+      commodity: values.focus_commodity,
+      breakdown: true,
+      currency: values.currency,
+      area_size_unit: values.area_size_unit,
+      volume_measurement_unit: values.volume_measurement_unit,
+    };
+    let commodities = [initial_commodities];
     if (secondary) {
       commodities = [
         ...commodities,
@@ -281,6 +295,8 @@ const CaseProfile = ({
         },
       ];
     }
+    // diversified_commodities
+    commodities = [...commodities, initial_commodities];
 
     const payload = {
       name: values.name,
@@ -299,6 +315,7 @@ const CaseProfile = ({
       logo: null,
       private: false,
       other_commodities: other_commodities,
+      tags: values.tags || null,
     };
 
     setCommodityList(commodities);

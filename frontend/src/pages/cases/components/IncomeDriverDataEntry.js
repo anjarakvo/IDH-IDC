@@ -35,6 +35,7 @@ const Questions = ({
   const [percentage, setPercentage] = useState(0);
   const [collapsed, setCollapsed] = useState(question_type !== "aggregator");
   const [disabled, setDisabled] = useState(childrens.length > 0);
+
   const unitName = unit
     .split("/")
     .map((u) => u.trim())
@@ -104,12 +105,20 @@ const Questions = ({
         </Col>
         <Col span={2}>
           <Space>
-            {percentage > 0 ? (
+            {percentage === 0 ? null : percentage > 0 ? (
               <CaretUpFilled className="ceret-up" />
             ) : (
               <CaretDownFilled className="ceret-down" />
             )}
-            <div className={percentage > 0 ? "ceret-up" : "ceret-down"}>
+            <div
+              className={
+                percentage === 0
+                  ? ""
+                  : percentage > 0
+                  ? "ceret-up"
+                  : "ceret-down"
+              }
+            >
               {feasibleValue < currentValue
                 ? -percentage.toFixed(0)
                 : percentage.toFixed(0)}
@@ -266,16 +275,16 @@ const DataFields = ({ segment, onDelete, questionGroups, commodityList }) => {
   );
 };
 
-const IncomeDriverDataEntry = ({ commodityList }) => {
+const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   const [activeKey, setActiveKey] = useState("1");
   const [questionGroups, setQuestionGroups] = useState([]);
   const [items, setItems] = useState([]);
 
   useEffect(() => {
-    if (commodityList.length === 0) {
+    if (commodityList.length === 0 && !currentCaseId) {
       return;
     }
-    api.post("/questions", commodityList).then((res) => {
+    api.get(`/questions/${currentCaseId}`).then((res) => {
       setQuestionGroups(res.data);
       setItems([
         {
@@ -299,7 +308,7 @@ const IncomeDriverDataEntry = ({ commodityList }) => {
         },
       ]);
     });
-  }, [commodityList, setItems, setQuestionGroups]);
+  }, [commodityList, setItems, setQuestionGroups, currentCaseId]);
 
   const onDelete = (segmentKey) => {
     const newItems = items.filter((item) => item.key !== segmentKey);
