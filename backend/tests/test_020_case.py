@@ -230,11 +230,12 @@ class TestCaseRoute:
                 {
                     "id": 1,
                     "name": "Bali Rice and Corn Production Comparison",
-                    "country": 2,
+                    "country": "Bali",
                     "focus_commodity": 2,
                     "diversified_commodities_count": 2,
                     "created_at": res["data"][0]["created_at"],
                     "created_by": "super_admin@akvo.org",
+                    "tags": [1],
                 }
             ],
             "total": 1,

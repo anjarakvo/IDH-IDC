@@ -33,11 +33,12 @@ class LivingIncomeStudyEnum(enum.Enum):
 class CaseListDict(TypedDict):
     id: int
     name: str
-    country: int
+    country: str
     focus_commodity: int
     diversified_commodities_count: int
     created_at: str
     created_by: str
+    tags: Optional[List[int]] = []
 
 
 class CaseDict(TypedDict):
@@ -132,12 +133,12 @@ class Case(Base):
         passive_deletes=True,
         back_populates="case_detail",
     )
-    # country_detail = relationship(
-    #     'Country',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='cases'
-    # )
+    country_detail = relationship(
+        'Country',
+        cascade="all, delete",
+        passive_deletes=True,
+        backref='cases'
+    )
     # commodity_detail = relationship(
     #     'Commodity',
     #     cascade="all, delete",
@@ -226,11 +227,12 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "country": self.country,
+            "country": self.country_detail.name,
             "focus_commodity": self.focus_commodity,
             "diversified_commodities_count": len(diversified_count),
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "created_by": self.created_by_user.email,
+            "tags": [ct.tag for ct in self.case_tags],
         }
 
     @property
