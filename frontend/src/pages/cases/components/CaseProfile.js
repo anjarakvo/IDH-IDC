@@ -20,12 +20,14 @@ import {
   currencyOptions,
   reportingPeriod,
   selectProps,
-  tagOptions,
   yesNoOptions,
 } from "./";
 import { api } from "../../../lib";
+import { UIState } from "../../../store";
 
 const CaseForm = ({ setCaseTitle }) => {
+  const tagOptions = UIState.useState((s) => s.tagOptions);
+
   return (
     <>
       <h3>General Information</h3>
@@ -65,7 +67,7 @@ const CaseForm = ({ setCaseTitle }) => {
         ]}
       >
         <Select
-          mode="tags"
+          mode="multiple"
           placeholder="Add Tags"
           options={tagOptions}
           {...selectProps}
