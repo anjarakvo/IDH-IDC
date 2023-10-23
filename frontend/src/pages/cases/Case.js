@@ -33,6 +33,7 @@ const Case = () => {
         .get(`case/${caseId}`)
         .then((res) => {
           const { data } = res;
+          setCaseTitle(data.name);
           // set other commodities type
           setInitialCommodityTypes(
             data.case_commodities.map((x) => x.commodity_type)

@@ -324,9 +324,10 @@ const CaseProfile = ({
 
     setCommodityList(commodities);
 
+    const paramCaseId = caseId ? caseId : currentCaseId;
     const apiCall =
       currentCaseId || caseId
-        ? api.put(`case/${caseId}`, payload)
+        ? api.put(`case/${paramCaseId}`, payload)
         : api.post("case", payload);
     apiCall
       .then((res) => {
