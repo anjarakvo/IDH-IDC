@@ -92,7 +92,7 @@ const Cases = () => {
       width: "5%",
       align: "center",
       render: (text, record) => (
-        <Link to={`/cases/${record.key}`}>
+        <Link to={`/cases/${record.id}`}>
           <EditOutlined />
         </Link>
       ),
