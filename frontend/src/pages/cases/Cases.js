@@ -82,6 +82,10 @@ const Cases = () => {
       key: "created_at",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.created_at - b.created_at,
+      render: (value) => {
+        const date = new Date(value);
+        return date.getFullYear();
+      },
     },
     {
       key: "action",
@@ -94,7 +98,8 @@ const Cases = () => {
       ),
     },
   ];
-  const onSearch = (value) => console.info(value);
+
+  const onSearch = (value) => setSearch(value);
 
   return (
     <ContentLayout
@@ -110,7 +115,7 @@ const Cases = () => {
         columns={columns}
         searchProps={{
           placeholder: "Find Case",
-          style: { width: 200 },
+          style: { width: 400 },
           onSearch: onSearch,
         }}
         buttonProps={{
