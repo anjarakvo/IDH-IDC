@@ -57,6 +57,7 @@ class TestCaseRoute:
                     "area_size_unit": "hectare",
                 }
             ],
+            "tags": [1],
         }
         # without cred
         res = await client.post(
@@ -267,6 +268,7 @@ class TestCaseRoute:
                     "volume_measurement_unit": "liters",
                 }
             ],
+            "tags": [1],
         }
         # without cred
         res = await client.put(
