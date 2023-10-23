@@ -19,6 +19,7 @@ import {
   CaretUpFilled,
   CaretDownFilled,
 } from "@ant-design/icons";
+import { flatten } from "./";
 import { api } from "../../../lib";
 
 const indentSize = 37.5;
@@ -105,20 +106,12 @@ const Questions = ({
         </Col>
         <Col span={4}>
           <Form.Item name={`current-${id}`} className="current-feasible-field">
-            <InputNumber
-              style={{ width: "100%" }}
-              disabled={disabled}
-              onChange={setCurrentValue}
-            />
+            <InputNumber style={{ width: "100%" }} disabled={disabled} />
           </Form.Item>
         </Col>
         <Col span={4}>
           <Form.Item name={`feasible-${id}`} className="current-feasible-field">
-            <InputNumber
-              style={{ width: "100%" }}
-              disabled={disabled}
-              onChange={setFeasibleValue}
-            />
+            <InputNumber style={{ width: "100%" }} disabled={disabled} />
           </Form.Item>
         </Col>
         <Col span={2}>
@@ -165,19 +158,7 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
 
-  const flattenQuestionList = group.questions.reduce((acc, question) => {
-    acc.push(question);
-    if (question.childrens.length > 0) {
-      acc = [...acc, ...question.childrens];
-      acc = acc.reduce((acc, q) => {
-        if (q.childrens.length > 0) {
-          acc = [...acc, ...q.childrens];
-        }
-        return acc;
-      }, []);
-    }
-    return acc;
-  }, []);
+  const flattenQuestionList = flatten(group.questions);
 
   const onValuesChange = (value, currentValues) => {
     const id = Object.keys(value)[0];
