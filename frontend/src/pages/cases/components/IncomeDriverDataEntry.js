@@ -72,7 +72,11 @@ const Questions = ({
         <Col
           span={12}
           style={{
-            paddingLeft: indent ? indent : 10,
+            paddingLeft: indent
+              ? childrens.length > 0 && question_type !== "aggregator"
+                ? indent - 40
+                : indent
+              : 10,
           }}
         >
           <Space size="small">
@@ -157,7 +161,7 @@ const Questions = ({
   );
 };
 
-const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
+const IncomeDriversForm = ({ group, groupIndex, commodity, last }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
 
@@ -216,11 +220,16 @@ const IncomeDriversForm = ({ group, groupIndex, commodity }) => {
       {groupIndex === 1 && <h3>Diversified Income</h3>}
       <h3
         style={{
-          paddingLeft: !groupIndex ? 24 : 48,
-          backgroundColor: groupIndex ? "#f0f0f0" : "",
+          paddingLeft: !groupIndex ? 24 : 54,
+          backgroundColor: groupIndex ? "#dddddd" : "",
         }}
       >
-        {groupIndex === 0 ? "Focus Commodity:" : ""} {group.commodity_name}
+        {groupIndex === 0
+          ? "Focus Commodity:"
+          : group.commodity_id === null
+          ? "Other "
+          : ""}{" "}
+        {group.commodity_name}
       </h3>
       {!groupIndex && (
         <Row
@@ -286,6 +295,7 @@ const DataFields = ({ segment, onDelete, questionGroups, commodityList }) => {
             <IncomeDriversForm
               group={group}
               groupIndex={groupIndex}
+              last={groupIndex === questionGroups.length - 1}
               commodity={commodityList[groupIndex]}
               key={groupIndex}
             />
