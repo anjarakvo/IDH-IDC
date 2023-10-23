@@ -78,14 +78,10 @@ const Cases = () => {
     },
     {
       title: "Year",
-      dataIndex: "created_at",
-      key: "created_at",
+      dataIndex: "year",
+      key: "year",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.created_at - b.created_at,
-      render: (value) => {
-        const date = new Date(value);
-        return date.getFullYear();
-      },
+      sorter: (a, b) => a.year - b.year,
     },
     {
       key: "action",
