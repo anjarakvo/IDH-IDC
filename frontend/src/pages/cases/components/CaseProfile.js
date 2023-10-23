@@ -208,14 +208,18 @@ const CaseProfile = ({
   const [messageApi, contextHolder] = message.useMessage();
 
   useEffect(() => {
+    // initial case profile value
     if (!isEmpty(formData)) {
+      const completed = finished.filter((item) => item !== "Case Profile");
       if (initialOtherCommodityTypes.includes("secondary")) {
         setSecondary(true);
       }
       if (initialOtherCommodityTypes.includes("tertiary")) {
         setTertiary(true);
       }
+      setFinished([...completed, "Case Profile"]);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData]);
 
   const onFinish = (values) => {

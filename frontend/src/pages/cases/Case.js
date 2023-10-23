@@ -24,6 +24,7 @@ const Case = () => {
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
 
+  // initial case profile value
   useEffect(() => {
     if (userID && caseId) {
       setLoading(true);
