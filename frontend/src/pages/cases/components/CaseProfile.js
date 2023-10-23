@@ -213,14 +213,15 @@ const CaseProfile = ({
   setFormData,
   finished,
   setFinished,
+  commodityList,
   setCommodityList,
   currentCaseId,
   setCurrentCaseId,
   initialOtherCommodityTypes,
 }) => {
   const [form] = Form.useForm();
-  const [secondary, setSecondary] = useState(false);
-  const [tertiary, setTertiary] = useState(false);
+  const [secondary, setSecondary] = useState(commodityList.length > 2);
+  const [tertiary, setTertiary] = useState(commodityList.length > 3);
   const [isSaving, setIsSaving] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { caseId } = useParams();

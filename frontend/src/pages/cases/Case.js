@@ -131,6 +131,7 @@ const Case = () => {
                 finished={finished}
                 setFinished={setFinished}
                 setPage={setPage}
+                commodityList={commodityList}
                 setCommodityList={setCommodityList}
                 currentCaseId={currentCaseId}
                 setCurrentCaseId={setCurrentCaseId}
