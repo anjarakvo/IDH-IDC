@@ -91,6 +91,7 @@ const App = () => {
           <Route exact path="/welcome" element={<Welcome />} />
           <Route exact path="/cases" element={<Cases />} />
           <Route exact path="/cases/new" element={<Case />} />
+          <Route exact path="/cases/:caseId" element={<Case />} />
         </Route>
         {adminRole.includes(userRole) ? (
           <Route element={<PrivateRoutes />}>
