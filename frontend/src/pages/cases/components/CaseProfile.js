@@ -282,6 +282,7 @@ const CaseProfile = ({
       logo: null,
       private: false,
       other_commodities: other_commodities,
+      tags: values.tags || null,
     };
 
     setCommodityList(commodities);
