@@ -76,7 +76,7 @@ const Case = () => {
           );
           if (!isEmpty(tertiaryCommodityTmp)) {
             Object.keys(tertiaryCommodityTmp).forEach((key) => {
-              let val = tertiaryCommodityValue[key];
+              let val = tertiaryCommodityTmp[key];
               if (key === "breakdown") {
                 val = val ? 1 : 0;
               }
