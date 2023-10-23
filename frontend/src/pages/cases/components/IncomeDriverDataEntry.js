@@ -60,7 +60,7 @@ const Questions = ({
       setCurrentValue(current);
       setFeasibleValue(feasible);
     }
-  }, [form, refresh]);
+  }, [form, refresh, id]);
 
   return (
     <>
