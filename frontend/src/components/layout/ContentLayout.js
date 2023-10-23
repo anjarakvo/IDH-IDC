@@ -55,15 +55,12 @@ const ContentLayout = ({
       <Affix offsetTop={80}>
         <Card className="content-card-container" bordered={false}>
           {hasBreadcrumb ? (
-            <Breadcrumb>
-              {breadcrumbItems.map((x, bi) => {
-                return (
-                  <Breadcrumb.Item key={bi}>
-                    <Link to={x.href}>{x.title}</Link>
-                  </Breadcrumb.Item>
-                );
-              })}
-            </Breadcrumb>
+            <Breadcrumb
+              items={breadcrumbItems.map((x, bi) => ({
+                key: bi,
+                title: <Link to={x.href}>{x.title}</Link>,
+              }))}
+            />
           ) : (
             ""
           )}
