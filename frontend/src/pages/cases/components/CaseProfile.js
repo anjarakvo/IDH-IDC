@@ -10,6 +10,7 @@ import {
   Switch,
   Button,
   Space,
+  message,
 } from "antd";
 import { StepForwardOutlined } from "@ant-design/icons";
 import {
@@ -22,6 +23,7 @@ import {
   tagOptions,
   yesNoOptions,
 } from "./";
+import { api } from "../../../lib";
 
 const CaseForm = ({ setCaseTitle }) => {
   return (
@@ -192,16 +194,22 @@ const CaseProfile = ({
   finished,
   setFinished,
   setCommodityList,
+  currentCaseId,
+  setCurrentCaseId,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(false);
   const [tertiary, setTertiary] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const onFinish = (values) => {
+    setIsSaving(true);
     setFormData(values);
-    setPage("Income Driver Data Entry");
     const completed = finished.filter((item) => item !== "Case Profile");
     setFinished([...completed, "Case Profile"]);
+
+    let other_commodities = [];
     let commodities = [
       {
         commodity: values.focus_commodity,
@@ -222,6 +230,16 @@ const CaseProfile = ({
           volume_measurement_unit: values["1-volume_measurement_unit"],
         },
       ];
+      other_commodities = [
+        ...other_commodities,
+        {
+          commodity: values["1-commodity"],
+          breakdown: values["1-breakdown"] ? true : false,
+          commodity_type: "secondary",
+          area_size_unit: values["1-area_size_unit"],
+          volume_measurement_unit: values["1-volume_measurement_unit"],
+        },
+      ];
     }
     if (tertiary) {
       commodities = [
@@ -234,8 +252,57 @@ const CaseProfile = ({
           volume_measurement_unit: values["2-volume_measurement_unit"],
         },
       ];
+      other_commodities = [
+        ...other_commodities,
+        {
+          commodity: values["2-commodity"],
+          breakdown: values["2-breakdown"] ? true : false,
+          commodity_type: "tertiary",
+          area_size_unit: values["2-area_size_unit"],
+          volume_measurement_unit: values["2-volume_measurement_unit"],
+        },
+      ];
     }
+
+    const payload = {
+      name: values.name,
+      description: values.description,
+      country: values.country,
+      focus_commodity: values.focus_commodity,
+      currency: values.currency,
+      area_size_unit: values.area_size_unit,
+      volume_measurement_unit: values.area_size_unit,
+      reporting_period: values.reporting_period,
+      multiple_commodities: secondary || tertiary,
+      // need to handle below value correctly
+      cost_of_production_unit: "cost_of_production_unit",
+      segmentation: true,
+      living_income_study: null,
+      logo: null,
+      private: false,
+      other_commodities: other_commodities,
+    };
+
     setCommodityList(commodities);
+
+    const apiCall = currentCaseId
+      ? api.put(`case/${currentCaseId}`, payload)
+      : api.post("case", payload);
+    apiCall
+      .then((res) => {
+        setCurrentCaseId(res?.data?.id);
+        setPage("Income Driver Data Entry");
+      })
+      .catch((e) => {
+        console.error(e);
+        messageApi.open({
+          type: "error",
+          content: "Failed to save case profile.",
+        });
+      })
+      .finally(() => {
+        setIsSaving(false);
+      });
   };
 
   const onFinishFailed = () => {
@@ -252,6 +319,7 @@ const CaseProfile = ({
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
+      {contextHolder}
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Card title="Case Details">
@@ -303,12 +371,14 @@ const CaseProfile = ({
                 <Button
                   htmlType="submit"
                   className="button button-submit button-secondary"
+                  loading={isSaving}
                 >
                   Save
                 </Button>
                 <Button
                   htmlType="submit"
                   className="button button-submit button-secondary"
+                  loading={isSaving}
                 >
                   Next
                   <StepForwardOutlined />
