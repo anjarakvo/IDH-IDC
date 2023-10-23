@@ -303,33 +303,37 @@ const DataFields = ({
     />
   );
 
+  const ButtonDelete = () => (
+    <Popover
+      content={
+        <Space align="end">
+          <Button type="primary" onClick={() => setConfimationModal(false)}>
+            Close
+          </Button>
+          <Button onClick={onDelete} danger>
+            Delete
+          </Button>
+        </Space>
+      }
+      title="Are you sure want to delete this segment?"
+      trigger="click"
+      open={confimationModal}
+      onOpenChange={(e) => setConfimationModal(e)}
+    >
+      <Button
+        size="small"
+        shape="circle"
+        type="secondary"
+        icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+      />
+    </Popover>
+  );
+
   const extra = onDelete ? (
     <Space>
       <ButtonEdit />
       {editing && <ButtonCancelEdit />}
-      <Popover
-        content={
-          <Space align="end">
-            <Button type="primary" onClick={() => setConfimationModal(false)}>
-              Close
-            </Button>
-            <Button onClick={onDelete} danger>
-              Delete
-            </Button>
-          </Space>
-        }
-        title="Are you sure want to delete this segment?"
-        trigger="click"
-        open={confimationModal}
-        onOpenChange={(e) => setConfimationModal(e)}
-      >
-        <Button
-          size="small"
-          shape="circle"
-          type="secondary"
-          icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
-        />
-      </Popover>
+      {!editing && <ButtonDelete />}
     </Space>
   ) : (
     <Space>
