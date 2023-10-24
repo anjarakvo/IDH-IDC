@@ -2,7 +2,9 @@ from sqlalchemy.orm import Session
 from typing import List
 from fastapi import HTTPException, status
 
-from models.segment import Segment, SegmentBase, SegmentDict
+from models.segment import (
+    Segment, SegmentBase, SegmentDict, SegmentUpdateBase
+)
 
 
 def add_segment(
@@ -32,3 +34,20 @@ def get_segment_by_id(session: Session, id: int) -> SegmentDict:
             detail=f"Segment {id} not found"
         )
     return segment
+
+
+def update_segment(
+    session: Session, payloads: List[SegmentUpdateBase]
+) -> List[SegmentDict]:
+    segments = []
+    for payload in payloads:
+        segment = get_segment_by_id(session=session, id=payload.id)
+        segment.name = payload.name
+        segment.case = payload.case
+        segment.target = payload.target
+        segment.household_size = payload.household_size
+        session.commit()
+        session.flush()
+        session.refresh(segment)
+        segments.append(segment)
+    return segments

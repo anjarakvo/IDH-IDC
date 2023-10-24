@@ -77,6 +77,72 @@ class TestSegmentRoute():
             'household_size': 40.0
         }]
 
+    @pytest.mark.asyncio
+    async def test_update_segment(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        payload = [{
+            "id": 1,
+            "name": "Segment 1 Updated",
+            "case": 1,
+            "target": 2000,
+            "household_size": 100,
+        }]
+        # without cred
+        res = await client.put(
+            app.url_path_for("segment:update"),
+            json=payload,
+        )
+        assert res.status_code == 403
+        # with normal user cred
+        res = await client.put(
+            app.url_path_for("segment:update"),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == [{
+            'id': 1,
+            'case': 1,
+            'name': 'Segment 1 Updated',
+            'target': 2000.0,
+            'household_size': 100.0
+        }]
+        # with admin user cred
+        payload = [{
+            "id": 1,
+            "name": "Segment 1",
+            "case": 1,
+            "target": 2000,
+            "household_size": 100
+        }, {
+            "id": 2,
+            "name": "Segment 2",
+            "case": 1,
+            "target": 2000,
+            "household_size": 50
+        }]
+        res = await client.put(
+            app.url_path_for("segment:update"),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == [{
+            'id': 1,
+            'case': 1,
+            'name': 'Segment 1',
+            'target': 2000.0,
+            'household_size': 100.0
+        }, {
+            'id': 2,
+            'case': 1,
+            'name': 'Segment 2',
+            'target': 2000.0,
+            'household_size': 50.0
+        }]
+
     # test_get_all_segment
     # test_get_segment_by_id
-    # test_update_segment

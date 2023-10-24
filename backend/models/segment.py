@@ -79,3 +79,11 @@ class SegmentBase(BaseModel):
     case: int
     target: Optional[float] = None
     household_size: Optional[float] = None
+
+
+class SegmentUpdateBase(BaseModel):
+    id: int
+    name: str
+    case: int
+    target: Optional[float] = None
+    household_size: Optional[float] = None
