@@ -21,7 +21,7 @@ from models.case_commodity import (
     SimplifiedCaseCommodityDict,
     CaseCommodityType,
 )
-from models.segment import Segment, SimplifiedSegmentDict
+from models.segment import Segment, SegmentDict
 from models.case_tag import CaseTag
 
 
@@ -60,8 +60,10 @@ class CaseDict(TypedDict):
     multiple_commodities: bool
     logo: Optional[str]
     created_by: int
+    segments: Optional[List[SegmentDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
     private: bool
+    tags: Optional[List[int]] = []
 
 
 class CaseDetailDict(TypedDict):
@@ -83,7 +85,7 @@ class CaseDetailDict(TypedDict):
     created_by: str
     created_at: str
     updated_at: Optional[str]
-    segments: Optional[List[SimplifiedSegmentDict]]
+    segments: Optional[List[SegmentDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
     private: bool
     tags: Optional[List[int]] = []
@@ -215,7 +217,9 @@ class Case(Base):
             "logo": self.logo,
             "created_by": self.created_by,
             "case_commodities": [pc.simplify for pc in self.case_commodities],
+            "segments": [ps.serialize for ps in self.case_segments],
             "private": self.private,
+            "tags": [ct.tag for ct in self.case_tags],
         }
 
     @property
@@ -260,7 +264,7 @@ class Case(Base):
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "segments": [ps.simplify for ps in self.case_segments],
+            "segments": [ps.serialize for ps in self.case_segments],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
             "tags": [ct.tag for ct in self.case_tags],

@@ -125,6 +125,8 @@ class TestCaseRoute:
                 },
             ],
             "private": False,
+            "segments": [],
+            "tags": [1],
         }
 
     @pytest.mark.asyncio
@@ -205,6 +207,8 @@ class TestCaseRoute:
                 },
             ],
             "private": True,
+            "segments": [],
+            "tags": [],
         }
 
     @pytest.mark.asyncio
@@ -338,6 +342,8 @@ class TestCaseRoute:
                 },
             ],
             "private": False,
+            "segments": [],
+            "tags": [1],
         }
 
     @pytest.mark.asyncio
@@ -415,5 +421,3 @@ class TestCaseRoute:
             "private": False,
             "tags": [1],
         }
-
-    # TODO :: test_get_case_by_id_with_segments
