@@ -21,6 +21,7 @@ import {
 import { IncomeDriverForm } from "./";
 import { api } from "../../../lib";
 import uniq from "lodash/uniq";
+import orderBy from "lodash/orderBy";
 
 const generateSegmentPayloads = (values, currentCaseId, isUpdate = false) => {
   // generate segment payloads
@@ -357,13 +358,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       return;
     }
     api.get(`/questions/${currentCaseId}`).then((res) => {
-      setQuestionGroups(res.data);
-      setItems([
-        {
-          key: "1",
-          label: "Segment 1",
-          currentSegmentId: null,
-        },
+      const defaultItems = [
         {
           key: "add",
           label: (
@@ -373,7 +368,34 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
           ),
           currentSegmentId: null,
         },
-      ]);
+      ];
+      setQuestionGroups(res.data);
+      // load segment from database
+      api
+        .get(`segment/case/${currentCaseId}`)
+        .then((res) => {
+          const { data } = res;
+          let itemsTmp = orderBy(data, "id").map((it, itIndex) => ({
+            key: String(itIndex + 1),
+            label: it.name,
+            currentSegmentId: it.id,
+          }));
+          if (itemsTmp.length !== 5) {
+            itemsTmp = [...itemsTmp, ...defaultItems];
+          }
+          setItems(itemsTmp);
+        })
+        .catch(() => {
+          // default items if no segments in database
+          setItems([
+            {
+              key: "1",
+              label: "Segment 1",
+              currentSegmentId: null,
+            },
+            ...defaultItems,
+          ]);
+        });
     });
   }, [commodityList, setQuestionGroups, currentCaseId]);
 
