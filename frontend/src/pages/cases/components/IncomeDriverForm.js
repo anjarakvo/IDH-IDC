@@ -19,15 +19,14 @@ const IncomeDriverForm = ({
   useEffect(() => {
     // set current feasible initial value
     if (caseId) {
-      formValues.forEach((fv) => {
-        if (isEmpty(fv.answers)) {
-          return;
-        }
-        Object.keys(fv.answers).forEach((key) => {
-          const val = fv.answers[key];
-          form.setFieldsValue({
-            [key]: val,
-          });
+      const findValue = formValues.find((fv) => fv.key === segmentItem.key);
+      if (!findValue && isEmpty(findValue)) {
+        return;
+      }
+      Object.keys(findValue.answers).forEach((key) => {
+        const val = findValue.answers[key];
+        form.setFieldsValue({
+          [key]: val,
         });
       });
     }
