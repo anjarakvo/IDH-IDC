@@ -1,7 +1,7 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Optional, List
+from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 
