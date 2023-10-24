@@ -92,8 +92,9 @@ class Segment(Base):
     def serialize_with_answers(self) -> SegmentWithAnswersDict:
         answers = {}
         for sa in self.segment_answers:
-            current_key = f"current-{sa.question}"
-            feasible_key = f"feasible-{sa.question}"
+            case_commodity = sa.case_commodity
+            current_key = f"current-{sa.question}-{case_commodity}"
+            feasible_key = f"feasible-{sa.question}-{case_commodity}"
             answers[current_key] = sa.current_value
             answers[feasible_key] = sa.feasible_value
         return {

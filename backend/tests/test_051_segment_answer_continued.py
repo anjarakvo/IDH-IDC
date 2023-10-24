@@ -65,12 +65,12 @@ class TestSegmentAnswerRouteContinued():
             'target': 2000.0,
             'household_size': 100.0,
             'answers': {
-                'current-1': 100.0,
-                'feasible-1': 100.0,
-                'current-2': 200.0,
-                'feasible-2': 200.0,
-                'current-3': 300.0,
-                'feasible-3': 300.0
+                'current-1-1': 100.0,
+                'feasible-1-1': 100.0,
+                'current-2-1': 200.0,
+                'feasible-2-1': 200.0,
+                'current-3-1': 300.0,
+                'feasible-3-1': 300.0
             }
         }]
 
