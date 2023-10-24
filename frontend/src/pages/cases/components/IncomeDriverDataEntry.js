@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col, Space, Card, Tabs, Button, Input, Popover } from "antd";
+import {
+  Row,
+  Col,
+  Space,
+  Card,
+  Tabs,
+  Button,
+  Input,
+  Popover,
+  message,
+} from "antd";
 import {
   PlusCircleFilled,
   DeleteTwoTone,
@@ -10,6 +20,46 @@ import {
 } from "@ant-design/icons";
 import { IncomeDriverForm } from "./";
 import { api } from "../../../lib";
+import uniq from "lodash/uniq";
+
+const generateSegmentPayloads = (values, currentCaseId) => {
+  // generate segment payloads
+  const segmentPayloads = values.map((fv) => ({
+    case: currentCaseId,
+    name: fv.label,
+    target: 0,
+    household_size: 0,
+  }));
+  return segmentPayloads;
+};
+
+const generateSegmentAnswerPayloads = (values) => {
+  // generate segment answer payloads
+  const segmentAnswerPayloads = [];
+  values.forEach((fv) => {
+    const questionIDs = uniq(
+      Object.keys(fv.answers).map((key) => {
+        const splitted = key.split("-");
+        return parseInt(splitted[1]);
+      })
+    );
+    questionIDs.forEach((qid) => {
+      const currentValue = fv.answers[`current-${qid}`];
+      const feasibleValue = fv.answers[`feasible-${qid}`];
+      const answerTmp = {
+        case_commodity: fv.case_commodity,
+        segment: fv?.currentSegmentId || 0,
+        question: qid,
+        current_value: currentValue,
+        feasible_value: feasibleValue,
+      };
+      segmentAnswerPayloads.push(answerTmp);
+    });
+  });
+  return segmentAnswerPayloads.filter(
+    (x) => x.current_value && x.feasible_value
+  );
+};
 
 const DataFields = ({
   segment,
@@ -22,6 +72,7 @@ const DataFields = ({
   setFormValues,
   segmentItem,
   handleSave,
+  isSaving,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -142,7 +193,7 @@ const DataFields = ({
           htmlType="submit"
           className="button button-submit button-secondary"
           style={{ float: "right" }}
-          // loading={isSaving}
+          loading={isSaving}
           onClick={handleSave}
           disabled={!formValues.length}
         >
@@ -159,61 +210,89 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   const [questionGroups, setQuestionGroups] = useState([]);
   const [items, setItems] = useState([]);
   const [formValues, setFormValues] = useState([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  const [isSaving, setIsSaving] = useState(false);
 
   // handle save here
   const handleSave = () => {
-    // generate segment payloads
-    const segmentPayloads = formValues.map((fv) => ({
-      case: currentCaseId,
-      name: fv.label,
-      target: 0,
-      household_size: 0,
-    }));
+    setIsSaving(true);
+    const postSegmenPayloads = generateSegmentPayloads(
+      formValues.filter((fv) => !fv.currentSegmentId),
+      currentCaseId
+    );
+    const putSegmenPayloads = generateSegmentPayloads(
+      formValues.filter((fv) => fv.currentSegmentId)
+    );
+    console.log(postSegmenPayloads, putSegmenPayloads);
 
-    // generate segment answer payloads
-    const segmentAnswerPayloads = [];
-    formValues.forEach((fv) => {
-      let answerTmp = {
-        case_commodity: fv.case_commodity,
-        segment: 0,
-      };
-      Object.keys(fv.answers).forEach((key) => {
-        const splitted = key.split("-");
-        const qid = parseInt(splitted[1]);
-        const val = fv.answers[key];
-        if (!val) {
-          return;
-        }
-        if (key.includes("current")) {
-          answerTmp = {
-            ...answerTmp,
-            current_value: val,
-          };
-        }
-        if (key.includes("feasible")) {
-          answerTmp = {
-            ...answerTmp,
-            feasible_value: val,
-          };
-        }
-        answerTmp = {
-          ...answerTmp,
-          question: qid,
-        };
-      });
-      segmentAnswerPayloads.push(answerTmp);
-    });
+    // POST
+    if (postSegmenPayloads.length) {
+      api
+        .post("/segment", postSegmenPayloads)
+        .then((res) => {
+          const { data } = res;
+          // set currentSegmentId to items state
+          const transformItems = items.map((it) => {
+            const findNewItem = data.find((d) => d.name === it.label);
+            return {
+              ...it,
+              currentSegmentId: findNewItem?.id || null,
+            };
+          });
+          setItems(transformItems);
+          // eol set currentSegmentId to items state
 
-    console.log(formValues, segmentPayloads, segmentAnswerPayloads, "TEST");
-    // [
-    //   {
-    //     "case_commodity": 0,
-    //     "segment": 0,
-    //     "question": 0,
-    //     "current_value": 0,
-    //     "feasible_value": 0
-    //   }
-    // ]
+          // update form values
+          const transformFormValues = formValues.map((fv) => {
+            const findItem = transformItems.find((it) => it.key === fv.key);
+            if (!findItem) {
+              return fv;
+            }
+            return {
+              ...fv,
+              ...findItem,
+            };
+          });
+          setFormValues(transformFormValues);
+
+          return transformFormValues;
+        })
+        .then((values) => {
+          // handle postSegmentAnswersPayloads
+          const postSegmenAnswerPayloads = generateSegmentAnswerPayloads(
+            values.filter((fv) => fv.currentSegmentId)
+          );
+          values.forEach((val) => {
+            const payload = postSegmenAnswerPayloads.filter(
+              (x) => x.segment === val.currentSegmentId
+            );
+            api
+              .post(`segment-answer/${val.currentSegmentId}`, payload)
+              .then(() => {
+                console.info("post segment answers success");
+              })
+              .catch((e) => {
+                console.error(e);
+              });
+          });
+        })
+        .then(() => {
+          messageApi.open({
+            type: "success",
+            content: "Segments saved successfully.",
+          });
+        })
+        .catch((e) => {
+          console.error(e);
+          messageApi.open({
+            type: "error",
+            content: "Failed to save segments.",
+          });
+        })
+        .finally(() => {
+          setIsSaving(false);
+        });
+    }
   };
 
   useEffect(() => {
@@ -268,6 +347,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             setFormValues={setFormValues}
             segmentItem={{ ...item, label: newLabel }}
             handleSave={handleSave}
+            isSaving={isSaving}
           />
         );
         // handle form values
@@ -315,6 +395,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
+        {contextHolder}
         <Tabs
           onChange={onChange}
           activeKey={activeKey}
@@ -333,6 +414,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
                   setFormValues={setFormValues}
                   segmentItem={item}
                   handleSave={handleSave}
+                  isSaving={isSaving}
                 />
               ),
           }))}
