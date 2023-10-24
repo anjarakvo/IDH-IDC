@@ -22,11 +22,16 @@ const IncomeDriverForm = ({
     );
     const currentFormValue = formValues.find(
       (x) => x.key === segmentItem.key
-    ) || { ...segmentItem, answers: {} };
+    ) || {
+      ...segmentItem,
+      case_commodity: commodity.case_commodity,
+      answers: {},
+    };
     setFormValues([
       ...filteredFormValues,
       {
         ...currentFormValue,
+        case_commodity: commodity.case_commodity,
         answers: {
           ...currentFormValue.answers,
           ...currentValues,

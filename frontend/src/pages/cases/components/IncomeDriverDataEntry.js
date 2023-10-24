@@ -21,6 +21,7 @@ const DataFields = ({
   formValues,
   setFormValues,
   segmentItem,
+  handleSave,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -136,8 +137,17 @@ const DataFields = ({
               segmentItem={segmentItem}
             />
           ))}
-          <h1>Save</h1>
         </Card>
+        <Button
+          htmlType="submit"
+          className="button button-submit button-secondary"
+          style={{ float: "right" }}
+          // loading={isSaving}
+          onClick={handleSave}
+          disabled={!formValues.length}
+        >
+          Save
+        </Button>
       </Col>
       <Col span={8}></Col>
     </Row>
@@ -151,7 +161,60 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   const [formValues, setFormValues] = useState([]);
 
   // handle save here
-  console.log(formValues);
+  const handleSave = () => {
+    // generate segment payloads
+    const segmentPayloads = formValues.map((fv) => ({
+      case: currentCaseId,
+      name: fv.label,
+      target: 0,
+      household_size: 0,
+    }));
+
+    // generate segment answer payloads
+    const segmentAnswerPayloads = [];
+    formValues.forEach((fv) => {
+      let answerTmp = {
+        case_commodity: fv.case_commodity,
+        segment: 0,
+      };
+      Object.keys(fv.answers).forEach((key) => {
+        const splitted = key.split("-");
+        const qid = parseInt(splitted[1]);
+        const val = fv.answers[key];
+        if (!val) {
+          return;
+        }
+        if (key.includes("current")) {
+          answerTmp = {
+            ...answerTmp,
+            current_value: val,
+          };
+        }
+        if (key.includes("feasible")) {
+          answerTmp = {
+            ...answerTmp,
+            feasible_value: val,
+          };
+        }
+        answerTmp = {
+          ...answerTmp,
+          question: qid,
+        };
+      });
+      segmentAnswerPayloads.push(answerTmp);
+    });
+
+    console.log(formValues, segmentPayloads, segmentAnswerPayloads, "TEST");
+    // [
+    //   {
+    //     "case_commodity": 0,
+    //     "segment": 0,
+    //     "question": 0,
+    //     "current_value": 0,
+    //     "feasible_value": 0
+    //   }
+    // ]
+  };
 
   useEffect(() => {
     if (commodityList.length === 0 && !currentCaseId) {
@@ -204,6 +267,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             formValues={formValues}
             setFormValues={setFormValues}
             segmentItem={{ ...item, label: newLabel }}
+            handleSave={handleSave}
           />
         );
         // handle form values
@@ -268,6 +332,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
                   formValues={formValues}
                   setFormValues={setFormValues}
                   segmentItem={item}
+                  handleSave={handleSave}
                 />
               ),
           }))}
