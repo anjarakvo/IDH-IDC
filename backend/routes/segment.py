@@ -11,7 +11,9 @@ from typing import List
 from http import HTTPStatus
 
 from db.connection import get_session
-from models.segment import SegmentBase, SegmentDict, SegmentUpdateBase
+from models.segment import (
+    SegmentBase, SegmentDict, SegmentUpdateBase, SegmentWithAnswersDict
+)
 
 
 security = HTTPBearer()
@@ -71,7 +73,7 @@ def delete_segment(
 
 @segment_route.get(
     "/segment/case/{case_id:path}",
-    response_model=List[SegmentDict],
+    response_model=List[SegmentWithAnswersDict],
     summary="get segment by case id",
     name="segment:get_by_case_id",
     tags=["Segment"]
@@ -85,4 +87,4 @@ def get_segments_by_case_id(
     segments = crud_segment.get_segments_by_case_id(
         session=session, case_id=case_id
     )
-    return [s.serialize for s in segments]
+    return [s.serialize_with_answers for s in segments]

@@ -1,7 +1,7 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 
@@ -21,6 +21,15 @@ class SimplifiedSegmentDict(TypedDict):
     household_size: Optional[float]
 
 
+class SegmentWithAnswersDict(TypedDict):
+    id: int
+    case: int
+    name: str
+    target: Optional[float]
+    household_size: Optional[float]
+    answers: Optional[dict]
+
+
 class Segment(Base):
     __tablename__ = 'segment'
 
@@ -35,6 +44,12 @@ class Segment(Base):
         cascade="all, delete",
         passive_deletes=True,
         back_populates='case_segments'
+    )
+    segment_answers = relationship(
+        'SegmentAnswer',
+        cascade="all, delete",
+        passive_deletes=True,
+        backref='segment_detail'
     )
 
     def __init__(
@@ -71,6 +86,23 @@ class Segment(Base):
             "name": self.name,
             "target": self.target,
             "household_size": self.household_size,
+        }
+
+    @property
+    def serialize_with_answers(self) -> SegmentWithAnswersDict:
+        answers = {}
+        for sa in self.segment_answers:
+            current_key = f"current-{sa.question}"
+            feasible_key = f"feasible-{sa.question}"
+            answers[current_key] = sa.current_value
+            answers[feasible_key] = sa.feasible_value
+        return {
+            "id": self.id,
+            "case": self.case,
+            "name": self.name,
+            "target": self.target,
+            "household_size": self.household_size,
+            "answers": answers
         }
 
 

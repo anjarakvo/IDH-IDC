@@ -3,7 +3,8 @@ from typing import List
 from fastapi import HTTPException, status
 
 from models.segment import (
-    Segment, SegmentBase, SegmentDict, SegmentUpdateBase
+    Segment, SegmentBase, SegmentDict, SegmentUpdateBase,
+    SegmentWithAnswersDict
 )
 from models.segment_answer import SegmentAnswer
 
@@ -70,7 +71,7 @@ def delete_segment(session: Session, id: int):
 
 def get_segments_by_case_id(
     session: Session, case_id: int
-) -> List[SegmentDict]:
+) -> List[SegmentWithAnswersDict]:
     segments = session.query(Segment).filter(Segment.case == case_id).all()
     if not segments:
         raise HTTPException(

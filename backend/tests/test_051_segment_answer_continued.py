@@ -49,19 +49,29 @@ class TestSegmentAnswerRouteContinued():
             'case': 1,
             'name': 'Segment 2',
             'target': 2000.0,
-            'household_size': 50.0
+            'household_size': 50.0,
+            'answers': {}
         }, {
             'id': 3,
             'case': 1,
             'name': 'Segment 3',
             'target': 3000.0,
-            'household_size': 40.0
+            'household_size': 40.0,
+            'answers': {}
         }, {
             'id': 1,
             'case': 1,
             'name': 'Segment 1',
             'target': 2000.0,
-            'household_size': 100.0
+            'household_size': 100.0,
+            'answers': {
+                'current-1': 100.0,
+                'feasible-1': 100.0,
+                'current-2': 200.0,
+                'feasible-2': 200.0,
+                'current-3': 300.0,
+                'feasible-3': 300.0
+            }
         }]
 
     @pytest.mark.asyncio

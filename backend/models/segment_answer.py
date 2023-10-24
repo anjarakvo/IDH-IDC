@@ -31,12 +31,6 @@ class SegmentAnswer(Base):
         passive_deletes=True,
         backref='case_commodity_segment_answer'
     )
-    segment_detail = relationship(
-        'Segment',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='segment_answer'
-    )
     question_detail = relationship(
         'Question',
         cascade="all, delete",
