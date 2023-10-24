@@ -43,7 +43,7 @@ const generateSegmentPayloads = (values, currentCaseId, isUpdate = false) => {
   return segmentPayloads;
 };
 
-const generateSegmentAnswerPayloads = (values) => {
+const generateSegmentAnswerPayloads = (values, commodityList) => {
   // generate segment answer payloads
   const segmentAnswerPayloads = [];
   values.forEach((fv) => {
@@ -53,17 +53,20 @@ const generateSegmentAnswerPayloads = (values) => {
         return parseInt(splitted[1]);
       })
     );
-    questionIDs.forEach((qid) => {
-      const currentValue = fv.answers[`current-${qid}`];
-      const feasibleValue = fv.answers[`feasible-${qid}`];
-      const answerTmp = {
-        case_commodity: fv.case_commodity,
-        segment: fv?.currentSegmentId || 0,
-        question: qid,
-        current_value: currentValue,
-        feasible_value: feasibleValue,
-      };
-      segmentAnswerPayloads.push(answerTmp);
+    commodityList.forEach((cl) => {
+      const case_commodity = cl.case_commodity;
+      questionIDs.forEach((qid) => {
+        const currentValue = fv.answers[`current-${qid}-${case_commodity}`];
+        const feasibleValue = fv.answers[`feasible-${qid}-${case_commodity}`];
+        const answerTmp = {
+          case_commodity: case_commodity,
+          segment: fv?.currentSegmentId || 0,
+          question: qid,
+          current_value: currentValue,
+          feasible_value: feasibleValue,
+        };
+        segmentAnswerPayloads.push(answerTmp);
+      });
     });
   });
   return segmentAnswerPayloads.filter(
@@ -271,7 +274,8 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         .then((values) => {
           // handle postSegmentAnswersPayloads
           const segmenAnswerPayloads = generateSegmentAnswerPayloads(
-            values.filter((fv) => fv.currentSegmentId)
+            values.filter((fv) => fv.currentSegmentId),
+            commodityList
           );
           values.forEach((val) => {
             if (!val.currentSegmentId) {
@@ -315,7 +319,8 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         .then(() => {
           // handle postSegmentAnswersPayloads
           const segmenAnswerPayloads = generateSegmentAnswerPayloads(
-            formValues.filter((fv) => fv.currentSegmentId)
+            formValues.filter((fv) => fv.currentSegmentId),
+            commodityList
           );
           formValues.forEach((val) => {
             if (!val.currentSegmentId) {
