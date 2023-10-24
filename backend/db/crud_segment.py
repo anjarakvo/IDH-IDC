@@ -66,3 +66,15 @@ def delete_segment(session: Session, id: int):
     session.delete(segment)
     session.commit()
     session.flush()
+
+
+def get_segments_by_case_id(
+    session: Session, case_id: int
+) -> List[SegmentDict]:
+    segments = session.query(Segment).filter(Segment.case == case_id).all()
+    if not segments:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Segments with case {case_id} not found"
+        )
+    return segments

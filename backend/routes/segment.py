@@ -67,3 +67,22 @@ def delete_segment(
 ):
     crud_segment.delete_segment(session=session, id=segment_id)
     return Response(status_code=HTTPStatus.NO_CONTENT.value)
+
+
+@segment_route.get(
+    "/segment/case/{case_id:path}",
+    response_model=List[SegmentDict],
+    summary="get segment by case id",
+    name="segment:get_by_case_id",
+    tags=["Segment"]
+)
+def get_segments_by_case_id(
+    req: Request,
+    case_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    segments = crud_segment.get_segments_by_case_id(
+        session=session, case_id=case_id
+    )
+    return [s.serialize for s in segments]
