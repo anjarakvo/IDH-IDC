@@ -22,14 +22,23 @@ import { IncomeDriverForm } from "./";
 import { api } from "../../../lib";
 import uniq from "lodash/uniq";
 
-const generateSegmentPayloads = (values, currentCaseId) => {
+const generateSegmentPayloads = (values, currentCaseId, isUpdate = false) => {
   // generate segment payloads
-  const segmentPayloads = values.map((fv) => ({
-    case: currentCaseId,
-    name: fv.label,
-    target: 0,
-    household_size: 0,
-  }));
+  const segmentPayloads = values.map((fv) => {
+    const res = {
+      case: currentCaseId,
+      name: fv.label,
+      target: null,
+      household_size: null,
+    };
+    if (isUpdate) {
+      return {
+        ...res,
+        id: fv?.currentSegmentId || 0,
+      };
+    }
+    return res;
+  });
   return segmentPayloads;
 };
 
@@ -221,9 +230,10 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       currentCaseId
     );
     const putSegmenPayloads = generateSegmentPayloads(
-      formValues.filter((fv) => fv.currentSegmentId)
+      formValues.filter((fv) => fv.currentSegmentId),
+      currentCaseId,
+      true
     );
-    console.log(postSegmenPayloads, putSegmenPayloads);
 
     // POST
     if (postSegmenPayloads.length) {
@@ -236,7 +246,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             const findNewItem = data.find((d) => d.name === it.label);
             return {
               ...it,
-              currentSegmentId: findNewItem?.id || null,
+              currentSegmentId: findNewItem?.id || it.currentSegmentId,
             };
           });
           setItems(transformItems);
@@ -259,11 +269,14 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         })
         .then((values) => {
           // handle postSegmentAnswersPayloads
-          const postSegmenAnswerPayloads = generateSegmentAnswerPayloads(
+          const segmenAnswerPayloads = generateSegmentAnswerPayloads(
             values.filter((fv) => fv.currentSegmentId)
           );
           values.forEach((val) => {
-            const payload = postSegmenAnswerPayloads.filter(
+            if (!val.currentSegmentId) {
+              return;
+            }
+            const payload = segmenAnswerPayloads.filter(
               (x) => x.segment === val.currentSegmentId
             );
             api
@@ -287,6 +300,50 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
           messageApi.open({
             type: "error",
             content: "Failed to save segments.",
+          });
+        })
+        .finally(() => {
+          setIsSaving(false);
+        });
+    }
+
+    // PUT
+    if (putSegmenPayloads.length) {
+      api
+        .put("/segment", putSegmenPayloads)
+        .then(() => {
+          // handle postSegmentAnswersPayloads
+          const segmenAnswerPayloads = generateSegmentAnswerPayloads(
+            formValues.filter((fv) => fv.currentSegmentId)
+          );
+          formValues.forEach((val) => {
+            if (!val.currentSegmentId) {
+              return;
+            }
+            const payload = segmenAnswerPayloads.filter(
+              (x) => x.segment === val.currentSegmentId
+            );
+            api
+              .put(`segment-answer/${val.currentSegmentId}`, payload)
+              .then(() => {
+                console.info("put segment answers success");
+              })
+              .catch((e) => {
+                console.error(e);
+              });
+          });
+        })
+        .then(() => {
+          messageApi.open({
+            type: "success",
+            content: "Segments updated successfully.",
+          });
+        })
+        .catch((e) => {
+          console.error(e);
+          messageApi.open({
+            type: "error",
+            content: "Failed to update segments.",
           });
         })
         .finally(() => {
