@@ -1,13 +1,14 @@
 import db.crud_segment as crud_segment
 
 from fastapi import (
-    APIRouter, Request, Depends
+    APIRouter, Request, Depends, Response
 )
 from fastapi.security import (
     HTTPBearer, HTTPBasicCredentials as credentials
 )
 from sqlalchemy.orm import Session
 from typing import List
+from http import HTTPStatus
 
 from db.connection import get_session
 from models.segment import SegmentBase, SegmentDict, SegmentUpdateBase
@@ -49,3 +50,20 @@ def update_segment(
 ):
     segments = crud_segment.update_segment(session=session, payloads=payload)
     return [s.serialize for s in segments]
+
+
+@segment_route.delete(
+    "/segment/{segment_id:path}",
+    responses={204: {"model": None}},
+    status_code=HTTPStatus.NO_CONTENT,
+    summary="delete segment and segment answers by segment id",
+    name="segment:delete",
+    tags=["Segment"])
+def delete_segment(
+    req: Request,
+    segment_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security)
+):
+    crud_segment.delete_segment(session=session, id=segment_id)
+    return Response(status_code=HTTPStatus.NO_CONTENT.value)

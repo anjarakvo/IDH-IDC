@@ -5,6 +5,9 @@ from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 
+from models.segment import Segment
+from models.segment_answer import SegmentAnswer
+
 sys.path.append("..")
 
 non_admin_account = Acc(email="support@akvo.org", token=None)
@@ -99,7 +102,7 @@ class TestSegmentAnswerRoute():
 
     # test_get_all_segment_answer
     # test_get_segment_answer_by_id
-    # test_update_segment_answer
+
     @pytest.mark.asyncio
     async def test_update_segment_answer(
         self, app: FastAPI, session: Session, client: AsyncClient
@@ -196,3 +199,24 @@ class TestSegmentAnswerRoute():
             'current_value': 300.0,
             'feasible_value': 300.0
         }]
+
+    @pytest.mark.asyncio
+    async def test_delete_segment_by_id_with_segment_answers(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # delete without cred
+        res = await client.delete(
+            app.url_path_for("segment:delete", segment_id=1))
+        assert res.status_code == 403
+        # delete with cred
+        res = await client.delete(
+            app.url_path_for("segment:delete", segment_id=1),
+            headers={"Authorization": f"Bearer {admin_account.token}"})
+        assert res.status_code == 204
+        segment = session.query(Segment).filter(Segment.id == 1).first()
+        assert segment is None
+        segment_answers = (
+            session.query(SegmentAnswer)
+            .filter(SegmentAnswer.segment == 1).count()
+        )
+        assert segment_answers == 0

@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from models.segment import (
     Segment, SegmentBase, SegmentDict, SegmentUpdateBase
 )
+from models.segment_answer import SegmentAnswer
 
 
 def add_segment(
@@ -51,3 +52,17 @@ def update_segment(
         session.refresh(segment)
         segments.append(segment)
     return segments
+
+
+def delete_segment(session: Session, id: int):
+    segment = get_segment_by_id(session=session, id=id)
+    # delete segment answers
+    segment_answers = (
+        session.query(SegmentAnswer)
+        .filter(SegmentAnswer.segment == id).all()
+    )
+    for sa in segment_answers:
+        session.delete(sa)
+    session.delete(segment)
+    session.commit()
+    session.flush()
