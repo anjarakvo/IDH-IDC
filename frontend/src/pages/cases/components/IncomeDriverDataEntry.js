@@ -18,6 +18,9 @@ const DataFields = ({
   questionGroups,
   commodityList,
   renameItem,
+  formValues,
+  setFormValues,
+  segmentItem,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -128,8 +131,12 @@ const DataFields = ({
               groupIndex={groupIndex}
               commodity={commodityList[groupIndex]}
               key={groupIndex}
+              formValues={formValues}
+              setFormValues={setFormValues}
+              segmentItem={segmentItem}
             />
           ))}
+          <h1>Save</h1>
         </Card>
       </Col>
       <Col span={8}></Col>
@@ -141,6 +148,10 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   const [activeKey, setActiveKey] = useState("1");
   const [questionGroups, setQuestionGroups] = useState([]);
   const [items, setItems] = useState([]);
+  const [formValues, setFormValues] = useState([]);
+
+  // handle save here
+  console.log(formValues);
 
   useEffect(() => {
     if (commodityList.length === 0 && !currentCaseId) {
@@ -152,6 +163,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         {
           key: "1",
           label: "Segment 1",
+          currentSegmentId: null,
         },
         {
           key: "add",
@@ -160,12 +172,17 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
               <PlusCircleFilled /> Add Segment
             </span>
           ),
+          currentSegmentId: null,
         },
       ]);
     });
   }, [commodityList, setQuestionGroups, currentCaseId]);
 
   const onDelete = (segmentKey) => {
+    // handle form values
+    const filteredFormValues = formValues.filter((x) => x.key !== segmentKey);
+    setFormValues(filteredFormValues);
+    // eol handle form values
     const newItems = items.filter((item) => item.key !== segmentKey);
     setItems(newItems);
     const newActiveKey = segmentKey - 1;
@@ -184,8 +201,25 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             onDelete={itemIndex ? onDelete(activeKey) : false}
             commodityList={commodityList}
             renameItem={renameItem}
+            formValues={formValues}
+            setFormValues={setFormValues}
+            segmentItem={{ ...item, label: newLabel }}
           />
         );
+        // handle form values
+        const filteredFormValues = formValues.filter((x) => x.key !== item.key);
+        const currentFormValue = formValues.find((x) => x.key === item.key) || {
+          ...item,
+          answers: {},
+        };
+        setFormValues([
+          ...filteredFormValues,
+          {
+            ...currentFormValue,
+            label: newLabel,
+          },
+        ]);
+        // EOL handle form values
       }
       return item;
     });
@@ -200,6 +234,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       newItems.splice(newItems.length - 1, 0, {
         key: newKey.toString(),
         label: `Segment ${newKey}`,
+        currentSegmentId: null,
       });
       setItems(newItems);
       setActiveKey(newKey.toString());
@@ -230,6 +265,9 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
                   questionGroups={questionGroups}
                   commodityList={commodityList}
                   renameItem={renameItem}
+                  formValues={formValues}
+                  setFormValues={setFormValues}
+                  segmentItem={item}
                 />
               ),
           }))}

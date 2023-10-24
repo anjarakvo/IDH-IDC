@@ -2,13 +2,38 @@ import React, { useState } from "react";
 import { Card, Form, Row, Col } from "antd";
 import { Questions, flatten, indentSize, getFunctionDefaultValue } from "./";
 
-const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
+const IncomeDriverForm = ({
+  group,
+  groupIndex,
+  commodity,
+  formValues,
+  setFormValues,
+  segmentItem,
+}) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
 
   const flattenQuestionList = flatten(group.questions);
 
   const onValuesChange = (value, currentValues) => {
+    // handle form values
+    const filteredFormValues = formValues.filter(
+      (x) => x.key !== segmentItem.key
+    );
+    const currentFormValue = formValues.find(
+      (x) => x.key === segmentItem.key
+    ) || { ...segmentItem, answers: {} };
+    setFormValues([
+      ...filteredFormValues,
+      {
+        ...currentFormValue,
+        answers: {
+          ...currentFormValue.answers,
+          ...currentValues,
+        },
+      },
+    ]);
+    // eol form values
     const id = Object.keys(value)[0];
     const dataType = id.split("-")[0];
     const questionId = id.split("-")[1];
@@ -52,6 +77,19 @@ const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
 
     const parentQuestionId = `${dataType}-${question.parent}`;
     if (parentQuestion) {
+      // handle form values
+      setFormValues([
+        ...filteredFormValues,
+        {
+          ...currentFormValue,
+          answers: {
+            ...currentFormValue.answers,
+            ...currentValues,
+            [parentQuestionId]: sumAllChildrensValues,
+          },
+        },
+      ]);
+      // eol handle form values
       form.setFieldsValue({
         [parentQuestionId]: sumAllChildrensValues,
       });
