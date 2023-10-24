@@ -377,7 +377,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
     });
   }, [commodityList, setQuestionGroups, currentCaseId]);
 
-  const onDelete = (segmentKey) => {
+  const handleRemoveSegmentFromItems = (segmentKey) => {
     // handle form values
     const filteredFormValues = formValues.filter((x) => x.key !== segmentKey);
     setFormValues(filteredFormValues);
@@ -386,6 +386,28 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
     setItems(newItems);
     const newActiveKey = segmentKey - 1;
     setActiveKey(newActiveKey.toString());
+  };
+
+  const onDelete = (segmentKey) => {
+    // delete segment & segment answers
+    const currentSegmentId =
+      items.find((item) => item.key === segmentKey)?.currentSegmentId || null;
+    if (currentSegmentId) {
+      api
+        .delete(`segment/${currentSegmentId}`)
+        .then(() => {
+          handleRemoveSegmentFromItems(segmentKey);
+        })
+        .catch((e) => {
+          console.error(e);
+          messageApi.open({
+            type: "error",
+            content: "Failed to delete a segment.",
+          });
+        });
+    } else {
+      handleRemoveSegmentFromItems(segmentKey);
+    }
   };
 
   const renameItem = (activeKey, newLabel) => {
