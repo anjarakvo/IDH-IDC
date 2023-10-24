@@ -380,10 +380,17 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             label: it.name,
             currentSegmentId: it.id,
           }));
+          const formValuesTmp = orderBy(data, "id").map((it, itIndex) => ({
+            key: String(itIndex + 1),
+            label: it.name,
+            currentSegmentId: it.id,
+            answers: it.answers,
+          }));
           if (itemsTmp.length !== 5) {
             itemsTmp = [...itemsTmp, ...defaultItems];
           }
           setItems(itemsTmp);
+          setFormValues(formValuesTmp);
         })
         .catch(() => {
           // default items if no segments in database

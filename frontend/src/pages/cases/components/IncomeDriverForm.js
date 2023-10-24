@@ -1,6 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Form, Row, Col } from "antd";
+import { useParams } from "react-router-dom";
 import { Questions, flatten, indentSize, getFunctionDefaultValue } from "./";
+import isEmpty from "lodash/isEmpty";
 
 const IncomeDriverForm = ({
   group,
@@ -12,21 +14,42 @@ const IncomeDriverForm = ({
 }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
+  const { caseId } = useParams();
+
+  useEffect(() => {
+    // set current feasible initial value
+    if (caseId) {
+      formValues.forEach((fv) => {
+        if (isEmpty(fv.answers)) {
+          return;
+        }
+        Object.keys(fv.answers).forEach((key) => {
+          const val = fv.answers[key];
+          form.setFieldsValue({
+            [key]: val,
+          });
+        });
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [caseId]);
 
   const flattenQuestionList = flatten(group.questions);
 
   const onValuesChange = (value, currentValues) => {
     // handle form values
-    const filteredFormValues = formValues.filter(
-      (x) => x.key !== segmentItem.key
-    );
-    const currentFormValue = formValues.find(
-      (x) => x.key === segmentItem.key
-    ) || {
+    const defaultFormValue = {
       ...segmentItem,
       case_commodity: commodity.case_commodity,
       answers: {},
     };
+    const filteredFormValues = formValues.filter(
+      (x) => x.key !== segmentItem.key
+    );
+    let currentFormValue = formValues.find((x) => x.key === segmentItem.key);
+    currentFormValue = isEmpty(currentFormValue)
+      ? defaultFormValue
+      : currentFormValue;
     setFormValues([
       ...filteredFormValues,
       {
@@ -87,6 +110,7 @@ const IncomeDriverForm = ({
         ...filteredFormValues,
         {
           ...currentFormValue,
+          case_commodity: commodity.case_commodity,
           answers: {
             ...currentFormValue.answers,
             ...currentValues,
