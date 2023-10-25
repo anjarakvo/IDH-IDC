@@ -93,8 +93,8 @@ class Segment(Base):
         answers = {}
         for sa in self.segment_answers:
             case_commodity = sa.case_commodity
-            current_key = f"current-{sa.question}-{case_commodity}"
-            feasible_key = f"feasible-{sa.question}-{case_commodity}"
+            current_key = f"current-{case_commodity}-{sa.question}"
+            feasible_key = f"feasible-{case_commodity}-{sa.question}"
             answers[current_key] = sa.current_value
             answers[feasible_key] = sa.feasible_value
         return {

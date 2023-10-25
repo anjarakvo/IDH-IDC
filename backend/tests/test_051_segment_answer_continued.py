@@ -67,10 +67,10 @@ class TestSegmentAnswerRouteContinued():
             'answers': {
                 'current-1-1': 100.0,
                 'feasible-1-1': 100.0,
-                'current-2-1': 200.0,
-                'feasible-2-1': 200.0,
-                'current-3-1': 300.0,
-                'feasible-3-1': 300.0
+                'current-1-2': 200.0,
+                'feasible-1-2': 200.0,
+                'current-1-3': 300.0,
+                'feasible-1-3': 300.0
             }
         }]
 
