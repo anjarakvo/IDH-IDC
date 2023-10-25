@@ -208,7 +208,9 @@ const DataFields = ({
           style={{ float: "right" }}
           loading={isSaving}
           onClick={handleSave}
-          disabled={!formValues.length}
+          disabled={
+            !formValues.filter((fv) => fv.key === segmentItem.key).length
+          }
         >
           Save
         </Button>
@@ -229,8 +231,9 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   // handle save here
   const handleSave = () => {
     setIsSaving(true);
+    const postFormValues = formValues.filter((fv) => !fv.currentSegmentId);
     const postSegmenPayloads = generateSegmentPayloads(
-      formValues.filter((fv) => !fv.currentSegmentId),
+      postFormValues,
       currentCaseId
     );
     const putSegmenPayloads = generateSegmentPayloads(
@@ -269,7 +272,16 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
           });
           setFormValues(transformFormValues);
 
-          return transformFormValues;
+          return postFormValues.map((fv) => {
+            const findItem = transformItems.find((it) => it.key === fv.key);
+            if (!findItem) {
+              return fv;
+            }
+            return {
+              ...fv,
+              ...findItem,
+            };
+          });
         })
         .then((values) => {
           // handle postSegmentAnswersPayloads
@@ -453,7 +465,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             segment={activeKey}
             segmentLabel={newLabel}
             questionGroups={questionGroups}
-            onDelete={itemIndex ? onDelete(activeKey) : false}
+            onDelete={itemIndex ? () => onDelete(activeKey) : false}
             commodityList={commodityList}
             renameItem={renameItem}
             formValues={formValues}
