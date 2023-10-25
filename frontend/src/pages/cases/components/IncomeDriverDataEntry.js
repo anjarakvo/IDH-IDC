@@ -50,14 +50,15 @@ const generateSegmentAnswerPayloads = (values, commodityList) => {
     const questionIDs = uniq(
       Object.keys(fv.answers).map((key) => {
         const splitted = key.split("-");
-        return parseInt(splitted[1]);
+        return parseInt(splitted[2]);
       })
     );
     commodityList.forEach((cl) => {
       const case_commodity = cl.case_commodity;
       questionIDs.forEach((qid) => {
-        const currentValue = fv.answers[`current-${qid}-${case_commodity}`];
-        const feasibleValue = fv.answers[`feasible-${qid}-${case_commodity}`];
+        const fieldKey = `${case_commodity}-${qid}`;
+        const currentValue = fv.answers[`current-${fieldKey}`];
+        const feasibleValue = fv.answers[`feasible-${fieldKey}`];
         const answerTmp = {
           case_commodity: case_commodity,
           segment: fv?.currentSegmentId || 0,

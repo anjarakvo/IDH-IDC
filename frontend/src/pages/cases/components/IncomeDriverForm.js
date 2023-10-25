@@ -62,9 +62,8 @@ const IncomeDriverForm = ({
     ]);
     // eol form values
     const id = Object.keys(value)[0];
-    const dataType = id.split("-")[0];
-    const questionId = id.split("-")[1];
-    const case_commodity = id.split("-")[2];
+    const dataType = `${id.split("-")[0]}-${id.split("-")[1]}`;
+    const questionId = id.split("-")[2];
     const question = flattenQuestionList.find(
       (q) => q.id === parseInt(questionId)
     );
@@ -103,7 +102,7 @@ const IncomeDriverForm = ({
       );
     }
 
-    const parentQuestionId = `${dataType}-${question.parent}-${case_commodity}`;
+    const parentQuestionId = `${dataType}-${question.parent}`;
     if (parentQuestion) {
       // handle form values
       setFormValues([

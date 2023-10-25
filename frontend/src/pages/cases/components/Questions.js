@@ -65,7 +65,7 @@ const Questions = ({
   const [collapsed, setCollapsed] = useState(question_type !== "aggregator");
   const [disabled, setDisabled] = useState(childrens.length > 0);
 
-  const fieldKey = `${id}-${units.case_commodity}`;
+  const fieldKey = `${units.case_commodity}-${id}`;
 
   const unitName = unit
     .split("/")
