@@ -305,7 +305,11 @@ const CaseProfile = ({
     // diversified_commodities
     commodities = [
       ...commodities,
-      { ...initial_commodities, commodity_type: "diversified" },
+      {
+        ...initial_commodities,
+        commodity_type: "diversified",
+        commodity: null,
+      },
     ];
     const payload = {
       name: values.name,

@@ -386,7 +386,11 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
           currentSegmentId: null,
         },
       ];
-      setQuestionGroups(res.data);
+      // reorder question to match commodity list order (CORRECT ORDER)
+      const dataTmp = commodityList.map((cl) =>
+        res.data.find((d) => d.commodity_id === cl.commodity)
+      );
+      setQuestionGroups(dataTmp);
       // load segment from database
       api
         .get(`segment/case/${currentCaseId}`)
