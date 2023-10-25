@@ -75,7 +75,48 @@ export const selectProps = {
   },
 };
 
+export const flatten = (data, parent = null) => {
+  let flatData = [];
+  for (const item of data) {
+    const flatItem = { ...item };
+    flatItem.parent_id = parent ? parent.id : null;
+    flatData.push(flatItem);
+
+    if (item.childrens && item.childrens.length > 0) {
+      flatData = flatData.concat(flatten(item.childrens, item));
+    }
+  }
+  return flatData;
+};
+
+export const indentSize = 37.5;
+
+export const regexQuestionId = /#(\d+)/;
+
+export const getFunctionDefaultValue = (question, prefix, values = {}) => {
+  const function_name = question.default_value.split(" ");
+  const getFunction = function_name.reduce((acc, fn) => {
+    const questionValue = fn.match(regexQuestionId);
+    if (questionValue) {
+      const valueName = `${prefix}-${questionValue[1]}`;
+      const value = values.find((v) => v.id === valueName)?.value;
+      if (!value) {
+        acc.push(0);
+        return acc;
+      }
+      acc.push(value.toString());
+    } else {
+      acc.push(fn);
+    }
+    return acc;
+  }, []);
+  const finalFunction = getFunction.join("");
+  return eval(finalFunction);
+};
+
 export { default as AreaUnitFields } from "./AreaUnitFields";
 export { default as SideMenu } from "./SideMenu";
 export { default as CaseProfile } from "./CaseProfile";
 export { default as IncomeDriverDataEntry } from "./IncomeDriverDataEntry";
+export { default as IncomeDriverForm } from "./IncomeDriverForm";
+export { default as Questions } from "./Questions";

@@ -1,8 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import { SideMenu, CaseProfile, IncomeDriverDataEntry } from "./components";
-import { Row, Col } from "antd";
+import { Row, Col, Spin } from "antd";
 import "./cases.scss";
+import { api } from "../../lib";
+import dayjs from "dayjs";
+import isEmpty from "lodash/isEmpty";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
@@ -10,10 +14,98 @@ const pageDependencies = {
 };
 
 const Case = () => {
+  const { caseId } = useParams();
   const [caseTitle, setCaseTitle] = useState("New Case");
   const [page, setPage] = useState("Case Profile");
   const [formData, setFormData] = useState({});
   const [finished, setFinished] = useState([]);
+  const [commodityList, setCommodityList] = useState([]);
+  const [currentCaseId, setCurrentCaseId] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
+
+  useEffect(() => {
+    if (caseId && isEmpty(formData) && !loading) {
+      setCurrentCaseId(caseId);
+      setLoading(true);
+      api
+        .get(`case/${caseId}`)
+        .then((res) => {
+          const { data } = res;
+          setCaseTitle(data.name);
+          // set other commodities type
+          setInitialCommodityTypes(
+            data.case_commodities.map((x) => x.commodity_type)
+          );
+          // set commodity list
+          const commodities = data.case_commodities.map((x) => ({
+            ...x,
+            currency: data.currency,
+          }));
+          setCommodityList(commodities);
+          // focus commodity
+          const focusCommodityValue = {
+            name: data.name,
+            description: data.description,
+            tags: data?.tags || [],
+            country: data.country,
+            focus_commodity: data.focus_commodity,
+            year: dayjs(String(data.year)),
+            currency: data.currency,
+            area_size_unit: data.area_size_unit,
+            volume_measurement_unit: data.volume_measurement_unit,
+            reporting_period: data.reporting_period,
+          };
+          // secondary
+          let secondaryCommodityValue = {};
+          const secondaryCommodityTmp = data.case_commodities.find(
+            (val) => val.commodity_type === "secondary"
+          );
+          if (secondaryCommodityTmp) {
+            Object.keys(secondaryCommodityTmp).forEach((key) => {
+              let val = secondaryCommodityTmp[key];
+              if (key === "breakdown") {
+                val = val ? 1 : 0;
+              }
+              secondaryCommodityValue = {
+                ...secondaryCommodityValue,
+                [`1-${key}`]: val,
+              };
+            });
+          }
+          // tertiary
+          let tertiaryCommodityValue = {};
+          const tertiaryCommodityTmp = data.case_commodities.find(
+            (val) => val.commodity_type === "tertiary"
+          );
+          if (tertiaryCommodityTmp) {
+            Object.keys(tertiaryCommodityTmp).forEach((key) => {
+              let val = tertiaryCommodityTmp[key];
+              if (key === "breakdown") {
+                val = val ? 1 : 0;
+              }
+              tertiaryCommodityValue = {
+                ...tertiaryCommodityValue,
+                [`2-${key}`]: val,
+              };
+            });
+          }
+          // set initial value
+          setFormData({
+            ...focusCommodityValue,
+            ...secondaryCommodityValue,
+            ...tertiaryCommodityValue,
+          });
+        })
+        .catch((e) => {
+          console.error("Error fetching case profile data", e);
+        })
+        .finally(() => {
+          setLoading(false);
+          setFinished(["Case Profile"]);
+        });
+    }
+  }, [caseId, formData, loading]);
 
   const setActive = (selected) => {
     if (finished.includes(selected)) {
@@ -38,22 +130,38 @@ const Case = () => {
       title={caseTitle}
       wrapperId="case"
     >
-      <Row gutter={[16, 16]} className="case-content">
-        <SideMenu active={page} setActive={setActive} finished={finished} />
-        <Col flex="auto">
-          {page === "Case Profile" && (
-            <CaseProfile
-              setCaseTitle={setCaseTitle}
-              formData={formData}
-              setFormData={setFormData}
-              finished={finished}
-              setFinished={setFinished}
-              setPage={setPage}
-            />
-          )}
-          {page === "Income Driver Data Entry" && <IncomeDriverDataEntry />}
-        </Col>
-      </Row>
+      {loading ? (
+        <div className="loading-container">
+          <Spin />
+        </div>
+      ) : (
+        <Row gutter={[16, 16]} className="case-content">
+          <SideMenu active={page} setActive={setActive} finished={finished} />
+          <Col flex="auto">
+            {page === "Case Profile" && (
+              <CaseProfile
+                setCaseTitle={setCaseTitle}
+                formData={formData}
+                setFormData={setFormData}
+                finished={finished}
+                setFinished={setFinished}
+                setPage={setPage}
+                commodityList={commodityList}
+                setCommodityList={setCommodityList}
+                currentCaseId={currentCaseId}
+                setCurrentCaseId={setCurrentCaseId}
+                initialOtherCommodityTypes={initialOtherCommodityTypes}
+              />
+            )}
+            {page === "Income Driver Data Entry" && (
+              <IncomeDriverDataEntry
+                commodityList={commodityList}
+                currentCaseId={currentCaseId}
+              />
+            )}
+          </Col>
+        </Row>
+      )}
     </ContentLayout>
   );
 };

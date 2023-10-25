@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Breadcrumb, Card, Tabs, Affix } from "antd";
 import { adminRole } from "../../store/static";
 import { UserState } from "../../store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const tabItems = [
   {
@@ -56,8 +56,10 @@ const ContentLayout = ({
         <Card className="content-card-container" bordered={false}>
           {hasBreadcrumb ? (
             <Breadcrumb
-              data-testid="breadcrumb"
-              items={breadcrumbItems.map((x) => ({ key: x.href, ...x }))}
+              items={breadcrumbItems.map((x, bi) => ({
+                key: bi,
+                title: <Link to={x.href}>{x.title}</Link>,
+              }))}
             />
           ) : (
             ""

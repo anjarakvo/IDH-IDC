@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Form,
   Input,
@@ -10,6 +10,8 @@ import {
   Switch,
   Button,
   Space,
+  message,
+  DatePicker,
 } from "antd";
 import { StepForwardOutlined } from "@ant-design/icons";
 import {
@@ -19,11 +21,17 @@ import {
   currencyOptions,
   reportingPeriod,
   selectProps,
-  tagOptions,
   yesNoOptions,
 } from "./";
+import { api } from "../../../lib";
+import { UIState } from "../../../store";
+import isEmpty from "lodash/isEmpty";
+import { useParams } from "react-router-dom";
+import dayjs from "dayjs";
 
 const CaseForm = ({ setCaseTitle }) => {
+  const tagOptions = UIState.useState((s) => s.tagOptions);
+
   return (
     <>
       <h3>General Information</h3>
@@ -55,6 +63,7 @@ const CaseForm = ({ setCaseTitle }) => {
 
       <Form.Item
         name="tags"
+        label="Tags"
         rules={[
           {
             required: true,
@@ -63,11 +72,24 @@ const CaseForm = ({ setCaseTitle }) => {
         ]}
       >
         <Select
-          mode="tags"
+          mode="multiple"
           placeholder="Add Tags"
           options={tagOptions}
           {...selectProps}
         />
+      </Form.Item>
+
+      <Form.Item
+        name="year"
+        label="Year"
+        rules={[
+          {
+            required: true,
+            message: "Select year",
+          },
+        ]}
+      >
+        <DatePicker picker="year" />
       </Form.Item>
 
       <h3>Driver Details</h3>
@@ -191,16 +213,138 @@ const CaseProfile = ({
   setFormData,
   finished,
   setFinished,
+  commodityList,
+  setCommodityList,
+  currentCaseId,
+  setCurrentCaseId,
+  initialOtherCommodityTypes,
 }) => {
   const [form] = Form.useForm();
-  const [secondary, setSecondary] = useState(false);
-  const [tertiary, setTertiary] = useState(false);
+  const [secondary, setSecondary] = useState(commodityList.length > 2);
+  const [tertiary, setTertiary] = useState(commodityList.length > 3);
+  const [isSaving, setIsSaving] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
+  const { caseId } = useParams();
+
+  useEffect(() => {
+    // initial case profile value
+    if (!isEmpty(formData)) {
+      const completed = finished.filter((item) => item !== "Case Profile");
+      if (initialOtherCommodityTypes?.includes("secondary")) {
+        setSecondary(true);
+      }
+      if (initialOtherCommodityTypes?.includes("tertiary")) {
+        setTertiary(true);
+      }
+      setFinished([...completed, "Case Profile"]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formData]);
 
   const onFinish = (values) => {
+    setIsSaving(true);
     setFormData(values);
-    setPage("Income Driver Data Entry");
     const completed = finished.filter((item) => item !== "Case Profile");
-    setFinished([...completed, "Case Profile"]);
+
+    let other_commodities = [];
+    const initial_commodities = {
+      commodity: values.focus_commodity,
+      breakdown: true,
+      currency: values.currency,
+      area_size_unit: values.area_size_unit,
+      volume_measurement_unit: values.volume_measurement_unit,
+    };
+    let commodities = [initial_commodities];
+    if (secondary) {
+      commodities = [
+        ...commodities,
+        {
+          commodity: values["1-commodity"],
+          breakdown: values["1-breakdown"] ? true : false,
+          currency: values.currency,
+          area_size_unit: values["1-area_size_unit"],
+          volume_measurement_unit: values["1-volume_measurement_unit"],
+        },
+      ];
+      other_commodities = [
+        ...other_commodities,
+        {
+          commodity: values["1-commodity"],
+          breakdown: values["1-breakdown"] ? true : false,
+          commodity_type: "secondary",
+          area_size_unit: values["1-area_size_unit"],
+          volume_measurement_unit: values["1-volume_measurement_unit"],
+        },
+      ];
+    }
+    if (tertiary) {
+      commodities = [
+        ...commodities,
+        {
+          commodity: values["2-commodity"],
+          breakdown: values["2-breakdown"] ? true : false,
+          currency: values.currency,
+          area_size_unit: values["2-area_size_unit"],
+          volume_measurement_unit: values["2-volume_measurement_unit"],
+        },
+      ];
+      other_commodities = [
+        ...other_commodities,
+        {
+          commodity: values["2-commodity"],
+          breakdown: values["2-breakdown"] ? true : false,
+          commodity_type: "tertiary",
+          area_size_unit: values["2-area_size_unit"],
+          volume_measurement_unit: values["2-volume_measurement_unit"],
+        },
+      ];
+    }
+    // diversified_commodities
+    commodities = [...commodities, initial_commodities];
+    const payload = {
+      name: values.name,
+      description: values.description,
+      country: values.country,
+      focus_commodity: values.focus_commodity,
+      year: dayjs(values.year).year(),
+      currency: values.currency,
+      area_size_unit: values.area_size_unit,
+      volume_measurement_unit: values.volume_measurement_unit,
+      reporting_period: values.reporting_period,
+      multiple_commodities: secondary || tertiary,
+      // need to handle below value correctly
+      cost_of_production_unit: "cost_of_production_unit",
+      segmentation: true,
+      living_income_study: null,
+      logo: null,
+      private: false,
+      other_commodities: other_commodities,
+      tags: values.tags || null,
+    };
+
+    setCommodityList(commodities);
+
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    const apiCall =
+      currentCaseId || caseId
+        ? api.put(`case/${paramCaseId}`, payload)
+        : api.post("case", payload);
+    apiCall
+      .then((res) => {
+        setCurrentCaseId(res?.data?.id);
+        setFinished([...completed, "Case Profile"]);
+        setPage("Income Driver Data Entry");
+      })
+      .catch((e) => {
+        console.error(e);
+        messageApi.open({
+          type: "error",
+          content: "Failed to save case profile.",
+        });
+      })
+      .finally(() => {
+        setIsSaving(false);
+      });
   };
 
   const onFinishFailed = () => {
@@ -217,6 +361,7 @@ const CaseProfile = ({
       onFinishFailed={onFinishFailed}
       autoComplete="off"
     >
+      {contextHolder}
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Card title="Case Details">
@@ -226,7 +371,7 @@ const CaseProfile = ({
         <Col span={12}>
           <Card
             title="Secondary Commodity"
-            extra={<Switch onChange={setSecondary} />}
+            extra={<Switch checked={secondary} onChange={setSecondary} />}
             style={{
               marginBottom: "16px",
               backgroundColor: !secondary ? "#f5f5f5" : "white",
@@ -240,7 +385,13 @@ const CaseProfile = ({
           </Card>
           <Card
             title="Teritary Commodity"
-            extra={<Switch onChange={setTertiary} disabled={!secondary} />}
+            extra={
+              <Switch
+                checked={tertiary}
+                onChange={setTertiary}
+                disabled={!secondary}
+              />
+            }
             style={{
               backgroundColor: !tertiary ? "#f5f5f5" : "white",
             }}
@@ -268,12 +419,14 @@ const CaseProfile = ({
                 <Button
                   htmlType="submit"
                   className="button button-submit button-secondary"
+                  loading={isSaving}
                 >
                   Save
                 </Button>
                 <Button
                   htmlType="submit"
                   className="button button-submit button-secondary"
+                  loading={isSaving}
                 >
                   Next
                   <StepForwardOutlined />

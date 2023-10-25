@@ -16,8 +16,13 @@ from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
-from models.case_commodity import CaseCommodity, SimplifiedCaseCommodityDict
+from models.case_commodity import (
+    CaseCommodity,
+    SimplifiedCaseCommodityDict,
+    CaseCommodityType,
+)
 from models.segment import Segment, SimplifiedSegmentDict
+from models.case_tag import CaseTag
 
 
 class LivingIncomeStudyEnum(enum.Enum):
@@ -28,16 +33,19 @@ class LivingIncomeStudyEnum(enum.Enum):
 class CaseListDict(TypedDict):
     id: int
     name: str
-    country: int
+    country: str
     focus_commodity: int
     diversified_commodities_count: int
+    year: int
     created_at: str
     created_by: str
+    tags: Optional[List[int]] = []
 
 
 class CaseDict(TypedDict):
     id: Optional[int]
     name: str
+    description: Optional[str]
     date: str
     year: int
     country: int
@@ -59,6 +67,7 @@ class CaseDict(TypedDict):
 class CaseDetailDict(TypedDict):
     id: int
     name: str
+    description: Optional[str]
     date: str
     year: int
     country: int
@@ -77,6 +86,7 @@ class CaseDetailDict(TypedDict):
     segments: Optional[List[SimplifiedSegmentDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
     private: bool
+    tags: Optional[List[int]] = []
 
 
 class Case(Base):
@@ -84,6 +94,7 @@ class Case(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
+    description = Column(String, nullable=True)
     date = Column(Date, nullable=False)
     year = Column(Integer, nullable=False)
     country = Column(Integer, ForeignKey("country.id"))
@@ -94,7 +105,9 @@ class Case(Base):
     cost_of_production_unit = Column(String, nullable=False)
     reporting_period = Column(String, nullable=False)
     segmentation = Column(SmallInteger, nullable=False, default=0)
-    living_income_study = Column(Enum(LivingIncomeStudyEnum), nullable=True)
+    living_income_study = Column(
+        Enum(LivingIncomeStudyEnum, name="case_living_income_study"), nullable=True
+    )
     multiple_commodities = Column(SmallInteger, nullable=False, default=0)
     private = Column(SmallInteger, nullable=False, default=0)
     logo = Column(String, nullable=True)
@@ -116,12 +129,18 @@ class Case(Base):
         passive_deletes=True,
         back_populates="case_detail",
     )
-    # country_detail = relationship(
-    #     'Country',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='cases'
-    # )
+    case_tags = relationship(
+        CaseTag,
+        cascade="all, delete",
+        passive_deletes=True,
+        back_populates="case_detail",
+    )
+    country_detail = relationship(
+        'Country',
+        cascade="all, delete",
+        passive_deletes=True,
+        backref='cases'
+    )
     # commodity_detail = relationship(
     #     'Commodity',
     #     cascade="all, delete",
@@ -146,6 +165,7 @@ class Case(Base):
         reporting_period: str,
         segmentation: int,
         living_income_study: Optional[str],
+        description: Optional[str],
         multiple_commodities: int,
         logo: Optional[str],
         created_by: int,
@@ -153,6 +173,7 @@ class Case(Base):
         id: Optional[int] = None,
     ):
         self.id = id
+        self.description = description
         self.name = name
         self.date = date
         self.year = year
@@ -178,6 +199,7 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "description": self.description,
             "date": self.date.strftime("%Y-%m-%d"),
             "year": self.year,
             "country": self.country,
@@ -207,11 +229,13 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
-            "country": self.country,
+            "country": self.country_detail.name,
             "focus_commodity": self.focus_commodity,
             "diversified_commodities_count": len(diversified_count),
+            "year": self.year,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "created_by": self.created_by_user.email,
+            "tags": [ct.tag for ct in self.case_tags],
         }
 
     @property
@@ -219,6 +243,7 @@ class Case(Base):
         return {
             "id": self.id,
             "name": self.name,
+            "description": self.description,
             "date": self.date.strftime("%Y-%m-%d"),
             "year": self.year,
             "country": self.country,
@@ -238,20 +263,23 @@ class Case(Base):
             "segments": [ps.simplify for ps in self.case_segments],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
+            "tags": [ct.tag for ct in self.case_tags],
         }
 
 
 class OtherCommoditysBase(BaseModel):
     commodity: int
     breakdown: bool
+    commodity_type: CaseCommodityType
     area_size_unit: str
     volume_measurement_unit: str
 
 
 class CaseBase(BaseModel):
     name: str
-    date: date_format
-    year: int
+    description: Optional[str] = None
+    date: Optional[date_format] = None
+    year: Optional[int] = None
     country: int
     focus_commodity: int
     currency: str
@@ -265,6 +293,7 @@ class CaseBase(BaseModel):
     logo: Optional[str] = None
     private: Optional[bool] = False
     other_commodities: Optional[List[OtherCommoditysBase]] = None
+    tags: Optional[List[int]] = None
 
 
 class PaginatedCaseResponse(BaseModel):

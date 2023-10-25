@@ -231,3 +231,12 @@
     font-family: "TabletGothic";
   }
 }
+
+.ant-popover {
+  .ant-popover-inner-content {
+    .fn-info {
+      font-family: "TabletGothic" !important;
+      font-size: 12px;
+    }
+  }
+}

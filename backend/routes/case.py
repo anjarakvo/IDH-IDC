@@ -1,19 +1,12 @@
 import db.crud_case as crud_case
 
 from math import ceil
-from fastapi import (
-    APIRouter, Request, Depends, HTTPException, Query
-)
-from fastapi.security import (
-    HTTPBearer, HTTPBasicCredentials as credentials
-)
+from fastapi import APIRouter, Request, Depends, HTTPException, Query
+from fastapi.security import HTTPBearer, HTTPBasicCredentials as credentials
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
-from models.case import (
-    CaseBase, CaseDict, PaginatedCaseResponse,
-    CaseDetailDict
-)
+from models.case import CaseBase, CaseDict, PaginatedCaseResponse, CaseDetailDict
 from middleware import verify_admin
 
 security = HTTPBearer()
@@ -25,17 +18,16 @@ case_route = APIRouter()
     response_model=CaseDict,
     summary="create case",
     name="case:create",
-    tags=["Case"]
+    tags=["Case"],
 )
 def create_case(
     req: Request,
     payload: CaseBase,
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security)
+    credentials: credentials = Depends(security),
 ):
     user = verify_admin(session=session, authenticated=req.state.authenticated)
-    case = crud_case.add_case(
-        session=session, payload=payload, user=user)
+    case = crud_case.add_case(session=session, payload=payload, user=user)
     return case.serialize
 
 
@@ -44,7 +36,7 @@ def create_case(
     response_model=PaginatedCaseResponse,
     summary="get all case",
     name="case:get_all",
-    tags=["Case"]
+    tags=["Case"],
 )
 def get_all_case(
     req: Request,
@@ -54,12 +46,15 @@ def get_all_case(
     tags: Optional[List[int]] = Query(None),
     focus_commodity: Optional[List[int]] = Query(None),
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security)
+    credentials: credentials = Depends(security),
 ):
     cases = crud_case.get_all_case(
-        session=session, search=search,
-        tags=tags, focus_commodities=focus_commodity,
-        skip=(limit * (page - 1)), limit=limit
+        session=session,
+        search=search,
+        tags=tags,
+        focus_commodities=focus_commodity,
+        skip=(limit * (page - 1)),
+        limit=limit,
     )
     if not cases:
         raise HTTPException(status_code=404, detail="Not found")
@@ -68,12 +63,7 @@ def get_all_case(
     total_page = ceil(total / limit) if total > 0 else 0
     if total_page < page:
         raise HTTPException(status_code=404, detail="Not found")
-    return {
-        'current': page,
-        'data': cases,
-        'total': total,
-        'total_page': total_page
-    }
+    return {"current": page, "data": cases, "total": total, "total_page": total_page}
 
 
 @case_route.put(
@@ -81,18 +71,17 @@ def get_all_case(
     response_model=CaseDict,
     summary="update case by id",
     name="case:update",
-    tags=["Case"]
+    tags=["Case"],
 )
 def update_Case(
     req: Request,
     case_id: int,
     payload: CaseBase,
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security)
+    credentials: credentials = Depends(security),
 ):
     verify_admin(session=session, authenticated=req.state.authenticated)
-    case = crud_case.update_case(
-        session=session, id=case_id, payload=payload)
+    case = crud_case.update_case(session=session, id=case_id, payload=payload)
     return case.serialize
 
 
@@ -101,13 +90,13 @@ def update_Case(
     response_model=CaseDetailDict,
     summary="get case by id",
     name="case:get_by_id",
-    tags=["Case"]
+    tags=["Case"],
 )
 def get_case_by_id(
     req: Request,
     case_id: int,
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security)
+    credentials: credentials = Depends(security),
 ):
     verify_admin(session=session, authenticated=req.state.authenticated)
     case = crud_case.get_case_by_id(session=session, id=case_id)

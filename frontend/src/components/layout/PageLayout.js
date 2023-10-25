@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Layout, Row, Col, Space, Image } from "antd";
 import { useCookies } from "react-cookie";
 import { UserState } from "../../store";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { LoadingOutlined } from "@ant-design/icons";
 import LogoWhite from "../../assets/images/logo-white.png";
 import { adminRole, allUserRole } from "../../store/static";
@@ -12,6 +12,7 @@ const pagesWithNoHeader = ["/login", "/register"];
 const { Header, Content } = Layout;
 
 const PageHeader = ({ isLoggedIn }) => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [, , removeCookie] = useCookies(["AUTH_TOKEN"]);
   const userRole = UserState.useState((s) => s.role);
@@ -106,8 +107,8 @@ const PageHeader = ({ isLoggedIn }) => {
                   });
                   setLoading(true);
                   setTimeout(() => {
-                    window.location.reload();
                     setLoading(false);
+                    navigate("/");
                   }, 300);
                 }}
               >
