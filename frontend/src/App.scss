@@ -192,10 +192,12 @@
   }
 
   .loading-container {
-    padding: 5rem;
+    padding: 8rem;
     display: flex;
     justify-content: center;
     align-content: center;
+    height: 100%;
+    width: 100%;
   }
   .ant-timeline {
     font-family: "RocGrotesk";

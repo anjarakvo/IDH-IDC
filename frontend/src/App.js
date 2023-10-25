@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import "./App.scss";
 import { Spin } from "antd";
 import { useCookies } from "react-cookie";
@@ -20,9 +20,7 @@ const optionRoutes = ["organisation/options", "tag/options"];
 
 const App = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
-  const [authTokenAvailable, setAuthTokenAvailable] = useState(false);
   const userRole = UserState.useState((s) => s.role);
-  const rootLoading = UIState.useState((s) => s.rootLoading);
 
   useEffect(() => {
     const optionApiCalls = optionRoutes.map((url) => api.get(url));
@@ -39,18 +37,16 @@ const App = () => {
       });
   }, []);
 
-  useEffect(() => {
-    setAuthTokenAvailable(
-      cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined"
-    );
-    api.setToken(cookies?.AUTH_TOKEN);
-  }, [cookies]);
+  const authTokenAvailable = useMemo(() => {
+    const res = cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+    if (res) {
+      api.setToken(cookies?.AUTH_TOKEN);
+    }
+    return res;
+  }, [cookies?.AUTH_TOKEN]);
 
   useEffect(() => {
     if (authTokenAvailable && userRole === null) {
-      UIState.update((s) => {
-        s.rootLoading = true;
-      });
       api
         .get("user/me")
         .then((res) => {
@@ -88,18 +84,13 @@ const App = () => {
             s.tags_count = 0;
             s.cases_count = 0;
           });
-        })
-        .finally(() => {
-          UIState.update((s) => {
-            s.rootLoading = false;
-          });
         });
     }
   }, [authTokenAvailable, userRole]);
 
   return (
     <PageLayout testid="page-layout">
-      {rootLoading ? (
+      {authTokenAvailable && userRole === null ? (
         <div className="loading-container">
           <Spin />
         </div>

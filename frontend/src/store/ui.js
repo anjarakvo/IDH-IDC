@@ -1,7 +1,6 @@
 import { Store } from "pullstate";
 
 const defaultUIState = {
-  rootLoading: true,
   organisationOptions: [],
   tagOptions: [],
 };
