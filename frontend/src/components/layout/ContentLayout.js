@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Breadcrumb, Card, Tabs, Affix } from "antd";
 import { adminRole } from "../../store/static";
 import { UserState } from "../../store";
@@ -40,7 +40,9 @@ const ContentLayout = ({
     navigate(key);
   };
 
-  const activeTabMenu = tabItems.find((x) => currentPath.includes(x.value));
+  const activeTabMenu = useMemo(() => {
+    return tabItems.find((x) => currentPath.includes(x.value));
+  }, [currentPath]);
 
   if (!renderCard) {
     return (
@@ -78,7 +80,7 @@ const ContentLayout = ({
           ) : (
             ""
           )}
-          {currentPath.includes("/admin/") && adminRole.includes(userRole) ? (
+          {adminRole.includes(userRole) && currentPath.includes("/admin/") ? (
             <Tabs
               data-testid="admin-tabs-menu"
               activeKey={activeTabMenu.key}

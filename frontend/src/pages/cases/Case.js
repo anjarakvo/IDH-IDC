@@ -101,8 +101,10 @@ const Case = () => {
           console.error("Error fetching case profile data", e);
         })
         .finally(() => {
-          setLoading(false);
-          setFinished(["Case Profile"]);
+          setTimeout(() => {
+            setLoading(false);
+            setFinished(["Case Profile"]);
+          }, 100);
         });
     }
   }, [caseId, formData, loading]);
@@ -119,6 +121,7 @@ const Case = () => {
       }
     }
   };
+  console.log(formData);
 
   return (
     <ContentLayout
