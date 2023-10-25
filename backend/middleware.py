@@ -116,3 +116,13 @@ def verify_admin(session: Session, authenticated):
             status_code=403,
             detail="You don't have data access")
     return user
+
+
+def verify_user_management(session: Session, authenticated):
+    roles = [UserRole.super_admin, UserRole.admin, UserRole.editor]
+    user = verify_user(session=session, authenticated=authenticated)
+    if user.role not in roles:
+        raise HTTPException(
+            status_code=403,
+            detail="You don't have data access")
+    return user
