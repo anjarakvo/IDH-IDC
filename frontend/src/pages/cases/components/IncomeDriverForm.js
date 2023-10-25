@@ -29,6 +29,8 @@ const IncomeDriverForm = ({
           [key]: val,
         });
       });
+      // refresh percentage
+      setRefresh(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [caseId]);
