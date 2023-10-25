@@ -121,7 +121,6 @@ const Case = () => {
       }
     }
   };
-  console.log(formData);
 
   return (
     <ContentLayout
