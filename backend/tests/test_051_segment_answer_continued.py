@@ -144,8 +144,8 @@ class TestSegmentAnswerRouteContinued():
                     "commodity": 2,
                     "breakdown": True,
                     "commodity_type": CaseCommodityType.focus.value,
-                    "area_size_unit": "hectare",
-                    "volume_measurement_unit": "liters",
+                    "area_size_unit": "acre",
+                    "volume_measurement_unit": "kilograms",
                 },
                 {
                     "id": 2,
