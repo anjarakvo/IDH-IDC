@@ -14,7 +14,6 @@ import {
 } from "antd";
 import { useCookies } from "react-cookie";
 import { api } from "../../lib";
-import { UserState } from "../../store";
 import ImageRight from "../../assets/images/login-right-img.png";
 
 const env = window?.__ENV__;
@@ -44,17 +43,6 @@ const Login = () => {
         removeCookie("AUTH_TOKEN");
         setCookie("AUTH_TOKEN", data?.access_token);
         api.setToken(cookies?.AUTH_TOKEN);
-        UserState.update((s) => {
-          s.id = data.id;
-          s.fullname = data.fullname;
-          s.email = data.email;
-          s.role = data.role;
-          s.active = data.active;
-          s.organisation_detail = data.organisation_detail;
-          s.business_unit_detail = data.business_unit_detail;
-          s.tags_count = data.tags_count;
-          s.cases_count = data.cases_count;
-        });
         setTimeout(() => {
           navigate("/welcome");
         }, 100);
