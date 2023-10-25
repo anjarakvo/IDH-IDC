@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Layout, Row, Col, Space, Image } from "antd";
 import { useCookies } from "react-cookie";
 import { UserState } from "../../store";
@@ -129,13 +129,21 @@ const PageHeader = ({ isLoggedIn }) => {
 };
 
 const PageLayout = ({ children }) => {
-  const [cookies] = useCookies(["AUTH_TOKEN"]);
-  const { id: userId, active: userActive } = UserState.useState((s) => s);
-  const authTokenAvailable =
-    cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
-  const isLoggedIn = authTokenAvailable || (userId && userActive);
   const location = useLocation();
   const pathname = location?.pathname;
+  const [cookies] = useCookies(["AUTH_TOKEN"]);
+  const userId = UserState.useState((s) => s.id);
+  const userActive = UserState.useState((s) => s.active);
+
+  const authTokenAvailable = useMemo(() => {
+    const res = cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+    return res;
+  }, [cookies?.AUTH_TOKEN]);
+
+  const isLoggedIn = useMemo(
+    () => authTokenAvailable || (userId && userActive),
+    [authTokenAvailable, userId, userActive]
+  );
 
   if (pagesWithNoSider.includes(pathname)) {
     return (
