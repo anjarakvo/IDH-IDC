@@ -10,10 +10,9 @@ import { adminRole, allUserRole } from "../../store/static";
 const pagesWithNoSider = ["/", "/login", "/welcome"];
 const { Header, Content } = Layout;
 
-const PageHeader = ({ isLoggedIn }) => {
+const PageHeader = ({ isLoggedIn, signOut }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
-  const [, , removeCookie] = useCookies(["AUTH_TOKEN"]);
   const userRole = UserState.useState((s) => s.role);
 
   const menus = [
@@ -83,27 +82,7 @@ const PageHeader = ({ isLoggedIn }) => {
               <Link
                 className="nav-sign-in"
                 onClick={() => {
-                  removeCookie("AUTH_TOKEN");
-                  UserState.update((s) => {
-                    s.id = 0;
-                    s.fullname = null;
-                    s.email = null;
-                    s.role = null;
-                    s.active = false;
-                    s.organisation_detail = {
-                      id: 0,
-                      name: null,
-                    };
-                    s.business_unit_detail = [
-                      {
-                        id: 0,
-                        name: null,
-                        role: null,
-                      },
-                    ];
-                    s.tags_count = 0;
-                    s.cases_count = 0;
-                  });
+                  signOut();
                   setLoading(true);
                   setTimeout(() => {
                     setLoading(false);
@@ -128,7 +107,7 @@ const PageHeader = ({ isLoggedIn }) => {
   );
 };
 
-const PageLayout = ({ children }) => {
+const PageLayout = ({ children, signOut }) => {
   const location = useLocation();
   const pathname = location?.pathname;
   const [cookies] = useCookies(["AUTH_TOKEN"]);
@@ -148,7 +127,11 @@ const PageLayout = ({ children }) => {
   if (pagesWithNoSider.includes(pathname)) {
     return (
       <Layout>
-        {pathname !== "/login" ? <PageHeader isLoggedIn={isLoggedIn} /> : ""}
+        {pathname !== "/login" ? (
+          <PageHeader isLoggedIn={isLoggedIn} signOut={signOut} />
+        ) : (
+          ""
+        )}
         <Content testid="layout-content" className="content-container">
           {children}
         </Content>
@@ -158,7 +141,7 @@ const PageLayout = ({ children }) => {
 
   return (
     <Layout>
-      <PageHeader isLoggedIn={isLoggedIn} />
+      <PageHeader isLoggedIn={isLoggedIn} signOut={signOut} />
       <Layout>
         <Layout>
           <Content testid="layout-content" className="content-container">

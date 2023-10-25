@@ -1,8 +1,8 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import "./App.scss";
 import { Spin } from "antd";
 import { useCookies } from "react-cookie";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "./components/route";
 import { PageLayout } from "./components/layout";
 import { Home } from "./pages/home";
@@ -19,7 +19,8 @@ import { adminRole } from "./store/static";
 const optionRoutes = ["organisation/options", "tag/options"];
 
 const App = () => {
-  const [cookies] = useCookies(["AUTH_TOKEN"]);
+  const navigate = useNavigate();
+  const [cookies, , removeCookie] = useCookies(["AUTH_TOKEN"]);
   const userRole = UserState.useState((s) => s.role);
 
   useEffect(() => {
@@ -45,6 +46,30 @@ const App = () => {
     return res;
   }, [cookies?.AUTH_TOKEN]);
 
+  const signOut = useCallback(() => {
+    removeCookie("AUTH_TOKEN");
+    UserState.update((s) => {
+      s.id = 0;
+      s.fullname = null;
+      s.email = null;
+      s.role = null;
+      s.active = false;
+      s.organisation_detail = {
+        id: 0,
+        name: null,
+      };
+      s.business_unit_detail = [
+        {
+          id: 0,
+          name: null,
+          role: null,
+        },
+      ];
+      s.tags_count = 0;
+      s.cases_count = 0;
+    });
+  }, [removeCookie]);
+
   useEffect(() => {
     if (authTokenAvailable && userRole === null) {
       api
@@ -64,32 +89,16 @@ const App = () => {
           });
         })
         .catch(() => {
-          UserState.update((s) => {
-            s.id = 0;
-            s.fullname = null;
-            s.email = null;
-            s.role = null;
-            s.active = false;
-            s.organisation_detail = {
-              id: 0,
-              name: null,
-            };
-            s.business_unit_detail = [
-              {
-                id: 0,
-                name: null,
-                role: null,
-              },
-            ];
-            s.tags_count = 0;
-            s.cases_count = 0;
-          });
+          signOut();
+          setTimeout(() => {
+            navigate("/");
+          }, 300);
         });
     }
-  }, [authTokenAvailable, userRole]);
+  }, [authTokenAvailable, userRole, navigate, signOut]);
 
   return (
-    <PageLayout testid="page-layout">
+    <PageLayout testid="page-layout" signOut={signOut}>
       {authTokenAvailable && userRole === null ? (
         <div className="loading-container">
           <Spin />
