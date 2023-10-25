@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./App.scss";
+import { Spin } from "antd";
 import { useCookies } from "react-cookie";
 import { Routes, Route } from "react-router-dom";
 import { PrivateRoutes } from "./components/route";
@@ -21,6 +22,7 @@ const App = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
   const [authTokenAvailable, setAuthTokenAvailable] = useState(false);
   const userRole = UserState.useState((s) => s.role);
+  const rootLoading = UIState.useState((s) => s.rootLoading);
 
   useEffect(() => {
     const optionApiCalls = optionRoutes.map((url) => api.get(url));
@@ -46,6 +48,9 @@ const App = () => {
 
   useEffect(() => {
     if (authTokenAvailable && userRole === null) {
+      UIState.update((s) => {
+        s.rootLoading = true;
+      });
       api
         .get("user/me")
         .then((res) => {
@@ -83,38 +88,49 @@ const App = () => {
             s.tags_count = 0;
             s.cases_count = 0;
           });
+        })
+        .finally(() => {
+          UIState.update((s) => {
+            s.rootLoading = false;
+          });
         });
     }
   }, [authTokenAvailable, userRole]);
 
   return (
     <PageLayout testid="page-layout">
-      <Routes>
-        <Route path="*" element={<NotFound />} />
-        {userRole !== null ? (
-          <Route element={<PrivateRoutes />}>
-            <Route exact path="/welcome" element={<Welcome />} />
-            <Route exact path="/home" element={<Home />} />
-            <Route exact path="/welcome" element={<Welcome />} />
-            <Route exact path="/cases" element={<Cases />} />
-            <Route exact path="/cases/new" element={<Case />} />
-            <Route exact path="/cases/:caseId" element={<Case />} />
-          </Route>
-        ) : (
-          ""
-        )}
-        {adminRole.includes(userRole) ? (
-          <Route element={<PrivateRoutes />}>
-            <Route exact path="/admin/users" element={<Users />} />
-            <Route exact path="/admin/user/new" element={<UserForm />} />
-            <Route path="/admin/user/:userId" element={<UserForm />} />
-          </Route>
-        ) : (
-          ""
-        )}
-        <Route exact path="/" element={<Landing />} />
-        <Route exact path="/login" element={<Login />} />
-      </Routes>
+      {rootLoading ? (
+        <div className="loading-container">
+          <Spin />
+        </div>
+      ) : (
+        <Routes>
+          <Route path="*" element={<NotFound />} />
+          {userRole !== null ? (
+            <Route element={<PrivateRoutes />}>
+              <Route exact path="/welcome" element={<Welcome />} />
+              <Route exact path="/home" element={<Home />} />
+              <Route exact path="/welcome" element={<Welcome />} />
+              <Route exact path="/cases" element={<Cases />} />
+              <Route exact path="/cases/new" element={<Case />} />
+              <Route exact path="/cases/:caseId" element={<Case />} />
+            </Route>
+          ) : (
+            ""
+          )}
+          {adminRole.includes(userRole) ? (
+            <Route element={<PrivateRoutes />}>
+              <Route exact path="/admin/users" element={<Users />} />
+              <Route exact path="/admin/user/new" element={<UserForm />} />
+              <Route path="/admin/user/:userId" element={<UserForm />} />
+            </Route>
+          ) : (
+            ""
+          )}
+          <Route exact path="/" element={<Landing />} />
+          <Route exact path="/login" element={<Login />} />
+        </Routes>
+      )}
     </PageLayout>
   );
 };
