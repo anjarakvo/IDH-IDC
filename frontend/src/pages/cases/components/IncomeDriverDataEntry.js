@@ -21,6 +21,7 @@ import {
   CaretDownFilled,
   CaretUpFilled,
 } from "@ant-design/icons";
+import ReactECharts from "echarts-for-react";
 import { IncomeDriverForm, generateSegmentPayloads, flatten } from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
@@ -138,7 +139,7 @@ const DataFields = ({
   );
 
   return (
-    <Row>
+    <Row gutter={[16, 16]}>
       <Col span={16}>
         <Card
           title={
@@ -254,7 +255,31 @@ const DataFields = ({
           Save
         </Button>
       </Col>
-      <Col span={8}></Col>
+      <Col span={8}>
+        <Card>
+          <ReactECharts
+            option={{
+              yAxis: {
+                type: "value",
+              },
+              xAxis: {
+                type: "category",
+                data: ["Feasible", "Current"],
+              },
+              series: [
+                {
+                  type: "bar",
+                  data: [totalFeasibleIncome, totalCurrentIncome],
+                  label: {
+                    show: true,
+                  },
+                },
+              ],
+            }}
+            style={{ height: "500px", width: "100%" }}
+          />
+        </Card>
+      </Col>
     </Row>
   );
 };
