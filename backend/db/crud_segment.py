@@ -18,7 +18,8 @@ def add_segment(
             name=payload.name,
             case=payload.case,
             target=payload.target,
-            household_size=payload.household_size
+            adult=payload.adult,
+            child=payload.child,
         )
         session.add(segment)
         session.commit()
@@ -47,7 +48,8 @@ def update_segment(
         segment.name = payload.name
         segment.case = payload.case
         segment.target = payload.target
-        segment.household_size = payload.household_size
+        segment.adult = payload.adult
+        segment.child = payload.child
         session.commit()
         session.flush()
         session.refresh(segment)

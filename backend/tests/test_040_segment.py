@@ -21,7 +21,8 @@ class TestSegmentRoute():
             "name": "Segment 1",
             "case": 1,
             "target": 1000,
-            "household_size": 20
+            "adult": 2,
+            "child": 3,
         }]
         # without cred
         res = await client.post(
@@ -42,19 +43,22 @@ class TestSegmentRoute():
             'case': 1,
             'name': 'Segment 1',
             'target': 1000.0,
-            'household_size': 20.0
+            "adult": 2.0,
+            "child": 3.0,
         }]
         # with admin user cred
         payload = [{
             "name": "Segment 2",
             "case": 1,
             "target": 2000,
-            "household_size": 30
+            "adult": 3,
+            "child": 2,
         }, {
             "name": "Segment 3",
             "case": 1,
             "target": 3000,
-            "household_size": 40
+            "adult": 4,
+            "child": 2,
         }]
         res = await client.post(
             app.url_path_for("segment:create"),
@@ -68,13 +72,15 @@ class TestSegmentRoute():
             'case': 1,
             'name': 'Segment 2',
             'target': 2000.0,
-            'household_size': 30.0
+            "adult": 3.0,
+            "child": 2.0,
         }, {
             'id': 3,
             'case': 1,
             'name': 'Segment 3',
             'target': 3000.0,
-            'household_size': 40.0
+            "adult": 4.0,
+            "child": 2.0,
         }]
 
     @pytest.mark.asyncio
@@ -86,7 +92,8 @@ class TestSegmentRoute():
             "name": "Segment 1 Updated",
             "case": 1,
             "target": 2000,
-            "household_size": 100,
+            "adult": 4,
+            "child": 2,
         }]
         # without cred
         res = await client.put(
@@ -107,7 +114,8 @@ class TestSegmentRoute():
             'case': 1,
             'name': 'Segment 1 Updated',
             'target': 2000.0,
-            'household_size': 100.0
+            "adult": 4.0,
+            "child": 2.0,
         }]
         # with admin user cred
         payload = [{
@@ -115,13 +123,16 @@ class TestSegmentRoute():
             "name": "Segment 1",
             "case": 1,
             "target": 2000,
-            "household_size": 100
+            "adult": 5,
+            "child": 0,
         }, {
             "id": 2,
             "name": "Segment 2",
             "case": 1,
             "target": 2000,
-            "household_size": 50
+            "household_size": 50,
+            "adult": 6,
+            "child": 0,
         }]
         res = await client.put(
             app.url_path_for("segment:update"),
@@ -135,13 +146,15 @@ class TestSegmentRoute():
             'case': 1,
             'name': 'Segment 1',
             'target': 2000.0,
-            'household_size': 100.0
+            "adult": 5.0,
+            "child": 0.0,
         }, {
             'id': 2,
             'case': 1,
             'name': 'Segment 2',
             'target': 2000.0,
-            'household_size': 50.0
+            "adult": 6.0,
+            "child": 0.0,
         }]
 
     # test_get_all_segment

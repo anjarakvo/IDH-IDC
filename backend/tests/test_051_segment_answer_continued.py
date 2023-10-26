@@ -49,21 +49,24 @@ class TestSegmentAnswerRouteContinued():
             'case': 1,
             'name': 'Segment 2',
             'target': 2000.0,
-            'household_size': 50.0,
+            'adult': 6.0,
+            'child': 0.0,
             'answers': {}
         }, {
             'id': 3,
             'case': 1,
             'name': 'Segment 3',
             'target': 3000.0,
-            'household_size': 40.0,
+            'adult': 4.0,
+            'child': 2.0,
             'answers': {}
         }, {
             'id': 1,
             'case': 1,
             'name': 'Segment 1',
             'target': 2000.0,
-            'household_size': 100.0,
+            'adult': 5.0,
+            'child': 0.0,
             'answers': {
                 'current-1-1': 100.0,
                 'feasible-1-1': 100.0,
@@ -124,19 +127,22 @@ class TestSegmentAnswerRouteContinued():
                 'case': 1,
                 'name': 'Segment 2',
                 'target': 2000.0,
-                'household_size': 50.0
+                'adult': 6.0,
+                'child': 0.0,
             }, {
                 'id': 3,
                 'case': 1,
                 'name': 'Segment 3',
                 'target': 3000.0,
-                'household_size': 40.0
+                'adult': 4.0,
+                'child': 2.0,
             }, {
                 'id': 1,
                 'case': 1,
                 'name': 'Segment 1',
                 'target': 2000.0,
-                'household_size': 100.0
+                'adult': 5.0,
+                'child': 0.0,
             }],
             "case_commodities": [
                 {

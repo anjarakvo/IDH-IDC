@@ -11,14 +11,16 @@ class SegmentDict(TypedDict):
     case: int
     name: str
     target: Optional[float]
-    household_size: Optional[float]
+    adult: Optional[float]
+    child: Optional[float]
 
 
 class SimplifiedSegmentDict(TypedDict):
     id: int
     name: str
     target: Optional[float]
-    household_size: Optional[float]
+    adult: Optional[float]
+    child: Optional[float]
 
 
 class SegmentWithAnswersDict(TypedDict):
@@ -26,7 +28,8 @@ class SegmentWithAnswersDict(TypedDict):
     case: int
     name: str
     target: Optional[float]
-    household_size: Optional[float]
+    adult: Optional[float]
+    child: Optional[float]
     answers: Optional[dict]
 
 
@@ -37,7 +40,8 @@ class Segment(Base):
     case = Column(Integer, ForeignKey('case.id'))
     name = Column(String, nullable=False)
     target = Column(Float, nullable=True)
-    household_size = Column(Float, nullable=True)
+    adult = Column(Float, nullable=True)
+    child = Column(Float, nullable=True)
 
     case_detail = relationship(
         'Case',
@@ -57,14 +61,16 @@ class Segment(Base):
         name: str,
         case: int,
         target: Optional[float] = None,
-        household_size: Optional[float] = None,
+        adult: Optional[float] = None,
+        child: Optional[float] = None,
         id: Optional[int] = None,
     ):
         self.id = id
         self.case = case
         self.name = name
         self.target = target
-        self.household_size = household_size
+        self.adult = adult
+        self.child = child
 
     def __repr__(self) -> int:
         return f"<Segment {self.id}>"
@@ -76,7 +82,8 @@ class Segment(Base):
             "case": self.case,
             "name": self.name,
             "target": self.target,
-            "household_size": self.household_size,
+            "adult": self.adult,
+            "child": self.child,
         }
 
     @property
@@ -85,7 +92,8 @@ class Segment(Base):
             "id": self.id,
             "name": self.name,
             "target": self.target,
-            "household_size": self.household_size,
+            "adult": self.adult,
+            "child": self.child,
         }
 
     @property
@@ -102,7 +110,8 @@ class Segment(Base):
             "case": self.case,
             "name": self.name,
             "target": self.target,
-            "household_size": self.household_size,
+            "adult": self.adult,
+            "child": self.child,
             "answers": answers
         }
 
@@ -111,7 +120,8 @@ class SegmentBase(BaseModel):
     name: str
     case: int
     target: Optional[float] = None
-    household_size: Optional[float] = None
+    adult: Optional[float] = None
+    child: Optional[float] = None
 
 
 class SegmentUpdateBase(BaseModel):
@@ -119,4 +129,5 @@ class SegmentUpdateBase(BaseModel):
     name: str
     case: int
     target: Optional[float] = None
-    household_size: Optional[float] = None
+    adult: Optional[float] = None
+    child: Optional[float] = None
