@@ -18,62 +18,13 @@ import {
   EditTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
-import { IncomeDriverForm } from "./";
+import {
+  IncomeDriverForm,
+  generateSegmentPayloads,
+  generateSegmentAnswerPayloads,
+} from "./";
 import { api } from "../../../lib";
-import uniq from "lodash/uniq";
 import orderBy from "lodash/orderBy";
-
-const generateSegmentPayloads = (values, currentCaseId, isUpdate = false) => {
-  // generate segment payloads
-  const segmentPayloads = values.map((fv) => {
-    const res = {
-      case: currentCaseId,
-      name: fv.label,
-      target: null,
-      household_size: null,
-    };
-    if (isUpdate) {
-      return {
-        ...res,
-        id: fv?.currentSegmentId || 0,
-      };
-    }
-    return res;
-  });
-  return segmentPayloads;
-};
-
-const generateSegmentAnswerPayloads = (values, commodityList) => {
-  // generate segment answer payloads
-  const segmentAnswerPayloads = [];
-  values.forEach((fv) => {
-    const questionIDs = uniq(
-      Object.keys(fv.answers).map((key) => {
-        const splitted = key.split("-");
-        return parseInt(splitted[2]);
-      })
-    );
-    commodityList.forEach((cl) => {
-      const case_commodity = cl.case_commodity;
-      questionIDs.forEach((qid) => {
-        const fieldKey = `${case_commodity}-${qid}`;
-        const currentValue = fv.answers[`current-${fieldKey}`];
-        const feasibleValue = fv.answers[`feasible-${fieldKey}`];
-        const answerTmp = {
-          case_commodity: case_commodity,
-          segment: fv?.currentSegmentId || 0,
-          question: qid,
-          current_value: currentValue,
-          feasible_value: feasibleValue,
-        };
-        segmentAnswerPayloads.push(answerTmp);
-      });
-    });
-  });
-  return segmentAnswerPayloads.filter(
-    (x) => x.current_value && x.feasible_value
-  );
-};
 
 const DataFields = ({
   segment,
@@ -209,9 +160,6 @@ const DataFields = ({
           style={{ float: "right" }}
           loading={isSaving}
           onClick={handleSave}
-          disabled={
-            !formValues.filter((fv) => fv.key === segmentItem.key).length
-          }
         >
           Save
         </Button>
@@ -232,17 +180,73 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
   // handle save here
   const handleSave = () => {
     setIsSaving(true);
+    const apiCalls = [];
     const postFormValues = formValues.filter((fv) => !fv.currentSegmentId);
-    const postSegmenPayloads = generateSegmentPayloads(
-      postFormValues,
-      currentCaseId
-    );
-    const putSegmenPayloads = generateSegmentPayloads(
-      formValues.filter((fv) => fv.currentSegmentId),
-      currentCaseId,
-      true
-    );
+    const putFormValues = formValues.filter((fv) => fv.currentSegmentId);
+    if (postFormValues.length) {
+      const postPayloads = generateSegmentPayloads(
+        postFormValues,
+        currentCaseId,
+        commodityList
+      );
+      apiCalls.push(api.post("/segment", postPayloads));
+    }
+    if (putFormValues.length) {
+      const putPayloads = generateSegmentPayloads(
+        putFormValues,
+        currentCaseId,
+        commodityList
+      );
+      apiCalls.push(api.put("/segment", putPayloads));
+    }
+    // api call
+    Promise.all(apiCalls)
+      .then((results) => {
+        console.log(results);
+        const [res, ,] = results;
+        // handle after POST
+        const { data } = res;
+        // set currentSegmentId to items state
+        const transformItems = items.map((it) => {
+          const findNewItem = data.find((d) => d.name === it.label);
+          return {
+            ...it,
+            currentSegmentId: findNewItem?.id || it.currentSegmentId,
+          };
+        });
+        setItems(transformItems);
+        // eol set currentSegmentId to items state
 
+        // update form values
+        const transformFormValues = formValues.map((fv) => {
+          const findItem = transformItems.find((it) => it.key === fv.key);
+          if (!findItem) {
+            return fv;
+          }
+          return {
+            ...fv,
+            ...findItem,
+          };
+        });
+        setFormValues(transformFormValues);
+        messageApi.open({
+          type: "success",
+          content: "Segments saved successfully.",
+        });
+      })
+      .catch((e) => {
+        console.error(e);
+        messageApi.open({
+          type: "error",
+          content: "Failed to save segments.",
+        });
+      })
+      .finally(() => {
+        setIsSaving(false);
+      });
+
+    return;
+    // OLD WAY
     // POST
     if (postSegmenPayloads.length) {
       api
@@ -424,6 +428,14 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             },
             ...defaultItems,
           ]);
+          setFormValues([
+            {
+              key: "1",
+              label: "Segment 1",
+              currentSegmentId: null,
+              answers: {},
+            },
+          ]);
         });
     });
   }, [commodityList, setQuestionGroups, currentCaseId]);
@@ -517,6 +529,15 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
         newItems.splice(newItems.length - 1, 1);
         setItems(newItems);
       }
+      setFormValues([
+        ...formValues,
+        {
+          key: newKey.toString(),
+          label: `Segment ${newKey}`,
+          currentSegmentId: null,
+          answers: {},
+        },
+      ]);
     } else {
       setActiveKey(activeKey);
     }

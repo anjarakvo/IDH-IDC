@@ -38,9 +38,10 @@ const Case = () => {
             data.case_commodities.map((x) => x.commodity_type)
           );
           // set commodity list
-          const commodities = data.case_commodities.map((x) => ({
-            ...x,
+          const commodities = data.case_commodities.map((d) => ({
+            ...d,
             currency: data.currency,
+            case_commodity: d.id,
           }));
           setCommodityList(commodities);
           // focus commodity
