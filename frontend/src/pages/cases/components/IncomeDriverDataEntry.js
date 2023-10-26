@@ -18,11 +18,7 @@ import {
   EditTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
-import {
-  IncomeDriverForm,
-  generateSegmentPayloads,
-  generateSegmentAnswerPayloads,
-} from "./";
+import { IncomeDriverForm, generateSegmentPayloads } from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
 
@@ -202,7 +198,6 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
     // api call
     Promise.all(apiCalls)
       .then((results) => {
-        console.log(results);
         const [res, ,] = results;
         // handle after POST
         const { data } = res;
@@ -244,135 +239,6 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       .finally(() => {
         setIsSaving(false);
       });
-
-    return;
-    // OLD WAY
-    // POST
-    if (postSegmenPayloads.length) {
-      api
-        .post("/segment", postSegmenPayloads)
-        .then((res) => {
-          const { data } = res;
-          // set currentSegmentId to items state
-          const transformItems = items.map((it) => {
-            const findNewItem = data.find((d) => d.name === it.label);
-            return {
-              ...it,
-              currentSegmentId: findNewItem?.id || it.currentSegmentId,
-            };
-          });
-          setItems(transformItems);
-          // eol set currentSegmentId to items state
-
-          // update form values
-          const transformFormValues = formValues.map((fv) => {
-            const findItem = transformItems.find((it) => it.key === fv.key);
-            if (!findItem) {
-              return fv;
-            }
-            return {
-              ...fv,
-              ...findItem,
-            };
-          });
-          setFormValues(transformFormValues);
-
-          return postFormValues.map((fv) => {
-            const findItem = transformItems.find((it) => it.key === fv.key);
-            if (!findItem) {
-              return fv;
-            }
-            return {
-              ...fv,
-              ...findItem,
-            };
-          });
-        })
-        .then((values) => {
-          // handle postSegmentAnswersPayloads
-          const segmenAnswerPayloads = generateSegmentAnswerPayloads(
-            values.filter((fv) => fv.currentSegmentId),
-            commodityList
-          );
-          values.forEach((val) => {
-            if (!val.currentSegmentId) {
-              return;
-            }
-            const payload = segmenAnswerPayloads.filter(
-              (x) => x.segment === val.currentSegmentId
-            );
-            api
-              .post(`segment-answer/${val.currentSegmentId}`, payload)
-              .then(() => {
-                console.info("post segment answers success");
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-          });
-        })
-        .then(() => {
-          messageApi.open({
-            type: "success",
-            content: "Segments saved successfully.",
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-          messageApi.open({
-            type: "error",
-            content: "Failed to save segments.",
-          });
-        })
-        .finally(() => {
-          setIsSaving(false);
-        });
-    }
-
-    // PUT
-    if (putSegmenPayloads.length) {
-      api
-        .put("/segment", putSegmenPayloads)
-        .then(() => {
-          // handle postSegmentAnswersPayloads
-          const segmenAnswerPayloads = generateSegmentAnswerPayloads(
-            formValues.filter((fv) => fv.currentSegmentId),
-            commodityList
-          );
-          formValues.forEach((val) => {
-            if (!val.currentSegmentId) {
-              return;
-            }
-            const payload = segmenAnswerPayloads.filter(
-              (x) => x.segment === val.currentSegmentId
-            );
-            api
-              .put(`segment-answer/${val.currentSegmentId}`, payload)
-              .then(() => {
-                console.info("put segment answers success");
-              })
-              .catch((e) => {
-                console.error(e);
-              });
-          });
-        })
-        .then(() => {
-          messageApi.open({
-            type: "success",
-            content: "Segments updated successfully.",
-          });
-        })
-        .catch((e) => {
-          console.error(e);
-          messageApi.open({
-            type: "error",
-            content: "Failed to update segments.",
-          });
-        })
-        .finally(() => {
-          setIsSaving(false);
-        });
-    }
   };
 
   useEffect(() => {
