@@ -37,6 +37,27 @@ const IncomeDriverForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCaseId]);
 
+  useEffect(() => {
+    // for total income
+    const currentFormValue = formValues.find((x) => x.key === segmentItem.key);
+    const totalCurrentIncomeAnswer = totalIncomeQuestion
+      .map((qs) => currentFormValue?.answers[`current-${qs}`])
+      .filter((a) => a)
+      .reduce((acc, a) => acc + a, 0);
+    setTotalCurrentIncome(totalCurrentIncomeAnswer);
+    const totalFeasibleIncomeAnswer = totalIncomeQuestion
+      .map((qs) => currentFormValue?.answers[`feasible-${qs}`])
+      .filter((a) => a)
+      .reduce((acc, a) => acc + a, 0);
+    setTotalFeasibleIncome(totalFeasibleIncomeAnswer);
+  }, [
+    formValues,
+    segmentItem,
+    totalIncomeQuestion,
+    setTotalCurrentIncome,
+    setTotalFeasibleIncome,
+  ]);
+
   const flattenQuestionList = flatten(group.questions);
 
   const onValuesChange = (value, currentValues) => {
@@ -72,16 +93,6 @@ const IncomeDriverForm = ({
       (q) => q.id === parseInt(questionId)
     );
     if (!question.parent) {
-      // for total income
-      const totalIncomeAnswer = totalIncomeQuestion
-        .map((qs) => currentFormValue?.answers[`${fieldName}-${qs}`])
-        .filter((a) => a)
-        .reduce((acc, a) => acc + a, 0);
-      if (fieldName === "current") {
-        setTotalCurrentIncome(totalIncomeAnswer);
-      } else {
-        setTotalFeasibleIncome(totalIncomeAnswer);
-      }
       setRefresh(!refresh);
       return;
     }
@@ -103,7 +114,7 @@ const IncomeDriverForm = ({
 
     let sumAllChildrensValues = 0;
 
-    if (!parentQuestion.default_value) {
+    if (!parentQuestion?.default_value) {
       sumAllChildrensValues = allChildrensValues.reduce(
         (acc, { value }) => acc + value,
         0
