@@ -63,8 +63,8 @@ const IncomeDriverForm = ({
     ]);
     // eol form values
     const id = Object.keys(value)[0];
-    const dataType = `${id.split("-")[0]}-${id.split("-")[1]}`;
-    const questionId = id.split("-")[2];
+    const [fieldName, caseCommodityId, questionId] = id.split("-");
+    const dataType = `${fieldName}-${caseCommodityId}`;
     const question = flattenQuestionList.find(
       (q) => q.id === parseInt(questionId)
     );
