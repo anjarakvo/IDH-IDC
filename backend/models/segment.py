@@ -1,9 +1,10 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from sqlalchemy.orm import relationship
-from typing import Optional
+from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+from models.segment_answer import SegmentAnswerBase
 
 
 class SegmentDict(TypedDict):
@@ -122,6 +123,7 @@ class SegmentBase(BaseModel):
     target: Optional[float] = None
     adult: Optional[float] = None
     child: Optional[float] = None
+    answers: Optional[List[SegmentAnswerBase]] = []
 
 
 class SegmentUpdateBase(BaseModel):
@@ -131,3 +133,4 @@ class SegmentUpdateBase(BaseModel):
     target: Optional[float] = None
     adult: Optional[float] = None
     child: Optional[float] = None
+    answers: Optional[List[SegmentAnswerBase]] = []

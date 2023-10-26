@@ -59,7 +59,14 @@ class TestSegmentAnswerRouteContinued():
             'target': 3000.0,
             'adult': 4.0,
             'child': 2.0,
-            'answers': {}
+            'answers': {
+                'current-1-1': 10000.0,
+                'current-1-2': None,
+                'current-1-3': None,
+                'feasible-1-1': None,
+                'feasible-1-2': None,
+                'feasible-1-3': 500.0
+            }
         }, {
             'id': 1,
             'case': 1,

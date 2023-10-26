@@ -59,6 +59,17 @@ class TestSegmentRoute():
             "target": 3000,
             "adult": 4,
             "child": 2,
+            "answers": [{
+                "case_commodity": 1,
+                "question": 1,
+                "current_value": 10000,
+                "feasible_value": None,
+            }, {
+                "case_commodity": 1,
+                "question": 2,
+                "current_value": None,
+                "feasible_value": None,
+            }]
         }]
         res = await client.post(
             app.url_path_for("segment:create"),
@@ -133,6 +144,29 @@ class TestSegmentRoute():
             "household_size": 50,
             "adult": 6,
             "child": 0,
+        }, {
+            "id": 3,
+            "name": "Segment 3",
+            "case": 1,
+            "target": 3000,
+            "adult": 4,
+            "child": 2,
+            "answers": [{
+                "case_commodity": 1,
+                "question": 1,
+                "current_value": 10000,
+                "feasible_value": None,
+            }, {
+                "case_commodity": 1,
+                "question": 2,
+                "current_value": None,
+                "feasible_value": None,
+            }, {
+                "case_commodity": 1,
+                "question": 3,
+                "current_value": None,
+                "feasible_value": 500,
+            }]
         }]
         res = await client.put(
             app.url_path_for("segment:update"),
@@ -155,6 +189,13 @@ class TestSegmentRoute():
             'target': 2000.0,
             "adult": 6.0,
             "child": 0.0,
+        }, {
+            'id': 3,
+            'case': 1,
+            'name': 'Segment 3',
+            'target': 3000.0,
+            "adult": 4.0,
+            "child": 2.0,
         }]
 
     # test_get_all_segment

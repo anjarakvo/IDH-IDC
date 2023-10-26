@@ -21,6 +21,15 @@ def add_segment(
             adult=payload.adult,
             child=payload.child,
         )
+        # handle segment answers
+        for val in payload.answers:
+            segment_answer = SegmentAnswer(
+                case_commodity=val.case_commodity,
+                question=val.question,
+                current_value=val.current_value,
+                feasible_value=val.feasible_value,
+            )
+            segment.segment_answers.append(segment_answer)
         session.add(segment)
         session.commit()
         session.flush()
@@ -50,6 +59,26 @@ def update_segment(
         segment.target = payload.target
         segment.adult = payload.adult
         segment.child = payload.child
+        # delete prev segment answers
+        if payload.answers:
+            prev_segment_answers = (
+                session.query(SegmentAnswer)
+                .filter(SegmentAnswer.segment == payload.id)
+                .all()
+            )
+            for sa in prev_segment_answers:
+                session.delete(sa)
+            session.commit()
+        # handle segment answers
+        for val in payload.answers:
+            segment_answer = SegmentAnswer(
+                segment=segment.id,
+                case_commodity=val.case_commodity,
+                question=val.question,
+                current_value=val.current_value,
+                feasible_value=val.feasible_value,
+            )
+            segment.segment_answers.append(segment_answer)
         session.commit()
         session.flush()
         session.refresh(segment)
