@@ -253,6 +253,7 @@ const CaseProfile = ({
       currency: values.currency,
       area_size_unit: values.area_size_unit,
       volume_measurement_unit: values.volume_measurement_unit,
+      commodity_type: "focus",
     };
     let commodities = [initial_commodities];
     if (secondary) {
@@ -264,6 +265,7 @@ const CaseProfile = ({
           currency: values.currency,
           area_size_unit: values["1-area_size_unit"],
           volume_measurement_unit: values["1-volume_measurement_unit"],
+          commodity_type: "secondary",
         },
       ];
       other_commodities = [
@@ -286,6 +288,7 @@ const CaseProfile = ({
           currency: values.currency,
           area_size_unit: values["2-area_size_unit"],
           volume_measurement_unit: values["2-volume_measurement_unit"],
+          commodity_type: "tertiary",
         },
       ];
       other_commodities = [
@@ -300,7 +303,14 @@ const CaseProfile = ({
       ];
     }
     // diversified_commodities
-    commodities = [...commodities, initial_commodities];
+    commodities = [
+      ...commodities,
+      {
+        ...initial_commodities,
+        commodity_type: "diversified",
+        commodity: null,
+      },
+    ];
     const payload = {
       name: values.name,
       description: values.description,
@@ -322,8 +332,6 @@ const CaseProfile = ({
       tags: values.tags || null,
     };
 
-    setCommodityList(commodities);
-
     const paramCaseId = caseId ? caseId : currentCaseId;
     const apiCall =
       currentCaseId || caseId
@@ -331,7 +339,18 @@ const CaseProfile = ({
         : api.post("case", payload);
     apiCall
       .then((res) => {
-        setCurrentCaseId(res?.data?.id);
+        const { data } = res;
+        setCurrentCaseId(data?.id);
+        const transformCommodities = commodities.map((cm) => {
+          const findCm = data.case_commodities.find(
+            (dcm) => dcm.commodity_type === cm.commodity_type
+          );
+          return {
+            ...cm,
+            case_commodity: findCm.id,
+          };
+        });
+        setCommodityList(transformCommodities);
         setFinished([...completed, "Case Profile"]);
         setPage("Income Driver Data Entry");
       })

@@ -1,17 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, Form, Row, Col } from "antd";
 import { Questions, flatten, indentSize, getFunctionDefaultValue } from "./";
+import isEmpty from "lodash/isEmpty";
 
-const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
+const IncomeDriverForm = ({
+  group,
+  groupIndex,
+  commodity,
+  formValues,
+  setFormValues,
+  segmentItem,
+  currentCaseId,
+}) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
+
+  useEffect(() => {
+    // set current feasible initial value
+    if (currentCaseId) {
+      const findValue = formValues.find((fv) => fv.key === segmentItem.key);
+      if (!findValue && isEmpty(findValue)) {
+        return;
+      }
+      Object.keys(findValue.answers).forEach((key) => {
+        const val = findValue.answers[key];
+        form.setFieldsValue({
+          [key]: val,
+        });
+      });
+      // refresh percentage
+      setRefresh(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentCaseId]);
 
   const flattenQuestionList = flatten(group.questions);
 
   const onValuesChange = (value, currentValues) => {
+    // handle form values
+    const defaultFormValue = {
+      ...segmentItem,
+      case_commodity: commodity.case_commodity,
+      answers: {},
+    };
+    const filteredFormValues = formValues.filter(
+      (x) => x.key !== segmentItem.key
+    );
+    let currentFormValue = formValues.find((x) => x.key === segmentItem.key);
+    currentFormValue = isEmpty(currentFormValue)
+      ? defaultFormValue
+      : currentFormValue;
+    setFormValues([
+      ...filteredFormValues,
+      {
+        ...currentFormValue,
+        case_commodity: commodity.case_commodity,
+        answers: {
+          ...currentFormValue.answers,
+          ...currentValues,
+        },
+      },
+    ]);
+    // eol form values
     const id = Object.keys(value)[0];
-    const dataType = id.split("-")[0];
-    const questionId = id.split("-")[1];
+    const [fieldName, caseCommodityId, questionId] = id.split("-");
+    const dataType = `${fieldName}-${caseCommodityId}`;
     const question = flattenQuestionList.find(
       (q) => q.id === parseInt(questionId)
     );
@@ -52,6 +105,20 @@ const IncomeDriverForm = ({ group, groupIndex, commodity }) => {
 
     const parentQuestionId = `${dataType}-${question.parent}`;
     if (parentQuestion) {
+      // handle form values
+      setFormValues([
+        ...filteredFormValues,
+        {
+          ...currentFormValue,
+          case_commodity: commodity.case_commodity,
+          answers: {
+            ...currentFormValue.answers,
+            ...currentValues,
+            [parentQuestionId]: sumAllChildrensValues,
+          },
+        },
+      ]);
+      // eol handle form values
       form.setFieldsValue({
         [parentQuestionId]: sumAllChildrensValues,
       });
