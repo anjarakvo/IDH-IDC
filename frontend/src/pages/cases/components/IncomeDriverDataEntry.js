@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Row,
   Col,
@@ -9,6 +9,7 @@ import {
   Input,
   Popover,
   message,
+  InputNumber,
 } from "antd";
 import {
   PlusCircleFilled,
@@ -18,7 +19,7 @@ import {
   EditTwoTone,
   CloseCircleTwoTone,
 } from "@ant-design/icons";
-import { IncomeDriverForm, generateSegmentPayloads } from "./";
+import { IncomeDriverForm, generateSegmentPayloads, flatten } from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
 
@@ -39,6 +40,8 @@ const DataFields = ({
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(segmentLabel);
+  const [totalCurrentIncome, setTotalCurrentIncome] = useState(0);
+  const [totalFeasibleIncome, setTotalFeasibleIncome] = useState(0);
 
   const finishEditing = () => {
     renameItem(segment, newName);
@@ -48,6 +51,17 @@ const DataFields = ({
     setNewName(segmentLabel);
     setEditing(false);
   };
+
+  const totalIncomeQuestion = useMemo(() => {
+    const qs = questionGroups.map((group) => {
+      const questions = flatten(group.questions).filter((q) => !q.parent);
+      const commodity = commodityList.find(
+        (c) => c.commodity === group.commodity_id
+      );
+      return questions.map((q) => `${commodity.case_commodity}-${q.id}`);
+    });
+    return qs.flatMap((q) => q);
+  }, [questionGroups, commodityList]);
 
   const ButtonEdit = () => (
     <Button
@@ -139,18 +153,65 @@ const DataFields = ({
               <InfoCircleFilled />
             </small>
           </h3>
-          {questionGroups.map((group, groupIndex) => (
-            <IncomeDriverForm
-              group={group}
-              groupIndex={groupIndex}
-              commodity={commodityList[groupIndex]}
-              key={groupIndex}
-              formValues={formValues}
-              setFormValues={setFormValues}
-              segmentItem={segmentItem}
-              currentCaseId={currentCaseId}
-            />
-          ))}
+          <Card.Grid
+            style={{
+              width: "100%",
+            }}
+            hoverable={false}
+          >
+            <Row gutter={[16, 16]} align="middle">
+              <Col span={14}></Col>
+              <Col span={4}>
+                <h4>Current</h4>
+              </Col>
+              <Col span={4}>
+                <h4>Feasible</h4>
+              </Col>
+              <Col span={2}></Col>
+            </Row>
+            <Row
+              gutter={[16, 16]}
+              style={{
+                borderBottom: "1px solid #f0f0f0",
+                padding: "8px 0",
+              }}
+              align="middle"
+            >
+              <Col span={14}>
+                <h2>Total Income</h2>
+              </Col>
+              <Col span={4}>
+                <InputNumber
+                  value={totalCurrentIncome}
+                  disabled
+                  style={{ width: "100%" }}
+                />
+              </Col>
+              <Col span={4}>
+                <InputNumber
+                  value={totalFeasibleIncome}
+                  disabled
+                  style={{ width: "100%" }}
+                />
+              </Col>
+              <Col span={2}></Col>
+            </Row>
+            {questionGroups.map((group, groupIndex) => (
+              <IncomeDriverForm
+                group={group}
+                groupIndex={groupIndex}
+                commodity={commodityList[groupIndex]}
+                key={groupIndex}
+                formValues={formValues}
+                setFormValues={setFormValues}
+                segmentItem={segmentItem}
+                currentCaseId={currentCaseId}
+                totalIncomeQuestion={totalIncomeQuestion}
+                setTotalCurrentIncome={setTotalCurrentIncome}
+                setTotalFeasibleIncome={setTotalFeasibleIncome}
+              />
+            ))}
+          </Card.Grid>
         </Card>
         <Button
           htmlType="submit"

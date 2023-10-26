@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Card, Form, Row, Col } from "antd";
+import { Form } from "antd";
 import { Questions, flatten, indentSize, getFunctionDefaultValue } from "./";
 import isEmpty from "lodash/isEmpty";
 
@@ -11,6 +11,9 @@ const IncomeDriverForm = ({
   setFormValues,
   segmentItem,
   currentCaseId,
+  totalIncomeQuestion,
+  setTotalCurrentIncome,
+  setTotalFeasibleIncome,
 }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
@@ -69,6 +72,16 @@ const IncomeDriverForm = ({
       (q) => q.id === parseInt(questionId)
     );
     if (!question.parent) {
+      // for total income
+      const totalIncomeAnswer = totalIncomeQuestion
+        .map((qs) => currentFormValue?.answers[`${fieldName}-${qs}`])
+        .filter((a) => a)
+        .reduce((acc, a) => acc + a, 0);
+      if (fieldName === "current") {
+        setTotalCurrentIncome(totalIncomeAnswer);
+      } else {
+        setTotalFeasibleIncome(totalIncomeAnswer);
+      }
       setRefresh(!refresh);
       return;
     }
@@ -133,17 +146,19 @@ const IncomeDriverForm = ({
   };
 
   return (
-    <Card.Grid
+    <div
       style={{
-        width: "100%",
-        backgroundColor: groupIndex ? "#ececec" : "",
+        backgroundColor: groupIndex ? "#ececec" : "transparent",
+        marginLeft: groupIndex ? -12 : 0,
+        marginRight: groupIndex ? -12 : 0,
       }}
-      hoverable={false}
     >
-      {groupIndex === 1 && <h3>Diversified Income</h3>}
+      {groupIndex === 1 && (
+        <h3 className="diversified-income-title">Diversified Income</h3>
+      )}
       <h3
         style={{
-          paddingLeft: !groupIndex ? 24 : 54,
+          paddingLeft: !groupIndex ? 24 : 45,
           backgroundColor: groupIndex ? "#dddddd" : "",
         }}
       >
@@ -154,28 +169,13 @@ const IncomeDriverForm = ({
           : ""}{" "}
         {group.commodity_name}
       </h3>
-      {!groupIndex && (
-        <Row
-          gutter={[16, 16]}
-          style={{ borderBottom: "1px solid #f0f0f0" }}
-          align="middle"
-        >
-          <Col span={14}></Col>
-          <Col span={5}>
-            <h4>Current</h4>
-          </Col>
-          <Col span={5}>
-            <h4>Feasible</h4>
-          </Col>
-        </Row>
-      )}
       <Form
         name={`drivers-income-${groupIndex}`}
         layout="vertical"
         form={form}
         onValuesChange={onValuesChange}
       >
-        {group.questions.map((question) => (
+        {group.questions.map((question, questionIndex) => (
           <Questions
             key={question.id}
             indent={!groupIndex ? 0 : indentSize}
@@ -184,11 +184,16 @@ const IncomeDriverForm = ({
             refresh={refresh}
             commodityName={group?.commodity_name}
             allQuestions={flattenQuestionList}
+            totalIncome={
+              !groupIndex &&
+              questionIndex === 0 &&
+              question.question_type === "aggregator"
+            }
             {...question}
           />
         ))}
       </Form>
-    </Card.Grid>
+    </div>
   );
 };
 
