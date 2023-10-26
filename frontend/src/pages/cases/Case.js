@@ -7,6 +7,7 @@ import "./cases.scss";
 import { api } from "../../lib";
 import dayjs from "dayjs";
 import isEmpty from "lodash/isEmpty";
+import orderBy from "lodash/orderBy";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
@@ -37,8 +38,9 @@ const Case = () => {
           setInitialCommodityTypes(
             data.case_commodities.map((x) => x.commodity_type)
           );
-          // set commodity list
-          const commodities = data.case_commodities.map((d) => ({
+          // set commodity list and order by id to match
+          // focus, secondary, tertiary, diversified order
+          const commodities = orderBy(data.case_commodities, "id").map((d) => ({
             ...d,
             currency: data.currency,
             case_commodity: d.id,
