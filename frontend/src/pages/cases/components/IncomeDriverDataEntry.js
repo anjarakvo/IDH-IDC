@@ -34,6 +34,7 @@ const DataFields = ({
   segmentItem,
   handleSave,
   isSaving,
+  currentCaseId,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -147,6 +148,7 @@ const DataFields = ({
               formValues={formValues}
               setFormValues={setFormValues}
               segmentItem={segmentItem}
+              currentCaseId={currentCaseId}
             />
           ))}
         </Card>
@@ -356,6 +358,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             segmentItem={{ ...item, label: newLabel }}
             handleSave={handleSave}
             isSaving={isSaving}
+            currentCaseId={currentCaseId}
           />
         );
         // handle form values
@@ -432,6 +435,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
                   segmentItem={item}
                   handleSave={handleSave}
                   isSaving={isSaving}
+                  currentCaseId={currentCaseId}
                 />
               ),
           }))}

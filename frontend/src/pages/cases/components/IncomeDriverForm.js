@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { Card, Form, Row, Col } from "antd";
-import { useParams } from "react-router-dom";
 import { Questions, flatten, indentSize, getFunctionDefaultValue } from "./";
 import isEmpty from "lodash/isEmpty";
 
@@ -11,14 +10,14 @@ const IncomeDriverForm = ({
   formValues,
   setFormValues,
   segmentItem,
+  currentCaseId,
 }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
-  const { caseId } = useParams();
 
   useEffect(() => {
     // set current feasible initial value
-    if (caseId) {
+    if (currentCaseId) {
       const findValue = formValues.find((fv) => fv.key === segmentItem.key);
       if (!findValue && isEmpty(findValue)) {
         return;
@@ -33,7 +32,7 @@ const IncomeDriverForm = ({
       setRefresh(true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [caseId]);
+  }, [currentCaseId]);
 
   const flattenQuestionList = flatten(group.questions);
 
