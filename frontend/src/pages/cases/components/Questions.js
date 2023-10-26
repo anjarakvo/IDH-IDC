@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Row,
   Col,
   Form,
   InputNumber,
-  Row,
   Space,
   Switch,
   Popover,
@@ -101,7 +101,7 @@ const Questions = ({
   return (
     <>
       <Row
-        gutter={[16, 16]}
+        gutter={[8, 8]}
         style={{ borderBottom: "1px solid #f0f0f0", display: hidden && "none" }}
         align="middle"
       >

@@ -18,6 +18,8 @@ import {
   CheckCircleTwoTone,
   EditTwoTone,
   CloseCircleTwoTone,
+  CaretDownFilled,
+  CaretUpFilled,
 } from "@ant-design/icons";
 import { IncomeDriverForm, generateSegmentPayloads, flatten } from "./";
 import { api } from "../../../lib";
@@ -42,6 +44,7 @@ const DataFields = ({
   const [newName, setNewName] = useState(segmentLabel);
   const [totalCurrentIncome, setTotalCurrentIncome] = useState(0);
   const [totalFeasibleIncome, setTotalFeasibleIncome] = useState(0);
+  const [percentage, setPercentage] = useState(0);
 
   const finishEditing = () => {
     renameItem(segment, newName);
@@ -51,6 +54,12 @@ const DataFields = ({
     setNewName(segmentLabel);
     setEditing(false);
   };
+
+  useEffect(() => {
+    const percent =
+      ((totalFeasibleIncome - totalCurrentIncome) / totalCurrentIncome) * 100;
+    setPercentage(percent || 0);
+  }, [totalCurrentIncome, totalFeasibleIncome]);
 
   const totalIncomeQuestion = useMemo(() => {
     const qs = questionGroups.map((group) => {
@@ -159,7 +168,7 @@ const DataFields = ({
             }}
             hoverable={false}
           >
-            <Row gutter={[16, 16]} align="middle">
+            <Row gutter={[8, 8]} align="middle">
               <Col span={14}></Col>
               <Col span={4}>
                 <h4>Current</h4>
@@ -170,7 +179,7 @@ const DataFields = ({
               <Col span={2}></Col>
             </Row>
             <Row
-              gutter={[16, 16]}
+              gutter={[8, 8]}
               style={{
                 borderBottom: "1px solid #f0f0f0",
                 padding: "8px 0",
@@ -194,7 +203,29 @@ const DataFields = ({
                   style={{ width: "100%" }}
                 />
               </Col>
-              <Col span={2}></Col>
+              <Col span={2}>
+                <Space>
+                  {percentage === 0 ? null : percentage > 0 ? (
+                    <CaretUpFilled className="ceret-up" />
+                  ) : (
+                    <CaretDownFilled className="ceret-down" />
+                  )}
+                  <div
+                    className={
+                      percentage === 0
+                        ? ""
+                        : percentage > 0
+                        ? "ceret-up"
+                        : "ceret-down"
+                    }
+                  >
+                    {totalFeasibleIncome < totalCurrentIncome
+                      ? -percentage.toFixed(0)
+                      : percentage.toFixed(0)}
+                    %
+                  </div>
+                </Space>
+              </Col>
             </Row>
             {questionGroups.map((group, groupIndex) => (
               <IncomeDriverForm
@@ -454,7 +485,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       });
       setItems(newItems);
       setActiveKey(newKey.toString());
-      // remove add tab after 5 segments
+
       if (newKey === 5) {
         newItems.splice(newItems.length - 1, 1);
         setItems(newItems);
