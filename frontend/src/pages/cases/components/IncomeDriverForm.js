@@ -181,7 +181,7 @@ const IncomeDriverForm = ({
         {group.commodity_name}
       </h3>
       <Form
-        name={`drivers-income-${groupIndex}`}
+        name={`drivers-income-${segmentItem.key}-${groupIndex}`}
         layout="vertical"
         form={form}
         onValuesChange={onValuesChange}
