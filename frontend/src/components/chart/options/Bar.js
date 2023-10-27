@@ -14,7 +14,14 @@ import {
 } from "./common";
 import { sortBy, isEmpty, sumBy } from "lodash";
 
-const Bar = (data, chartTitle, extra = {}, horizontal = false, grid = {}) => {
+const Bar = (
+  data,
+  percentage,
+  chartTitle,
+  extra = {},
+  horizontal = false,
+  grid = {}
+) => {
   if (isEmpty(data) || !data) {
     return NoData;
   }
@@ -23,7 +30,9 @@ const Bar = (data, chartTitle, extra = {}, horizontal = false, grid = {}) => {
   const { xAxisTitle, yAxisTitle } = axisTitle(extra);
   const total = sumBy(data, "value");
   data = sortBy(data, "order");
-  data = data.map((x) => ({ ...x, percentage: (x.value / total) * 100 }));
+  if (percentage) {
+    data = data.map((x) => ({ ...x, percentage: (x.value / total) * 100 }));
+  }
   const labels = data.map((x) => x.name);
   const option = {
     ...Color,
@@ -34,10 +43,10 @@ const Bar = (data, chartTitle, extra = {}, horizontal = false, grid = {}) => {
       subtext: chartTitle?.subTitle,
     },
     grid: {
-      top: grid?.top ? grid.top : horizontal ? 80 : 20,
-      bottom: grid?.bottom ? grid.bottom : horizontal ? 28 : 20,
-      left: grid?.left ? grid.left : horizontal ? 100 : 0,
-      right: grid?.right ? grid.right : horizontal ? 20 : 0,
+      top: grid?.top ? grid.top : horizontal ? 80 : 50,
+      bottom: grid?.bottom ? grid.bottom : horizontal ? 58 : 50,
+      left: grid?.left ? grid.left : horizontal ? 100 : 50,
+      right: grid?.right ? grid.right : horizontal ? 50 : 0,
       show: true,
       label: {
         color: "#222",
@@ -108,7 +117,7 @@ const Bar = (data, chartTitle, extra = {}, horizontal = false, grid = {}) => {
       {
         data: data.map((v, vi) => ({
           name: v.name,
-          value: v.percentage?.toFixed(2),
+          value: percentage ? v.percentage?.toFixed(2) : v.value,
           count: v.value,
           itemStyle: { color: v.color || Color.color[vi] },
         })),
@@ -123,7 +132,7 @@ const Bar = (data, chartTitle, extra = {}, horizontal = false, grid = {}) => {
           ...TextStyle,
           color: "#fff",
           formatter: (s) => {
-            return `${s.value} %`;
+            return `${s.value}${percentage ? " %" : ""}`;
           },
         },
       },
@@ -132,6 +141,7 @@ const Bar = (data, chartTitle, extra = {}, horizontal = false, grid = {}) => {
     ...backgroundColor,
     ...Easing,
     ...extra,
+    ...TextStyle,
   };
   return option;
 };

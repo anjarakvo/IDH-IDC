@@ -117,6 +117,7 @@ export const Legend = {
   itemGap: 10,
   textStyle: {
     fontWeight: "normal",
+    fontFamily: "RocGrotesk",
     fontSize: 12,
     marginLeft: 20,
   },

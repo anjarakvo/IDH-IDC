@@ -256,6 +256,7 @@ const DataFields = ({
         </Button>
       </Col>
       <Chart
+        title="Calculated Household Income"
         span={8}
         data={[
           { name: "Feasible", value: totalFeasibleIncome },

@@ -4,7 +4,7 @@ import ReactECharts from "echarts-for-react";
 import { Bar, BarStack } from "./options";
 
 export const generateOptions = (
-  { type, data, chartTitle },
+  { type, data, chartTitle, percentage },
   extra,
   series,
   legend,
@@ -17,7 +17,7 @@ export const generateOptions = (
     case "BARSTACK":
       return BarStack(data, chartTitle, extra, horizontal, highlighted);
     default:
-      return Bar(data, chartTitle, extra, horizontal, grid);
+      return Bar(data, percentage, chartTitle, extra, horizontal, grid);
   }
 };
 
@@ -38,6 +38,7 @@ const loadingStyle = {
 
 const Chart = ({
   type,
+  percentage = false,
   title = "",
   subTitle = "",
   height = 450,
@@ -62,6 +63,7 @@ const Chart = ({
       type: type,
       data: data,
       chartTitle: chartTitle,
+      percentage: percentage,
     },
     extra,
     series,
@@ -86,7 +88,10 @@ const Chart = ({
         lg={span}
         style={{ height: height, ...styles }}
       >
-        <Card title={title}>
+        <Card
+          title={<h3 className="segment-group">{title}</h3>}
+          className="chart-container"
+        >
           <ReactECharts
             option={option}
             notMerge={true}
