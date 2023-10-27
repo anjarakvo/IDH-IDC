@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Row,
   Col,
@@ -9,6 +9,7 @@ import {
   Input,
   Popover,
   message,
+  InputNumber,
 } from "antd";
 import {
   PlusCircleFilled,
@@ -17,10 +18,23 @@ import {
   CheckCircleTwoTone,
   EditTwoTone,
   CloseCircleTwoTone,
+  CaretDownFilled,
+  CaretUpFilled,
 } from "@ant-design/icons";
-import { IncomeDriverForm, generateSegmentPayloads } from "./";
+import Chart from "../../../components/chart";
+import { IncomeDriverForm, generateSegmentPayloads, flatten } from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
+import groupBy from "lodash/groupBy";
+import map from "lodash/map";
+
+const masterCommodityCategories = window.master?.commodity_categories || [];
+const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
+  const commodities = curr.commodities.reduce((a, c) => {
+    return { ...a, [c.id]: c.name };
+  }, {});
+  return { ...acc, ...commodities };
+}, {});
 
 const DataFields = ({
   segment,
@@ -39,6 +53,9 @@ const DataFields = ({
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(segmentLabel);
+  const [totalCurrentIncome, setTotalCurrentIncome] = useState(0);
+  const [totalFeasibleIncome, setTotalFeasibleIncome] = useState(0);
+  const [percentage, setPercentage] = useState(0);
 
   const finishEditing = () => {
     renameItem(segment, newName);
@@ -48,6 +65,72 @@ const DataFields = ({
     setNewName(segmentLabel);
     setEditing(false);
   };
+
+  useEffect(() => {
+    const percent =
+      ((totalFeasibleIncome - totalCurrentIncome) / totalCurrentIncome) * 100;
+    setPercentage(percent || 0);
+  }, [totalCurrentIncome, totalFeasibleIncome]);
+
+  const totalIncomeQuestion = useMemo(() => {
+    const qs = questionGroups.map((group) => {
+      const questions = flatten(group.questions).filter((q) => !q.parent);
+      const commodity = commodityList.find(
+        (c) => c.commodity === group.commodity_id
+      );
+      return questions.map((q) => `${commodity.case_commodity}-${q.id}`);
+    });
+    return qs.flatMap((q) => q);
+  }, [questionGroups, commodityList]);
+
+  const chartData = useMemo(() => {
+    const chartQuestion = totalIncomeQuestion.map((qid) => {
+      const [caseCommodity, questionId] = qid.split("-");
+      const feasibleId = `feasible-${qid}`;
+      const currentId = `current-${qid}`;
+      const segmentValues = formValues.find((v) => v.key === segment);
+      const feasibleValue = segmentValues.answers?.[feasibleId];
+      const currentValue = segmentValues.answers?.[currentId];
+      const question = questionGroups
+        .flatMap((g) => g.questions)
+        .find((q) => q.id === parseInt(questionId));
+      const commodityId = commodityList.find(
+        (c) => c.case_commodity === parseInt(caseCommodity)
+      ).commodity;
+      return {
+        case_id: caseCommodity,
+        commodity_id: commodityId,
+        question: question,
+        feasibleValue: feasibleValue || 0,
+        currentValue: currentValue || 0,
+      };
+    });
+    const commodityGroup = map(groupBy(chartQuestion, "case_id"), (g) => {
+      const commodityName =
+        commodityNames?.[g[0].commodity_id] || "diversified";
+      return {
+        name: commodityName,
+        title: commodityName,
+        stack: [
+          {
+            name: "Feasible",
+            title: "Feasible",
+            value: g.reduce((a, b) => a + b.feasibleValue, 0),
+            total: g.reduce((a, b) => a + b.feasibleValue, 0),
+            order: 1,
+          },
+          {
+            name: "Current",
+            title: "Current",
+            value: g.reduce((a, b) => a + b.currentValue, 0),
+            total: g.reduce((a, b) => a + b.currentValue, 0),
+            order: 2,
+          },
+        ],
+      };
+    });
+    return commodityGroup;
+  }, [totalIncomeQuestion, formValues, segment, questionGroups, commodityList]);
 
   const ButtonEdit = () => (
     <Button
@@ -115,7 +198,7 @@ const DataFields = ({
   );
 
   return (
-    <Row>
+    <Row gutter={[16, 16]}>
       <Col span={16}>
         <Card
           title={
@@ -139,18 +222,87 @@ const DataFields = ({
               <InfoCircleFilled />
             </small>
           </h3>
-          {questionGroups.map((group, groupIndex) => (
-            <IncomeDriverForm
-              group={group}
-              groupIndex={groupIndex}
-              commodity={commodityList[groupIndex]}
-              key={groupIndex}
-              formValues={formValues}
-              setFormValues={setFormValues}
-              segmentItem={segmentItem}
-              currentCaseId={currentCaseId}
-            />
-          ))}
+          <Card.Grid
+            style={{
+              width: "100%",
+            }}
+            hoverable={false}
+          >
+            <Row gutter={[8, 8]} align="middle">
+              <Col span={14}></Col>
+              <Col span={4}>
+                <h4>Current</h4>
+              </Col>
+              <Col span={4}>
+                <h4>Feasible</h4>
+              </Col>
+              <Col span={2}></Col>
+            </Row>
+            <Row
+              gutter={[8, 8]}
+              style={{
+                borderBottom: "1px solid #f0f0f0",
+                padding: "8px 0",
+              }}
+              align="middle"
+            >
+              <Col span={14}>
+                <h2>Total Income</h2>
+              </Col>
+              <Col span={4}>
+                <InputNumber
+                  value={totalCurrentIncome}
+                  disabled
+                  style={{ width: "100%" }}
+                />
+              </Col>
+              <Col span={4}>
+                <InputNumber
+                  value={totalFeasibleIncome}
+                  disabled
+                  style={{ width: "100%" }}
+                />
+              </Col>
+              <Col span={2}>
+                <Space>
+                  {percentage === 0 ? null : percentage > 0 ? (
+                    <CaretUpFilled className="ceret-up" />
+                  ) : (
+                    <CaretDownFilled className="ceret-down" />
+                  )}
+                  <div
+                    className={
+                      percentage === 0
+                        ? ""
+                        : percentage > 0
+                        ? "ceret-up"
+                        : "ceret-down"
+                    }
+                  >
+                    {totalFeasibleIncome < totalCurrentIncome
+                      ? -percentage.toFixed(0)
+                      : percentage.toFixed(0)}
+                    %
+                  </div>
+                </Space>
+              </Col>
+            </Row>
+            {questionGroups.map((group, groupIndex) => (
+              <IncomeDriverForm
+                group={group}
+                groupIndex={groupIndex}
+                commodity={commodityList[groupIndex]}
+                key={groupIndex}
+                formValues={formValues}
+                setFormValues={setFormValues}
+                segmentItem={segmentItem}
+                currentCaseId={currentCaseId}
+                totalIncomeQuestion={totalIncomeQuestion}
+                setTotalCurrentIncome={setTotalCurrentIncome}
+                setTotalFeasibleIncome={setTotalFeasibleIncome}
+              />
+            ))}
+          </Card.Grid>
         </Card>
         <Button
           htmlType="submit"
@@ -162,7 +314,12 @@ const DataFields = ({
           Save
         </Button>
       </Col>
-      <Col span={8}></Col>
+      <Chart
+        title="Calculated Household Income"
+        span={8}
+        type="BARSTACK"
+        data={chartData}
+      />
     </Row>
   );
 };
@@ -393,7 +550,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
       });
       setItems(newItems);
       setActiveKey(newKey.toString());
-      // remove add tab after 5 segments
+
       if (newKey === 5) {
         newItems.splice(newItems.length - 1, 1);
         setItems(newItems);

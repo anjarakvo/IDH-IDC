@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import {
   Button,
+  Row,
   Col,
   Form,
   InputNumber,
-  Row,
   Space,
   Switch,
   Popover,
@@ -66,6 +66,7 @@ const Questions = ({
   const [disabled, setDisabled] = useState(childrens.length > 0);
 
   const fieldKey = `${units.case_commodity}-${id}`;
+  const hidden = question_type === "aggregator";
 
   const unitName = unit
     .split("/")
@@ -100,8 +101,8 @@ const Questions = ({
   return (
     <>
       <Row
-        gutter={[16, 16]}
-        style={{ borderBottom: "1px solid #f0f0f0" }}
+        gutter={[8, 8]}
+        style={{ borderBottom: "1px solid #f0f0f0", display: hidden && "none" }}
         align="middle"
       >
         <Col
@@ -110,6 +111,8 @@ const Questions = ({
             paddingLeft: indent
               ? childrens.length > 0 && question_type !== "aggregator"
                 ? indent - 40
+                : question_type === "diversified"
+                ? 54
                 : indent
               : 10,
           }}
@@ -128,14 +131,12 @@ const Questions = ({
                 }
               />
             )}
-            <h4>
-              {text}{" "}
-              {question_type === "aggregator" && commodityName
-                ? ` from ${commodityName} `
-                : ""}
-              <small>({unitName})</small>
-            </h4>
-            {infoText.length ? (
+            {!hidden ? (
+              <h4>
+                {text} <small>({unitName})</small>
+              </h4>
+            ) : null}
+            {infoText.length && !hidden ? (
               <Popover content={<div className="fn-info">{infoText}</div>}>
                 <InfoCircleTwoTone twoToneColor="#1677ff" />
               </Popover>
@@ -143,7 +144,7 @@ const Questions = ({
           </Space>
         </Col>
         <Col span={2}>
-          {childrens.length > 0 ? (
+          {childrens.length > 0 && !hidden ? (
             <Switch size="small" onChange={() => setDisabled(!disabled)} />
           ) : null}
         </Col>
