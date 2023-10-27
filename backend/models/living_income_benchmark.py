@@ -1,6 +1,6 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, Float, ForeignKey, String
-from sqlalchemy.orm import relationship
+# from sqlalchemy.orm import relationship
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
@@ -31,18 +31,18 @@ class LivingIncomeBenchmark(Base):
     usd = Column(Float, nullable=False)
     eur = Column(Float, nullable=False)
 
-    country_detail = relationship(
-        'Country',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='country_living_income_benchmark'
-    )
-    region_detail = relationship(
-        'region',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='region_living_income_benchmark'
-    )
+    # country_detail = relationship(
+    #     'Country',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='country_living_income_benchmark'
+    # )
+    # region_detail = relationship(
+    #     'region',
+    #     cascade="all, delete",
+    #     passive_deletes=True,
+    #     backref='region_living_income_benchmark'
+    # )
 
     def __init__(
         self,
@@ -70,7 +70,7 @@ class LivingIncomeBenchmark(Base):
         return f"<LivingIncomeBenchmark {self.id}>"
 
     @property
-    def serializer(self) -> LivingIncomeBenchmarkDict:
+    def serialize(self) -> LivingIncomeBenchmarkDict:
         return {
             "id": self.id,
             "country": self.country,
