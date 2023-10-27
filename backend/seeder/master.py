@@ -82,16 +82,42 @@ def seeder_master(session: Session, engine: create_engine):
         country_ids = row["country_ids"].replace('[', '').replace(']', '').split(', ')
         country = row["country"].replace('[', '').replace(']', '').split(', ')
         intersect = list(set(country_ids) & set(country))
-        if not intersect:
-            res = pd.DataFrame({
-                'id': row['id'],
-                'name': row['name'],
-                'country_ids': "{" + ", ".join(map(str, set(country_ids))) + "}",
-            }, index=[index])
-            filtered_regions.append(res)
+        if intersect:
+            for val in intersect:
+                country_ids.remove(val)
+        country_ids_tmp = []
+        for val in country_ids:
+            try:
+                int(val)
+                country_ids_tmp.append(val)
+            except Exception:
+                continue
+        res = pd.DataFrame({
+            'id': row['id'],
+            'name': row['name'],
+            'country_ids': "{" + ", ".join(map(str, set(country_ids_tmp))) + "}",
+        }, index=[index])
+        filtered_regions.append(res)
     filtered_regions = pd.concat(filtered_regions, ignore_index=True)
     filtered_regions.to_sql("region", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Region")
+
+    ## living income benchmark
+    truncatedb(session=session, table="living_income_benchmark")
+    li_benchmark = pd.read_csv(MASTER_DIR + "li_benchmark.csv")
+    # Filter rows where the list does not contain any string values
+    filtered_lib = li_benchmark[li_benchmark["country_id"] != li_benchmark["country"]]
+    filtered_lib.drop(columns=['country', 'region'], inplace=True)
+    filtered_lib = filtered_lib.rename(columns={
+        "LCU": "lcu",
+        "USD": "usd",
+        "EUR": "eur",
+        "country_id": "country",
+        "region_id": "region",
+    })
+    filtered_lib = filtered_lib.fillna(0)
+    filtered_lib.to_sql("living_income_benchmark", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Living Income Benchmark")
 
     generate_config_file()
 
