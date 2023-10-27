@@ -14,6 +14,7 @@ class RegionDict(TypedDict):
 class RegionDropdown(TypedDict):
     value: int
     label: str
+    country_ids: List[int]
 
 
 class Region(Base):
@@ -49,6 +50,7 @@ class Region(Base):
         return {
             "value": self.id,
             "label": self.name,
+            "country_ids": self.country_ids,
         }
 
 

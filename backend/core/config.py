@@ -12,11 +12,14 @@ from routes.question import question_route
 from routes.segment import segment_route
 from routes.segment_answer import segment_answer_route
 from routes.organisation import organisation_route
+from routes.region import region_route
 
 from models.business_unit import BusinessUnit
 from models.commodity_category import CommodityCategory
 from models.currency import Currency
 from models.country import Country
+
+import db.crud_region as crud_region
 
 
 app = FastAPI(
@@ -61,6 +64,9 @@ def generate_config_file() -> None:
     )
     if countries:
         countries = [c.to_dropdown for c in countries]
+    regions = crud_region.get_all_region(session=session)
+    if regions:
+        regions = [rg.to_dropdown for rg in regions]
     min_js += "var master={};".format(
         str(
             {
@@ -68,6 +74,7 @@ def generate_config_file() -> None:
                 "commodity_categories": commodity_categories,
                 "currencies": currencies,
                 "countries": countries,
+                "regions": regions,
             }
         )
     )
@@ -77,6 +84,7 @@ def generate_config_file() -> None:
 
 # Routes register
 app.include_router(organisation_route)
+app.include_router(region_route)
 app.include_router(user_route)
 app.include_router(tag_route)
 app.include_router(case_route)
