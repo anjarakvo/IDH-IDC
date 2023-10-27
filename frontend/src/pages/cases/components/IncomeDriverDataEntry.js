@@ -25,6 +25,16 @@ import Chart from "../../../components/chart";
 import { IncomeDriverForm, generateSegmentPayloads, flatten } from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
+import groupBy from "lodash/groupBy";
+import map from "lodash/map";
+
+const masterCommodityCategories = window.master?.commodity_categories || [];
+const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
+  const commodities = curr.commodities.reduce((a, c) => {
+    return { ...a, [c.id]: c.name };
+  }, {});
+  return { ...acc, ...commodities };
+}, {});
 
 const DataFields = ({
   segment,
@@ -72,6 +82,55 @@ const DataFields = ({
     });
     return qs.flatMap((q) => q);
   }, [questionGroups, commodityList]);
+
+  const chartData = useMemo(() => {
+    const chartQuestion = totalIncomeQuestion.map((qid) => {
+      const [caseCommodity, questionId] = qid.split("-");
+      const feasibleId = `feasible-${qid}`;
+      const currentId = `current-${qid}`;
+      const segmentValues = formValues.find((v) => v.key === segment);
+      const feasibleValue = segmentValues.answers?.[feasibleId];
+      const currentValue = segmentValues.answers?.[currentId];
+      const question = questionGroups
+        .flatMap((g) => g.questions)
+        .find((q) => q.id === parseInt(questionId));
+      const commodityId = commodityList.find(
+        (c) => c.case_commodity === parseInt(caseCommodity)
+      ).commodity;
+      return {
+        case_id: caseCommodity,
+        commodity_id: commodityId,
+        question: question,
+        feasibleValue: feasibleValue || 0,
+        currentValue: currentValue || 0,
+      };
+    });
+    const commodityGroup = map(groupBy(chartQuestion, "case_id"), (g) => {
+      const commodityName =
+        commodityNames?.[g[0].commodity_id] || "diversified";
+      return {
+        name: commodityName,
+        title: commodityName,
+        stack: [
+          {
+            name: "Feasible",
+            title: "Feasible",
+            value: g.reduce((a, b) => a + b.feasibleValue, 0),
+            total: g.reduce((a, b) => a + b.feasibleValue, 0),
+            order: 1,
+          },
+          {
+            name: "Current",
+            title: "Current",
+            value: g.reduce((a, b) => a + b.currentValue, 0),
+            total: g.reduce((a, b) => a + b.currentValue, 0),
+            order: 2,
+          },
+        ],
+      };
+    });
+    return commodityGroup;
+  }, [totalIncomeQuestion, formValues, segment, questionGroups, commodityList]);
 
   const ButtonEdit = () => (
     <Button
@@ -258,10 +317,8 @@ const DataFields = ({
       <Chart
         title="Calculated Household Income"
         span={8}
-        data={[
-          { name: "Feasible", value: totalFeasibleIncome },
-          { name: "Current", value: totalCurrentIncome },
-        ]}
+        type="BARSTACK"
+        data={chartData}
       />
     </Row>
   );
