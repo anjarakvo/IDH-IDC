@@ -69,6 +69,30 @@ def seeder_master(session: Session, engine: create_engine):
     tags.to_sql("tag", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Tag")
 
+    ## regions
+    truncatedb(session=session, table="region")
+    regions = pd.read_csv(MASTER_DIR + "regions.csv")
+    regions = regions.rename(columns={
+        "region": "name",
+        "country_id": "country_ids"
+    })
+    # Filter rows where the list does not contain any string values
+    filtered_regions = []
+    for index, row in regions.iterrows():
+        country_ids = row["country_ids"].replace('[', '').replace(']', '').split(', ')
+        country = row["country"].replace('[', '').replace(']', '').split(', ')
+        intersect = list(set(country_ids) & set(country))
+        if not intersect:
+            res = pd.DataFrame({
+                'id': row['id'],
+                'name': row['name'],
+                'country_ids': "{" + ", ".join(map(str, set(country_ids))) + "}",
+            }, index=[index])
+            filtered_regions.append(res)
+    filtered_regions = pd.concat(filtered_regions, ignore_index=True)
+    filtered_regions.to_sql("region", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Region")
+
     generate_config_file()
 
 
