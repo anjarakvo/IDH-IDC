@@ -85,7 +85,7 @@ def downgrade() -> None:
     )
     op.add_column(
         'living_income_benchmark',
-        sa.Column('value', sa.Float(), nullable=False),
+        sa.Column('value', sa.Float(), nullable=True),
     )
     op.drop_constraint(
         'living_income_benchmark_region_constraint',
