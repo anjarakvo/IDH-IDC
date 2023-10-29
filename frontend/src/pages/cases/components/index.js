@@ -1,3 +1,5 @@
+import uniq from "lodash/uniq";
+
 const commodityCategories = window.master?.commodity_categories || [];
 const commodities = commodityCategories
   ? commodityCategories.reduce(
@@ -112,6 +114,62 @@ export const getFunctionDefaultValue = (question, prefix, values = {}) => {
   }, []);
   const finalFunction = getFunction.join("");
   return eval(finalFunction);
+};
+
+export const generateSegmentPayloads = (
+  values,
+  currentCaseId,
+  commodityList
+) => {
+  // generate segment payloads
+  const segmentPayloads = values.map((fv) => {
+    let res = {
+      case: currentCaseId,
+      name: fv.label,
+      target: null,
+      household_size: null,
+    };
+    if (fv?.currentSegmentId) {
+      res = {
+        ...res,
+        id: fv.currentSegmentId,
+      };
+    }
+    // generate segment answer payloads
+    let segmentAnswerPayloads = [];
+    const questionIDs = uniq(
+      Object.keys(fv.answers).map((key) => {
+        const splitted = key.split("-");
+        return parseInt(splitted[2]);
+      })
+    );
+    commodityList.forEach((cl) => {
+      const case_commodity = cl.case_commodity;
+      questionIDs.forEach((qid) => {
+        const fieldKey = `${case_commodity}-${qid}`;
+        const currentValue = fv.answers[`current-${fieldKey}`];
+        const feasibleValue = fv.answers[`feasible-${fieldKey}`];
+        const answerTmp = {
+          case_commodity: case_commodity,
+          question: qid,
+          current_value: currentValue,
+          feasible_value: feasibleValue,
+        };
+        segmentAnswerPayloads.push(answerTmp);
+      });
+    });
+    segmentAnswerPayloads = segmentAnswerPayloads.filter(
+      (x) => x.current_value || x.feasible_value
+    );
+    if (segmentAnswerPayloads.length) {
+      res = {
+        ...res,
+        answers: segmentAnswerPayloads,
+      };
+    }
+    return res;
+  });
+  return segmentPayloads;
 };
 
 export { default as AreaUnitFields } from "./AreaUnitFields";

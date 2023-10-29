@@ -5,6 +5,7 @@ from httpx import AsyncClient
 from sqlalchemy.orm import Session
 from tests.test_000_main import Acc
 
+
 sys.path.append("..")
 
 non_admin_account = Acc(email="support@akvo.org", token=None)
@@ -59,14 +60,14 @@ class TestSegmentAnswerRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == [{
-            'id': 1,
+            'id': 6,
             'case_commodity': 1,
             'segment': 1,
             'question': 1,
             'current_value': 10000.0,
             'feasible_value': 5000.0
         }, {
-            'id': 2,
+            'id': 7,
             'case_commodity': 1,
             'segment': 1,
             'question': 2,
@@ -89,7 +90,7 @@ class TestSegmentAnswerRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == [{
-            'id': 3,
+            'id': 8,
             'case_commodity': 1,
             'segment': 1,
             'question': 3,
@@ -99,7 +100,7 @@ class TestSegmentAnswerRoute():
 
     # test_get_all_segment_answer
     # test_get_segment_answer_by_id
-    # test_update_segment_answer
+
     @pytest.mark.asyncio
     async def test_update_segment_answer(
         self, app: FastAPI, session: Session, client: AsyncClient
@@ -140,7 +141,7 @@ class TestSegmentAnswerRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == [{
-            'id': 4,
+            'id': 9,
             'case_commodity': 1,
             'segment': 1,
             'question': 1,
@@ -175,21 +176,21 @@ class TestSegmentAnswerRoute():
         assert res.status_code == 200
         res = res.json()
         assert res == [{
-            'id': 5,
+            'id': 10,
             'case_commodity': 1,
             'segment': 1,
             'question': 1,
             'current_value': 100.0,
             'feasible_value': 100.0
         }, {
-            'id': 6,
+            'id': 11,
             'case_commodity': 1,
             'segment': 1,
             'question': 2,
             'current_value': 200.0,
             'feasible_value': 200.0
         }, {
-            'id': 7,
+            'id': 12,
             'case_commodity': 1,
             'segment': 1,
             'question': 3,

@@ -1,13 +1,17 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Outlet, Navigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
 import { UserState } from "../../store";
 
 const PrivateRoutes = () => {
   const [cookies] = useCookies(["AUTH_TOKEN"]);
-  const { id: userId, active: userActive } = UserState.useState((s) => s);
-  const authTokenAvailable =
-    cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+  const userId = UserState.useState((s) => s.id);
+  const userActive = UserState.useState((s) => s.active);
+
+  const authTokenAvailable = useMemo(() => {
+    const res = cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+    return res;
+  }, [cookies?.AUTH_TOKEN]);
 
   return authTokenAvailable || (userId && userActive) ? (
     <Outlet />

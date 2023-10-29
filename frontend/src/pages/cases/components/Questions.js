@@ -65,6 +65,8 @@ const Questions = ({
   const [collapsed, setCollapsed] = useState(question_type !== "aggregator");
   const [disabled, setDisabled] = useState(childrens.length > 0);
 
+  const fieldKey = `${units.case_commodity}-${id}`;
+
   const unitName = unit
     .split("/")
     .map((u) => u.trim())
@@ -86,13 +88,14 @@ const Questions = ({
   }, [currentValue, feasibleValue, setPercentage]);
 
   useEffect(() => {
-    const current = form.getFieldValue(`current-${id}`);
-    const feasible = form.getFieldValue(`feasible-${id}`);
+    const current = form.getFieldValue(`current-${fieldKey}`);
+    const feasible = form.getFieldValue(`feasible-${fieldKey}`);
     if (current && feasible) {
       setCurrentValue(current);
       setFeasibleValue(feasible);
     }
-  }, [form, refresh, id]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, refresh]);
 
   return (
     <>
@@ -145,12 +148,18 @@ const Questions = ({
           ) : null}
         </Col>
         <Col span={4}>
-          <Form.Item name={`current-${id}`} className="current-feasible-field">
+          <Form.Item
+            name={`current-${fieldKey}`}
+            className="current-feasible-field"
+          >
             <InputNumber style={{ width: "100%" }} disabled={disabled} />
           </Form.Item>
         </Col>
         <Col span={4}>
-          <Form.Item name={`feasible-${id}`} className="current-feasible-field">
+          <Form.Item
+            name={`feasible-${fieldKey}`}
+            className="current-feasible-field"
+          >
             <InputNumber style={{ width: "100%" }} disabled={disabled} />
           </Form.Item>
         </Col>

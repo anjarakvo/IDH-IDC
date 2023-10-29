@@ -90,7 +90,9 @@ def get_all_case(
     if not show_private:
         case = case.filter(Case.private == 0)
     if search:
-        case = case.filter(Case.name.ilike("%{}%".format(search.lower().strip())))
+        case = case.filter(
+            Case.name.ilike("%{}%".format(search.lower().strip()))
+        )
     if focus_commodities:
         case = case.filter(Case.focus_commodity.in_(focus_commodities))
     if tags:
@@ -106,7 +108,8 @@ def get_case_by_id(session: Session, id: int) -> CaseDict:
     case = session.query(Case).filter(Case.id == id).first()
     if not case:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"Case {id} not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Case {id} not found"
         )
     return case
 
@@ -132,7 +135,10 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     case.private = 1 if payload.private else 0
     # handle tag
     if payload.tags:
-        prev_tags = session.query(CaseTag).filter(CaseTag.case == case.id).all()
+        prev_tags = (
+            session.query(CaseTag)
+            .filter(CaseTag.case == case.id).all()
+        )
         for ct in prev_tags:
             session.delete(ct)
             session.commit()
@@ -140,12 +146,25 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
         for tag_id in payload.tags:
             tag = CaseTag(tag=tag_id, case=case.id)
             case.case_tags.append(tag)
-    # store other commodities
-    # TODO ::
-    """
-    What if we remove the other_commodities from case
-    which has existing question value?
-    """
+    # handle update focus crop in crop_commodity table
+    prev_focus_commodity = (
+        session.query(CaseCommodity)
+        .filter(
+            and_(
+                CaseCommodity.case == case.id,
+                CaseCommodity.commodity_type == CaseCommodityType.focus.value,
+            )
+        )
+        .first()
+    )
+    if prev_focus_commodity:
+        # update value
+        prev_focus_commodity.commodity = payload.focus_commodity
+        prev_focus_commodity.area_size_unit = payload.area_size_unit,
+        prev_focus_commodity.volume_measurement_unit = (
+            payload.volume_measurement_unit
+        )
+    # handle update other commodities
     if payload.other_commodities:
         for val in payload.other_commodities:
             breakdown = 1 if val.breakdown else 0
@@ -154,15 +173,19 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
                 .filter(
                     and_(
                         CaseCommodity.case == case.id,
-                        CaseCommodity.commodity == val.commodity,
+                        CaseCommodity.commodity_type == val.commodity_type,
                     )
                 )
                 .first()
             )
             if prev_case_commodity:
-                # update breakdown value
+                # update value
+                prev_case_commodity.commodity = val.commodity
                 prev_case_commodity.breakdown = breakdown
-                prev_case_commodity.commodity_type = val.commodity_type.value
+                prev_case_commodity.area_size_unit = val.area_size_unit,
+                prev_case_commodity.volume_measurement_unit = (
+                    val.volume_measurement_unit
+                )
                 session.commit()
                 session.flush()
                 session.refresh(prev_case_commodity)

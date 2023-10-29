@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useCallback } from "react";
 import "./App.scss";
+import { Spin } from "antd";
 import { useCookies } from "react-cookie";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import { PrivateRoutes } from "./components/route";
 import { PageLayout } from "./components/layout";
 import { Home } from "./pages/home";
@@ -18,8 +19,8 @@ import { adminRole } from "./store/static";
 const optionRoutes = ["organisation/options", "tag/options"];
 
 const App = () => {
-  const [cookies] = useCookies(["AUTH_TOKEN"]);
-  const [authTokenAvailable, setAuthTokenAvailable] = useState(false);
+  const navigate = useNavigate();
+  const [cookies, , removeCookie] = useCookies(["AUTH_TOKEN"]);
   const userRole = UserState.useState((s) => s.role);
 
   useEffect(() => {
@@ -37,12 +38,37 @@ const App = () => {
       });
   }, []);
 
-  useEffect(() => {
-    setAuthTokenAvailable(
-      cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined"
-    );
-    api.setToken(cookies?.AUTH_TOKEN);
-  }, [cookies]);
+  const authTokenAvailable = useMemo(() => {
+    const res = cookies?.AUTH_TOKEN && cookies?.AUTH_TOKEN !== "undefined";
+    if (res) {
+      api.setToken(cookies?.AUTH_TOKEN);
+    }
+    return res;
+  }, [cookies?.AUTH_TOKEN]);
+
+  const signOut = useCallback(() => {
+    removeCookie("AUTH_TOKEN");
+    UserState.update((s) => {
+      s.id = 0;
+      s.fullname = null;
+      s.email = null;
+      s.role = null;
+      s.active = false;
+      s.organisation_detail = {
+        id: 0,
+        name: null,
+      };
+      s.business_unit_detail = [
+        {
+          id: 0,
+          name: null,
+          role: null,
+        },
+      ];
+      s.tags_count = 0;
+      s.cases_count = 0;
+    });
+  }, [removeCookie]);
 
   useEffect(() => {
     if (authTokenAvailable && userRole === null) {
@@ -63,59 +89,49 @@ const App = () => {
           });
         })
         .catch(() => {
-          UserState.update((s) => {
-            s.id = 0;
-            s.fullname = null;
-            s.email = null;
-            s.role = null;
-            s.active = false;
-            s.organisation_detail = {
-              id: 0,
-              name: null,
-            };
-            s.business_unit_detail = [
-              {
-                id: 0,
-                name: null,
-                role: null,
-              },
-            ];
-            s.tags_count = 0;
-            s.cases_count = 0;
-          });
+          signOut();
+          setTimeout(() => {
+            navigate("/");
+          }, 300);
         });
     }
-  }, [authTokenAvailable, userRole]);
+  }, [authTokenAvailable, userRole, navigate, signOut]);
 
   return (
-    <PageLayout testid="page-layout">
-      <Routes>
-        <Route path="*" element={<NotFound />} />
-        {userRole !== null ? (
-          <Route element={<PrivateRoutes />}>
-            <Route exact path="/welcome" element={<Welcome />} />
-            <Route exact path="/home" element={<Home />} />
-            <Route exact path="/welcome" element={<Welcome />} />
-            <Route exact path="/cases" element={<Cases />} />
-            <Route exact path="/cases/new" element={<Case />} />
-            <Route exact path="/cases/:caseId" element={<Case />} />
-          </Route>
-        ) : (
-          ""
-        )}
-        {adminRole.includes(userRole) ? (
-          <Route element={<PrivateRoutes />}>
-            <Route exact path="/admin/users" element={<Users />} />
-            <Route exact path="/admin/user/new" element={<UserForm />} />
-            <Route path="/admin/user/:userId" element={<UserForm />} />
-          </Route>
-        ) : (
-          ""
-        )}
-        <Route exact path="/" element={<Landing />} />
-        <Route exact path="/login" element={<Login />} />
-        <Route exact path="/register" element={<Register />} />
+    <PageLayout testid="page-layout" signOut={signOut}>
+      {authTokenAvailable && userRole === null ? (
+        <div className="loading-container">
+          <Spin />
+        </div>
+      ) : (
+        <Routes>
+          <Route path="*" element={<NotFound />} />
+          {userRole !== null ? (
+            <Route element={<PrivateRoutes />}>
+              <Route exact path="/welcome" element={<Welcome />} />
+              <Route exact path="/home" element={<Home />} />
+              <Route exact path="/welcome" element={<Welcome />} />
+              <Route exact path="/cases" element={<Cases />} />
+              <Route exact path="/cases/new" element={<Case />} />
+              <Route exact path="/cases/:caseId" element={<Case />} />
+            </Route>
+          ) : (
+            ""
+          )}
+          {adminRole.includes(userRole) ? (
+            <Route element={<PrivateRoutes />}>
+              <Route exact path="/admin/users" element={<Users />} />
+              <Route exact path="/admin/user/new" element={<UserForm />} />
+              <Route path="/admin/user/:userId" element={<UserForm />} />
+            </Route>
+          ) : (
+            ""
+          )}
+          <Route exact path="/" element={<Landing />} />
+          <Route exact path="/login" element={<Login />} />
+          <Route exact path="/register" element={<Register />} />
       </Routes>
+      )}
     </PageLayout>
   );
 };

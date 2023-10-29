@@ -10,20 +10,18 @@ const container = document.getElementById("root");
 const root = createRoot(container);
 
 root.render(
-  <React.StrictMode>
-    <Router>
-      <ConfigProvider
-        theme={{
-          token: {
-            colorPrimary: "#26605F",
-            borderRadius: 0,
-          },
-        }}
-      >
-        <App />
-      </ConfigProvider>
-    </Router>
-  </React.StrictMode>
+  <Router>
+    <ConfigProvider
+      theme={{
+        token: {
+          colorPrimary: "#26605F",
+          borderRadius: 0,
+        },
+      }}
+    >
+      <App />
+    </ConfigProvider>
+  </Router>
 );
 
 // If you want to start measuring performance in your app, pass a function

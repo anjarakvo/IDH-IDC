@@ -15,7 +15,6 @@ from models.case_commodity import CaseCommodity
 def build_tree(data, parent=None):
     tree = []
     for item in data:
-        print(item["default_value"])
         if item["parent"] == parent:
             children = build_tree(data, item["id"])
             if children:
