@@ -119,6 +119,19 @@ def seeder_master(session: Session, engine: create_engine):
     filtered_lib.to_sql("living_income_benchmark", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Living Income Benchmark")
 
+    ## CPI
+    truncatedb(session=session, table="cpi")
+    cpi = pd.read_csv(MASTER_DIR + "cpi.csv")
+    # Filter rows where the list does not contain any string values
+    filtered_cpi = cpi[cpi["country_id"] != cpi["country"]]
+    filtered_cpi.drop(columns=['country'], inplace=True)
+    filtered_cpi = filtered_cpi.rename(columns={
+        "country_id": "country",
+    })
+    filtered_cpi = filtered_cpi.fillna(0)
+    filtered_cpi.to_sql("cpi", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: CPI")
+
     generate_config_file()
 
 
