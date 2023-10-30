@@ -221,25 +221,25 @@ const DataFields = ({
           extra={extra}
           className="segment-group"
         >
-          <h3>
-            Income Target
-            <small>
-              <InfoCircleFilled />
-            </small>
-          </h3>
-          <IncomeDriverTarget />
-          <h3>
-            Income Drivers
-            <small>
-              <InfoCircleFilled />
-            </small>
-          </h3>
           <Card.Grid
             style={{
               width: "100%",
             }}
             hoverable={false}
           >
+            <h2 className="section-title">
+              Income Target
+              <small>
+                <InfoCircleFilled />
+              </small>
+            </h2>
+            <IncomeDriverTarget />
+            <h2 className="section-title">
+              Income Drivers
+              <small>
+                <InfoCircleFilled />
+              </small>
+            </h2>
             <Row gutter={[8, 8]} align="middle">
               <Col span={14}></Col>
               <Col span={4}>
