@@ -21,8 +21,6 @@ from models.commodity_category import CommodityCategory
 from models.currency import Currency
 from models.country import Country
 
-import db.crud_region as crud_region
-
 
 app = FastAPI(
     root_path="/api",
@@ -66,9 +64,6 @@ def generate_config_file() -> None:
     )
     if countries:
         countries = [c.to_dropdown for c in countries]
-    regions = crud_region.get_all_region(session=session)
-    if regions:
-        regions = [rg.to_dropdown for rg in regions]
     min_js += "var master={};".format(
         str(
             {
@@ -76,7 +71,6 @@ def generate_config_file() -> None:
                 "commodity_categories": commodity_categories,
                 "currencies": currencies,
                 "countries": countries,
-                "regions": regions,
             }
         )
     )
