@@ -40,7 +40,7 @@ const cpi = [
 
 const formStyle = { width: "100%" };
 
-const IncomeDriverTarget = () => {
+const IncomeDriverTarget = ({ segment }) => {
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
   const [incomeTarget, setIncomeTarget] = useState(0);
@@ -85,7 +85,7 @@ const IncomeDriverTarget = () => {
 
   return (
     <Form
-      name={`drivers-income-target`}
+      name={`drivers-income-target-${segment}`}
       layout="vertical"
       form={form}
       onValuesChange={onValuesChange}

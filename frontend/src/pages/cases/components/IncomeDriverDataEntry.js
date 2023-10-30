@@ -233,7 +233,7 @@ const DataFields = ({
                 <InfoCircleFilled />
               </small>
             </h2>
-            <IncomeDriverTarget />
+            <IncomeDriverTarget segment={segment} />
             <h2 className="section-title">
               Income Drivers
               <small>
