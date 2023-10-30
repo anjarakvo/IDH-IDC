@@ -12,6 +12,8 @@ from models.commodity_category import CommodityCategory
 from models.commodity import Commodity
 from models.country import Country
 from models.business_unit import BusinessUnit
+from models.region import Region
+from models.country_region import CountryRegion
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(BASE_DIR)
@@ -181,3 +183,52 @@ class TestAddMasterDataWithoutDedenpentToUser():
                 'children': []
             }]
         }]
+
+    @pytest.mark.asyncio
+    async def test_add_region_master_data(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        payload = [{
+            "id": 1,
+            "name": "Rural",
+        }, {
+            "id": 2,
+            "name": "Urban",
+        }]
+        for val in payload:
+            region = Region(id=val["id"], name=val["name"])
+            session.add(region)
+            session.commit()
+            session.flush()
+            session.refresh(region)
+        regions = session.query(Region).all()
+        regions = [c.serialize for c in regions]
+        assert regions == [{
+            'id': 1,
+            'name': 'Rural',
+        }, {
+            'id': 2,
+            'name': 'Urban',
+        }]
+        # add country region
+        payload = [{
+            'id': 1,
+            'region': 1,
+            'country': 1,
+        }, {
+            'id': 2,
+            'region': 1,
+            'country': 4,
+        }]
+        for val in payload:
+            country_region = CountryRegion(
+                id=val["id"],
+                country=val["country"],
+                region=val["region"]
+            )
+            session.add(country_region)
+            session.commit()
+            session.flush()
+            session.refresh(country_region)
+        country_regions = session.query(CountryRegion).count()
+        assert country_regions == 2
