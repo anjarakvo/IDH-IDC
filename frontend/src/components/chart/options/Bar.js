@@ -14,14 +14,14 @@ import {
 } from "./common";
 import { sortBy, isEmpty, sumBy } from "lodash";
 
-const Bar = (
+const Bar = ({
   data,
   percentage,
   chartTitle,
   extra = {},
   horizontal = false,
-  grid = {}
-) => {
+  grid = {},
+}) => {
   if (isEmpty(data) || !data) {
     return NoData;
   }
