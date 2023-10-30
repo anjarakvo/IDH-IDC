@@ -22,7 +22,12 @@ import {
   CaretUpFilled,
 } from "@ant-design/icons";
 import Chart from "../../../components/chart";
-import { IncomeDriverForm, generateSegmentPayloads, flatten } from "./";
+import {
+  IncomeDriverForm,
+  IncomeDriverTarget,
+  generateSegmentPayloads,
+  flatten,
+} from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
 import groupBy from "lodash/groupBy";
@@ -216,6 +221,13 @@ const DataFields = ({
           extra={extra}
           className="segment-group"
         >
+          <h3>
+            Income Target
+            <small>
+              <InfoCircleFilled />
+            </small>
+          </h3>
+          <IncomeDriverTarget />
           <h3>
             Income Drivers
             <small>

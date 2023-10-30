@@ -177,4 +177,5 @@ export { default as SideMenu } from "./SideMenu";
 export { default as CaseProfile } from "./CaseProfile";
 export { default as IncomeDriverDataEntry } from "./IncomeDriverDataEntry";
 export { default as IncomeDriverForm } from "./IncomeDriverForm";
+export { default as IncomeDriverTarget } from "./IncomeDriverTarget";
 export { default as Questions } from "./Questions";
