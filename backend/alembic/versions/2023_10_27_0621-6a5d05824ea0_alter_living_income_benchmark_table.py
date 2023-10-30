@@ -45,7 +45,7 @@ def upgrade() -> None:
     )
     op.add_column(
         'living_income_benchmark',
-        sa.Column('household_size', sa.Float(), nullable=False),
+        sa.Column('household_size', sa.Float(), nullable=True),
     )
     op.add_column(
         'living_income_benchmark',
@@ -53,15 +53,15 @@ def upgrade() -> None:
     )
     op.add_column(
         'living_income_benchmark',
-        sa.Column('lcu', sa.Float(), nullable=False),
+        sa.Column('lcu', sa.Float(), nullable=True),
     )
     op.add_column(
         'living_income_benchmark',
-        sa.Column('usd', sa.Float(), nullable=False),
+        sa.Column('usd', sa.Float(), nullable=True),
     )
     op.add_column(
         'living_income_benchmark',
-        sa.Column('eur', sa.Float(), nullable=False),
+        sa.Column('eur', sa.Float(), nullable=True),
     )
 
 
