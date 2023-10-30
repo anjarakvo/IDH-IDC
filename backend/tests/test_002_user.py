@@ -408,6 +408,8 @@ class TestUserEndpoint():
             "email": "super_admin@akvo.org",
             "fullname": "John Doe",
             "role": UserRole.super_admin.value,
+            "all_cases": False,
+            "active": True,
             "organisation": 1,
             "tags": [],
             "business_units": [],
@@ -579,6 +581,7 @@ class TestUserEndpoint():
                 'fullname': 'Invited Admin',
                 'email': 'admin@akvo.org',
                 'role': UserRole.admin.value,
+                'all_cases': False,
                 'active': 1,
                 'business_unit_detail': [{
                     'id': 2,

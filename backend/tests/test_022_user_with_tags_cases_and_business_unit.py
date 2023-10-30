@@ -100,6 +100,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
             'fullname': 'John Doe',
             'email': 'super_admin@akvo.org',
             'role': UserRole.super_admin.value,
+            'all_cases': False,
             'active': True,
             'business_unit_detail': [{
                 'id': 4,

@@ -57,6 +57,7 @@ class UserInfo(TypedDict):
     fullname: str
     email: str
     role: UserRole
+    all_cases: bool
     active: bool
     business_unit_detail: Optional[List[UserBusinessUnitDetailDict]]
     organisation_detail: OrganisationDict
@@ -70,6 +71,8 @@ class UserDetailDict(TypedDict):
     organisation: int
     email: str
     role: UserRole
+    all_cases: bool
+    active: bool
     tags: Optional[List[int]]
     business_units: Optional[List[UserBusinessUnitRoleDict]]
     cases: Optional[List[UserCasePermissionDict]]
@@ -197,6 +200,7 @@ class User(Base):
             "fullname": self.fullname,
             "email": self.email,
             "role": self.role,
+            "all_cases": self.all_cases,
             "active": self.is_active,
             "business_unit_detail": business_unit_detail,
             "organisation_detail": self.user_organisation.serialize,
@@ -222,6 +226,7 @@ class User(Base):
             "fullname": self.fullname,
             "email": self.email,
             "role": self.role,
+            "all_cases": self.all_cases,
             "active": self.is_active,
             "organisation": self.organisation,
             "tags": tags,
@@ -264,6 +269,7 @@ class UserBase(BaseModel):
     fullname: str
     role: Optional[UserRole] = UserRole.user
     password: Optional[SecretStr] = None
+    all_cases: Optional[bool] = False
     tags: Optional[str] = None
     cases: Optional[str] = None
     business_units: Optional[str] = None
@@ -292,6 +298,7 @@ class UserBase(BaseModel):
         email: str = Form(...),
         password: SecretStr = Form(None),
         role: UserRole = Form(None),
+        all_cases: bool = Form(False),
         tags: str = Form(None, description=tags_desc),
         cases: str = Form(None, description=cases_desc),
         business_units: str = Form(None, description=bus_desc),
@@ -302,6 +309,7 @@ class UserBase(BaseModel):
             password=password,
             organisation=organisation,
             role=role,
+            all_cases=all_cases,
             tags=tags,
             cases=cases,
             business_units=business_units,

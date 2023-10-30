@@ -77,7 +77,12 @@ const UserForm = () => {
         .then((res) => {
           const { data } = res;
           setSelectedRole(data?.role || null);
-          setAllCases(data?.all_cases || null);
+          if (
+            data?.allCases &&
+            useRolerWithRadioButtonField.includes(data?.role)
+          ) {
+            setAllCases(data.all_cases ? 1 : 0);
+          }
           setInitValues({
             ...data,
             cases: data?.cases?.length ? data.cases : defFormListValue.cases,
