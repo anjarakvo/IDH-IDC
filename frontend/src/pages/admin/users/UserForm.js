@@ -54,6 +54,7 @@ const UserForm = () => {
   const [initValues, setInitValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
+  const [allCases, setAllCases] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
@@ -76,6 +77,7 @@ const UserForm = () => {
         .then((res) => {
           const { data } = res;
           setSelectedRole(data?.role || null);
+          setAllCases(data?.all_cases || null);
           setInitValues({
             ...data,
             cases: data?.cases?.length ? data.cases : defFormListValue.cases,
@@ -160,9 +162,21 @@ const UserForm = () => {
     [selectedRole]
   );
 
+  const isTagsAndCasesFieldAvailable = useMemo(
+    () =>
+      userRoleWithTagsCasesFieldByDefault.includes(selectedRole) ||
+      (useRolerWithRadioButtonField.includes(selectedRole) && allCases === 0),
+    [selectedRole, allCases]
+  );
+
   const handleOnChangeRole = (value) => {
+    setAllCases(null);
     setSelectedRole(value);
     form.setFieldsValue({ ["all_cases"]: null });
+  };
+
+  const handleOnChangeAllCases = (e) => {
+    setAllCases(e.target.value);
   };
 
   return (
@@ -272,7 +286,10 @@ const UserForm = () => {
                       },
                     ]}
                   >
-                    <Radio.Group>
+                    <Radio.Group
+                      onChange={handleOnChangeAllCases}
+                      value={allCases}
+                    >
                       <Radio value={1}>
                         {selectedRole === "editor" ? "Edit" : "View"} all cases
                         on this Business Unit
@@ -357,7 +374,7 @@ const UserForm = () => {
                 ""
               )}
               {/* Tags */}
-              {userRoleWithTagsCasesFieldByDefault.includes(selectedRole) ? (
+              {isTagsAndCasesFieldAvailable ? (
                 <Card title="Tags">
                   <Form.Item label="Tags" name="tags" required={false}>
                     <Select
@@ -373,7 +390,7 @@ const UserForm = () => {
                 ""
               )}
               {/* Cases Selector */}
-              {userRoleWithTagsCasesFieldByDefault.includes(selectedRole) ? (
+              {isTagsAndCasesFieldAvailable ? (
                 <Card title="Cases">
                   <Form.List name="cases">
                     {(fields, { add, remove } /*{ errors }*/) => {
