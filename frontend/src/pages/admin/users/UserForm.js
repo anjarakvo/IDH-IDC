@@ -40,6 +40,10 @@ const defFormListValue = {
   cases: [{ case: null, permission: null }],
 };
 
+const useRolerWithBusinessUnitFieldByDefault = ["admin"];
+const useRolerWithRadioButtonField = ["editor", "viewer"];
+const userRoleWithTagsCasesFieldByDefault = ["user"];
+
 const UserForm = () => {
   const navigate = useNavigate();
   const { userId } = useParams();
@@ -256,154 +260,166 @@ const UserForm = () => {
             {/* EOL User Information */}
             {/* Other Inputs */}
             <Col span={12}>
-              {/* Tags */}
-              <Card title="Tags">
-                <Form.Item label="Tags" name="tags" required={false}>
-                  <Select
-                    showSearch
-                    mode="tags"
-                    optionFilterProp="children"
-                    filterOption={filterOption}
-                    options={tagOptions}
-                  />
-                </Form.Item>
-              </Card>
               {/* Business Unit Selector */}
-              <Card title="Business Units">
-                <Form.List name="business_units">
-                  {(fields, { add, remove }) => {
-                    return (
-                      <>
-                        {fields.map((field) => {
-                          return (
-                            <Form.Item
-                              key={field.key}
-                              required={isBusinessUnitRequired}
+              {useRolerWithBusinessUnitFieldByDefault.includes(selectedRole) ? (
+                <Card title="Business Units">
+                  <Form.List name="business_units">
+                    {(fields, { add, remove }) => {
+                      return (
+                        <>
+                          {fields.map((field) => {
+                            return (
+                              <Form.Item
+                                key={field.key}
+                                required={isBusinessUnitRequired}
+                              >
+                                <Row gutter={[16, 16]} align="middle">
+                                  <Col span={20}>
+                                    <Form.Item
+                                      {...field}
+                                      label="Business Unit"
+                                      name={[field.name, "business_unit"]}
+                                      rules={[
+                                        {
+                                          required: isBusinessUnitRequired,
+                                          message: "Business Unit is required",
+                                        },
+                                      ]}
+                                    >
+                                      <Select
+                                        showSearch
+                                        allowClear
+                                        optionFilterProp="children"
+                                        filterOption={filterOption}
+                                        options={businessUnitOptions}
+                                      />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col span={4}>
+                                    {fields.length > 1 ? (
+                                      <MinusCircleOutlined
+                                        onClick={() => remove(field.name)}
+                                      />
+                                    ) : (
+                                      ""
+                                    )}
+                                  </Col>
+                                </Row>
+                              </Form.Item>
+                            );
+                          })}
+                          <Form.Item>
+                            <Button
+                              type="dashed"
+                              onClick={() => add()}
+                              style={{
+                                width: "100%",
+                              }}
+                              icon={<PlusOutlined />}
                             >
-                              <Row gutter={[16, 16]} align="middle">
-                                <Col span={20}>
-                                  <Form.Item
-                                    {...field}
-                                    label="Business Unit"
-                                    name={[field.name, "business_unit"]}
-                                    rules={[
-                                      {
-                                        required: isBusinessUnitRequired,
-                                        message: "Business Unit is required",
-                                      },
-                                    ]}
-                                  >
-                                    <Select
-                                      showSearch
-                                      allowClear
-                                      optionFilterProp="children"
-                                      filterOption={filterOption}
-                                      options={businessUnitOptions}
-                                    />
-                                  </Form.Item>
-                                </Col>
-                                <Col span={4}>
-                                  {fields.length > 1 ? (
-                                    <MinusCircleOutlined
-                                      onClick={() => remove(field.name)}
-                                    />
-                                  ) : (
-                                    ""
-                                  )}
-                                </Col>
-                              </Row>
-                            </Form.Item>
-                          );
-                        })}
-                        <Form.Item>
-                          <Button
-                            type="dashed"
-                            onClick={() => add()}
-                            style={{
-                              width: "100%",
-                            }}
-                            icon={<PlusOutlined />}
-                          >
-                            Add Business Unit
-                          </Button>
-                        </Form.Item>
-                      </>
-                    );
-                  }}
-                </Form.List>
-              </Card>
+                              Add Business Unit
+                            </Button>
+                          </Form.Item>
+                        </>
+                      );
+                    }}
+                  </Form.List>
+                </Card>
+              ) : (
+                ""
+              )}
+              {/* Tags */}
+              {userRoleWithTagsCasesFieldByDefault.includes(selectedRole) ? (
+                <Card title="Tags">
+                  <Form.Item label="Tags" name="tags" required={false}>
+                    <Select
+                      showSearch
+                      mode="tags"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      options={tagOptions}
+                    />
+                  </Form.Item>
+                </Card>
+              ) : (
+                ""
+              )}
               {/* Cases Selector */}
-              <Card title="Cases">
-                <Form.List name="cases">
-                  {(fields, { add, remove } /*{ errors }*/) => {
-                    return (
-                      <>
-                        {fields.map((field) => {
-                          return (
-                            <Form.Item key={field.key} required={false}>
-                              <Row gutter={[16, 16]} align="middle">
-                                <Col span={10}>
-                                  <Form.Item
-                                    {...field}
-                                    label="Case"
-                                    name={[field.name, "case"]}
-                                  >
-                                    <Select
-                                      showSearch
-                                      allowClear
-                                      optionFilterProp="children"
-                                      filterOption={filterOption}
-                                      options={[]}
-                                      disabled
-                                    />
-                                  </Form.Item>
-                                </Col>
-                                <Col span={10}>
-                                  <Form.Item
-                                    {...field}
-                                    label="Permission"
-                                    name={[field.name, "permission"]}
-                                  >
-                                    <Select
-                                      showSearch
-                                      allowClear
-                                      optionFilterProp="children"
-                                      filterOption={filterOption}
-                                      options={casePermissionOptions}
-                                      disabled
-                                    />
-                                  </Form.Item>
-                                </Col>
-                                <Col span={4}>
-                                  {fields.length > 1 ? (
-                                    <MinusCircleOutlined
-                                      onClick={() => remove(field.name)}
-                                    />
-                                  ) : (
-                                    ""
-                                  )}
-                                </Col>
-                              </Row>
-                            </Form.Item>
-                          );
-                        })}
-                        <Form.Item>
-                          <Button
-                            type="dashed"
-                            onClick={() => add()}
-                            style={{
-                              width: "100%",
-                            }}
-                            icon={<PlusOutlined />}
-                          >
-                            Add Cases
-                          </Button>
-                        </Form.Item>
-                      </>
-                    );
-                  }}
-                </Form.List>
-              </Card>
+              {userRoleWithTagsCasesFieldByDefault.includes(selectedRole) ? (
+                <Card title="Cases">
+                  <Form.List name="cases">
+                    {(fields, { add, remove } /*{ errors }*/) => {
+                      return (
+                        <>
+                          {fields.map((field) => {
+                            return (
+                              <Form.Item key={field.key} required={false}>
+                                <Row gutter={[16, 16]} align="middle">
+                                  <Col span={10}>
+                                    <Form.Item
+                                      {...field}
+                                      label="Case"
+                                      name={[field.name, "case"]}
+                                    >
+                                      <Select
+                                        showSearch
+                                        allowClear
+                                        optionFilterProp="children"
+                                        filterOption={filterOption}
+                                        options={[]}
+                                        disabled
+                                      />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col span={10}>
+                                    <Form.Item
+                                      {...field}
+                                      label="Permission"
+                                      name={[field.name, "permission"]}
+                                    >
+                                      <Select
+                                        showSearch
+                                        allowClear
+                                        optionFilterProp="children"
+                                        filterOption={filterOption}
+                                        options={casePermissionOptions}
+                                        disabled
+                                      />
+                                    </Form.Item>
+                                  </Col>
+                                  <Col span={4}>
+                                    {fields.length > 1 ? (
+                                      <MinusCircleOutlined
+                                        onClick={() => remove(field.name)}
+                                      />
+                                    ) : (
+                                      ""
+                                    )}
+                                  </Col>
+                                </Row>
+                              </Form.Item>
+                            );
+                          })}
+                          <Form.Item>
+                            <Button
+                              type="dashed"
+                              onClick={() => add()}
+                              style={{
+                                width: "100%",
+                              }}
+                              icon={<PlusOutlined />}
+                            >
+                              Add Cases
+                            </Button>
+                          </Form.Item>
+                        </>
+                      );
+                    }}
+                  </Form.List>
+                </Card>
+              ) : (
+                ""
+              )}
             </Col>
             {/* EOL Other Inputs */}
           </Row>
@@ -412,7 +428,7 @@ const UserForm = () => {
             <Button
               className="button button-submit button-secondary"
               htmlType="submit"
-              style={{ width: "200px", float: "right" }}
+              style={{ width: "200px", float: "left" }}
               loading={submitting}
             >
               Save User
