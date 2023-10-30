@@ -1,21 +1,24 @@
 from db.connection import Base
 from sqlalchemy import Column, Integer, Float, ForeignKey, String
-# from sqlalchemy.orm import relationship
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+
+
+class LivingIncomeBenchmarkValue(TypedDict):
+    lcu: float
+    usd: float
+    eur: float
 
 
 class LivingIncomeBenchmarkDict(TypedDict):
     id: int
     country: int
     region: int
-    household_size: float
+    household_size: int
     year: int
-    source: Optional[str]
-    lcu: float
-    usd: float
-    eur: float
+    value: LivingIncomeBenchmarkValue
+    cpi: Optional[float]
 
 
 class LivingIncomeBenchmark(Base):
@@ -30,19 +33,6 @@ class LivingIncomeBenchmark(Base):
     lcu = Column(Float, nullable=False)
     usd = Column(Float, nullable=False)
     eur = Column(Float, nullable=False)
-
-    # country_detail = relationship(
-    #     'Country',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='country_living_income_benchmark'
-    # )
-    # region_detail = relationship(
-    #     'region',
-    #     cascade="all, delete",
-    #     passive_deletes=True,
-    #     backref='region_living_income_benchmark'
-    # )
 
     def __init__(
         self,
@@ -77,10 +67,12 @@ class LivingIncomeBenchmark(Base):
             "region": self.region,
             "year": self.year,
             "household_size": self.household_size,
-            "source": self.source,
-            "lcu": self.lcu,
-            "usd": self.usd,
-            "eur": self.eur,
+            "value": {
+                "lcu": self.lcu,
+                "usd": self.usd,
+                "eur": self.eur,
+            },
+            "cpi": None,
         }
 
 
