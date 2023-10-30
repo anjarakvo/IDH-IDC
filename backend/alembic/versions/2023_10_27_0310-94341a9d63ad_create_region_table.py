@@ -23,7 +23,6 @@ def upgrade() -> None:
         'region',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('name', sa.String(), nullable=False),
-        sa.Column('country_ids', sa.ARRAY(sa.Integer), nullable=False),
         sa.PrimaryKeyConstraint('id'),
     )
     op.create_index(

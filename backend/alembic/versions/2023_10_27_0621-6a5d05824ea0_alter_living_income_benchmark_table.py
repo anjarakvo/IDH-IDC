@@ -1,7 +1,7 @@
 """alter living income benchmark table
 
 Revision ID: 6a5d05824ea0
-Revises: 94341a9d63ad
+Revises: e035d03bf316
 Create Date: 2023-10-27 06:21:49.208459
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '6a5d05824ea0'
-down_revision: Union[str, None] = '94341a9d63ad'
+down_revision: Union[str, None] = 'e035d03bf316'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
