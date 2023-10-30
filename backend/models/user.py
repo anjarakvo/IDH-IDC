@@ -37,11 +37,7 @@ def json_load(value: Optional[str] = None):
 
 
 def validate_business_units(info: ValidationInfo, value: Optional[str] = None):
-    business_units_required = [
-        UserRole.admin.value,
-        UserRole.editor.value,
-        UserRole.viewer.value,
-    ]
+    business_units_required = [UserRole.admin.value]
     role = info.data.get("role", None)
     # business unit required for admin role
     if role and role.value in business_units_required and not value:

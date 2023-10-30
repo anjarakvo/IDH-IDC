@@ -16,8 +16,9 @@ from sqlalchemy.orm import Session
 from db.connection import get_session
 from models.user import (
     UserDict, UserBase, UserResponse, UserInfo, UserUpdateBase,
-    UserInvitation, UserDetailDict
+    UserInvitation, UserDetailDict, UserRole
 )
+from models.user_business_unit import UserBusinessUnitRole
 from typing import Optional
 from pydantic import SecretStr
 from http import HTTPStatus
@@ -140,11 +141,13 @@ def register(
     session: Session = Depends(get_session),
 ):
     # check invitation or not
+    user = None
     if invitation_id:
         if hasattr(req.state, 'authenticated'):
-            verify_admin(
+            user = verify_admin(
                 session=session,
                 authenticated=req.state.authenticated)
+            print(user.role, '=================')
         else:
             raise HTTPException(status_code=403, detail="Forbidden access")
     # Check if user exist by email
@@ -157,6 +160,20 @@ def register(
     if payload.password:
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
+    # generate business unit for editor/viewer
+    print(user, payload.role)
+    if user and payload.role in [UserRole.editor.value, UserRole.viewer.value]:
+        same_business_units = (
+            crud_user.find_same_business_unit(session=session, user_id=user.id)
+        )
+        payload_bu = []
+        for bu in same_business_units:
+            payload_bu.append({
+                "business_unit": bu.business_unit,
+                "role": UserBusinessUnitRole.member.value,
+            })
+        payload.business_units = payload_bu
+    # EOL generate business unit for editor/viewer
     user = crud_user.add_user(
         session=session, payload=payload, invitation_id=invitation_id)
     user = user.serialize

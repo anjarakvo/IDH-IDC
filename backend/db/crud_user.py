@@ -213,3 +213,11 @@ def accept_invitation(
     session.flush()
     session.refresh(user)
     return user
+
+
+def find_same_business_unit(session: Session, user_id: int):
+    return (
+        session.query(UserBusinessUnit)
+        .filter(UserBusinessUnit.user == user_id)
+        .all()
+    )
