@@ -23,7 +23,7 @@ def upgrade() -> None:
         'cpi',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('country', sa.Integer(), sa.ForeignKey('country.id')),
-        sa.Column('year', sa.Integer(), nullable=False),
+        sa.Column('year', sa.Integer(), nullable=True),
         sa.Column('value', sa.Float(), nullable=True),
         sa.PrimaryKeyConstraint('id'),
         sa.ForeignKeyConstraint(
