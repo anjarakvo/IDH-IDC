@@ -72,14 +72,18 @@ def seeder_master(session: Session, engine: create_engine):
     ## regions
     truncatedb(session=session, table="region")
     regions = pd.read_csv(MASTER_DIR + "regions.csv")
-    regions = regions.rename(columns={
-        "region": "name",
-        "country_id": "country_ids"
-    })
+    regions = regions.rename(columns={"region": "name"})
+    regions = regions.drop(columns=["country_id", "country"])
+    regions.to_sql("region", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Region")
+
+    ## country region
     # Filter rows where the list does not contain any string values
-    filtered_regions = []
+    regions = pd.read_csv(MASTER_DIR + "regions.csv")
+    country_regions = []
     for index, row in regions.iterrows():
-        country_ids = row["country_ids"].replace('[', '').replace(']', '').split(', ')
+        region_id = row["id"]
+        country_ids = row["country_id"].replace('[', '').replace(']', '').split(', ')
         country = row["country"].replace('[', '').replace(']', '').split(', ')
         intersect = list(set(country_ids) & set(country))
         if intersect:
@@ -92,15 +96,16 @@ def seeder_master(session: Session, engine: create_engine):
                 country_ids_tmp.append(val)
             except Exception:
                 continue
-        res = pd.DataFrame({
-            'id': row['id'],
-            'name': row['name'],
-            'country_ids': "{" + ", ".join(map(str, set(country_ids_tmp))) + "}",
-        }, index=[index])
-        filtered_regions.append(res)
-    filtered_regions = pd.concat(filtered_regions, ignore_index=True)
-    filtered_regions.to_sql("region", con=engine, if_exists="append", index=False)
-    print("[DATABASE UPDATED]: Region")
+        for country in country_ids_tmp:
+            res = pd.DataFrame({
+                'country': country,
+                'region': region_id,
+            }, index=[index])
+            country_regions.append(res)
+    country_regions = pd.concat(country_regions, ignore_index=True)
+    country_regions["id"] = country_regions.reset_index().index + 1
+    country_regions.to_sql("country_region", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Country Region")
 
     ## living income benchmark
     truncatedb(session=session, table="living_income_benchmark")
