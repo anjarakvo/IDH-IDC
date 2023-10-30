@@ -25,7 +25,8 @@ region_route = APIRouter()
 )
 def get_region_options(
     req: Request,
+    country: int,
     session: Session = Depends(get_session),
 ):
-    regions = crud_region.get_all_region(session=session)
+    regions = crud_region.get_region_by_country(session=session, country=country)
     return [rg.to_dropdown for rg in regions]
