@@ -182,10 +182,10 @@ const UserForm = () => {
           onFinish={onFinish}
           className="user-form-container"
         >
-          {/* User Information */}
-          <Card title="User Information">
-            <Row gutter={[16, 16]}>
-              <Col span={12}>
+          <Row gutter={[16, 16]}>
+            {/* User Information */}
+            <Col span={12}>
+              <Card title="User Information">
                 <Form.Item
                   label="Fullname"
                   name="fullname"
@@ -214,8 +214,6 @@ const UserForm = () => {
                 >
                   <Input />
                 </Form.Item>
-              </Col>
-              <Col span={12}>
                 <Form.Item
                   label="Role"
                   name="role"
@@ -253,25 +251,24 @@ const UserForm = () => {
                     options={organisationOptions}
                   />
                 </Form.Item>
-              </Col>
-            </Row>
-          </Card>
-          {/* EOL User Information */}
-
-          {/* Other Inputs */}
-          <Card title="Tags">
-            <Form.Item label="Tags" name="tags" required={false}>
-              <Select
-                showSearch
-                mode="tags"
-                optionFilterProp="children"
-                filterOption={filterOption}
-                options={tagOptions}
-              />
-            </Form.Item>
-          </Card>
-          <Row gutter={[16, 16]}>
+              </Card>
+            </Col>
+            {/* EOL User Information */}
+            {/* Other Inputs */}
             <Col span={12}>
+              {/* Tags */}
+              <Card title="Tags">
+                <Form.Item label="Tags" name="tags" required={false}>
+                  <Select
+                    showSearch
+                    mode="tags"
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    options={tagOptions}
+                  />
+                </Form.Item>
+              </Card>
+              {/* Business Unit Selector */}
               <Card title="Business Units">
                 <Form.List name="business_units">
                   {(fields, { add, remove }) => {
@@ -335,9 +332,7 @@ const UserForm = () => {
                   }}
                 </Form.List>
               </Card>
-            </Col>
-
-            <Col span={12}>
+              {/* Cases Selector */}
               <Card title="Cases">
                 <Form.List name="cases">
                   {(fields, { add, remove } /*{ errors }*/) => {
@@ -410,8 +405,8 @@ const UserForm = () => {
                 </Form.List>
               </Card>
             </Col>
+            {/* EOL Other Inputs */}
           </Row>
-          {/* EOL Other Inputs */}
 
           <Form.Item>
             <Button
