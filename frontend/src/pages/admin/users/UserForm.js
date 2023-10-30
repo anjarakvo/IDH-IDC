@@ -12,6 +12,7 @@ import {
   Select,
   Spin,
   message,
+  Radio,
 } from "antd";
 import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import {
@@ -159,6 +160,11 @@ const UserForm = () => {
     [selectedRole]
   );
 
+  const handleOnChangeRole = (value) => {
+    setSelectedRole(value);
+    form.setFieldsValue({ ["all_cases"]: null });
+  };
+
   return (
     <ContentLayout
       breadcrumbItems={[
@@ -234,7 +240,7 @@ const UserForm = () => {
                     optionFilterProp="children"
                     filterOption={filterOption}
                     options={roleOptions}
-                    onChange={setSelectedRole}
+                    onChange={handleOnChangeRole}
                   />
                 </Form.Item>
                 <Form.Item
@@ -255,6 +261,28 @@ const UserForm = () => {
                     options={organisationOptions}
                   />
                 </Form.Item>
+                {/* Radio button for Editor / Viewer */}
+                {useRolerWithRadioButtonField.includes(selectedRole) ? (
+                  <Form.Item
+                    name="all_cases"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select access level",
+                      },
+                    ]}
+                  >
+                    <Radio.Group>
+                      <Radio value={1}>
+                        {selectedRole === "editor" ? "Edit" : "View"} all cases
+                        on this Business Unit
+                      </Radio>
+                      <Radio value={0}>Use specific cases or tags</Radio>
+                    </Radio.Group>
+                  </Form.Item>
+                ) : (
+                  ""
+                )}
               </Card>
             </Col>
             {/* EOL User Information */}
