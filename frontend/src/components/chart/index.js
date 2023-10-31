@@ -15,9 +15,23 @@ export const generateOptions = (
 ) => {
   switch (type) {
     case "BARSTACK":
-      return BarStack(data, chartTitle, extra, horizontal, highlighted);
+      return BarStack({
+        data: data,
+        percentage: percentage,
+        chartTitle: chartTitle,
+        extra: extra,
+        horizontal: horizontal,
+        highlighted: highlighted,
+      });
     default:
-      return Bar(data, percentage, chartTitle, extra, horizontal, grid);
+      return Bar({
+        data: data,
+        percentage: percentage,
+        chartTitle: chartTitle,
+        extra: extra,
+        horizontal: horizontal,
+        grid: grid,
+      });
   }
 };
 

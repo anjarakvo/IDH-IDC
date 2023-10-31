@@ -15,8 +15,8 @@ import {
 } from "./common";
 import { uniq, flatten, uniqBy, isEmpty, upperFirst, sumBy } from "lodash";
 
-const tableFormatter = (e) => {
-  let table = `<table border="0" style="width:100%;border-spacing: 60px;font-size:13px;"><thead>`;
+const tableFormatter = (e, percentage) => {
+  let table = `<table border="0" style="width:100%;font-size:13px;"><thead>`;
   table += `<tr><th style="font-size: 15px;color:#000;padding-bottom:8px;" colspan=${
     e?.length || 1
   }>${e[0]?.axisValueLabel || "-"}</th></tr></thead><tbody>`;
@@ -27,8 +27,12 @@ const tableFormatter = (e) => {
     table += upperFirst(eI.seriesName);
     table += "</span></td>";
     table += '<td style="width: 80px; text-align: right; font-weight: 500;">';
-    table += eI.value + "%";
-    table += eI.data?.original ? ` (${eI.data.original})` : "";
+    if (percentage) {
+      table += eI.value + "%";
+      table += eI.data?.original ? ` (${eI.data.original})` : "";
+    } else {
+      table += eI.value;
+    }
     table += "</td>";
     table += "</tr>";
   });
@@ -40,13 +44,14 @@ const tableFormatter = (e) => {
   );
 };
 
-const BarStack = (
+const BarStack = ({
   data,
+  percentage = false,
   chartTitle,
   extra = {},
   horizontal = false,
-  highlighted = null
-) => {
+  highlighted = null,
+}) => {
   if (isEmpty(data) || !data) {
     return NoData;
   }
@@ -60,16 +65,20 @@ const BarStack = (
     const temp = data.map((d) => {
       const vals = d.stack?.filter((c) => c.title === s.title);
       const stackSum = sumBy(d.stack, "value");
-      const resValue =
-        vals?.length && stackSum !== 0
-          ? +((sumBy(vals, "value") / stackSum) * 100 || 0)
-              ?.toFixed(2)
-              .toString()
-              ?.match(/^-?\d+(?:\.\d{0,1})?/)[0] || 0
-          : 0;
+      let resValue = vals?.length ? vals[0].value : 0;
+      if (percentage) {
+        resValue =
+          vals?.length && stackSum !== 0
+            ? +((sumBy(vals, "value") / stackSum) * 100 || 0)
+                ?.toFixed(2)
+                .toString()
+                ?.match(/^-?\d+(?:\.\d{0,1})?/)[0] || 0
+            : 0;
+      }
       return {
         name: s.title || s.name,
         value: resValue,
+        percentage: resValue,
         itemStyle: {
           color: vals[0]?.color || s.color,
           opacity: highlighted ? (d.name === highlighted ? 1 : 0.4) : 1,
@@ -144,7 +153,7 @@ const BarStack = (
       },
       show: true,
       backgroundColor: "#ffffff",
-      formatter: tableFormatter,
+      formatter: (e) => tableFormatter(e, percentage),
       ...TextStyle,
     },
     toolbox: {
@@ -172,7 +181,7 @@ const BarStack = (
       nameLocation: "middle",
       nameGap: 50,
       axisLabel: {
-        formatter: (e) => e + "%",
+        formatter: (e) => (percentage ? `${e}%` : e),
         ...TextStyle,
         color: "#9292ab",
       },

@@ -28,22 +28,24 @@
         }
       }
       .ant-card-body {
-        h3 {
-          background: #e6f7ff;
-          font-size: 18px;
-          margin: 0px;
-          padding: 10px 24px;
-          position: relative;
-          width: 100%;
-          small {
-            position: absolute;
-            right: 24px;
-            top: calc(50% - 9px);
-          }
-        }
         padding: 0px;
         .ant-card-grid {
           padding: 10px 24px;
+          h2 {
+            &.section-title {
+              background: #e6f7ff;
+              font-size: 18px;
+              margin: -10px -24px 24px -24px;
+              padding: 10px 24px;
+              position: relative;
+              width: calc(100% + 48px);
+              small {
+                position: absolute;
+                right: 24px;
+                top: calc(50% - 9px);
+              }
+            }
+          }
           h3 {
             background: #ffffff;
             font-size: 14px;
