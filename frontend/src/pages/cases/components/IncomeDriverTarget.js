@@ -20,6 +20,7 @@ const IncomeDriverTarget = ({
   const [regionOptions, setRegionOptions] = useState([]);
   const [loadingRegionOptions, setLoadingRegionOptions] = useState(false);
   const currentSegmentId = segmentItem?.currentSegmentId || null;
+  const [regionOptionStatus, setRegionOptionStatus] = useState(null);
 
   // load initial target& hh size
   useEffect(() => {
@@ -42,7 +43,12 @@ const IncomeDriverTarget = ({
       api
         .get(`region/options?country_id=${currentCase.country}`)
         .then((res) => {
+          setRegionOptionStatus(200);
           setRegionOptions(res.data);
+        })
+        .catch((e) => {
+          const { status } = e.response;
+          setRegionOptionStatus(status);
         })
         .finally(() => {
           setLoadingRegionOptions(false);
@@ -152,6 +158,21 @@ const IncomeDriverTarget = ({
           </Form.Item>
         </Col>
       </Row>
+      {/* region options notif */}
+      {regionOptionStatus === 404 && (
+        <Row
+          style={{
+            borderBottom: "1px solid #e8e8e8",
+            marginBottom: "12px",
+            color: "red",
+          }}
+        >
+          <Col span={24}>
+            A benchmark for the county is not available; please switch to manual
+            target.
+          </Col>
+        </Row>
+      )}
       <Row gutter={[8, 8]} style={{ display: !disableTarget ? "none" : "" }}>
         <Col span={12}>
           <Form.Item label="Search Region" name="region">
@@ -160,6 +181,11 @@ const IncomeDriverTarget = ({
               options={regionOptions}
               disabled={!disableTarget}
               loading={loadingRegionOptions}
+              placeholder={
+                regionOptionStatus === 404
+                  ? "Region not available"
+                  : "Select Region"
+              }
               {...selectProps}
             />
           </Form.Item>
