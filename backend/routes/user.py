@@ -147,7 +147,6 @@ def register(
             user = verify_admin(
                 session=session,
                 authenticated=req.state.authenticated)
-            print(user.role, '=================')
         else:
             raise HTTPException(status_code=403, detail="Forbidden access")
     # Check if user exist by email
@@ -161,8 +160,7 @@ def register(
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
     # generate business unit for editor/viewer
-    print(user, payload.role)
-    if user and payload.role in [UserRole.editor.value, UserRole.viewer.value]:
+    if user and payload.role in [UserRole.editor, UserRole.viewer]:
         same_business_units = (
             crud_user.find_same_business_unit(session=session, user_id=user.id)
         )

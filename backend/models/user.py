@@ -36,11 +36,15 @@ def json_load(value: Optional[str] = None):
     return value
 
 
-def validate_business_units(info: ValidationInfo, value: Optional[str] = None):
-    business_units_required = [UserRole.admin.value]
+def validate_business_units(
+    info: ValidationInfo, value: Optional[str] = None, is_update: bool = False
+):
+    business_units_required = [UserRole.admin]
+    if is_update:
+        business_units_required += [UserRole.editor, UserRole.viewer]
     role = info.data.get("role", None)
     # business unit required for admin role
-    if role and role.value in business_units_required and not value:
+    if role and role in business_units_required and not value:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"business_units required for {role.value} role",
@@ -343,7 +347,7 @@ class UserUpdateBase(BaseModel):
     @field_validator("business_units")
     @classmethod
     def validate_business_units(cls, value, info: ValidationInfo) -> dict:
-        value = validate_business_units(value=value, info=info)
+        value = validate_business_units(value=value, info=info, is_update=True)
         return value
 
     @classmethod

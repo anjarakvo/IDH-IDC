@@ -49,7 +49,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
         user = get_user_by_email(session=session, email=user_payload["email"])
         user = user.to_user_list
         assert user == {
-            'id': 5,
+            'id': 6,
             'organisation': 1,
             'email': 'jane@akvo.org',
             'fullname': 'Jane Doe',
@@ -100,10 +100,10 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
             'fullname': 'John Doe',
             'email': 'super_admin@akvo.org',
             'role': UserRole.super_admin.value,
-            'all_cases': False,
+            'all_cases': True,
             'active': True,
             'business_unit_detail': [{
-                'id': 4,
+                'id': 6,
                 'name': 'Acme Technologies Sales Division',
                 'role': 'member'
             }],

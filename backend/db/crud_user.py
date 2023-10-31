@@ -26,12 +26,16 @@ def add_user(
         if invitation_id or payload.role
         else UserRole.user
     )
+    all_cases = 0
+    if role in [UserRole.super_admin, UserRole.admin]:
+        all_cases = 1
     user = User(
         fullname=payload.fullname,
         email=payload.email,
         password=password if not invitation_id else None,
         organisation=payload.organisation,
         role=role,
+        all_cases=all_cases,
         invitation_id=str(uuid4()) if invitation_id else None
     )
     if payload.tags:
@@ -63,8 +67,12 @@ def update_user(
     user.fullname = payload.fullname
     user.organisation = payload.organisation
     user.is_active = 1 if payload.is_active else 0
-    user.role = payload.role if payload.role else user.role
-    user.all_cases = 1 if payload.all_cases else 0
+    role = payload.role if payload.role else user.role
+    user.role = role
+    all_cases = 0
+    if role in [UserRole.super_admin, UserRole.admin]:
+        all_cases = 1
+    user.all_cases = 1 if payload.all_cases else all_cases
     if payload.password:
         try:
             password = payload.password.get_secret_value()
@@ -96,6 +104,7 @@ def update_user(
                 case=proj["case"],
                 permission=proj["permission"])
             user.user_case_access.append(case_access)
+    # TODO :: How we manage business units in user update?
     if payload.business_units:
         # delete prev user business units before update
         prev_user_bus = session.query(UserBusinessUnit).filter(
