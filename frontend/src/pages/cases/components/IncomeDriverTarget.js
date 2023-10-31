@@ -2,17 +2,40 @@ import React, { useState, useEffect } from "react";
 import { Row, Col, Form, InputNumber, Select, Switch } from "antd";
 import { selectProps } from "./";
 import { api } from "../../../lib";
+import isEmpty from "lodash/isEmpty";
 
 const formStyle = { width: "100%" };
 
-const IncomeDriverTarget = ({ segment, currentCase }) => {
+const IncomeDriverTarget = ({
+  segment,
+  currentCase,
+  formValues,
+  setFormValues,
+  segmentItem,
+}) => {
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
   const [loadingRegionOptions, setLoadingRegionOptions] = useState(false);
+  const currentSegmentId = segmentItem?.currentSegmentId || null;
 
+  // load initial target& hh size
+  useEffect(() => {
+    if (!isEmpty(segmentItem) && currentSegmentId) {
+      setIncomeTarget(segmentItem?.target || 0);
+      form.setFieldsValue({
+        household_adult: segmentItem?.adult || null,
+      });
+      form.setFieldsValue({
+        household_children: segmentItem?.child || null,
+      });
+      calculateHouseholdSize(segmentItem?.adult || 0, segmentItem?.child || 0);
+    }
+  }, [segmentItem, currentSegmentId, form]);
+
+  // call region api
   useEffect(() => {
     if (currentCase?.country) {
       setLoadingRegionOptions(true);
@@ -27,6 +50,38 @@ const IncomeDriverTarget = ({ segment, currentCase }) => {
     }
   }, [currentCase?.country]);
 
+  const updateFormValues = (value) => {
+    const updatedFv = formValues.map((fv) => {
+      if (fv.key === segment) {
+        return {
+          ...fv,
+          ...value,
+        };
+      }
+      return fv;
+    });
+    setFormValues(updatedFv);
+  };
+
+  const handleOnChangeHouseholdAdult = (value) => {
+    updateFormValues({ adult: value });
+  };
+
+  const handleOnChangeHouseholdChild = (value) => {
+    updateFormValues({ child: value });
+  };
+
+  const calculateHouseholdSize = (household_adult, household_children) => {
+    // OECD average household size
+    // first adult = 1, next adult 0.5
+    // 1 child = 0.3
+    const adult_size =
+      household_adult === 1 ? 1 : 1 + (household_adult - 1) * 0.5;
+    const children_size = household_children * 0.3;
+    const size = adult_size + children_size;
+    setHouseholdSize(size);
+  };
+
   const onValuesChange = (changedValues, allValues) => {
     const {
       household_adult = 0,
@@ -35,28 +90,24 @@ const IncomeDriverTarget = ({ segment, currentCase }) => {
       region,
     } = allValues;
     if (household_adult || household_children) {
-      // OECD average household size
-      // first adult = 1, next adult 0.5
-      // 1 child = 0.3
-      const adult_size =
-        household_adult === 1 ? 1 : 1 + (household_adult - 1) * 0.5;
-      const children_size = household_children * 0.3;
-      const size = adult_size + children_size;
-      setHouseholdSize(size);
+      calculateHouseholdSize(household_adult, household_children);
     }
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
       setDisableTarget(!changedValues.manual_target);
       if (changedValues.manual_target && target) {
         setIncomeTarget(target);
+        updateFormValues({ target: target });
       }
       if (!changedValues.manual_target) {
         form.setFieldsValue({ region: [] });
         setIncomeTarget(0);
+        updateFormValues({ target: 0 });
       }
     }
     if (changedValues.target && !disableTarget) {
       setIncomeTarget(target);
+      updateFormValues({ target: target });
     }
     if (changedValues.region && disableTarget) {
       // TODO: get from API
@@ -67,8 +118,10 @@ const IncomeDriverTarget = ({ segment, currentCase }) => {
           const { data } = res;
           if (data?.cpi) {
             setIncomeTarget(data.cpi);
+            updateFormValues({ target: data.cpi });
           } else {
             setIncomeTarget(data.value.usd);
+            updateFormValues({ target: data.value.usd });
           }
         });
       }
@@ -113,12 +166,18 @@ const IncomeDriverTarget = ({ segment, currentCase }) => {
         </Col>
         <Col span={6}>
           <Form.Item label="Number of Adult" name="household_adult">
-            <InputNumber style={formStyle} />
+            <InputNumber
+              style={formStyle}
+              onChange={handleOnChangeHouseholdAdult}
+            />
           </Form.Item>
         </Col>
         <Col span={6}>
           <Form.Item label="Number of Children" name="household_children">
-            <InputNumber style={formStyle} />
+            <InputNumber
+              style={formStyle}
+              onChange={handleOnChangeHouseholdChild}
+            />
           </Form.Item>
         </Col>
       </Row>

@@ -234,7 +234,13 @@ const DataFields = ({
                 <InfoCircleFilled />
               </small>
             </h2>
-            <IncomeDriverTarget segment={segment} currentCase={currentCase} />
+            <IncomeDriverTarget
+              segment={segment}
+              currentCase={currentCase}
+              formValues={formValues}
+              setFormValues={setFormValues}
+              segmentItem={segmentItem}
+            />
             <h2 className="section-title">
               Income Drivers
               <small>
@@ -382,6 +388,7 @@ const IncomeDriverDataEntry = ({
           const findNewItem = data.find((d) => d.name === it.label);
           return {
             ...it,
+            ...findNewItem,
             currentSegmentId: findNewItem?.id || it.currentSegmentId,
           };
         });
@@ -447,12 +454,14 @@ const IncomeDriverDataEntry = ({
             key: String(itIndex + 1),
             label: it.name,
             currentSegmentId: it.id,
+            ...it,
           }));
           const formValuesTmp = orderBy(data, "id").map((it, itIndex) => ({
             key: String(itIndex + 1),
             label: it.name,
             currentSegmentId: it.id,
             answers: it.answers,
+            ...it,
           }));
           if (itemsTmp.length !== 5) {
             itemsTmp = [...itemsTmp, ...defaultItems];
