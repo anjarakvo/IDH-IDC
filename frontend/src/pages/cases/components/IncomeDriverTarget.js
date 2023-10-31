@@ -3,31 +3,6 @@ import { Row, Col, Form, InputNumber, Select, Switch } from "antd";
 import { selectProps } from "./";
 import { api } from "../../../lib";
 
-const cpi = [
-  {
-    id: 1,
-    country: 1,
-    region: 1,
-    year: 2002,
-    value: {
-      usd: 2000,
-      eur: 2000,
-    },
-    cpi: 3000,
-  },
-  {
-    id: 2,
-    country: 1,
-    region: 2,
-    year: 2002,
-    value: {
-      usd: 3000,
-      eur: 3000,
-    },
-    cpi: 4000,
-  },
-];
-
 const formStyle = { width: "100%" };
 
 const IncomeDriverTarget = ({ segment, currentCase }) => {
@@ -69,15 +44,15 @@ const IncomeDriverTarget = ({ segment, currentCase }) => {
       const size = adult_size + children_size;
       setHouseholdSize(size);
     }
-    const cpiValue = cpi.find((item) => item.region === region);
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
       setDisableTarget(!changedValues.manual_target);
       if (changedValues.manual_target && target) {
         setIncomeTarget(target);
       }
-      if (!changedValues.manual_target && cpiValue) {
-        setIncomeTarget(cpiValue.value.usd);
+      if (!changedValues.manual_target) {
+        form.setFieldsValue({ region: [] });
+        setIncomeTarget(0);
       }
     }
     if (changedValues.target && !disableTarget) {
