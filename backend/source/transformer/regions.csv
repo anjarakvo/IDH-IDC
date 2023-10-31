@@ -1,5 +1,5 @@
 id,region,country_id,country
-1,All,"[11, 23, 35, 37, 38, 43, 44, 109, 51, 65, 66, 79, 97, 113, 134, 152, 153, 164, 173, 174, 176, 186, 210, 220, 221, 226, 227, 248, 249]","['Argentina', 'Belize', 'Burkina Faso', 'Cambodia', 'Cameroon', 'Chad', 'Chile', ""Cote d'Ivoire"", 'Congo, Dem. Rep.', 'Egypt, Arab Rep.', 'El Salvador', 'Gabon', 'Honduras', 'Jordan', 'Madagascar', 'Morocco', 'Mozambique', 'Nigeria', 'Panama', 'Papua New Guinea', 'Peru', 'Rwanda', 'Sri Lanka', 'Tanzania', 'Thailand', 'Tunisia', 'Turkey', 'Zambia', 'Zimbabwe']"
+1,All,"[11, 23, 35, 37, 38, 43, 44, 109, 50, 65, 66, 79, 97, 113, 134, 152, 153, 164, 173, 174, 176, 186, 210, 220, 221, 226, 227, 248, 249]","['Argentina', 'Belize', 'Burkina Faso', 'Cambodia', 'Cameroon', 'Chad', 'Chile', ""Cote d'Ivoire"", 'Congo, Dem. Rep.', 'Egypt, Arab Rep.', 'El Salvador', 'Gabon', 'Honduras', 'Jordan', 'Madagascar', 'Morocco', 'Mozambique', 'Nigeria', 'Panama', 'Papua New Guinea', 'Peru', 'Rwanda', 'Sri Lanka', 'Tanzania', 'Thailand', 'Tunisia', 'Turkey', 'Zambia', 'Zimbabwe']"
 2,All coffee and cocoa growing regions,[176],['Peru']
 3,Andhra Pradesh,[101],['India']
 4,Baja California,[145],['Mexico']
@@ -11,8 +11,8 @@ id,region,country_id,country
 10,Chengdu,[45],['China']
 11,Cocoa growing areas,[109],"[""Cote d'Ivoire""]"
 12,"Cocoa growing areas of Ashanti, Central, Eastern, Western Regions",[83],['Ghana']
-13,Congo,[51],"['Congo, Rep.']"
-14,Congo Kinshasa,[51],"['Congo, Dem. Rep.']"
+13,Congo,[52],"['Congo, Rep.']"
+14,Congo Kinshasa,[50],"['Congo, Dem. Rep.']"
 15,Cusco,[176],['Peru']
 16,Dhaka City,[19],['Bangladesh']
 17,East Rondônia,[31],['Brazil']
@@ -63,7 +63,7 @@ id,region,country_id,country
 62,Cocoa growing regions,[31],['Brazil']
 63,Coffee growing regions,[31],['Brazil']
 64,Coffee or Cocoa growing regions,[31],['Brazil']
-65,Congo Brazzaville,[51],"['Congo, Rep.']"
+65,Congo Brazzaville,[52],"['Congo, Rep.']"
 66,Municipality of Ensenada,[145],['Mexico']
 67,Municipality of San Quintín,[145],['Mexico']
 68,Non-Metropolitan Urban,"[11, 44, 70]","['Argentina', 'Chile', 'Ethiopia']"
@@ -72,7 +72,7 @@ id,region,country_id,country
 71,Non-metropolitan Urban & Rural,[145],['Mexico']
 72,Peri-Urban,[83],['Ghana']
 73,Ratlam District,[101],['India']
-74,Rural,"[11, 23, 35, 38, 43, 48, 54, 109, 51, 62, 64, 65, 66, 79, 83, 90, 97, 101, 115, 134, 135, 152, 153, 164, 170, 173, 174, 176, 186, 207, 210, 220, 177, 226, 227, 231, 242, 248, 249]","['Argentina', 'Belize', 'Burkina Faso', 'Cameroon', 'Chad', 'Colombia', 'Costa Rica', ""Cote d'Ivoire"", 'Congo, Rep.', 'Congo, Dem. Rep.', 'Dominican Republic', 'Ecuador', 'Egypt, Arab Rep.', 'El Salvador', 'Gabon', 'Ghana', 'Guatemala', 'Honduras', 'India', 'Kenya', 'Madagascar', 'Malawi', 'Morocco', 'Mozambique', 'Nigeria', 'Pakistan', 'Panama', 'Papua New Guinea', 'Peru', 'Rwanda', 'South Africa', 'Sri Lanka', 'Tanzania', 'Philippines', 'Tunisia', 'Turkey', 'Uganda', 'Vietnam', 'Zambia', 'Zimbabwe']"
+74,Rural,"[11, 23, 35, 38, 43, 48, 54, 109, 52, 50, 62, 64, 65, 66, 79, 83, 90, 97, 101, 115, 134, 135, 152, 153, 164, 170, 173, 174, 176, 186, 207, 210, 220, 177, 226, 227, 231, 242, 248, 249]","['Argentina', 'Belize', 'Burkina Faso', 'Cameroon', 'Chad', 'Colombia', 'Costa Rica', ""Cote d'Ivoire"", 'Congo, Rep.', 'Congo, Dem. Rep.', 'Dominican Republic', 'Ecuador', 'Egypt, Arab Rep.', 'El Salvador', 'Gabon', 'Ghana', 'Guatemala', 'Honduras', 'India', 'Kenya', 'Madagascar', 'Malawi', 'Morocco', 'Mozambique', 'Nigeria', 'Pakistan', 'Panama', 'Papua New Guinea', 'Peru', 'Rwanda', 'South Africa', 'Sri Lanka', 'Tanzania', 'Philippines', 'Tunisia', 'Turkey', 'Uganda', 'Vietnam', 'Zambia', 'Zimbabwe']"
 75,Rural Areas and Small Towns,"[145, 176]","['Mexico', 'Peru']"
 76,Rural Guji zone,[70],['Ethiopia']
 77,Rural-Urban,[162],['Nicaragua']
