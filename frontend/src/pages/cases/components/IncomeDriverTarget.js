@@ -1,17 +1,7 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Row, Col, Form, InputNumber, Select, Switch } from "antd";
 import { selectProps } from "./";
-
-const region = [
-  {
-    value: 1,
-    label: "North",
-  },
-  {
-    value: 2,
-    label: "South",
-  },
-];
+import { api } from "../../../lib";
 
 const cpi = [
   {
@@ -40,11 +30,27 @@ const cpi = [
 
 const formStyle = { width: "100%" };
 
-const IncomeDriverTarget = ({ segment }) => {
+const IncomeDriverTarget = ({ segment, currentCase }) => {
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
+  const [regionOptions, setRegionOptions] = useState([]);
+  const [loadingRegionOptions, setLoadingRegionOptions] = useState(false);
+
+  useEffect(() => {
+    if (currentCase?.country) {
+      setLoadingRegionOptions(true);
+      api
+        .get(`region/options?country_id=${currentCase.country}`)
+        .then((res) => {
+          setRegionOptions(res.data);
+        })
+        .finally(() => {
+          setLoadingRegionOptions(false);
+        });
+    }
+  }, [currentCase?.country]);
 
   const onValuesChange = (changedValues, allValues) => {
     const {
@@ -79,7 +85,18 @@ const IncomeDriverTarget = ({ segment }) => {
     }
     if (changedValues.region && disableTarget) {
       // TODO: get from API
-      setIncomeTarget(cpiValue.value.usd);
+      if (currentCase?.country && currentCase?.year && region) {
+        let url = `country_region_benchmark?country_id=${currentCase.country}`;
+        url = `${url}&region_id=${region}&year=${currentCase.year}`;
+        api.get(url).then((res) => {
+          const { data } = res;
+          if (data?.cpi) {
+            setIncomeTarget(data.cpi);
+          } else {
+            setIncomeTarget(data.value.usd);
+          }
+        });
+      }
     }
   };
 
@@ -112,8 +129,9 @@ const IncomeDriverTarget = ({ segment }) => {
           <Form.Item label="Search Region" name="region">
             <Select
               style={formStyle}
-              options={region}
+              options={regionOptions}
               disabled={!disableTarget}
+              loading={loadingRegionOptions}
               {...selectProps}
             />
           </Form.Item>
@@ -138,7 +156,7 @@ const IncomeDriverTarget = ({ segment }) => {
       >
         <Col span={12}>
           <p>Living Income Target</p>
-          <h2>{incomeTarget}</h2>
+          <h2>{incomeTarget.toFixed(2)}</h2>
         </Col>
         <Col span={12}>
           <p>Household Size</p>

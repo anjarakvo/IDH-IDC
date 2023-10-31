@@ -24,6 +24,7 @@ const Case = () => {
   const [currentCaseId, setCurrentCaseId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
+  const [currentCase, setCurrectCase] = useState({});
 
   useEffect(() => {
     if (caseId && isEmpty(formData) && !loading) {
@@ -33,6 +34,7 @@ const Case = () => {
         .get(`case/${caseId}`)
         .then((res) => {
           const { data } = res;
+          setCurrectCase(data);
           setCaseTitle(data.name);
           // set other commodities type
           setInitialCommodityTypes(
@@ -156,12 +158,14 @@ const Case = () => {
                 currentCaseId={currentCaseId}
                 setCurrentCaseId={setCurrentCaseId}
                 initialOtherCommodityTypes={initialOtherCommodityTypes}
+                setCurrectCase={setCurrectCase}
               />
             )}
             {page === "Income Driver Data Entry" && (
               <IncomeDriverDataEntry
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
+                currentCase={currentCase}
               />
             )}
           </Col>

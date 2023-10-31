@@ -54,6 +54,7 @@ const DataFields = ({
   handleSave,
   isSaving,
   currentCaseId,
+  currentCase,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -233,7 +234,7 @@ const DataFields = ({
                 <InfoCircleFilled />
               </small>
             </h2>
-            <IncomeDriverTarget segment={segment} />
+            <IncomeDriverTarget segment={segment} currentCase={currentCase} />
             <h2 className="section-title">
               Income Drivers
               <small>
@@ -336,7 +337,11 @@ const DataFields = ({
   );
 };
 
-const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
+const IncomeDriverDataEntry = ({
+  commodityList,
+  currentCaseId,
+  currentCase,
+}) => {
   const [activeKey, setActiveKey] = useState("1");
   const [questionGroups, setQuestionGroups] = useState([]);
   const [items, setItems] = useState([]);
@@ -528,6 +533,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             handleSave={handleSave}
             isSaving={isSaving}
             currentCaseId={currentCaseId}
+            currentCase={currentCase}
           />
         );
         // handle form values
@@ -605,6 +611,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
                   handleSave={handleSave}
                   isSaving={isSaving}
                   currentCaseId={currentCaseId}
+                  currentCase={currentCase}
                 />
               ),
           }))}

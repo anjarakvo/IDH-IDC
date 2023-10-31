@@ -218,6 +218,7 @@ const CaseProfile = ({
   currentCaseId,
   setCurrentCaseId,
   initialOtherCommodityTypes,
+  setCurrentCase,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(commodityList.length > 2);
@@ -341,6 +342,7 @@ const CaseProfile = ({
       .then((res) => {
         const { data } = res;
         setCurrentCaseId(data?.id);
+        setCurrentCase(data);
         const transformCommodities = commodities.map((cm) => {
           const findCm = data.case_commodities.find(
             (dcm) => dcm.commodity_type === cm.commodity_type
