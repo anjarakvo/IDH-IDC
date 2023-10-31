@@ -48,6 +48,8 @@ def get_all_case(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
+    # TODO :: verify by user then filter cases in same business unit if all_cases true and role not admin
+    # if role = user we should check for user tags or user cases (also if editor / viewer and all_cases false)
     cases = crud_case.get_all_case(
         session=session,
         search=search,
@@ -101,3 +103,5 @@ def get_case_by_id(
     verify_admin(session=session, authenticated=req.state.authenticated)
     case = crud_case.get_case_by_id(session=session, id=case_id)
     return case.to_case_detail
+
+# TODO :: create an endpoint to load cases on user form, filter by same business unit
