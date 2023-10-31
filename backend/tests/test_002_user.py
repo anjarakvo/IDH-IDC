@@ -262,54 +262,6 @@ class TestUserEndpoint():
         }
 
     @pytest.mark.asyncio
-    async def test_update_user_to_an_editor_without_business_units(
-        self, app: FastAPI, session: Session, client: AsyncClient
-    ) -> None:
-        user = get_user_by_email(session=session, email="editor@akvo.org")
-        assert user.email == "editor@akvo.org"
-        update_payload = {
-            "fullname": user.fullname,
-            "organisation": user.organisation,
-            "role": UserRole.editor.value,
-            "is_active": True,
-        }
-        # with cred
-        res = await client.put(
-            app.url_path_for("user:update", user_id=user.id),
-            data=update_payload,
-            headers={
-                "content-type": "application/x-www-form-urlencoded",
-                "Authorization": f"Bearer {account.token}"
-            })
-        assert res.status_code == 422
-        res = res.json()
-        assert res == {"detail": "business_units required for editor role"}
-
-    @pytest.mark.asyncio
-    async def test_update_user_to_a_viewer_without_business_units(
-        self, app: FastAPI, session: Session, client: AsyncClient
-    ) -> None:
-        user = get_user_by_email(session=session, email="viewer@akvo.org")
-        assert user.email == "viewer@akvo.org"
-        update_payload = {
-            "fullname": user.fullname,
-            "organisation": user.organisation,
-            "role": UserRole.viewer.value,
-            "is_active": True,
-        }
-        # with cred
-        res = await client.put(
-            app.url_path_for("user:update", user_id=user.id),
-            data=update_payload,
-            headers={
-                "content-type": "application/x-www-form-urlencoded",
-                "Authorization": f"Bearer {account.token}"
-            })
-        assert res.status_code == 422
-        res = res.json()
-        assert res == {"detail": "business_units required for viewer role"}
-
-    @pytest.mark.asyncio
     async def test_update_user_to_an_external_user_without_business_units(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
@@ -438,16 +390,6 @@ class TestUserEndpoint():
             }],
             "cases": [],
         }
-
-    @pytest.mark.asyncio
-    async def test_delete_user_by_super_admin_cred(
-        self, app: FastAPI, session: Session, client: AsyncClient
-    ) -> None:
-        # delete user by admin
-        res = await client.delete(
-            app.url_path_for("user:delete", user_id=3),
-            headers={"Authorization": f"Bearer {account.token}"})
-        assert res.status_code == 204
 
     @pytest.mark.asyncio
     async def test_update_user_password(
@@ -616,3 +558,58 @@ class TestUserEndpoint():
                 'cases_count': 0
             }
         }
+
+    @pytest.mark.asyncio
+    async def test_update_user_to_an_editor_without_business_units(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user = get_user_by_email(session=session, email="editor@akvo.org")
+        assert user.email == "editor@akvo.org"
+        update_payload = {
+            "fullname": user.fullname,
+            "organisation": user.organisation,
+            "role": UserRole.editor.value,
+            "is_active": True,
+        }
+        # with cred
+        res = await client.put(
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_update_user_to_a_viewer_without_business_units(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user = get_user_by_email(session=session, email="viewer@akvo.org")
+        assert user.email == "viewer@akvo.org"
+        update_payload = {
+            "fullname": user.fullname,
+            "organisation": user.organisation,
+            "role": UserRole.viewer.value,
+            "is_active": True,
+        }
+        # with cred
+        res = await client.put(
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_delete_user_by_super_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # delete user by admin
+        user = get_user_by_email(session=session, email="user@test.com")
+        res = await client.delete(
+            app.url_path_for("user:delete", user_id=user.id),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 204

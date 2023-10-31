@@ -26,7 +26,7 @@ def add_user(
         if invitation_id or payload.role
         else UserRole.user
     )
-    all_cases = 0
+    all_cases = 1 if payload.all_cases else 0
     if role in [UserRole.super_admin, UserRole.admin]:
         all_cases = 1
     user = User(
@@ -105,7 +105,11 @@ def update_user(
                 permission=proj["permission"])
             user.user_case_access.append(case_access)
     # TODO :: How we manage business units in user update?
-    if payload.business_units:
+    # I think doesn't need too update business unit when update,
+    # because business unit already inherit from admin for editor and viewer
+    if payload.business_units and payload.role in [
+        UserRole.super_admin, UserRole.admin
+    ]:
         # delete prev user business units before update
         prev_user_bus = session.query(UserBusinessUnit).filter(
             UserBusinessUnit.user == user.id).all()
