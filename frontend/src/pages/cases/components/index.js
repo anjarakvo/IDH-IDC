@@ -126,8 +126,9 @@ export const generateSegmentPayloads = (
     let res = {
       case: currentCaseId,
       name: fv.label,
-      target: null,
-      household_size: null,
+      target: fv?.target || null,
+      adult: fv?.adult || null,
+      child: fv?.child || null,
     };
     if (fv?.currentSegmentId) {
       res = {

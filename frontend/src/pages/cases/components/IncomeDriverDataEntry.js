@@ -54,6 +54,7 @@ const DataFields = ({
   handleSave,
   isSaving,
   currentCaseId,
+  currentCase,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -233,7 +234,13 @@ const DataFields = ({
                 <InfoCircleFilled />
               </small>
             </h2>
-            <IncomeDriverTarget segment={segment} />
+            <IncomeDriverTarget
+              segment={segment}
+              currentCase={currentCase}
+              formValues={formValues}
+              setFormValues={setFormValues}
+              segmentItem={segmentItem}
+            />
             <h2 className="section-title">
               Income Drivers
               <small>
@@ -336,7 +343,11 @@ const DataFields = ({
   );
 };
 
-const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
+const IncomeDriverDataEntry = ({
+  commodityList,
+  currentCaseId,
+  currentCase,
+}) => {
   const [activeKey, setActiveKey] = useState("1");
   const [questionGroups, setQuestionGroups] = useState([]);
   const [items, setItems] = useState([]);
@@ -377,6 +388,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
           const findNewItem = data.find((d) => d.name === it.label);
           return {
             ...it,
+            ...findNewItem,
             currentSegmentId: findNewItem?.id || it.currentSegmentId,
           };
         });
@@ -442,12 +454,14 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             key: String(itIndex + 1),
             label: it.name,
             currentSegmentId: it.id,
+            ...it,
           }));
           const formValuesTmp = orderBy(data, "id").map((it, itIndex) => ({
             key: String(itIndex + 1),
             label: it.name,
             currentSegmentId: it.id,
             answers: it.answers,
+            ...it,
           }));
           if (itemsTmp.length !== 5) {
             itemsTmp = [...itemsTmp, ...defaultItems];
@@ -528,6 +542,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
             handleSave={handleSave}
             isSaving={isSaving}
             currentCaseId={currentCaseId}
+            currentCase={currentCase}
           />
         );
         // handle form values
@@ -605,6 +620,7 @@ const IncomeDriverDataEntry = ({ commodityList, currentCaseId }) => {
                   handleSave={handleSave}
                   isSaving={isSaving}
                   currentCaseId={currentCaseId}
+                  currentCase={currentCase}
                 />
               ),
           }))}
