@@ -38,6 +38,4 @@ class TestRegionRoute():
             ),
             params={'country_id': 100}
         )
-        assert res.status_code == 200
-        res = res.json()
-        assert res == []
+        assert res.status_code == 404
