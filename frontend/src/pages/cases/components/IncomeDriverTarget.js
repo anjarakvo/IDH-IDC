@@ -107,7 +107,7 @@ const IncomeDriverTarget = ({
       }
       if (!changedValues.manual_target) {
         form.setFieldsValue({ region: [] });
-        setIncomeTarget(0);
+        setIncomeTarget(segmentItem?.target || 0);
         updateFormValues({ target: 0 });
       }
     }
