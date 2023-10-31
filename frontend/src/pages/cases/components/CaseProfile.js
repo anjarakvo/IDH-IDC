@@ -352,8 +352,10 @@ const CaseProfile = ({
             case_commodity: findCm.id,
           };
         });
-        setCommodityList(transformCommodities);
-        setFinished([...completed, "Case Profile"]);
+        setTimeout(() => {
+          setCommodityList(transformCommodities);
+          setFinished([...completed, "Case Profile"]);
+        }, 500);
         setPage("Income Driver Data Entry");
       })
       .catch((e) => {
