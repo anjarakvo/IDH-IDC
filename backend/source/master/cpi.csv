@@ -47,7 +47,7 @@ id,country,country_id,year,value
 46,Costa Rica,54,2012,83.85525
 47,Côte d'Ivoire,109,2012,98.8783466666425
 48,"Croatia, Rep. of",55,2012,98.5
-49,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2012,120.716666666667
+49,"Curaçao, Kingdom of the Netherlands",250,2012,120.716666666667
 50,Cyprus,57,2012,103.960108583622
 51,Czech Rep.,58,2012,97.9166666666667
 52,Denmark,59,2012,98.2166666666667
@@ -94,7 +94,7 @@ id,country,country_id,year,value
 93,Kenya,115,2012,67.6968662659466
 94,Kiribati,116,2012,122.87980961312
 95,"Korea, Rep. of",118,2012,91.8150833333333
-96,"Kosovo, Rep. of","Kosovo, Rep. of",2012,98.371846984568
+96,"Kosovo, Rep. of",251,2012,98.371846984568
 97,Kuwait,119,2012,97.6408980582524
 98,Kyrgyz Rep.,120,2012,81.5814471158466
 99,Lao People's Dem. Rep.,121,2012,88.8873929267861
@@ -163,7 +163,7 @@ id,country,country_id,year,value
 162,Solomon Islands,205,2012,0.0
 163,Somalia,206,2012,0.0
 164,South Africa,207,2012,63.1
-165,"South Sudan, Rep. of","South Sudan, Rep. of",2012,158.926942471238
+165,"South Sudan, Rep. of",252,2012,158.926942471238
 166,Spain,209,2012,92.7174166666667
 167,Sri Lanka,210,2012,75.8660587437584
 168,St. Kitts and Nevis,189,2012,108.4025
@@ -193,7 +193,7 @@ id,country,country_id,year,value
 192,Vanuatu,239,2012,138.8
 193,"Venezuela, Rep. Bolivariana de",241,2012,288.8
 194,Vietnam,242,2012,78.9978833900787
-195,West Bank and Gaza,West Bank and Gaza,2012,95.4593187224229
+195,West Bank and Gaza,172,2012,95.4593187224229
 196,"Yemen, Rep. of",247,2012,153.029755806066
 197,Zambia,248,2012,122.700833333333
 198,Zimbabwe,249,2012,2.04833977724741
@@ -245,7 +245,7 @@ id,country,country_id,year,value
 244,Costa Rica,54,2013,88.242
 245,Côte d'Ivoire,109,2013,101.430565255649
 246,"Croatia, Rep. of",55,2013,100.683333333333
-247,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2013,122.325
+247,"Curaçao, Kingdom of the Netherlands",250,2013,122.325
 248,Cyprus,57,2013,103.544935909533
 249,Czech Rep.,58,2013,99.325
 250,Denmark,59,2013,98.9916666666667
@@ -292,7 +292,7 @@ id,country,country_id,year,value
 291,Kenya,115,2013,71.5674302420491
 292,Kiribati,116,2013,121.051285442933
 293,"Korea, Rep. of",118,2013,93.0099166666667
-294,"Kosovo, Rep. of","Kosovo, Rep. of",2013,100.110396524502
+294,"Kosovo, Rep. of",251,2013,100.110396524502
 295,Kuwait,119,2013,100.259916782247
 296,Kyrgyz Rep.,120,2013,86.9770417253374
 297,Lao People's Dem. Rep.,121,2013,94.5507884373874
@@ -361,7 +361,7 @@ id,country,country_id,year,value
 360,Solomon Islands,205,2013,0.0
 361,Somalia,206,2013,0.0
 362,South Africa,207,2013,66.75
-363,"South Sudan, Rep. of","South Sudan, Rep. of",2013,158.834620255379
+363,"South Sudan, Rep. of",252,2013,158.834620255379
 364,Spain,209,2013,94.0234166666667
 365,Sri Lanka,210,2013,81.1072277432712
 366,St. Kitts and Nevis,189,2013,109.6025
@@ -391,7 +391,7 @@ id,country,country_id,year,value
 390,Vanuatu,239,2013,140.825
 391,"Venezuela, Rep. Bolivariana de",241,2013,406.166666666667
 392,Vietnam,242,2013,84.2059569084743
-393,West Bank and Gaza,West Bank and Gaza,2013,97.1054185808795
+393,West Bank and Gaza,172,2013,97.1054185808795
 394,"Yemen, Rep. of",247,2013,169.81473604397
 395,Zambia,248,2013,131.2625
 396,Zimbabwe,249,2013,2.08182911694511
@@ -443,7 +443,7 @@ id,country,country_id,year,value
 442,Costa Rica,54,2014,92.2298333333333
 443,Côte d'Ivoire,109,2014,101.885666022314
 444,"Croatia, Rep. of",55,2014,100.466666666667
-445,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2014,124.158333333333
+445,"Curaçao, Kingdom of the Netherlands",250,2014,124.158333333333
 446,Cyprus,57,2014,102.141913568598
 447,Czech Rep.,58,2014,99.6666666666667
 448,Denmark,59,2014,99.55
@@ -490,7 +490,7 @@ id,country,country_id,year,value
 489,Kenya,115,2014,76.4899490184322
 490,Kiribati,116,2014,123.59818658426
 491,"Korea, Rep. of",118,2014,94.1955833333333
-492,"Kosovo, Rep. of","Kosovo, Rep. of",2014,100.539827887338
+492,"Kosovo, Rep. of",251,2014,100.539827887338
 493,Kuwait,119,2014,103.176404299584
 494,Kyrgyz Rep.,120,2014,93.5301071411992
 495,Lao People's Dem. Rep.,121,2014,98.4550203153751
@@ -559,7 +559,7 @@ id,country,country_id,year,value
 558,Solomon Islands,205,2014,99.5913612565445
 559,Somalia,206,2014,0.0
 560,South Africa,207,2014,70.8416666666667
-561,"South Sudan, Rep. of","South Sudan, Rep. of",2014,161.493986813964
+561,"South Sudan, Rep. of",252,2014,161.493986813964
 562,Spain,209,2014,93.8813333333333
 563,Sri Lanka,210,2014,83.6856283643892
 564,St. Kitts and Nevis,189,2014,109.874166666667
@@ -589,7 +589,7 @@ id,country,country_id,year,value
 588,Vanuatu,239,2014,141.95
 589,"Venezuela, Rep. Bolivariana de",241,2014,658.675
 590,Vietnam,242,2014,87.6453950823342
-591,West Bank and Gaza,West Bank and Gaza,2014,98.7882410165425
+591,West Bank and Gaza,172,2014,98.7882410165425
 592,"Yemen, Rep. of",247,2014,183.577754829868
 593,Zambia,248,2014,141.51
 594,Zimbabwe,249,2014,2.077711575179
@@ -641,7 +641,7 @@ id,country,country_id,year,value
 640,Costa Rica,54,2015,92.9695
 641,Côte d'Ivoire,109,2015,103.160764671871
 642,"Croatia, Rep. of",55,2015,100.0
-643,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2015,123.566666666667
+643,"Curaçao, Kingdom of the Netherlands",250,2015,123.566666666667
 644,Cyprus,57,2015,100.0
 645,Czech Rep.,58,2015,99.975
 646,Denmark,59,2015,100.0
@@ -688,7 +688,7 @@ id,country,country_id,year,value
 687,Kenya,115,2015,81.5246508632118
 688,Kiribati,116,2015,124.305187670368
 689,"Korea, Rep. of",118,2015,94.8609166666667
-690,"Kosovo, Rep. of","Kosovo, Rep. of",2015,99.9999999999999
+690,"Kosovo, Rep. of",251,2015,99.9999999999999
 691,Kuwait,119,2015,106.552028432732
 692,Kyrgyz Rep.,120,2015,99.6126677990376
 693,Lao People's Dem. Rep.,121,2015,99.7126397224169
@@ -757,7 +757,7 @@ id,country,country_id,year,value
 756,Solomon Islands,205,2015,99.0192394742583
 757,Somalia,206,2015,100.912614982632
 758,South Africa,207,2015,74.0583333333333
-759,"South Sudan, Rep. of","South Sudan, Rep. of",2015,246.708437503382
+759,"South Sudan, Rep. of",252,2015,246.708437503382
 760,Spain,209,2015,93.4115833333333
 761,Sri Lanka,210,2015,86.8392106625259
 762,St. Kitts and Nevis,189,2015,107.345
@@ -787,7 +787,7 @@ id,country,country_id,year,value
 786,Vanuatu,239,2015,145.475
 787,"Venezuela, Rep. Bolivariana de",241,2015,1460.53333333333
 788,Vietnam,242,2015,88.1986136094388
-789,West Bank and Gaza,West Bank and Gaza,2015,100.202504794195
+789,West Bank and Gaza,172,2015,100.202504794195
 790,"Yemen, Rep. of",247,2015,0.0
 791,Zambia,248,2015,155.8175
 792,Zimbabwe,249,2015,2.02720306284805
@@ -839,7 +839,7 @@ id,country,country_id,year,value
 838,Costa Rica,54,2016,92.95325
 839,Côte d'Ivoire,109,2016,103.906801098584
 840,"Croatia, Rep. of",55,2016,98.875
-841,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2016,123.508333333333
+841,"Curaçao, Kingdom of the Netherlands",250,2016,123.508333333333
 842,Cyprus,57,2016,98.5708333333333
 843,Czech Rep.,58,2016,100.658333333333
 844,Denmark,59,2016,100.25
@@ -886,7 +886,7 @@ id,country,country_id,year,value
 885,Kenya,115,2016,86.658386549418
 886,Kiribati,116,2016,126.688504585739
 887,"Korea, Rep. of",118,2016,95.7826666666667
-888,"Kosovo, Rep. of","Kosovo, Rep. of",2016,100.273169431046
+888,"Kosovo, Rep. of",251,2016,100.273169431046
 889,Kuwait,119,2016,109.959986130375
 890,Kyrgyz Rep.,120,2016,99.9999999999999
 891,Lao People's Dem. Rep.,121,2016,101.3049631067
@@ -955,7 +955,7 @@ id,country,country_id,year,value
 954,Solomon Islands,205,2016,99.5266988438045
 955,Somalia,206,2016,100.936767125623
 956,South Africa,207,2016,78.925
-957,"South Sudan, Rep. of","South Sudan, Rep. of",2016,1184.19947771574
+957,"South Sudan, Rep. of",252,2016,1184.19947771574
 958,Spain,209,2016,93.2223333333333
 959,Sri Lanka,210,2016,90.2770781573499
 960,St. Kitts and Nevis,189,2016,106.6075
@@ -985,7 +985,7 @@ id,country,country_id,year,value
 984,Vanuatu,239,2016,146.7
 985,"Venezuela, Rep. Bolivariana de",241,2016,5184.14166666667
 986,Vietnam,242,2016,90.5519715027653
-987,West Bank and Gaza,West Bank and Gaza,2016,99.9829544879087
+987,West Bank and Gaza,172,2016,99.9829544879087
 988,"Yemen, Rep. of",247,2016,0.0
 989,Zambia,248,2016,183.661666666667
 990,Zimbabwe,249,2016,1.99590974542562
@@ -1037,7 +1037,7 @@ id,country,country_id,year,value
 1036,Costa Rica,54,2017,94.4645833333333
 1037,Côte d'Ivoire,109,2017,104.619478172883
 1038,"Croatia, Rep. of",55,2017,99.9916666666667
-1039,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2017,125.466666666667
+1039,"Curaçao, Kingdom of the Netherlands",250,2017,125.466666666667
 1040,Cyprus,57,2017,99.095
 1041,Czech Rep.,58,2017,103.125
 1042,Denmark,59,2017,101.4
@@ -1084,7 +1084,7 @@ id,country,country_id,year,value
 1083,Kenya,115,2017,93.5960167520181
 1084,Kiribati,116,2017,127.138908682929
 1085,"Korea, Rep. of",118,2017,97.645
-1086,"Kosovo, Rep. of","Kosovo, Rep. of",2017,101.765469138155
+1086,"Kosovo, Rep. of",251,2017,101.765469138155
 1087,Kuwait,119,2017,112.348133379565
 1088,Kyrgyz Rep.,120,2017,103.175309863799
 1089,Lao People's Dem. Rep.,121,2017,102.141213905551
@@ -1153,7 +1153,7 @@ id,country,country_id,year,value
 1152,Solomon Islands,205,2017,100.013072643979
 1153,Somalia,206,2017,104.930424553925
 1154,South Africa,207,2017,83.0166666666667
-1155,"South Sudan, Rep. of","South Sudan, Rep. of",2017,3408.7375023654
+1155,"South Sudan, Rep. of",252,2017,3408.7375023654
 1156,Spain,209,2017,95.0458333333333
 1157,Sri Lanka,210,2017,97.2321485507246
 1158,St. Kitts and Nevis,189,2017,107.348333333333
@@ -1183,7 +1183,7 @@ id,country,country_id,year,value
 1182,Vanuatu,239,2017,151.225
 1183,"Venezuela, Rep. Bolivariana de",241,2017,0.0
 1184,Vietnam,242,2017,93.7396335169164
-1185,West Bank and Gaza,West Bank and Gaza,2017,100.195489188333
+1185,West Bank and Gaza,172,2017,100.195489188333
 1186,"Yemen, Rep. of",247,2017,0.0
 1187,Zambia,248,2017,195.741666666667
 1188,Zimbabwe,249,2017,2.01375242641209
@@ -1235,7 +1235,7 @@ id,country,country_id,year,value
 1234,Costa Rica,54,2018,96.56275
 1235,Côte d'Ivoire,109,2018,104.995490026019
 1236,"Croatia, Rep. of",55,2018,101.491666666667
-1237,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2018,128.708333333333
+1237,"Curaçao, Kingdom of the Netherlands",250,2018,128.708333333333
 1238,Cyprus,57,2018,100.5175
 1239,Czech Rep.,58,2018,105.341666666667
 1240,Denmark,59,2018,102.225
@@ -1282,7 +1282,7 @@ id,country,country_id,year,value
 1281,Kenya,115,2018,97.9855012414426
 1282,Kiribati,116,2018,127.856010894452
 1283,"Korea, Rep. of",118,2018,99.0860833333333
-1284,"Kosovo, Rep. of","Kosovo, Rep. of",2018,102.837871348522
+1284,"Kosovo, Rep. of",251,2018,102.837871348522
 1285,Kuwait,119,2018,112.958333333333
 1286,Kyrgyz Rep.,120,2018,104.766955597446
 1287,Lao People's Dem. Rep.,121,2018,104.225295746007
@@ -1351,7 +1351,7 @@ id,country,country_id,year,value
 1350,Solomon Islands,205,2018,103.475
 1351,Somalia,206,2018,109.406704846526
 1352,South Africa,207,2018,86.7666666666667
-1353,"South Sudan, Rep. of","South Sudan, Rep. of",2018,6255.08545321473
+1353,"South Sudan, Rep. of",252,2018,6255.08545321473
 1354,Spain,209,2018,96.6378333333333
 1355,Sri Lanka,210,2018,99.3080916149068
 1356,St. Kitts and Nevis,189,2018,106.235
@@ -1381,7 +1381,7 @@ id,country,country_id,year,value
 1380,Vanuatu,239,2018,154.75
 1381,"Venezuela, Rep. Bolivariana de",241,2018,0.0
 1382,Vietnam,242,2018,97.0576678876847
-1383,West Bank and Gaza,West Bank and Gaza,2018,99.9999999999993
+1383,West Bank and Gaza,172,2018,99.9999999999993
 1384,"Yemen, Rep. of",247,2018,0.0
 1385,Zambia,248,2018,210.411666666667
 1386,Zimbabwe,249,2018,2.22759009546539
@@ -1433,7 +1433,7 @@ id,country,country_id,year,value
 1432,Costa Rica,54,2019,98.58675
 1433,Côte d'Ivoire,109,2019,103.833333333333
 1434,"Croatia, Rep. of",55,2019,102.275
-1435,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2019,132.083333333333
+1435,"Curaçao, Kingdom of the Netherlands",250,2019,132.083333333333
 1436,Cyprus,57,2019,100.769166666667
 1437,Czech Rep.,58,2019,108.341666666667
 1438,Denmark,59,2019,103.0
@@ -1480,7 +1480,7 @@ id,country,country_id,year,value
 1479,Kenya,115,2019,103.115884901113
 1480,Kiribati,116,2019,125.537879192182
 1481,"Korea, Rep. of",118,2019,99.4655833333333
-1482,"Kosovo, Rep. of","Kosovo, Rep. of",2019,105.589804585927
+1482,"Kosovo, Rep. of",251,2019,105.589804585927
 1483,Kuwait,119,2019,114.191666666667
 1484,Kyrgyz Rep.,120,2019,105.954617459531
 1485,Lao People's Dem. Rep.,121,2019,107.688242494743
@@ -1549,7 +1549,7 @@ id,country,country_id,year,value
 1548,Solomon Islands,205,2019,105.166666666667
 1549,Somalia,206,2019,114.558181456565
 1550,South Africa,207,2019,90.3416666666667
-1551,"South Sudan, Rep. of","South Sudan, Rep. of",2019,11712.1073313477
+1551,"South Sudan, Rep. of",252,2019,11712.1073313477
 1552,Spain,209,2019,97.3138333333333
 1553,Sri Lanka,210,2019,102.81207194617
 1554,St. Kitts and Nevis,189,2019,105.884889741667
@@ -1579,7 +1579,7 @@ id,country,country_id,year,value
 1578,Vanuatu,239,2019,159.025
 1579,"Venezuela, Rep. Bolivariana de",241,2019,0.0
 1580,Vietnam,242,2019,99.7712291444279
-1581,West Bank and Gaza,West Bank and Gaza,2019,101.580183336394
+1581,West Bank and Gaza,172,2019,101.580183336394
 1582,"Yemen, Rep. of",247,2019,0.0
 1583,Zambia,248,2019,229.665
 1584,Zimbabwe,249,2019,7.91473878281623
@@ -1631,7 +1631,7 @@ id,country,country_id,year,value
 1630,Costa Rica,54,2020,99.3014166666667
 1631,Côte d'Ivoire,109,2020,106.351298486667
 1632,"Croatia, Rep. of",55,2020,102.433333333333
-1633,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2020,0.0
+1633,"Curaçao, Kingdom of the Netherlands",250,2020,0.0
 1634,Cyprus,57,2020,100.125833333333
 1635,Czech Rep.,58,2020,111.766666666667
 1636,Denmark,59,2020,103.433333333333
@@ -1678,7 +1678,7 @@ id,country,country_id,year,value
 1677,Kenya,115,2020,108.689107377251
 1678,Kiribati,116,2020,0.0
 1679,"Korea, Rep. of",118,2020,100.0
-1680,"Kosovo, Rep. of","Kosovo, Rep. of",2020,105.799113062452
+1680,"Kosovo, Rep. of",251,2020,105.799113062452
 1681,Kuwait,119,2020,116.591666666667
 1682,Kyrgyz Rep.,120,2020,112.656695163079
 1683,Lao People's Dem. Rep.,121,2020,113.184728605213
@@ -1747,7 +1747,7 @@ id,country,country_id,year,value
 1746,Solomon Islands,205,2020,108.283333333333
 1747,Somalia,206,2020,119.270108177513
 1748,South Africa,207,2020,93.2416666666667
-1749,"South Sudan, Rep. of","South Sudan, Rep. of",2020,15187.7739798582
+1749,"South Sudan, Rep. of",252,2020,15187.7739798582
 1750,Spain,209,2020,96.99975
 1751,Sri Lanka,210,2020,109.139070393375
 1752,St. Kitts and Nevis,189,2020,104.648953641667
@@ -1777,7 +1777,7 @@ id,country,country_id,year,value
 1776,Vanuatu,239,2020,167.5
 1777,"Venezuela, Rep. Bolivariana de",241,2020,0.0
 1778,Vietnam,242,2020,102.984794951845
-1779,West Bank and Gaza,West Bank and Gaza,2020,100.833231741553
+1779,West Bank and Gaza,172,2020,100.833231741553
 1780,"Yemen, Rep. of",247,2020,0.0
 1781,Zambia,248,2020,265.798333333333
 1782,Zimbabwe,249,2020,52.0158071201273
@@ -1829,7 +1829,7 @@ id,country,country_id,year,value
 1828,Costa Rica,54,2021,101.015833333333
 1829,Côte d'Ivoire,109,2021,110.7031424625
 1830,"Croatia, Rep. of",55,2021,105.05
-1831,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2021,0.0
+1831,"Curaçao, Kingdom of the Netherlands",250,2021,0.0
 1832,Cyprus,57,2021,102.575
 1833,Czech Rep.,58,2021,116.058333333333
 1834,Denmark,59,2021,105.35
@@ -1876,7 +1876,7 @@ id,country,country_id,year,value
 1875,Kenya,115,2021,115.331
 1876,Kiribati,116,2021,0.0
 1877,"Korea, Rep. of",118,2021,102.498333333333
-1878,"Kosovo, Rep. of","Kosovo, Rep. of",2021,109.347288810124
+1878,"Kosovo, Rep. of",251,2021,109.347288810124
 1879,Kuwait,119,2021,120.583333333333
 1880,Kyrgyz Rep.,120,2021,126.068519580466
 1881,Lao People's Dem. Rep.,121,2021,117.435517324579
@@ -1945,7 +1945,7 @@ id,country,country_id,year,value
 1944,Solomon Islands,205,2021,108.158333333333
 1945,Somalia,206,2021,124.786231873996
 1946,South Africa,207,2021,97.5416666666667
-1947,"South Sudan, Rep. of","South Sudan, Rep. of",2021,16785.0290101369
+1947,"South Sudan, Rep. of",252,2021,16785.0290101369
 1948,Spain,209,2021,100.000083333333
 1949,Sri Lanka,210,2021,116.794936853002
 1950,St. Kitts and Nevis,189,2021,105.900229533333
@@ -1975,7 +1975,7 @@ id,country,country_id,year,value
 1974,Vanuatu,239,2021,171.425
 1975,"Venezuela, Rep. Bolivariana de",241,2021,0.0
 1976,Vietnam,242,2021,104.87427299701
-1977,West Bank and Gaza,West Bank and Gaza,2021,102.081023854591
+1977,West Bank and Gaza,172,2021,102.081023854591
 1978,"Yemen, Rep. of",247,2021,0.0
 1979,Zambia,248,2021,324.329166666667
 1980,Zimbabwe,249,2021,103.275359069212
@@ -2027,7 +2027,7 @@ id,country,country_id,year,value
 2026,Costa Rica,54,2022,109.374666157376
 2027,Côte d'Ivoire,109,2022,116.544025401667
 2028,"Croatia, Rep. of",55,2022,116.375
-2029,"Curaçao, Kingdom of the Netherlands","Curaçao, Kingdom of the Netherlands",2022,0.0
+2029,"Curaçao, Kingdom of the Netherlands",250,2022,0.0
 2030,Cyprus,57,2022,111.186666666667
 2031,Czech Rep.,58,2022,133.583333333333
 2032,Denmark,59,2022,113.458333333333
@@ -2074,7 +2074,7 @@ id,country,country_id,year,value
 2073,Kenya,115,2022,124.16175
 2074,Kiribati,116,2022,0.0
 2075,"Korea, Rep. of",118,2022,107.713333333333
-2076,"Kosovo, Rep. of","Kosovo, Rep. of",2022,122.010263022166
+2076,"Kosovo, Rep. of",251,2022,122.010263022166
 2077,Kuwait,119,2022,125.383333333333
 2078,Kyrgyz Rep.,120,2022,143.620925239465
 2079,Lao People's Dem. Rep.,121,2022,144.394275991143
@@ -2143,7 +2143,7 @@ id,country,country_id,year,value
 2142,Solomon Islands,205,2022,114.12665
 2143,Somalia,206,2022,133.245835234109
 2144,South Africa,207,2022,104.408333333333
-2145,"South Sudan, Rep. of","South Sudan, Rep. of",2022,15662.56025
+2145,"South Sudan, Rep. of",252,2022,15662.56025
 2146,Spain,209,2022,108.390666666667
 2147,Sri Lanka,210,2022,174.866666666667
 2148,St. Kitts and Nevis,189,2022,108.725
@@ -2173,7 +2173,7 @@ id,country,country_id,year,value
 2172,Vanuatu,239,2022,0.0
 2173,"Venezuela, Rep. Bolivariana de",241,2022,0.0
 2174,Vietnam,242,2022,108.184637289345
-2175,West Bank and Gaza,West Bank and Gaza,2022,105.900103535309
+2175,West Bank and Gaza,172,2022,105.900103535309
 2176,"Yemen, Rep. of",247,2022,0.0
 2177,Zambia,248,2022,359.983333333333
 2178,Zimbabwe,249,2022,211.41
