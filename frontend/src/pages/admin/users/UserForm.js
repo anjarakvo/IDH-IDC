@@ -56,6 +56,11 @@ const UserForm = () => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [allCases, setAllCases] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const [caseOptions, setCaseOptions] = useState([]);
+  const [
+    isCasePermissionDropdownDisabled,
+    setIsCasePermissionDropdownDisabled,
+  ] = useState(false);
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -67,7 +72,31 @@ const UserForm = () => {
   const roleOptions = transformToSelectOptions(
     userRole === "super_admin" ? allUserRole : nonAdminRole
   );
-  const casePermissionOptions = transformToSelectOptions(casePermission);
+
+  const casePermissionOptions = useMemo(() => {
+    let casePermissionTemp = casePermission;
+    if (selectedRole === "viewer") {
+      form.setFieldsValue({ cases: [{ permission: "view" }] });
+      setIsCasePermissionDropdownDisabled(true);
+      casePermissionTemp = casePermission.filter((x) => x !== "edit");
+    } else {
+      form.setFieldsValue({ cases: [{ permission: null }] });
+      setIsCasePermissionDropdownDisabled(false);
+    }
+    return transformToSelectOptions(casePermissionTemp);
+  }, [selectedRole, form]);
+
+  useEffect(() => {
+    // get case options
+    api
+      .get("case/options")
+      .then((res) => {
+        setCaseOptions(res.data);
+      })
+      .catch(() => {
+        setCaseOptions([]);
+      });
+  }, []);
 
   useEffect(() => {
     if (userId) {
@@ -109,12 +138,21 @@ const UserForm = () => {
 
   const onFinish = (values) => {
     setSubmitting(true);
-    const { fullname, email, role, organisation, tags, business_units, cases } =
-      values;
+    const {
+      fullname,
+      email,
+      role,
+      organisation,
+      all_cases,
+      tags,
+      business_units,
+      cases,
+    } = values;
     const payload = new FormData();
     payload.append("fullname", fullname);
     payload.append("email", email);
     payload.append("role", role);
+    payload.append("all_cases", all_cases);
     payload.append("organisation", organisation);
     if (tags && tags?.length) {
       const tagVal = Array.isArray(tags) ? tags : [tags];
@@ -418,8 +456,7 @@ const UserForm = () => {
                                         allowClear
                                         optionFilterProp="children"
                                         filterOption={filterOption}
-                                        options={[]}
-                                        disabled
+                                        options={caseOptions}
                                       />
                                     </Form.Item>
                                   </Col>
@@ -435,7 +472,9 @@ const UserForm = () => {
                                         optionFilterProp="children"
                                         filterOption={filterOption}
                                         options={casePermissionOptions}
-                                        disabled
+                                        disabled={
+                                          isCasePermissionDropdownDisabled
+                                        }
                                       />
                                     </Form.Item>
                                   </Col>
