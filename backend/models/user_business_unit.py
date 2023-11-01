@@ -14,6 +14,13 @@ class UserBusinessUnitRole(enum.Enum):
     member = "member"
 
 
+class UserBusinessUnitDict(TypedDict):
+    id: int
+    user: int
+    business_unit: int
+    role: UserBusinessUnitRole
+
+
 class UserBusinessUnitDetailDict(TypedDict):
     id: int
     name: str

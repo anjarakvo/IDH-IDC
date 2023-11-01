@@ -63,21 +63,18 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
     async def test_update_user_with_cases_n_tags(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        user = get_user_by_email(session=session, email="super_admin@akvo.org")
-        assert user.email == "super_admin@akvo.org"
+        user = get_user_by_email(session=session, email="support@akvo.org")
+        assert user.email == "support@akvo.org"
         update_payload = {
             "fullname": user.fullname,
             "organisation": user.organisation,
-            "role": UserRole.super_admin.value,
+            "role": UserRole.user.value,
             "is_active": user.is_active,
+            "all_cases": False,
             "tags": json.dumps([1]),
             "cases": json.dumps([{
                 "case": 1,
                 "permission": PermissionType.view.value,
-            }]),
-            "business_units": json.dumps([{
-                "business_unit": 1,
-                "role": UserBusinessUnitRole.admin.value,
             }]),
         }
         # without cred
@@ -96,17 +93,13 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
         assert res.status_code == 200
         res = res.json()
         assert res == {
-            'id': 1,
-            'fullname': 'John Doe',
-            'email': 'super_admin@akvo.org',
-            'role': UserRole.super_admin.value,
-            'all_cases': True,
+            'id': res['id'],
+            'fullname': 'Normal User',
+            'email': 'support@akvo.org',
+            'role': UserRole.user.value,
+            'all_cases': False,
             'active': True,
-            'business_unit_detail': [{
-                'id': 5,
-                'name': 'Acme Technologies Sales Division',
-                'role': 'admin'
-            }],
+            'business_unit_detail': None,
             'organisation_detail': {
                 'id': 1,
                 'name': 'Akvo'

@@ -93,4 +93,7 @@ class TestCaseDropdownRoute:
         )
         assert res.status_code == 200
         res = res.json()
-        assert res == [{'label': 'Bali Coffee', 'value': 3}]
+        assert res == [{
+            'label': 'Bali Coffee',
+            'value': 3
+        }]

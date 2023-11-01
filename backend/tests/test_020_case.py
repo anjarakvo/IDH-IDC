@@ -220,7 +220,24 @@ class TestCaseRoute:
             app.url_path_for("case:get_all"),
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
         )
-        assert res.status_code == 404
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'current': 1,
+            'data': [{
+                'id': 1,
+                'name': 'Bali Rice and Corn Production Comparison',
+                'country': 'Bali',
+                'focus_commodity': 2,
+                'diversified_commodities_count': 2,
+                'year': 2023,
+                "created_at": res["data"][0]["created_at"],
+                'created_by': 'super_admin@akvo.org',
+                'tags': [1]
+            }],
+            'total': 1,
+            'total_page': 1
+        }
         # with admin user cred
         res = await client.get(
             app.url_path_for("case:get_all"),

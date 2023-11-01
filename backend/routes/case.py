@@ -1,4 +1,5 @@
 import db.crud_case as crud_case
+import db.crud_user_business_unit as crud_bu
 
 from math import ceil
 from fastapi import APIRouter, Request, Depends, HTTPException, Query
@@ -56,8 +57,15 @@ def get_all_case(
     # if all_cases false and role not super_admin
     user = verify_user(session=session, authenticated=req.state.authenticated)
     business_unit_users = []
-    if user.role != UserRole.super_admin or user.all_cases:
-        business_unit_users = [bu.user for bu in user.user_business_units]
+    if user.role != UserRole.super_admin and user.all_cases:
+        business_unit_users = crud_bu.find_users_in_same_business_unit(
+            session=session,
+            business_units=[
+                bu.business_unit for bu in user.user_business_units
+            ]
+        )
+        if not business_unit_users:
+            raise HTTPException(status_code=404, detail="Not found")
     # if role = user we should check for user tags or user cases
     # (also if editor / viewer and all_cases false)
     user_cases = []
@@ -97,10 +105,17 @@ def get_case_options(
 ):
     user = verify_admin(session=session, authenticated=req.state.authenticated)
     business_unit_users = []
-    if user.role == UserRole.admin and user.all_cases:
-        business_unit_users = [bu.user for bu in user.user_business_units]
+    if user.role != UserRole.super_admin and user.all_cases:
+        business_unit_users = crud_bu.find_users_in_same_business_unit(
+            session=session,
+            business_units=[
+                bu.business_unit for bu in user.user_business_units
+            ]
+        )
+        if not business_unit_users:
+            raise HTTPException(status_code=404, detail="Not found")
     user_cases = []
-    if user.role == UserRole.admin and not user.all_cases:
+    if user.role != UserRole.super_admin or not user.all_cases:
         user_cases = [uc.case for uc in user.user_case_access]
     cases = crud_case.get_case_options(
         session=session,
