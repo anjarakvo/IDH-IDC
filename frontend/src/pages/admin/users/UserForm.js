@@ -37,7 +37,6 @@ const transformToSelectOptions = (values) => {
 };
 
 const defFormListValue = {
-  business_units: [{ business_unit: null }],
   cases: [{ case: null, permission: null }],
 };
 
@@ -118,6 +117,7 @@ const UserForm = () => {
         .then((res) => {
           const { data } = res;
           setSelectedRole(data?.role || null);
+
           if (
             data?.all_cases !== null &&
             useRolerWithRadioButtonField.includes(data?.role)
@@ -125,16 +125,20 @@ const UserForm = () => {
             setAllCases(data.all_cases ? 1 : 0);
             form.setFieldsValue({ all_cases: data.all_cases ? 1 : 0 });
           }
+
           const cases = data?.cases?.length
             ? data.cases
             : defFormListValue.cases;
           setSelectedCases(cases.map((x) => x.case));
+
+          const businessUnits = data?.business_units?.length
+            ? data.business_units.map((bu) => bu.business_unit)
+            : [];
+
           setInitValues({
             ...data,
             cases: cases,
-            business_units: data?.business_units?.length
-              ? data.business_units
-              : defFormListValue.business_units,
+            business_units: businessUnits,
           });
         })
         .catch((e) => {
@@ -176,15 +180,15 @@ const UserForm = () => {
       const tagVal = Array.isArray(tags) ? tags : [tags];
       payload.append("tags", JSON.stringify(tagVal));
     }
-    if (
-      business_units &&
-      business_units?.filter((x) => x.business_unit)?.length
-    ) {
-      const businessUnitsVal = business_units.map((bu) => ({
-        ...bu,
+    if (business_units && business_units?.length) {
+      let businessUnitVals = Array.isArray(business_units)
+        ? business_units
+        : [business_units];
+      businessUnitVals = businessUnitVals.map((bu) => ({
+        business_unit: bu,
         role: adminRole.includes(role) ? "admin" : "member",
       }));
-      payload.append("business_units", JSON.stringify(businessUnitsVal));
+      payload.append("business_units", JSON.stringify(businessUnitVals));
     }
     if (cases && cases?.filter((x) => x.case && x.permission)?.length) {
       payload.append("cases", JSON.stringify(cases));
@@ -375,67 +379,19 @@ const UserForm = () => {
               (userRole === "super_admin" &&
                 useRolerWithRadioButtonField.includes(selectedRole)) ? (
                 <Card title="Business Units">
-                  <Form.List name="business_units">
-                    {(fields, { add, remove }) => {
-                      return (
-                        <>
-                          {fields.map((field) => {
-                            return (
-                              <Form.Item
-                                key={field.key}
-                                required={isBusinessUnitRequired}
-                              >
-                                <Row gutter={[16, 16]} align="middle">
-                                  <Col span={20}>
-                                    <Form.Item
-                                      {...field}
-                                      label="Business Unit"
-                                      name={[field.name, "business_unit"]}
-                                      rules={[
-                                        {
-                                          required: isBusinessUnitRequired,
-                                          message: "Business Unit is required",
-                                        },
-                                      ]}
-                                    >
-                                      <Select
-                                        showSearch
-                                        allowClear
-                                        optionFilterProp="children"
-                                        filterOption={filterOption}
-                                        options={businessUnitOptions}
-                                      />
-                                    </Form.Item>
-                                  </Col>
-                                  <Col span={4}>
-                                    {fields.length > 1 ? (
-                                      <MinusCircleOutlined
-                                        onClick={() => remove(field.name)}
-                                      />
-                                    ) : (
-                                      ""
-                                    )}
-                                  </Col>
-                                </Row>
-                              </Form.Item>
-                            );
-                          })}
-                          <Form.Item>
-                            <Button
-                              type="dashed"
-                              onClick={() => add()}
-                              style={{
-                                width: "100%",
-                              }}
-                              icon={<PlusOutlined />}
-                            >
-                              Add Business Unit
-                            </Button>
-                          </Form.Item>
-                        </>
-                      );
-                    }}
-                  </Form.List>
+                  <Form.Item
+                    label="Business Units"
+                    name="business_units"
+                    required={isBusinessUnitRequired}
+                  >
+                    <Select
+                      showSearch
+                      mode="multiple"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      options={businessUnitOptions}
+                    />
+                  </Form.Item>
                 </Card>
               ) : (
                 ""
@@ -446,7 +402,7 @@ const UserForm = () => {
                   <Form.Item label="Tags" name="tags" required={false}>
                     <Select
                       showSearch
-                      mode="tags"
+                      mode="multiple"
                       optionFilterProp="children"
                       filterOption={filterOption}
                       options={tagOptions}
