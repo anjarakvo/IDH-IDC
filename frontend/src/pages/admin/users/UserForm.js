@@ -56,11 +56,9 @@ const UserForm = () => {
   const [selectedRole, setSelectedRole] = useState(null);
   const [allCases, setAllCases] = useState(null);
   const [messageApi, contextHolder] = message.useMessage();
+  const [loadingCaseOptions, setLoadingCaseOptions] = useState(true);
   const [caseOptions, setCaseOptions] = useState([]);
-  const [
-    isCasePermissionDropdownDisabled,
-    setIsCasePermissionDropdownDisabled,
-  ] = useState(false);
+  const [selectedCases, setSelectedCases] = useState([]);
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -76,18 +74,26 @@ const UserForm = () => {
   const casePermissionOptions = useMemo(() => {
     let casePermissionTemp = casePermission;
     if (selectedRole === "viewer") {
-      form.setFieldsValue({ cases: [{ permission: "view" }] });
-      setIsCasePermissionDropdownDisabled(true);
       casePermissionTemp = casePermission.filter((x) => x !== "edit");
-    } else {
-      form.setFieldsValue({ cases: [{ permission: null }] });
-      setIsCasePermissionDropdownDisabled(false);
     }
     return transformToSelectOptions(casePermissionTemp);
-  }, [selectedRole, form]);
+  }, [selectedRole]);
+
+  const filteredCaseOptions = useMemo(() => {
+    return caseOptions.map((opt) => {
+      if (selectedCases.includes(opt.value)) {
+        return {
+          ...opt,
+          disabled: true,
+        };
+      }
+      return opt;
+    });
+  }, [caseOptions, selectedCases]);
 
   useEffect(() => {
     // get case options
+    setLoadingCaseOptions(true);
     api
       .get("case/options")
       .then((res) => {
@@ -95,26 +101,37 @@ const UserForm = () => {
       })
       .catch(() => {
         setCaseOptions([]);
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setLoadingCaseOptions(false);
+        }, 100);
       });
   }, []);
 
   useEffect(() => {
-    if (userId) {
-      setLoading(true);
+    setLoading(true);
+    if (userId && !loadingCaseOptions) {
+      //  TODO ::Fix initial user value load when edit
       api
         .get(`user/${userId}`)
         .then((res) => {
           const { data } = res;
           setSelectedRole(data?.role || null);
           if (
-            data?.allCases &&
+            data?.all_cases !== null &&
             useRolerWithRadioButtonField.includes(data?.role)
           ) {
             setAllCases(data.all_cases ? 1 : 0);
+            form.setFieldsValue({ all_cases: data.all_cases ? 1 : 0 });
           }
+          const cases = data?.cases?.length
+            ? data.cases
+            : defFormListValue.cases;
+          setSelectedCases(cases.map((x) => x.case));
           setInitValues({
             ...data,
-            cases: data?.cases?.length ? data.cases : defFormListValue.cases,
+            cases: cases,
             business_units: data?.business_units?.length
               ? data.business_units
               : defFormListValue.business_units,
@@ -130,8 +147,9 @@ const UserForm = () => {
         });
     } else {
       setInitValues(defFormListValue);
+      setLoading(false);
     }
-  }, [userId]);
+  }, [userId, loadingCaseOptions, form]);
 
   const filterOption = (input, option) =>
     (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
@@ -220,6 +238,10 @@ const UserForm = () => {
 
   const handleOnChangeAllCases = (e) => {
     setAllCases(e.target.value);
+  };
+
+  const handleOnChangeCaseDropdown = (val) => {
+    setSelectedCases([...selectedCases, val]);
   };
 
   return (
@@ -443,20 +465,31 @@ const UserForm = () => {
                         <>
                           {fields.map((field) => {
                             return (
-                              <Form.Item key={field.key} required={false}>
+                              <Form.Item
+                                key={field.key}
+                                required={allCases !== null && !allCases}
+                              >
                                 <Row gutter={[16, 16]} align="middle">
                                   <Col span={10}>
                                     <Form.Item
                                       {...field}
                                       label="Case"
                                       name={[field.name, "case"]}
+                                      rules={[
+                                        {
+                                          required:
+                                            allCases !== null && !allCases,
+                                          message: "Case required",
+                                        },
+                                      ]}
                                     >
                                       <Select
                                         showSearch
                                         allowClear
                                         optionFilterProp="children"
                                         filterOption={filterOption}
-                                        options={caseOptions}
+                                        options={filteredCaseOptions}
+                                        onChange={handleOnChangeCaseDropdown}
                                       />
                                     </Form.Item>
                                   </Col>
@@ -465,6 +498,13 @@ const UserForm = () => {
                                       {...field}
                                       label="Permission"
                                       name={[field.name, "permission"]}
+                                      rules={[
+                                        {
+                                          required:
+                                            allCases !== null && !allCases,
+                                          message: "Case permission required",
+                                        },
+                                      ]}
                                     >
                                       <Select
                                         showSearch
@@ -472,9 +512,6 @@ const UserForm = () => {
                                         optionFilterProp="children"
                                         filterOption={filterOption}
                                         options={casePermissionOptions}
-                                        disabled={
-                                          isCasePermissionDropdownDisabled
-                                        }
                                       />
                                     </Form.Item>
                                   </Col>
