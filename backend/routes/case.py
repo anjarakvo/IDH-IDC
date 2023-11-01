@@ -6,7 +6,10 @@ from fastapi.security import HTTPBearer, HTTPBasicCredentials as credentials
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
-from models.case import CaseBase, CaseDict, PaginatedCaseResponse, CaseDetailDict
+from models.case import (
+    CaseBase, CaseDict, PaginatedCaseResponse, CaseDetailDict,
+    CaseDropdown
+)
 from models.user import UserRole
 from middleware import verify_admin, verify_user
 
@@ -80,6 +83,35 @@ def get_all_case(
     return {"current": page, "data": cases, "total": total, "total_page": total_page}
 
 
+@case_route.get(
+    "/case/options",
+    response_model=List[CaseDropdown],
+    summary="get case options dropdown",
+    name="case:get_options",
+    tags=["Case"],
+)
+def get_case_options(
+    req: Request,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    user = verify_admin(session=session, authenticated=req.state.authenticated)
+    business_unit_users = []
+    if user.role == UserRole.admin and user.all_cases:
+        business_unit_users = [bu.user for bu in user.user_business_units]
+    user_cases = []
+    if user.role == UserRole.admin and not user.all_cases:
+        user_cases = [uc.case for uc in user.user_case_access]
+    cases = crud_case.get_case_options(
+        session=session,
+        business_unit_users=business_unit_users,
+        user_cases=user_cases
+    )
+    if not cases:
+        raise HTTPException(status_code=404, detail="Not found")
+    return [case.to_dropdown for case in cases]
+
+
 @case_route.put(
     "/case/{case_id:path}",
     response_model=CaseDict,
@@ -117,5 +149,3 @@ def get_case_by_id(
     verify_admin(session=session, authenticated=req.state.authenticated)
     case = crud_case.get_case_by_id(session=session, id=case_id)
     return case.to_case_detail
-
-# TODO :: create an endpoint to load cases on user form, filter by same business unit

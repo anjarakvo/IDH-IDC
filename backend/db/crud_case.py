@@ -208,3 +208,16 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     session.flush()
     session.refresh(case)
     return case
+
+
+def get_case_options(
+    session: Session,
+    business_unit_users: Optional[List[int]] = None,
+    user_cases: Optional[List[int]] = None,
+) -> List[CaseListDict]:
+    case = session.query(Case)
+    if business_unit_users:
+        case = case.filter(Case.created_by.in_(business_unit_users))
+    if user_cases:
+        case = case.filter(Case.id.in_(user_cases))
+    return case.all()
