@@ -9,7 +9,7 @@ from models.user import (
 )
 from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
-from models.user_business_unit import UserBusinessUnit
+from models.user_business_unit import UserBusinessUnit, UserBusinessUnitRole
 
 
 def add_user(
@@ -26,12 +26,16 @@ def add_user(
         if invitation_id or payload.role
         else UserRole.user
     )
+    all_cases = 1 if payload.all_cases else 0
+    if role in [UserRole.super_admin, UserRole.admin]:
+        all_cases = 1
     user = User(
         fullname=payload.fullname,
         email=payload.email,
         password=password if not invitation_id else None,
         organisation=payload.organisation,
         role=role,
+        all_cases=all_cases,
         invitation_id=str(uuid4()) if invitation_id else None
     )
     if payload.tags:
@@ -44,10 +48,15 @@ def add_user(
                 case=proj["case"], permission=proj["permission"])
             user.user_case_access.append(case_access)
     if payload.business_units:
+        bu_role = (
+            UserBusinessUnitRole.admin
+            if role in [UserRole.super_admin, UserRole.admin]
+            else UserBusinessUnitRole.member
+        )
         for bu in payload.business_units:
             business_unit = UserBusinessUnit(
                 business_unit=bu["business_unit"],
-                role=bu["role"])
+                role=bu_role)
             user.user_business_units.append(business_unit)
     session.add(user)
     session.commit()
@@ -63,8 +72,12 @@ def update_user(
     user.fullname = payload.fullname
     user.organisation = payload.organisation
     user.is_active = 1 if payload.is_active else 0
-    user.role = payload.role if payload.role else user.role
-    user.all_cases = 1 if payload.all_cases else 0
+    role = payload.role if payload.role else user.role
+    user.role = role
+    all_cases = 0
+    if role in [UserRole.super_admin, UserRole.admin]:
+        all_cases = 1
+    user.all_cases = 1 if payload.all_cases else all_cases
     if payload.password:
         try:
             password = payload.password.get_secret_value()
@@ -96,7 +109,13 @@ def update_user(
                 case=proj["case"],
                 permission=proj["permission"])
             user.user_case_access.append(case_access)
+    # Handle business units
     if payload.business_units:
+        bu_role = (
+            UserBusinessUnitRole.admin
+            if role in [UserRole.super_admin, UserRole.admin]
+            else UserBusinessUnitRole.member
+        )
         # delete prev user business units before update
         prev_user_bus = session.query(UserBusinessUnit).filter(
             UserBusinessUnit.user == user.id).all()
@@ -107,7 +126,7 @@ def update_user(
         for bu in payload.business_units:
             business_unit = UserBusinessUnit(
                 user=user.id,
-                role=bu["role"],
+                role=bu_role,
                 business_unit=bu["business_unit"])
             user.user_business_units.append(business_unit)
     session.commit()
@@ -213,3 +232,11 @@ def accept_invitation(
     session.flush()
     session.refresh(user)
     return user
+
+
+def find_same_business_unit(session: Session, user_id: int):
+    return (
+        session.query(UserBusinessUnit)
+        .filter(UserBusinessUnit.user == user_id)
+        .all()
+    )

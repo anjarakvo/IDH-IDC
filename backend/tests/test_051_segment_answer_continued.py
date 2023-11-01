@@ -102,7 +102,7 @@ class TestSegmentAnswerRouteContinued():
             app.url_path_for("case:get_by_id", case_id=1),
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.get(
             app.url_path_for("case:get_by_id", case_id=1),
