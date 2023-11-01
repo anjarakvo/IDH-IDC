@@ -77,7 +77,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
             }]),
             "business_units": json.dumps([{
                 "business_unit": 1,
-                "role": UserBusinessUnitRole.member.value,
+                "role": UserBusinessUnitRole.admin.value,
             }]),
         }
         # without cred
@@ -103,9 +103,9 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
             'all_cases': True,
             'active': True,
             'business_unit_detail': [{
-                'id': 6,
+                'id': 5,
                 'name': 'Acme Technologies Sales Division',
-                'role': 'member'
+                'role': 'admin'
             }],
             'organisation_detail': {
                 'id': 1,

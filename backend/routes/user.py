@@ -160,8 +160,20 @@ def register(
     if payload.password:
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
-    # generate business unit for editor/viewer
-    if user and payload.role in [UserRole.editor, UserRole.viewer]:
+    is_editor_or_viewer = payload.role in [UserRole.editor, UserRole.viewer]
+    # if super_admin invite editor/viewer
+    if (
+        user and user.role == UserRole.super_admin
+        and is_editor_or_viewer
+        and not payload.business_units
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"business_units required for {payload.role.value} role",
+        )
+    # EOL super_admin invite editor/viewer
+    # generate business unit for editor/viewer invited by admin
+    if user and user.role == UserRole.admin and is_editor_or_viewer:
         same_business_units = (
             crud_user.find_same_business_unit(session=session, user_id=user.id)
         )

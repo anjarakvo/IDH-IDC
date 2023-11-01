@@ -9,7 +9,7 @@ from models.user import (
 )
 from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
-from models.user_business_unit import UserBusinessUnit
+from models.user_business_unit import UserBusinessUnit, UserBusinessUnitRole
 
 
 def add_user(
@@ -48,10 +48,15 @@ def add_user(
                 case=proj["case"], permission=proj["permission"])
             user.user_case_access.append(case_access)
     if payload.business_units:
+        bu_role = (
+            UserBusinessUnitRole.admin
+            if role in [UserRole.super_admin, UserRole.admin]
+            else UserBusinessUnitRole.member
+        )
         for bu in payload.business_units:
             business_unit = UserBusinessUnit(
                 business_unit=bu["business_unit"],
-                role=bu["role"])
+                role=bu_role)
             user.user_business_units.append(business_unit)
     session.add(user)
     session.commit()
@@ -104,12 +109,13 @@ def update_user(
                 case=proj["case"],
                 permission=proj["permission"])
             user.user_case_access.append(case_access)
-    # TODO :: How we manage business units in user update?
-    # I think doesn't need too update business unit when update,
-    # because business unit already inherit from admin for editor and viewer
-    if payload.business_units and payload.role in [
-        UserRole.super_admin, UserRole.admin
-    ]:
+    # Handle business units
+    if payload.business_units:
+        bu_role = (
+            UserBusinessUnitRole.admin
+            if role in [UserRole.super_admin, UserRole.admin]
+            else UserBusinessUnitRole.member
+        )
         # delete prev user business units before update
         prev_user_bus = session.query(UserBusinessUnit).filter(
             UserBusinessUnit.user == user.id).all()
@@ -120,7 +126,7 @@ def update_user(
         for bu in payload.business_units:
             business_unit = UserBusinessUnit(
                 user=user.id,
-                role=bu["role"],
+                role=bu_role,
                 business_unit=bu["business_unit"])
             user.user_business_units.append(business_unit)
     session.commit()
