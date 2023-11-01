@@ -58,6 +58,7 @@ const UserForm = () => {
   const [loadingCaseOptions, setLoadingCaseOptions] = useState(true);
   const [caseOptions, setCaseOptions] = useState([]);
   const [selectedCases, setSelectedCases] = useState([]);
+  const [isUserActive, setIsUserActive] = useState(null);
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -111,12 +112,12 @@ const UserForm = () => {
   useEffect(() => {
     setLoading(true);
     if (userId && !loadingCaseOptions) {
-      //  TODO ::Fix initial user value load when edit
       api
         .get(`user/${userId}`)
         .then((res) => {
           const { data } = res;
           setSelectedRole(data?.role || null);
+          setIsUserActive(data.active);
 
           if (
             data?.all_cases !== null &&
@@ -515,7 +516,9 @@ const UserForm = () => {
               style={{ width: "200px", float: "left" }}
               loading={submitting}
             >
-              Save User
+              {isUserActive !== null && !isUserActive
+                ? "Approve User"
+                : "Save User"}
             </Button>
           </Form.Item>
         </Form>
