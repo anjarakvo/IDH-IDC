@@ -719,3 +719,48 @@ class TestUserEndpoint():
         res = res.json()
         assert res["role"] == UserRole.user.value
         assert res["active"] is True
+
+    @pytest.mark.asyncio
+    async def test_get_all_approved_user_by_admin_cred(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        account = Acc(email="admin@akvo.org", token=None)
+        # with admin credential
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            headers={"Authorization": f"Bearer {account.token}"})
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'current': 1,
+            'data': [{
+                'id': 5,
+                'organisation': 1,
+                'email': 'viewer@akvo.org',
+                'fullname': 'Viewer User',
+                'role': 'viewer',
+                'active': True,
+                'tags_count': 0,
+                'cases_count': 0
+            }, {
+                'id': 4,
+                'organisation': 1,
+                'email': 'editor@akvo.org',
+                'fullname': 'Editor User',
+                'role': 'editor',
+                'active': True,
+                'tags_count': 0,
+                'cases_count': 0
+            }, {
+                'id': 3,
+                'organisation': 1,
+                'email': 'admin@akvo.org',
+                'fullname': 'Invited Admin',
+                'role': 'admin',
+                'active': True,
+                'tags_count': 0,
+                'cases_count': 0
+            }],
+            'total': 3,
+            'total_page': 1
+        }

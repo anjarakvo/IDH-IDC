@@ -162,7 +162,8 @@ def filter_user(
     session: Session,
     search: Optional[str] = None,
     approved: Optional[bool] = True,
-    organisation: Optional[int] = None
+    organisation: Optional[int] = None,
+    business_unit_users: Optional[List[int]] = None,
 ):
     is_active = 1 if approved else 0
     user = session.query(User).filter(User.is_active == is_active)
@@ -174,6 +175,8 @@ def filter_user(
             ))
     if organisation:
         user = user.filter(User.organisation.in_([organisation]))
+    if business_unit_users:
+        user = user.filter(User.id.in_(business_unit_users))
     return user
 
 
@@ -182,12 +185,14 @@ def get_all_user(
     search: Optional[str] = None,
     approved: Optional[bool] = True,
     organisation: Optional[List[int]] = None,
+    business_unit_users: Optional[List[int]] = None,
     skip: int = 0,
     limit: int = 10
 ) -> List[UserDict]:
     user = filter_user(
         session=session, search=search,
-        organisation=organisation, approved=approved)
+        organisation=organisation, approved=approved,
+        business_unit_users=business_unit_users)
     user = user.order_by(User.id.desc()).offset(skip).limit(limit).all()
     return user
 
@@ -196,11 +201,13 @@ def count(
     session: Session,
     search: Optional[str] = None,
     approved: Optional[bool] = True,
-    organisation: Optional[int] = None
+    organisation: Optional[int] = None,
+    business_unit_users: Optional[List[int]] = None,
 ) -> int:
     user = filter_user(
         session=session, search=search,
-        organisation=organisation, approved=approved)
+        organisation=organisation, approved=approved,
+        business_unit_users=business_unit_users)
     return user.count()
 
 

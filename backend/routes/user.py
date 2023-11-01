@@ -1,5 +1,7 @@
 import os
 import db.crud_user as crud_user
+import db.crud_user_business_unit as crud_bu
+
 from math import ceil
 from middleware import (
     Token, authenticate_user, create_access_token, verify_user,
@@ -88,21 +90,32 @@ def get_all(
     credentials: credentials = Depends(security)
 ):
     # TODO :: filter user in same business unit when role == admin
-    verify_admin(session=session, authenticated=req.state.authenticated)
+    user = verify_admin(session=session, authenticated=req.state.authenticated)
+    business_unit_users = []
+    if user.role == UserRole.admin:
+        business_unit_users = crud_bu.find_users_in_same_business_unit(
+            session=session,
+            business_units=[
+                bu.business_unit for bu in user.user_business_units
+            ]
+        )
     user = crud_user.get_all_user(
         session=session,
         search=search,
         organisation=organisation,
         approved=approved,
         skip=(limit * (page - 1)),
-        limit=limit
+        limit=limit,
+        business_unit_users=business_unit_users,
     )
     if not user:
         raise HTTPException(status_code=404, detail="Not found")
     # count total user
     total = crud_user.count(
         session=session, search=search,
-        organisation=organisation, approved=approved)
+        organisation=organisation, approved=approved,
+        business_unit_users=business_unit_users,
+    )
     user = [u.to_user_list for u in user]
     total_page = ceil(total / limit) if total > 0 else 0
     if total_page < page:
