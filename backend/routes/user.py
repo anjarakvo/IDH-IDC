@@ -89,7 +89,6 @@ def get_all(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security)
 ):
-    # TODO :: filter user in same business unit when role == admin
     user = verify_admin(session=session, authenticated=req.state.authenticated)
     business_unit_users = []
     if user.role == UserRole.admin:

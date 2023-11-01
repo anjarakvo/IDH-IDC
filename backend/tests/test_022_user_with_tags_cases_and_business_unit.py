@@ -54,7 +54,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
             'email': 'jane@akvo.org',
             'fullname': 'Jane Doe',
             'role': UserRole.user,
-            'active': 0,
+            'active': 1,
             'tags_count': 1,
             'cases_count': 1,
         }

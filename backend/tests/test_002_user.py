@@ -314,7 +314,7 @@ class TestUserEndpoint():
             "email": "admin@akvo.org",
             "organisation": 1,
             "role": UserRole.admin.value,
-            "active": False
+            "active": True
         }
         user = get_user_by_email(session=session, email=user_payload["email"])
         assert user.invitation_id is not None
@@ -419,7 +419,7 @@ class TestUserEndpoint():
             'email': 'editor@akvo.org',
             'role': 'editor',
             'all_cases': False,
-            'active': False,
+            'active': True,
             'tags': [],
             'business_units': [{
                 'business_unit': 1,
@@ -464,7 +464,7 @@ class TestUserEndpoint():
             'email': 'viewer@akvo.org',
             'role': 'viewer',
             'all_cases': False,
-            'active': False,
+            'active': True,
             'tags': [],
             'business_units': [{
                 'business_unit': 1,
@@ -482,32 +482,7 @@ class TestUserEndpoint():
             app.url_path_for("user:get_all"),
             params={"approved": False},
             headers={"Authorization": f"Bearer {account.token}"})
-        assert res.status_code == 200
-        res = res.json()
-        assert res == {
-            'current': 1,
-            'data': [{
-                'id': 5,
-                'organisation': 1,
-                'email': 'viewer@akvo.org',
-                'fullname': 'Viewer User',
-                'role': 'viewer',
-                'active': False,
-                'tags_count': 0,
-                'cases_count': 0
-            }, {
-                'id': 4,
-                'organisation': 1,
-                'email': 'editor@akvo.org',
-                'fullname': 'Editor User',
-                'role': 'editor',
-                'active': False,
-                'tags_count': 0,
-                'cases_count': 0
-            }],
-            'total': 2,
-            'total_page': 1
-        }
+        assert res.status_code == 404
 
     @pytest.mark.asyncio
     async def test_update_user_password(
