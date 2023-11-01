@@ -5,7 +5,13 @@
     margin-top: 2rem;
     .ant-card-head-title {
       font-family: "TabletGothic";
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .chart-container {
+      .ant-card-body {
+        padding: 0px;
+      }
     }
 
     .segment-group {
@@ -28,27 +34,33 @@
         }
       }
       .ant-card-body {
-        h3 {
-          background: #e6f7ff;
-          font-size: 18px;
-          margin: 0px;
-          padding: 10px 24px;
-          position: relative;
-          small {
-            position: absolute;
-            right: 24px;
-            top: calc(50% - 9px);
-          }
-        }
         padding: 0px;
         .ant-card-grid {
-          padding: 0px 24px;
+          padding: 10px 24px;
+          h2 {
+            &.section-title {
+              background: #e6f7ff;
+              font-size: 18px;
+              margin: -10px -24px 24px -24px;
+              padding: 10px 24px;
+              position: relative;
+              width: calc(100% + 48px);
+              small {
+                position: absolute;
+                right: 24px;
+                top: calc(50% - 9px);
+              }
+            }
+          }
           h3 {
             background: #ffffff;
             font-size: 14px;
             padding: 10px 24px;
             font-weight: bold;
-            margin: 0px -24px;
+            margin: 0px;
+            &.diversified-income-title {
+              padding: 22px 45px !important;
+            }
           }
           h4 {
             small {
@@ -82,7 +94,6 @@
     }
   }
   h3 {
-    border-bottom: 1px solid #e8e8e8;
     margin: 0px -24px 10px;
     padding: 0px 24px 10px;
     font-weight: normal;
