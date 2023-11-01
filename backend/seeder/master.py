@@ -69,6 +69,74 @@ def seeder_master(session: Session, engine: create_engine):
     tags.to_sql("tag", con=engine, if_exists="append", index=False)
     print("[DATABASE UPDATED]: Tag")
 
+    ## regions
+    truncatedb(session=session, table="region")
+    regions = pd.read_csv(MASTER_DIR + "regions.csv")
+    regions = regions.rename(columns={"region": "name"})
+    regions = regions.drop(columns=["country_id", "country"])
+    regions.to_sql("region", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Region")
+
+    ## country region
+    # Filter rows where the list does not contain any string values
+    regions = pd.read_csv(MASTER_DIR + "regions.csv")
+    country_regions = []
+    for index, row in regions.iterrows():
+        region_id = row["id"]
+        country_ids = row["country_id"].replace('[', '').replace(']', '').split(', ')
+        country = row["country"].replace('[', '').replace(']', '').split(', ')
+        intersect = list(set(country_ids) & set(country))
+        if intersect:
+            for val in intersect:
+                country_ids.remove(val)
+        country_ids_tmp = []
+        for val in country_ids:
+            try:
+                int(val)
+                country_ids_tmp.append(val)
+            except Exception:
+                continue
+        for country in country_ids_tmp:
+            res = pd.DataFrame({
+                'country': country,
+                'region': region_id,
+            }, index=[index])
+            country_regions.append(res)
+    country_regions = pd.concat(country_regions, ignore_index=True)
+    country_regions["id"] = country_regions.reset_index().index + 1
+    country_regions.to_sql("country_region", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Country Region")
+
+    ## living income benchmark
+    truncatedb(session=session, table="living_income_benchmark")
+    li_benchmark = pd.read_csv(MASTER_DIR + "li_benchmark.csv")
+    # Filter rows where the list does not contain any string values
+    filtered_lib = li_benchmark[li_benchmark["country_id"] != li_benchmark["country"]]
+    filtered_lib.drop(columns=['country', 'region'], inplace=True)
+    filtered_lib = filtered_lib.rename(columns={
+        "LCU": "lcu",
+        "USD": "usd",
+        "EUR": "eur",
+        "country_id": "country",
+        "region_id": "region",
+    })
+    filtered_lib = filtered_lib.fillna(0)
+    filtered_lib.to_sql("living_income_benchmark", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: Living Income Benchmark")
+
+    ## CPI
+    truncatedb(session=session, table="cpi")
+    cpi = pd.read_csv(MASTER_DIR + "cpi.csv")
+    # Filter rows where the list does not contain any string values
+    filtered_cpi = cpi[cpi["country_id"] != cpi["country"]]
+    filtered_cpi.drop(columns=['country'], inplace=True)
+    filtered_cpi = filtered_cpi.rename(columns={
+        "country_id": "country",
+    })
+    filtered_cpi = filtered_cpi.fillna(0)
+    filtered_cpi.to_sql("cpi", con=engine, if_exists="append", index=False)
+    print("[DATABASE UPDATED]: CPI")
+
     generate_config_file()
 
 

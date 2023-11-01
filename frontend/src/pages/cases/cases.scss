@@ -5,7 +5,13 @@
     margin-top: 2rem;
     .ant-card-head-title {
       font-family: "TabletGothic";
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+    }
+
+    .chart-container {
+      .ant-card-body {
+        padding: 0px;
+      }
     }
 
     .segment-group {

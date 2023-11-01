@@ -12,6 +12,9 @@ from routes.question import question_route
 from routes.segment import segment_route
 from routes.segment_answer import segment_answer_route
 from routes.organisation import organisation_route
+from routes.region import region_route
+from routes.living_income_benchmark import lib_route
+from routes.cpi import cpi_route
 
 from models.business_unit import BusinessUnit
 from models.commodity_category import CommodityCategory
@@ -78,11 +81,14 @@ def generate_config_file() -> None:
 # Routes register
 app.include_router(organisation_route)
 app.include_router(user_route)
-app.include_router(tag_route)
 app.include_router(case_route)
 app.include_router(question_route)
 app.include_router(segment_route)
 app.include_router(segment_answer_route)
+app.include_router(tag_route)
+app.include_router(region_route)
+app.include_router(lib_route)
+app.include_router(cpi_route)
 
 
 @app.get("/", tags=["Dev"])

@@ -68,6 +68,7 @@ user = User(
     password=get_password_hash("password"),
     organisation=org.id,
     is_active=1,
+    all_cases=1,
     role=UserRole.super_admin
 )
 session.add(user)

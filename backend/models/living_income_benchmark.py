@@ -1,17 +1,24 @@
 from db.connection import Base
-from sqlalchemy import Column, Integer, Float, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, Float, ForeignKey, String
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 
 
+class LivingIncomeBenchmarkValue(TypedDict):
+    lcu: float
+    usd: float
+    eur: float
+
+
 class LivingIncomeBenchmarkDict(TypedDict):
     id: int
     country: int
-    currency: int
+    region: int
+    household_size: int
     year: int
-    value: float
+    value: LivingIncomeBenchmarkValue
+    cpi: Optional[float]
 
 
 class LivingIncomeBenchmark(Base):
@@ -19,54 +26,63 @@ class LivingIncomeBenchmark(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     country = Column(Integer, ForeignKey('country.id'))
-    currency = Column(Integer, ForeignKey('currency.id'))
+    region = Column(Integer, ForeignKey('region.id'))
+    household_size = Column(Float, nullable=False)
     year = Column(Integer, nullable=False)
-    value = Column(Float, nullable=False)
-
-    country_detail = relationship(
-        'Country',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='country_living_income_benchmark'
-    )
-    currency_detail = relationship(
-        'Currency',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='currency_living_income_benchmark'
-    )
+    source = Column(String, nullable=True)
+    lcu = Column(Float, nullable=False)
+    usd = Column(Float, nullable=False)
+    eur = Column(Float, nullable=False)
 
     def __init__(
         self,
-        id: Optional[int],
         country: int,
-        currency: int,
+        region: int,
         year: int,
-        value: float,
+        household_size: float,
+        lcu: float,
+        usd: float,
+        eur: float,
+        id: Optional[int] = None,
+        source: Optional[str] = None,
     ):
         self.id = id
         self.country = country
-        self.currency = currency
+        self.region = region
         self.year = year
-        self.value = value
+        self.household_size = household_size
+        self.source = source
+        self.lcu = lcu
+        self.usd = usd
+        self.eur = eur
 
     def __repr__(self) -> int:
         return f"<LivingIncomeBenchmark {self.id}>"
 
     @property
-    def serializer(self) -> LivingIncomeBenchmarkDict:
+    def serialize(self) -> LivingIncomeBenchmarkDict:
         return {
             "id": self.id,
             "country": self.country,
-            "currency": self.currency,
+            "region": self.region,
             "year": self.year,
-            "value": self.value,
+            "household_size": self.household_size,
+            "value": {
+                "lcu": self.lcu,
+                "usd": self.usd,
+                "eur": self.eur,
+            },
+            "cpi": None,
         }
 
 
 class LivingIncomeBenchmarkBase(BaseModel):
     id: int
     country: int
-    currency: int
+    region: int
     year: int
-    value: float
+    household_size: float
+    lcu: float
+    usd: float
+    eur: float
+    source: Optional[str]
