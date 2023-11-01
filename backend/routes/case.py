@@ -7,7 +7,8 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
 from models.case import CaseBase, CaseDict, PaginatedCaseResponse, CaseDetailDict
-from middleware import verify_admin
+from models.user import UserRole
+from middleware import verify_admin, verify_user
 
 security = HTTPBearer()
 case_route = APIRouter()
@@ -48,8 +49,17 @@ def get_all_case(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
-    # TODO :: verify by user then filter cases in same business unit if all_cases true and role not admin
-    # if role = user we should check for user tags or user cases (also if editor / viewer and all_cases false)
+    # verify by user then filter cases in same business unit
+    # if all_cases false and role not super_admin
+    user = verify_user(session=session, authenticated=req.state.authenticated)
+    business_unit_users = []
+    if user.role != UserRole.super_admin or user.all_cases:
+        business_unit_users = [bu.user for bu in user.user_business_units]
+    # if role = user we should check for user tags or user cases
+    # (also if editor / viewer and all_cases false)
+    user_cases = []
+    if user.role == UserRole.user or not user.all_cases:
+        user_cases = [uc.case for uc in user.user_case_access]
     cases = crud_case.get_all_case(
         session=session,
         search=search,
@@ -57,6 +67,8 @@ def get_all_case(
         focus_commodities=focus_commodity,
         skip=(limit * (page - 1)),
         limit=limit,
+        business_unit_users=business_unit_users,
+        user_cases=user_cases
     )
     if not cases:
         raise HTTPException(status_code=404, detail="Not found")
@@ -82,6 +94,7 @@ def update_Case(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
+    # TODO :: verify by user, then check user role and access
     verify_admin(session=session, authenticated=req.state.authenticated)
     case = crud_case.update_case(session=session, id=case_id, payload=payload)
     return case.serialize
@@ -100,6 +113,7 @@ def get_case_by_id(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
+    # TODO :: verify by user, then check user role and access
     verify_admin(session=session, authenticated=req.state.authenticated)
     case = crud_case.get_case_by_id(session=session, id=case_id)
     return case.to_case_detail

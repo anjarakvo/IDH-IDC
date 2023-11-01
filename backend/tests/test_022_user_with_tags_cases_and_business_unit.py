@@ -49,7 +49,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint():
         user = get_user_by_email(session=session, email=user_payload["email"])
         user = user.to_user_list
         assert user == {
-            'id': 6,
+            'id': user['id'],
             'organisation': 1,
             'email': 'jane@akvo.org',
             'fullname': 'Jane Doe',

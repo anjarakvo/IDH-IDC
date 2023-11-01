@@ -45,7 +45,7 @@ class TestTagRoute():
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
             json=payload,
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.post(
             app.url_path_for("tag:create"),
@@ -143,7 +143,7 @@ class TestTagRoute():
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
             json=payload,
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.put(
             app.url_path_for("tag:update", tag_id=1),

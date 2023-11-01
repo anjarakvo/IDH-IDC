@@ -77,8 +77,8 @@ class TestUserEndpoint():
     ) -> None:
         # add user to delete
         user_payload = {
-            "fullname": "User to delete",
-            "email": "user@test.com",
+            "fullname": "Normal User",
+            "email": "support@akvo.org",
             "password": None,
             "organisation": 1,
         }
@@ -217,8 +217,8 @@ class TestUserEndpoint():
     async def test_update_user_to_an_external_user_without_business_units(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        user = get_user_by_email(session=session, email="user@test.com")
-        assert user.email == "user@test.com"
+        user = get_user_by_email(session=session, email="support@akvo.org")
+        assert user.email == "support@akvo.org"
         update_payload = {
             "fullname": user.fullname,
             "organisation": user.organisation,
@@ -638,8 +638,8 @@ class TestUserEndpoint():
             }, {
                 'id': 2,
                 'organisation': 1,
-                'email': 'user@test.com',
-                'fullname': 'User to delete',
+                'email': 'support@akvo.org',
+                'fullname': 'Normal User',
                 'role': 'user',
                 'active': True,
                 'tags_count': 0,
@@ -673,9 +673,49 @@ class TestUserEndpoint():
     async def test_delete_user_by_super_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
+        user_payload = {
+            "fullname": "User to delete",
+            "email": "user@test.com",
+            "password": None,
+            "organisation": 1,
+        }
+        res = await client.post(
+            app.url_path_for("user:register"),
+            data=user_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+        res = res.json()
+        user_id = res['id']
         # delete user by admin
-        user = get_user_by_email(session=session, email="user@test.com")
         res = await client.delete(
-            app.url_path_for("user:delete", user_id=user.id),
+            app.url_path_for("user:delete", user_id=user_id),
             headers={"Authorization": f"Bearer {account.token}"})
         assert res.status_code == 204
+
+    @pytest.mark.asyncio
+    async def test_update_user_to_a_normal_user(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user = get_user_by_email(session=session, email="support@akvo.org")
+        assert user.email == "support@akvo.org"
+        update_payload = {
+            "fullname": user.fullname,
+            "organisation": user.organisation,
+            "role": UserRole.user.value,
+            "is_active": True,
+        }
+        # with cred
+        res = await client.put(
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+                "Authorization": f"Bearer {account.token}"
+            })
+        assert res.status_code == 200
+        res = res.json()
+        assert res["role"] == UserRole.user.value
+        assert res["active"] is True
