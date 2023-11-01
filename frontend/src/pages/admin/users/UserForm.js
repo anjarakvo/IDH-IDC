@@ -311,7 +311,9 @@ const UserForm = () => {
             {/* Other Inputs */}
             <Col span={12}>
               {/* Business Unit Selector */}
-              {useRolerWithBusinessUnitFieldByDefault.includes(selectedRole) ? (
+              {useRolerWithBusinessUnitFieldByDefault.includes(selectedRole) ||
+              (userRole === "super_admin" &&
+                useRolerWithRadioButtonField.includes(selectedRole)) ? (
                 <Card title="Business Units">
                   <Form.List name="business_units">
                     {(fields, { add, remove }) => {
