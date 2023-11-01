@@ -1,7 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
-import { SideMenu, CaseProfile, IncomeDriverDataEntry } from "./components";
+import {
+  SideMenu,
+  CaseProfile,
+  IncomeDriverDataEntry,
+  IncomeDriverDashboard,
+} from "./components";
 import { Row, Col, Spin } from "antd";
 import "./cases.scss";
 import { api } from "../../lib";
@@ -11,7 +16,7 @@ import orderBy from "lodash/orderBy";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
-  "Income Driver Dashboard": ["Case Profile", "Income Driver Data Entry"],
+  "Income Driver Dashboard": ["Case Profile"],
 };
 
 const Case = () => {
@@ -163,6 +168,13 @@ const Case = () => {
             )}
             {page === "Income Driver Data Entry" && (
               <IncomeDriverDataEntry
+                commodityList={commodityList}
+                currentCaseId={currentCaseId}
+                currentCase={currentCase}
+              />
+            )}
+            {page === "Income Driver Dashboard" && (
+              <IncomeDriverDashboard
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
                 currentCase={currentCase}

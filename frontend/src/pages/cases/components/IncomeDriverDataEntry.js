@@ -338,6 +338,7 @@ const DataFields = ({
         span={8}
         type="BARSTACK"
         data={chartData}
+        affix={true}
       />
     </Row>
   );

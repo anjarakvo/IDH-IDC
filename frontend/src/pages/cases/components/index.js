@@ -179,4 +179,8 @@ export { default as CaseProfile } from "./CaseProfile";
 export { default as IncomeDriverDataEntry } from "./IncomeDriverDataEntry";
 export { default as IncomeDriverForm } from "./IncomeDriverForm";
 export { default as IncomeDriverTarget } from "./IncomeDriverTarget";
+export { default as IncomeDriverDashboard } from "./IncomeDriverDashboard";
+export { default as DashboardIncomeOverview } from "./DashboardIncomeOverview";
+export { default as DashboardSensitivityAnalysis } from "./DashboardSensitivityAnalysis";
+export { default as DashboardScenarioModeling } from "./DashboardScenarioModeling";
 export { default as Questions } from "./Questions";
