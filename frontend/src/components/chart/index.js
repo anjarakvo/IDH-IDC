@@ -2,10 +2,10 @@ import React from "react";
 import { Col, Card } from "antd";
 import ReactECharts from "echarts-for-react";
 import { Bar, BarStack } from "./options";
+import { Easing } from "./options/common";
 
 export const generateOptions = (
-  { type, data, chartTitle, percentage },
-  extra,
+  { type, data, chartTitle, percentage, extra },
   series,
   legend,
   horizontal,
@@ -70,6 +70,7 @@ const Chart = ({
   loading = false,
   loadingOption = loadingStyle,
   grid = {},
+  override = false,
 }) => {
   const chartTitle = wrapper ? {} : { title: title, subTitle: subTitle };
   const option = generateOptions(
@@ -78,8 +79,8 @@ const Chart = ({
       data: data,
       chartTitle: chartTitle,
       percentage: percentage,
+      extra: extra,
     },
-    extra,
     series,
     legend,
     horizontal,
@@ -94,6 +95,20 @@ const Chart = ({
       }
     },
   };
+  let chartOptions = {
+    option: option,
+    notMerge: true,
+    style: { height: height - 50, width: "100%" },
+    onEvents: onEvents,
+    showLoading: loading,
+    loadingOption: loadingOption,
+  };
+  if (override) {
+    chartOptions = {
+      ...chartOptions,
+      option: { ...override, ...Easing },
+    };
+  }
   if (wrapper) {
     return (
       <Col
@@ -106,28 +121,12 @@ const Chart = ({
           title={<h3 className="segment-group">{title}</h3>}
           className="chart-container"
         >
-          <ReactECharts
-            option={option}
-            notMerge={true}
-            style={{ height: height - 50, width: "100%" }}
-            onEvents={onEvents}
-            showLoading={loading}
-            loadingOption={loadingOption}
-          />
+          <ReactECharts {...chartOptions} />
         </Card>
       </Col>
     );
   }
-  return (
-    <ReactECharts
-      option={option}
-      notMerge={true}
-      style={{ height: height - 50, width: "100%" }}
-      onEvents={onEvents}
-      showLoading={loading}
-      loadingOption={loadingOption}
-    />
-  );
+  return <ReactECharts {...chartOptions} />;
 };
 
 export default Chart;

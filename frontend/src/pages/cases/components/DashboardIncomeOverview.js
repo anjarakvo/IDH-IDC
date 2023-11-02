@@ -151,18 +151,53 @@ const MonetaryContributionChart = ({ dashboardData }) => {
     if (!data) {
       return {};
     }
+    const dataSeries = data.answers.filter(
+      (d) => d.question.parent === 1 && d.commodityFocus
+    );
+
+    const indicators = dataSeries
+      .filter((d) => d.name === "current")
+      .map((d) => d.question.text);
+
+    const additionalData = indicators
+      .map((d) => {
+        const feasibleValue = dataSeries.find(
+          (dd) => dd.name === "feasible" && dd.question.text === d
+        );
+        if (feasibleValue) {
+          if (feasibleValue.question.text.toLowerCase().includes("cost")) {
+            return -feasibleValue.value || 0;
+          }
+          return feasibleValue?.value || 0;
+        }
+        return 0;
+      })
+      .reduce((c, u) => {
+        if (c.length === 0) {
+          return [u];
+        }
+        return [...c, c[c.length - 1] + u];
+      }, []);
+
+    const increasingData = additionalData.map(
+      (d) => d + data.total_current_focus_income
+    );
+
     return {
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
+        },
+        formatter: function (params) {
+          var tar = params[1];
+          return tar.name + "<br/>" + tar.seriesName + " : " + tar.value;
+        },
+      },
       xAxis: {
         type: "category",
         splitLine: { show: false },
-        data: [
-          "Total",
-          "Rent",
-          "Utilities",
-          "Transportation",
-          "Meals",
-          "Other",
-        ],
+        data: ["Current\nIncome", ...indicators, "Feasible"],
       },
       yAxis: {
         type: "value",
@@ -182,7 +217,7 @@ const MonetaryContributionChart = ({ dashboardData }) => {
               color: "transparent",
             },
           },
-          data: [0, 1700, 1400, 1200, 300, 0],
+          data: [0, ...increasingData, 0],
         },
         {
           name: "Life Cost",
@@ -192,7 +227,11 @@ const MonetaryContributionChart = ({ dashboardData }) => {
             show: true,
             position: "inside",
           },
-          data: [2900, 1200, 300, 200, 900, 300],
+          data: [
+            data.total_current_focus_income,
+            ...additionalData,
+            data.total_feasible_focus_income,
+          ],
         },
       ],
     };
@@ -205,7 +244,7 @@ const MonetaryContributionChart = ({ dashboardData }) => {
         selectedSegment={selectedSegment}
         setSelectedSegment={setSelectedSegment}
       />
-      <Chart wrapper={false} type="BAR" data={[]} extra={chartData} />
+      <Chart wrapper={false} type="BAR" override={chartData} />
     </div>
   );
 };
@@ -278,8 +317,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             hoverable={false}
           >
             <Row className="income-driver-content">
-              <Col span={12}></Col>
-              <Col span={12}>
+              <Col span={24}>
                 <h2>Monetary contribution of each driver to income.</h2>
                 <MonetaryContributionChart dashboardData={dashboardData} />
               </Col>
