@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from fastapi import HTTPException, status
@@ -13,7 +13,8 @@ def get_all_lib(session: Session) -> List[LivingIncomeBenchmarkDict]:
 
 
 def get_by_country_region_year(
-    session: Session, country: int, region: int, year: int
+    session: Session, country: int, region: int, year: int,
+    raise404: Optional[bool] = True
 ) -> LivingIncomeBenchmarkDict:
     lib = (
         session.query(LivingIncomeBenchmark)
@@ -32,6 +33,8 @@ def get_by_country_region_year(
             )).first()
         )
         if not lib:
+            if not raise404:
+                return None
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
                 detail="Benchmark not found"
@@ -49,6 +52,8 @@ def get_by_country_region_year(
         lib = lib.serialize
         lib['cpi'] = None
         return lib
+    if not raise404:
+        return None
     raise HTTPException(
         status_code=status.HTTP_404_NOT_FOUND,
         detail="Benchmark not found"

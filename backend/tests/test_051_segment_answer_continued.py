@@ -52,7 +52,8 @@ class TestSegmentAnswerRouteContinued():
             'target': 2000.0,
             'adult': 6.0,
             'child': 0.0,
-            'answers': {}
+            'answers': {},
+            'benchmark': None
         }, {
             'id': 3,
             'case': 1,
@@ -68,7 +69,8 @@ class TestSegmentAnswerRouteContinued():
                 'feasible-1-1': None,
                 'feasible-1-2': None,
                 'feasible-1-3': 500.0
-            }
+            },
+            'benchmark': None
         }, {
             'id': 1,
             'case': 1,
@@ -84,7 +86,8 @@ class TestSegmentAnswerRouteContinued():
                 'feasible-1-2': 200.0,
                 'current-1-3': 300.0,
                 'feasible-1-3': 300.0
-            }
+            },
+            'benchmark': None
         }]
 
     @pytest.mark.asyncio

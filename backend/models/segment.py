@@ -5,6 +5,7 @@ from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 from models.segment_answer import SegmentAnswerBase
+from models.living_income_benchmark import LivingIncomeBenchmarkDict
 
 
 class SegmentDict(TypedDict):
@@ -35,6 +36,7 @@ class SegmentWithAnswersDict(TypedDict):
     adult: Optional[float]
     child: Optional[float]
     answers: Optional[dict]
+    benchmark: Optional[LivingIncomeBenchmarkDict]
 
 
 class Segment(Base):
@@ -122,7 +124,8 @@ class Segment(Base):
             "target": self.target,
             "adult": self.adult,
             "child": self.child,
-            "answers": answers
+            "answers": answers,
+            "benchmark": None,
         }
 
 
