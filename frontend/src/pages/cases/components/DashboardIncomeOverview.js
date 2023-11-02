@@ -8,8 +8,8 @@ const CurrentFeasibleChart = ({ dashboardData = [] }) => {
       return [
         ...c,
         {
-          name: `Current ${d.name}`,
-          title: `Current ${d.name}`,
+          name: `Current\n${d.name}`,
+          title: `Current\n${d.name}`,
           stack: [
             {
               name: "Cost of Production",
@@ -38,8 +38,8 @@ const CurrentFeasibleChart = ({ dashboardData = [] }) => {
           ],
         },
         {
-          name: `Feasible ${d.name}`,
-          title: `Feasible ${d.name}`,
+          name: `Feasible\n${d.name}`,
+          title: `Feasible\n${d.name}`,
           stack: [
             {
               name: "Cost of Production",
@@ -69,7 +69,7 @@ const CurrentFeasibleChart = ({ dashboardData = [] }) => {
   }, [dashboardData]);
 
   return (
-    <Chart title="" span={24} type="BARSTACK" data={chartData} affix={true} />
+    <Chart wrapper={false} type="BARSTACK" data={chartData} affix={true} />
   );
 };
 
@@ -79,13 +79,13 @@ const IncomeGapChart = ({ dashboardData }) => {
       return [
         ...c,
         {
-          name: `Current ${d.name}`,
+          name: `Current\n${d.name}`,
           value: d.total_current_income,
           total: d.total_current_income,
           color: "#854634",
         },
         {
-          name: `Feasible ${d.name}`,
+          name: `Feasible\n${d.name}`,
           value: d.total_feasible_income,
           color: "#ff6c19",
         },
@@ -93,7 +93,7 @@ const IncomeGapChart = ({ dashboardData }) => {
     }, []);
   }, [dashboardData]);
 
-  return <Chart title="" span={24} type="BAR" data={chartData} affix={true} />;
+  return <Chart wrapper={false} type="BAR" data={chartData} affix={true} />;
 };
 
 const DashboardIncomeOverview = ({ dashboardData }) => {
@@ -107,7 +107,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             }}
             hoverable={false}
           >
-            <Row gutter={[16, 16]}>
+            <Row className="income-driver-content">
               <Col span={12}>
                 <h2>
                   What are the current and feasible income levels for the
@@ -119,7 +119,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                 </p>
                 <CurrentFeasibleChart dashboardData={dashboardData} />
               </Col>
-              <Col span={11}>
+              <Col span={12}>
                 <h2>How big is the income gap?</h2>
                 <p>
                   This graph shows you the actual household income components,
@@ -137,7 +137,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             }}
             hoverable={false}
           >
-            <Row gutter={[16, 16]}>
+            <Row className="income-driver-content">
               <Col span={12}>
                 <h2>Which drivers have the biggest impact on income?</h2>
                 <p>
@@ -162,10 +162,8 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             }}
             hoverable={false}
           >
-            <Row gutter={[16, 16]}>
-              <Col span={12} className="information-box">
-                <h2>Information Box</h2>
-              </Col>
+            <Row className="income-driver-content">
+              <Col span={12}></Col>
               <Col span={12}>
                 <h2>Monetary contribution of each driver to income.</h2>
                 Chart here
