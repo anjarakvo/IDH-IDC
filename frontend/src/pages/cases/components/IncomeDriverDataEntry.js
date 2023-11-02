@@ -265,6 +265,7 @@ const DataFields = ({
               formValues={formValues}
               setFormValues={setFormValues}
               segmentItem={segmentItem}
+              totalCurrentIncome={totalCurrentIncome}
             />
             <h2 className="section-title">
               Income Drivers
