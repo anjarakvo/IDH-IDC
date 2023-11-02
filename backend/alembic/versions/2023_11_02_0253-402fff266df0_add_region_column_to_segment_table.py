@@ -21,7 +21,12 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.add_column(
         'segment',
-        sa.Column('region', sa.Integer(), sa.ForeignKey('region.id')),
+        sa.Column(
+            'region',
+            sa.Integer(),
+            sa.ForeignKey('region.id'),
+            nullable=True
+        ),
     )
     op.create_foreign_key(
         'segment_region_constraint',

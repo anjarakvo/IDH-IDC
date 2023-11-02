@@ -10,8 +10,8 @@ from models.segment_answer import SegmentAnswerBase
 class SegmentDict(TypedDict):
     id: int
     case: int
-    region: int
     name: str
+    region: Optional[int]
     target: Optional[float]
     adult: Optional[float]
     child: Optional[float]
@@ -20,7 +20,7 @@ class SegmentDict(TypedDict):
 class SimplifiedSegmentDict(TypedDict):
     id: int
     name: str
-    region: int
+    region: Optional[int]
     target: Optional[float]
     adult: Optional[float]
     child: Optional[float]
@@ -29,8 +29,8 @@ class SimplifiedSegmentDict(TypedDict):
 class SegmentWithAnswersDict(TypedDict):
     id: int
     case: int
-    region: int
     name: str
+    region: Optional[int]
     target: Optional[float]
     adult: Optional[float]
     child: Optional[float]
@@ -42,7 +42,7 @@ class Segment(Base):
 
     id = Column(Integer, primary_key=True, nullable=False)
     case = Column(Integer, ForeignKey('case.id'))
-    region = Column(Integer, ForeignKey('region.id'))
+    region = Column(Integer, ForeignKey('region.id'), nullable=True)
     name = Column(String, nullable=False)
     target = Column(Float, nullable=True)
     adult = Column(Float, nullable=True)
@@ -65,7 +65,7 @@ class Segment(Base):
         self,
         name: str,
         case: int,
-        region: int,
+        region: Optional[int] = None,
         target: Optional[float] = None,
         adult: Optional[float] = None,
         child: Optional[float] = None,
@@ -129,7 +129,7 @@ class Segment(Base):
 class SegmentBase(BaseModel):
     name: str
     case: int
-    region: int
+    region: Optional[int] = None
     target: Optional[float] = None
     adult: Optional[float] = None
     child: Optional[float] = None
@@ -140,7 +140,7 @@ class SegmentUpdateBase(BaseModel):
     id: int
     name: str
     case: int
-    region: int
+    region: Optional[int] = None
     target: Optional[float] = None
     adult: Optional[float] = None
     child: Optional[float] = None
