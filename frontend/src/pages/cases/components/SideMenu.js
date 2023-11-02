@@ -20,7 +20,7 @@ const menuList = [
 
 const SideMenu = ({ active, setActive, finished }) => {
   return (
-    <Col flex="200px">
+    <Col span={4}>
       <div className="timeline-container">
         <Timeline
           items={menuList.map((item) => {
