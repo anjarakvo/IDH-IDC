@@ -3,13 +3,10 @@ import {
   Color,
   TextStyle,
   backgroundColor,
-  Icons,
   AxisLabelFormatter,
   AxisShortLabelFormatter,
   Title,
   axisTitle,
-  DataView,
-  optionToContent,
   NoData,
 } from "./common";
 import { sortBy, isEmpty, sumBy } from "lodash";
@@ -43,10 +40,10 @@ const Bar = ({
       subtext: chartTitle?.subTitle,
     },
     grid: {
-      top: grid?.top ? grid.top : horizontal ? 80 : 50,
-      bottom: grid?.bottom ? grid.bottom : horizontal ? 58 : 50,
-      left: grid?.left ? grid.left : horizontal ? 100 : 50,
-      right: grid?.right ? grid.right : horizontal ? 50 : 0,
+      top: grid?.top ? grid.top : horizontal ? 80 : 58,
+      bottom: grid?.bottom ? grid.bottom : horizontal ? 80 : 58,
+      left: grid?.left ? grid.left : horizontal ? 100 : 58,
+      right: grid?.right ? grid.right : horizontal ? 58 : 0,
       show: true,
       label: {
         color: "#222",
@@ -60,26 +57,6 @@ const Bar = ({
       padding: 5,
       backgroundColor: "#f2f2f2",
       ...TextStyle,
-    },
-    toolbox: {
-      show: true,
-      showTitle: true,
-      orient: "horizontal",
-      right: 30,
-      top: 20,
-      feature: {
-        saveAsImage: {
-          type: "jpg",
-          title: "Save Image",
-          icon: Icons.saveAsImage,
-          backgroundColor: "#EAF5FB",
-        },
-        dataView: {
-          ...DataView,
-          optionToContent: (e) =>
-            optionToContent({ option: e, horizontal: horizontal, suffix: "%" }),
-        },
-      },
     },
     [horizontal ? "xAxis" : "yAxis"]: {
       type: "value",
