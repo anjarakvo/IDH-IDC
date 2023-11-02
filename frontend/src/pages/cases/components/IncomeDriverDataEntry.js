@@ -106,6 +106,7 @@ const DataFields = ({
     const commodityGroup = map(groupBy(chartQuestion, "case_id"), (g) => {
       const commodityName =
         commodityNames?.[g[0].commodity_id] || "diversified";
+      const additionalIncome = g.reduce((a, b) => a + b.feasibleValue, 0);
       return {
         name: commodityName,
         title: commodityName,
@@ -120,8 +121,8 @@ const DataFields = ({
           {
             name: "Feasible",
             title: "Additional income if feasible values are reached",
-            value: g.reduce((a, b) => a + b.feasibleValue, 0),
-            total: g.reduce((a, b) => a + b.feasibleValue, 0),
+            value: additionalIncome < 0 ? 0 : additionalIncome,
+            total: additionalIncome < 0 ? 0 : additionalIncome,
             order: 1,
           },
         ],
