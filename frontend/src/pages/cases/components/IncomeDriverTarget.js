@@ -12,9 +12,11 @@ const IncomeDriverTarget = ({
   formValues,
   setFormValues,
   segmentItem,
+  totalCurrentIncome,
 }) => {
   const [form] = Form.useForm();
-  const [householdSize, setHouseholdSize] = useState(0);
+  const [, setHouseholdSize] = useState(0);
+  const [, setBenchmark] = useState(null);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
@@ -132,6 +134,7 @@ const IncomeDriverTarget = ({
         url = `${url}&region_id=${region}&year=${currentCase.year}`;
         api.get(url).then((res) => {
           const { data } = res;
+          setBenchmark(data);
           if (data?.cpi) {
             setIncomeTarget(data.cpi);
             setHouseholdSize(data.household_size);
@@ -194,7 +197,7 @@ const IncomeDriverTarget = ({
         </Row>
       )}
       <Row gutter={[8, 8]} style={{ display: !disableTarget ? "none" : "" }}>
-        <Col span={12}>
+        <Col span={8}>
           <Form.Item label="Region" name="region">
             <Select
               style={formStyle}
@@ -210,7 +213,7 @@ const IncomeDriverTarget = ({
             />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Form.Item
             label="Number of Average Adult in Household"
             name="household_adult"
@@ -221,7 +224,7 @@ const IncomeDriverTarget = ({
             />
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={8}>
           <Form.Item
             label="Number of Average Children in Household"
             name="household_children"
@@ -240,13 +243,15 @@ const IncomeDriverTarget = ({
           display: !disableTarget ? "none" : "",
         }}
       >
-        <Col span={12}>
-          <p>Living Income</p>
-          <h2>{incomeTarget.toFixed(2)}</h2>
+        <Col span={8}>
+          <p>Living Income Target</p>
+          <h2>{incomeTarget.toFixed(2)} USD</h2>
         </Col>
-        <Col span={12}>
-          <p>Household Size</p>
-          <h2>{householdSize}</h2>
+        <Col span={16}>
+          <p>Calculated Living Income</p>
+          <h2>
+            {totalCurrentIncome} {currentCase.currency}
+          </h2>
         </Col>
       </Row>
     </Form>

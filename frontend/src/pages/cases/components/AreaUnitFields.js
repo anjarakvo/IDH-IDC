@@ -28,6 +28,18 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
                 label: "Acres",
                 value: "acres",
               },
+              {
+                label: "Cubic Metres",
+                value: "cubic-metres",
+              },
+              {
+                label: "Cubic Feet",
+                value: "cubic-feet",
+              },
+              {
+                label: "Cubic Yards",
+                value: "cubic-yards",
+              },
             ]}
             {...selectProps}
           />
@@ -71,18 +83,6 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
               {
                 label: "Barrels",
                 value: "barrels",
-              },
-              {
-                label: "Cubic Metres",
-                value: "cubic-metres",
-              },
-              {
-                label: "Cubic Feet",
-                value: "cubic-feet",
-              },
-              {
-                label: "Cubic Yards",
-                value: "cubic-yards",
               },
               {
                 label: "Bags",

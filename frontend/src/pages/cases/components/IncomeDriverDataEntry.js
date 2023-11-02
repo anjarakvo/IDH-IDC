@@ -117,6 +117,7 @@ const DataFields = ({
             value: g.reduce((a, b) => a + b.currentValue, 0),
             total: g.reduce((a, b) => a + b.currentValue, 0),
             order: 2,
+            color: "#3b78d8",
           },
           {
             name: "Feasible",
@@ -124,12 +125,43 @@ const DataFields = ({
             value: additionalIncome < 0 ? 0 : additionalIncome,
             total: additionalIncome < 0 ? 0 : additionalIncome,
             order: 1,
+            color: "#c9daf8",
           },
         ],
       };
     });
-    return commodityGroup;
-  }, [totalIncomeQuestion, formValues, segment, questionGroups, commodityList]);
+    const totalIncomeCommodityGroup = {
+      name: "Total\nIncome",
+      title: "Total\nIncome",
+      stack: [
+        {
+          name: "Current",
+          title: "Current",
+          value: totalCurrentIncome,
+          total: totalCurrentIncome,
+          order: 2,
+          color: "#6aa84f",
+        },
+        {
+          name: "Feasible",
+          title: "Additional income if feasible values are reached",
+          value: totalFeasibleIncome - totalCurrentIncome,
+          total: totalFeasibleIncome,
+          order: 1,
+          color: "#d9ead3",
+        },
+      ],
+    };
+    return [...commodityGroup, totalIncomeCommodityGroup];
+  }, [
+    totalIncomeQuestion,
+    formValues,
+    segment,
+    questionGroups,
+    commodityList,
+    totalCurrentIncome,
+    totalFeasibleIncome,
+  ]);
 
   const ButtonEdit = () => (
     <Button
@@ -233,6 +265,7 @@ const DataFields = ({
               formValues={formValues}
               setFormValues={setFormValues}
               segmentItem={segmentItem}
+              totalCurrentIncome={totalCurrentIncome}
             />
             <h2 className="section-title">
               Income Drivers
