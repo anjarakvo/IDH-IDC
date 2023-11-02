@@ -125,10 +125,14 @@ const PageLayout = ({ children, signOut }) => {
     [authTokenAvailable, userId, userActive]
   );
 
-  if (pagesWithNoSider.includes(pathname)) {
+  const isResetPasswordPage =
+    pathname.includes("invitation") || pathname.includes("reset-password");
+  console.log(isResetPasswordPage);
+
+  if (pagesWithNoSider.includes(pathname) || isResetPasswordPage) {
     return (
       <Layout>
-        {!pagesWithNoHeader.includes(pathname) ? (
+        {!pagesWithNoHeader.includes(pathname) || isResetPasswordPage ? (
           <PageHeader isLoggedIn={isLoggedIn} signOut={signOut} />
         ) : (
           ""
