@@ -1,6 +1,27 @@
-import React, { useMemo } from "react";
-import { Row, Col, Card } from "antd";
+import React, { useEffect, useState, useMemo } from "react";
+import { Row, Col, Card, Radio } from "antd";
 import Chart from "../../../components/chart";
+
+const SegmentSelector = ({
+  dashboardData,
+  selectedSegment,
+  setSelectedSegment,
+}) => {
+  return (
+    <Radio.Group
+      value={selectedSegment}
+      onChange={(e) => {
+        setSelectedSegment(e.target.value);
+      }}
+    >
+      {dashboardData.map((d) => (
+        <Radio.Button key={d.id} value={d.id}>
+          {d.name}
+        </Radio.Button>
+      ))}
+    </Radio.Group>
+  );
+};
 
 const CurrentFeasibleChart = ({ dashboardData = [] }) => {
   const chartData = useMemo(() => {
@@ -96,6 +117,99 @@ const IncomeGapChart = ({ dashboardData }) => {
   return <Chart wrapper={false} type="BAR" data={chartData} affix={true} />;
 };
 
+const BigImpactChart = ({ dashboardData }) => {
+  const [selectedSegment, setSelectedSegment] = useState(null);
+
+  useEffect(() => {
+    if (dashboardData.length > 0) {
+      setSelectedSegment(dashboardData[0].id);
+    }
+  }, [dashboardData]);
+
+  return (
+    <div>
+      <SegmentSelector
+        dashboardData={dashboardData}
+        selectedSegment={selectedSegment}
+        setSelectedSegment={setSelectedSegment}
+      />
+    </div>
+  );
+};
+
+const MonetaryContributionChart = ({ dashboardData }) => {
+  const [selectedSegment, setSelectedSegment] = useState(null);
+
+  useEffect(() => {
+    if (dashboardData.length > 0) {
+      setSelectedSegment(dashboardData[0].id);
+    }
+  }, [dashboardData]);
+
+  const chartData = useMemo(() => {
+    const data = dashboardData.find((d) => d.id === selectedSegment);
+    if (!data) {
+      return {};
+    }
+    return {
+      xAxis: {
+        type: "category",
+        splitLine: { show: false },
+        data: [
+          "Total",
+          "Rent",
+          "Utilities",
+          "Transportation",
+          "Meals",
+          "Other",
+        ],
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          name: "Placeholder",
+          type: "bar",
+          stack: "Total",
+          itemStyle: {
+            borderColor: "transparent",
+            color: "transparent",
+          },
+          emphasis: {
+            itemStyle: {
+              borderColor: "transparent",
+              color: "transparent",
+            },
+          },
+          data: [0, 1700, 1400, 1200, 300, 0],
+        },
+        {
+          name: "Life Cost",
+          type: "bar",
+          stack: "Total",
+          label: {
+            show: true,
+            position: "inside",
+          },
+          data: [2900, 1200, 300, 200, 900, 300],
+        },
+      ],
+    };
+  }, [dashboardData, selectedSegment]);
+
+  return (
+    <div>
+      <SegmentSelector
+        dashboardData={dashboardData}
+        selectedSegment={selectedSegment}
+        setSelectedSegment={setSelectedSegment}
+      />
+      <Chart wrapper={false} type="BAR" data={[]} extra={chartData} />
+    </div>
+  );
+};
+
 const DashboardIncomeOverview = ({ dashboardData }) => {
   return (
     <Row>
@@ -144,6 +258,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   This ranking shows the elasticity of the driver and to which
                   the driver can influence income.
                 </p>
+                <BigImpactChart dashboardData={dashboardData} />
               </Col>
               <Col span={12}>
                 <h2>Explore the breakdown of drivers</h2>
@@ -166,7 +281,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
               <Col span={12}></Col>
               <Col span={12}>
                 <h2>Monetary contribution of each driver to income.</h2>
-                Chart here
+                <MonetaryContributionChart dashboardData={dashboardData} />
               </Col>
             </Row>
           </Card.Grid>
