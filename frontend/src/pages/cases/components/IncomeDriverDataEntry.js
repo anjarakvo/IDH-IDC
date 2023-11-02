@@ -131,8 +131,8 @@ const DataFields = ({
       };
     });
     const totalIncomeCommodityGroup = {
-      name: "Total Income",
-      title: "Total Income",
+      name: "Total\nIncome",
+      title: "Total\nIncome",
       stack: [
         {
           name: "Current",

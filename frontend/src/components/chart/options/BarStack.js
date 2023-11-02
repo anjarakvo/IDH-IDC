@@ -3,14 +3,11 @@ import {
   Color,
   TextStyle,
   backgroundColor,
-  Icons,
   AxisLabelFormatter,
   AxisShortLabelFormatter,
   Legend,
-  DataView,
   Title,
   axisTitle,
-  optionToContent,
   NoData,
 } from "./common";
 import { uniq, flatten, uniqBy, isEmpty, upperFirst, sumBy } from "lodash";
@@ -155,24 +152,6 @@ const BarStack = ({
       backgroundColor: "#ffffff",
       formatter: (e) => tableFormatter(e, percentage),
       ...TextStyle,
-    },
-    toolbox: {
-      show: true,
-      orient: "horizontal",
-      right: 30,
-      top: 20,
-      feature: {
-        saveAsImage: {
-          type: "jpg",
-          icon: Icons.saveAsImage,
-          backgroundColor: "#EAF5FB",
-        },
-        dataView: {
-          ...DataView,
-          optionToContent: (e) =>
-            optionToContent({ option: e, horizontal: horizontal }),
-        },
-      },
     },
     [horizontal ? "xAxis" : "yAxis"]: {
       type: "value",

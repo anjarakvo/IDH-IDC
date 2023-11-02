@@ -15,8 +15,8 @@ const IncomeDriverTarget = ({
   totalCurrentIncome,
 }) => {
   const [form] = Form.useForm();
-  const [householdSize, setHouseholdSize] = useState(0);
-  const [benchmark, setBenchmark] = useState(null);
+  const [, setHouseholdSize] = useState(0);
+  const [, setBenchmark] = useState(null);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
