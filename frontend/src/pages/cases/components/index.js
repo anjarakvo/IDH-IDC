@@ -111,6 +111,7 @@ export const generateSegmentPayloads = (
   const segmentPayloads = values.map((fv) => {
     let res = {
       case: currentCaseId,
+      region: fv.region,
       name: fv.label,
       target: fv?.target || null,
       adult: fv?.adult || null,
