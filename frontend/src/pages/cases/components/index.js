@@ -77,20 +77,6 @@ export const selectProps = {
   },
 };
 
-export const flatten = (data, parent = null) => {
-  let flatData = [];
-  for (const item of data) {
-    const flatItem = { ...item };
-    flatItem.parent_id = parent ? parent.id : null;
-    flatData.push(flatItem);
-
-    if (item.childrens && item.childrens.length > 0) {
-      flatData = flatData.concat(flatten(item.childrens, item));
-    }
-  }
-  return flatData;
-};
-
 export const indentSize = 37.5;
 
 export const regexQuestionId = /#(\d+)/;
@@ -125,6 +111,7 @@ export const generateSegmentPayloads = (
   const segmentPayloads = values.map((fv) => {
     let res = {
       case: currentCaseId,
+      region: fv.region,
       name: fv.label,
       target: fv?.target || null,
       adult: fv?.adult || null,
@@ -179,4 +166,8 @@ export { default as CaseProfile } from "./CaseProfile";
 export { default as IncomeDriverDataEntry } from "./IncomeDriverDataEntry";
 export { default as IncomeDriverForm } from "./IncomeDriverForm";
 export { default as IncomeDriverTarget } from "./IncomeDriverTarget";
+export { default as IncomeDriverDashboard } from "./IncomeDriverDashboard";
+export { default as DashboardIncomeOverview } from "./DashboardIncomeOverview";
+export { default as DashboardSensitivityAnalysis } from "./DashboardSensitivityAnalysis";
+export { default as DashboardScenarioModeling } from "./DashboardScenarioModeling";
 export { default as Questions } from "./Questions";

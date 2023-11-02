@@ -14,6 +14,23 @@
       }
     }
 
+    .income-driver-dashboard {
+      margin-bottom: 1rem;
+      .information-box {
+        border-radius: 4px;
+        background: #cce0df;
+        h3 {
+          text-align: center;
+          background: transparent !important;
+        }
+        .information-box {
+          background: #00625f;
+          color: #fff;
+        }
+      }
+    }
+
+    .income-driver-dashboard,
     .segment-group {
       .ant-card-head {
         padding: 0px;

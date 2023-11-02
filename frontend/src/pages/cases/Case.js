@@ -1,10 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
-import { SideMenu, CaseProfile, IncomeDriverDataEntry } from "./components";
+import {
+  SideMenu,
+  CaseProfile,
+  IncomeDriverDataEntry,
+  IncomeDriverDashboard,
+} from "./components";
 import { Row, Col, Spin } from "antd";
 import "./cases.scss";
-import { api } from "../../lib";
+import { api, flatten } from "../../lib";
 import dayjs from "dayjs";
 import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
@@ -14,6 +19,14 @@ const pageDependencies = {
   "Income Driver Dashboard": ["Case Profile", "Income Driver Data Entry"],
 };
 
+const masterCommodityCategories = window.master?.commodity_categories || [];
+const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
+  const commodities = curr.commodities.reduce((a, c) => {
+    return { ...a, [c.id]: c.name };
+  }, {});
+  return { ...acc, ...commodities };
+}, {});
+
 const Case = () => {
   const { caseId } = useParams();
   const [caseTitle, setCaseTitle] = useState("New Case");
@@ -21,10 +34,127 @@ const Case = () => {
   const [formData, setFormData] = useState({});
   const [finished, setFinished] = useState([]);
   const [commodityList, setCommodityList] = useState([]);
+  const [caseData, setCaseData] = useState([]);
+  const [questionGroups, setQuestionGroups] = useState([]);
   const [currentCaseId, setCurrentCaseId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
   const [currentCase, setCurrentCase] = useState({});
+
+  useEffect(() => {
+    if (caseId && caseData.length) {
+      setFinished(["Case Profile", "Income Driver Data Entry"]);
+    }
+  }, [caseData, caseId]);
+
+  const totalIncomeQuestion = useMemo(() => {
+    const qs = questionGroups.map((group) => {
+      const questions = flatten(group.questions).filter((q) => !q.parent);
+      const commodity = commodityList.find(
+        (c) => c.commodity === group.commodity_id
+      );
+      return questions.map((q) => `${commodity.case_commodity}-${q.id}`);
+    });
+    return qs.flatMap((q) => q);
+  }, [questionGroups, commodityList]);
+
+  const costQuestions = useMemo(() => {
+    const qs = questionGroups.map((group) => {
+      const questions = flatten(group.questions).filter((q) =>
+        q.text.toLowerCase().includes("cost")
+      );
+      return questions;
+    });
+    return qs.flatMap((q) => q);
+  }, [questionGroups]);
+
+  const dashboardData = useMemo(() => {
+    const mappedData = caseData.map((d) => {
+      const answers = Object.keys(d.answers).map((k) => {
+        const [dataType, caseCommodityId, questionId] = k.split("-");
+        const commodity = commodityList.find(
+          (x) => x.case_commodity === parseInt(caseCommodityId)
+        );
+        const commodityId = commodity.commodity;
+        const commodityFocus =
+          commodity.commodity_type === "focus" ? true : false;
+        const totalCommodityQuestion = questionGroups
+          .map((group) => {
+            const questions = flatten(group.questions).filter(
+              (q) => !q.parent && q.question_type === "aggregator"
+            );
+            return questions;
+          })
+          .flatMap((q) => q);
+
+        const totalCommodityValue = totalCommodityQuestion.find(
+          (q) => q.id === parseInt(questionId)
+        );
+        const cost = costQuestions.find(
+          (q) => q.id === parseInt(questionId) && q.parent === 1
+        );
+        return {
+          name: dataType,
+          commodityFocus: commodityFocus,
+          caseCommodityId: parseInt(caseCommodityId),
+          commodityId: parseInt(commodityId),
+          commodityName: commodityNames[commodityId],
+          questionId: parseInt(questionId),
+          value: d.answers[k],
+          isTotalFeasibleFocusIncome:
+            totalCommodityValue && commodityFocus && dataType === "feasible"
+              ? true
+              : false,
+          isTotalFeasibleDiversifiedIncome:
+            totalCommodityValue && !commodityFocus && dataType === "feasible"
+              ? true
+              : false,
+          isTotalCurrentFocusIncome:
+            totalCommodityValue && commodityFocus && dataType === "current"
+              ? true
+              : false,
+          isTotalCurrentDiversifiedIncome:
+            totalCommodityValue && !commodityFocus && dataType === "current"
+              ? true
+              : false,
+          feasibleCost:
+            cost && d.answers[k] && dataType === "feasible" ? true : false,
+          currentCost:
+            cost && d.answers[k] && dataType === "current" ? true : false,
+          costName: cost ? cost.text : "",
+        };
+      });
+      const totalCostFeasible = answers
+        .filter((a) => a.feasibleCost)
+        .reduce((acc, curr) => acc + curr.value, 0);
+      const totalCostCurrent = answers
+        .filter((a) => a.currentCost)
+        .reduce((acc, curr) => acc + curr.value, 0);
+      const totalFeasibleFocusIncome = answers
+        .filter((a) => a.isTotalFeasibleFocusIncome)
+        .reduce((acc, curr) => acc + curr.value, 0);
+      const totalFeasibleDiversifiedIncome = answers
+        .filter((a) => a.isTotalFeasibleDiversifiedIncome)
+        .reduce((acc, curr) => acc + curr.value, 0);
+      const totalCurrentFocusIncome = answers
+        .filter((a) => a.isTotalCurrentFocusIncome)
+        .reduce((acc, curr) => acc + curr.value, 0);
+      const totalCurrentDiversifiedIncome = answers
+        .filter((a) => a.isTotalCurrentDiversifiedIncome)
+        .reduce((acc, curr) => acc + curr.value, 0);
+      return {
+        ...d,
+        total_feasible_cost: -totalCostFeasible,
+        total_current_cost: -totalCostCurrent,
+        total_feasible_focus_income: totalFeasibleFocusIncome,
+        total_feasible_diversified_income: totalFeasibleDiversifiedIncome,
+        total_current_focus_income: totalCurrentFocusIncome,
+        total_current_diversified_income: totalCurrentDiversifiedIncome,
+        answers: answers,
+      };
+    });
+    return mappedData;
+  }, [caseData, commodityList, costQuestions, questionGroups]);
 
   useEffect(() => {
     if (caseId && isEmpty(formData) && !loading) {
@@ -144,7 +274,7 @@ const Case = () => {
       ) : (
         <Row gutter={[16, 16]} className="case-content">
           <SideMenu active={page} setActive={setActive} finished={finished} />
-          <Col flex="auto">
+          <Col span={20}>
             {page === "Case Profile" && (
               <CaseProfile
                 setCaseTitle={setCaseTitle}
@@ -166,6 +296,17 @@ const Case = () => {
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
                 currentCase={currentCase}
+                setCaseData={setCaseData}
+                totalIncomeQuestion={totalIncomeQuestion}
+                questionGroups={questionGroups}
+                setQuestionGroups={setQuestionGroups}
+              />
+            )}
+            {page === "Income Driver Dashboard" && (
+              <IncomeDriverDashboard
+                commodityList={commodityList}
+                currentCaseId={currentCaseId}
+                dashboardData={dashboardData}
               />
             )}
           </Col>

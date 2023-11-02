@@ -15,18 +15,18 @@ class LivingIncomeBenchmarkDict(TypedDict):
     id: int
     country: int
     region: int
-    household_size: int
+    household_size: float
     year: int
     value: LivingIncomeBenchmarkValue
     cpi: Optional[float]
 
 
 class LivingIncomeBenchmark(Base):
-    __tablename__ = 'living_income_benchmark'
+    __tablename__ = "living_income_benchmark"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    country = Column(Integer, ForeignKey('country.id'))
-    region = Column(Integer, ForeignKey('region.id'))
+    country = Column(Integer, ForeignKey("country.id"))
+    region = Column(Integer, ForeignKey("region.id"))
     household_size = Column(Float, nullable=False)
     year = Column(Integer, nullable=False)
     source = Column(String, nullable=True)
