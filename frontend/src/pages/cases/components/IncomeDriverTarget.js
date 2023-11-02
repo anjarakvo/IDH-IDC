@@ -26,6 +26,14 @@ const IncomeDriverTarget = ({
   useEffect(() => {
     if (!isEmpty(segmentItem) && currentSegmentId) {
       setIncomeTarget(segmentItem?.target || 0);
+      if (!segmentItem?.region) {
+        form.setFieldsValue({
+          manual_target: true,
+          target: segmentItem?.target || null,
+        });
+        setDisableTarget(false);
+      }
+      form.setFieldsValue({ region: segmentItem?.region || null });
       form.setFieldsValue({
         household_adult: segmentItem?.adult || null,
       });
@@ -95,6 +103,7 @@ const IncomeDriverTarget = ({
       target,
       region,
     } = allValues;
+    const regionData = { region: region };
     if (household_adult || household_children) {
       calculateHouseholdSize(household_adult, household_children);
     }
@@ -102,21 +111,22 @@ const IncomeDriverTarget = ({
     if (changedValues.manual_target !== undefined) {
       setDisableTarget(!changedValues.manual_target);
       if (changedValues.manual_target && target) {
+        form.setFieldsValue({ region: null });
         setIncomeTarget(target);
-        updateFormValues({ target: target });
+        updateFormValues({ region: null, target: target });
       }
       if (!changedValues.manual_target) {
-        form.setFieldsValue({ region: [] });
+        form.setFieldsValue({ target: null });
         setIncomeTarget(segmentItem?.target || 0);
-        updateFormValues({ target: 0 });
+        updateFormValues({ region: null, target: 0 });
       }
     }
     if (changedValues.target && !disableTarget) {
       setIncomeTarget(target);
-      updateFormValues({ target: target });
+      updateFormValues({ ...regionData, target: target });
     }
     if (changedValues.region && disableTarget) {
-      // TODO: get from API
+      // get from API
       if (currentCase?.country && currentCase?.year && region) {
         let url = `country_region_benchmark?country_id=${currentCase.country}`;
         url = `${url}&region_id=${region}&year=${currentCase.year}`;
@@ -125,11 +135,19 @@ const IncomeDriverTarget = ({
           if (data?.cpi) {
             setIncomeTarget(data.cpi);
             setHouseholdSize(data.household_size);
-            updateFormValues({ target: data.cpi, benchmark: data });
+            updateFormValues({
+              ...regionData,
+              target: data.cpi,
+              benchmark: data,
+            });
           } else {
             setIncomeTarget(data.value.usd);
             setHouseholdSize(data.household_size);
-            updateFormValues({ target: data.value.usd, benchmark: data });
+            updateFormValues({
+              ...regionData,
+              target: data.value.usd,
+              benchmark: data,
+            });
           }
         });
       }
@@ -146,7 +164,7 @@ const IncomeDriverTarget = ({
       <Row gutter={[8, 8]}>
         <Col span={12}>
           <Form.Item label="Manual Target" name="manual_target">
-            <Switch defaultChecked={!disableTarget} />
+            <Switch checked={!disableTarget} />
           </Form.Item>
         </Col>
         <Col

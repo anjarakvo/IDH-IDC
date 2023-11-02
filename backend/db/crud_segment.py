@@ -17,6 +17,7 @@ def add_segment(
         segment = Segment(
             name=payload.name,
             case=payload.case,
+            region=payload.region,
             target=payload.target,
             adult=payload.adult,
             child=payload.child,
@@ -56,6 +57,7 @@ def update_segment(
         segment = get_segment_by_id(session=session, id=payload.id)
         segment.name = payload.name
         segment.case = payload.case
+        segment.region = payload.region
         segment.target = payload.target
         segment.adult = payload.adult
         segment.child = payload.child
