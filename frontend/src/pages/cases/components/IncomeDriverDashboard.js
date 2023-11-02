@@ -6,7 +6,11 @@ import {
   DashboardScenarioModeling,
 } from "./";
 
-const IncomeDriverDashboard = () => {
+const IncomeDriverDashboard = ({
+  commodityList,
+  currentCaseId,
+  dashboardData,
+}) => {
   const [activeKey, setActiveKey] = useState("income-overview");
 
   return (
@@ -19,7 +23,13 @@ const IncomeDriverDashboard = () => {
             {
               key: "income-overview",
               label: "Income Overview",
-              children: <DashboardIncomeOverview />,
+              children: (
+                <DashboardIncomeOverview
+                  currentCaseId={currentCaseId}
+                  commodityList={commodityList}
+                  dashboardData={dashboardData}
+                />
+              ),
             },
             {
               key: "sensitivity-analysis",

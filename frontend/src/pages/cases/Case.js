@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import {
@@ -9,15 +9,23 @@ import {
 } from "./components";
 import { Row, Col, Spin } from "antd";
 import "./cases.scss";
-import { api } from "../../lib";
+import { api, flatten } from "../../lib";
 import dayjs from "dayjs";
 import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
-  "Income Driver Dashboard": ["Case Profile"],
+  "Income Driver Dashboard": ["Case Profile", "Income Driver Data Entry"],
 };
+
+const masterCommodityCategories = window.master?.commodity_categories || [];
+const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
+  const commodities = curr.commodities.reduce((a, c) => {
+    return { ...a, [c.id]: c.name };
+  }, {});
+  return { ...acc, ...commodities };
+}, {});
 
 const Case = () => {
   const { caseId } = useParams();
@@ -26,10 +34,53 @@ const Case = () => {
   const [formData, setFormData] = useState({});
   const [finished, setFinished] = useState([]);
   const [commodityList, setCommodityList] = useState([]);
+  const [caseData, setCaseData] = useState([]);
+  const [questionGroups, setQuestionGroups] = useState([]);
   const [currentCaseId, setCurrentCaseId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
   const [currentCase, setCurrentCase] = useState({});
+
+  useEffect(() => {
+    if (caseId && caseData.length) {
+      setFinished(["Case Profile", "Income Driver Data Entry"]);
+    }
+  }, [caseData, caseId]);
+
+  const totalIncomeQuestion = useMemo(() => {
+    const qs = questionGroups.map((group) => {
+      const questions = flatten(group.questions).filter((q) => !q.parent);
+      const commodity = commodityList.find(
+        (c) => c.commodity === group.commodity_id
+      );
+      return questions.map((q) => `${commodity.case_commodity}-${q.id}`);
+    });
+    return qs.flatMap((q) => q);
+  }, [questionGroups, commodityList]);
+
+  const dashboardData = useMemo(() => {
+    const mappedData = caseData.map((d) => {
+      const answers = Object.keys(d.answers).map((k) => {
+        const [dataType, caseCommodityId, questionId] = k.split("-");
+        const commodityId = commodityList.find(
+          (x) => x.case_commodity === parseInt(caseCommodityId)
+        ).commodity;
+        return {
+          name: dataType,
+          caseCommodityId: parseInt(caseCommodityId),
+          commodityId: parseInt(commodityId),
+          commodityName: commodityNames[commodityId],
+          questionId: parseInt(questionId),
+          value: d.answers[k],
+        };
+      });
+      return {
+        ...d,
+        answers: answers,
+      };
+    });
+    return mappedData;
+  }, [caseData, commodityList]);
 
   useEffect(() => {
     if (caseId && isEmpty(formData) && !loading) {
@@ -171,13 +222,17 @@ const Case = () => {
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
                 currentCase={currentCase}
+                setCaseData={setCaseData}
+                totalIncomeQuestion={totalIncomeQuestion}
+                questionGroups={questionGroups}
+                setQuestionGroups={setQuestionGroups}
               />
             )}
             {page === "Income Driver Dashboard" && (
               <IncomeDriverDashboard
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
-                currentCase={currentCase}
+                dashboardData={dashboardData}
               />
             )}
           </Col>

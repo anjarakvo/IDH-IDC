@@ -26,7 +26,6 @@ import {
   IncomeDriverForm,
   IncomeDriverTarget,
   generateSegmentPayloads,
-  flatten,
 } from "./";
 import { api } from "../../../lib";
 import orderBy from "lodash/orderBy";
@@ -46,6 +45,7 @@ const DataFields = ({
   segmentLabel,
   onDelete,
   questionGroups,
+  totalIncomeQuestion,
   commodityList,
   renameItem,
   formValues,
@@ -78,24 +78,16 @@ const DataFields = ({
     setPercentage(percent || 0);
   }, [totalCurrentIncome, totalFeasibleIncome]);
 
-  const totalIncomeQuestion = useMemo(() => {
-    const qs = questionGroups.map((group) => {
-      const questions = flatten(group.questions).filter((q) => !q.parent);
-      const commodity = commodityList.find(
-        (c) => c.commodity === group.commodity_id
-      );
-      return questions.map((q) => `${commodity.case_commodity}-${q.id}`);
-    });
-    return qs.flatMap((q) => q);
-  }, [questionGroups, commodityList]);
-
   const chartData = useMemo(() => {
+    if (!formValues.length) {
+      return [];
+    }
     const chartQuestion = totalIncomeQuestion.map((qid) => {
       const [caseCommodity, questionId] = qid.split("-");
       const feasibleId = `feasible-${qid}`;
       const currentId = `current-${qid}`;
       const segmentValues = formValues.find((v) => v.key === segment);
-      const feasibleValue = segmentValues.answers?.[feasibleId];
+      const feasibleValue = segmentValues.answers?.[feasibleId] || 0;
       const currentValue = segmentValues.answers?.[currentId];
       const question = questionGroups
         .flatMap((g) => g.questions)
@@ -107,7 +99,7 @@ const DataFields = ({
         case_id: caseCommodity,
         commodity_id: commodityId,
         question: question,
-        feasibleValue: feasibleValue || 0,
+        feasibleValue: feasibleValue - (currentValue || 0),
         currentValue: currentValue || 0,
       };
     });
@@ -119,18 +111,18 @@ const DataFields = ({
         title: commodityName,
         stack: [
           {
-            name: "Feasible",
-            title: "Feasible",
-            value: g.reduce((a, b) => a + b.feasibleValue, 0),
-            total: g.reduce((a, b) => a + b.feasibleValue, 0),
-            order: 1,
-          },
-          {
             name: "Current",
             title: "Current",
             value: g.reduce((a, b) => a + b.currentValue, 0),
             total: g.reduce((a, b) => a + b.currentValue, 0),
             order: 2,
+          },
+          {
+            name: "Feasible",
+            title: "Additional income if feasible values are reached",
+            value: g.reduce((a, b) => a + b.feasibleValue, 0),
+            total: g.reduce((a, b) => a + b.feasibleValue, 0),
+            order: 1,
           },
         ],
       };
@@ -348,13 +340,37 @@ const IncomeDriverDataEntry = ({
   commodityList,
   currentCaseId,
   currentCase,
+  setCaseData,
+  questionGroups,
+  setQuestionGroups,
+  totalIncomeQuestion,
 }) => {
   const [activeKey, setActiveKey] = useState("1");
-  const [questionGroups, setQuestionGroups] = useState([]);
   const [items, setItems] = useState([]);
   const [formValues, setFormValues] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [isSaving, setIsSaving] = useState(false);
+
+  useEffect(() => {
+    const formValeusWithTotalCurrentIncomeAnswer = formValues.map(
+      (currentFormValue) => {
+        const totalCurrentIncomeAnswer = totalIncomeQuestion
+          .map((qs) => currentFormValue?.answers[`current-${qs}`])
+          .filter((a) => a)
+          .reduce((acc, a) => acc + a, 0);
+        const totalFeasibleIncomeAnswer = totalIncomeQuestion
+          .map((qs) => currentFormValue?.answers[`feasible-${qs}`])
+          .filter((a) => a)
+          .reduce((acc, a) => acc + a, 0);
+        return {
+          ...currentFormValue,
+          total_current_income: totalCurrentIncomeAnswer,
+          total_feasible_income: totalFeasibleIncomeAnswer,
+        };
+      }
+    );
+    setCaseData(formValeusWithTotalCurrentIncomeAnswer);
+  }, [formValues, setCaseData, totalIncomeQuestion]);
 
   // handle save here
   const handleSave = () => {
@@ -534,6 +550,7 @@ const IncomeDriverDataEntry = ({
             segment={activeKey}
             segmentLabel={newLabel}
             questionGroups={questionGroups}
+            totalIncomeQuestion={totalIncomeQuestion}
             onDelete={itemIndex ? () => onDelete(activeKey) : false}
             commodityList={commodityList}
             renameItem={renameItem}
@@ -613,6 +630,7 @@ const IncomeDriverDataEntry = ({
                   segmentLabel={item.label}
                   onDelete={itemIndex ? () => onDelete(item.key) : false}
                   questionGroups={questionGroups}
+                  totalIncomeQuestion={totalIncomeQuestion}
                   commodityList={commodityList}
                   renameItem={renameItem}
                   formValues={formValues}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form } from "antd";
-import { Questions, flatten, indentSize, getFunctionDefaultValue } from "./";
+import { Questions, indentSize, getFunctionDefaultValue } from "./";
+import { flatten } from "../../../lib";
 import isEmpty from "lodash/isEmpty";
 
 const IncomeDriverForm = ({
