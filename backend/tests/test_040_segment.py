@@ -20,6 +20,7 @@ class TestSegmentRoute():
         payload = [{
             "name": "Segment 1",
             "case": 1,
+            "region": 1,
             "target": 1000,
             "adult": 2,
             "child": 3,
@@ -41,6 +42,7 @@ class TestSegmentRoute():
         assert res == [{
             'id': 1,
             'case': 1,
+            "region": 1,
             'name': 'Segment 1',
             'target': 1000.0,
             "adult": 2.0,
@@ -50,12 +52,14 @@ class TestSegmentRoute():
         payload = [{
             "name": "Segment 2",
             "case": 1,
+            "region": 1,
             "target": 2000,
             "adult": 3,
             "child": 2,
         }, {
             "name": "Segment 3",
             "case": 1,
+            "region": 2,
             "target": 3000,
             "adult": 4,
             "child": 2,
@@ -81,6 +85,7 @@ class TestSegmentRoute():
         assert res == [{
             'id': 2,
             'case': 1,
+            "region": 1,
             'name': 'Segment 2',
             'target': 2000.0,
             "adult": 3.0,
@@ -88,6 +93,7 @@ class TestSegmentRoute():
         }, {
             'id': 3,
             'case': 1,
+            "region": 2,
             'name': 'Segment 3',
             'target': 3000.0,
             "adult": 4.0,
@@ -102,6 +108,7 @@ class TestSegmentRoute():
             "id": 1,
             "name": "Segment 1 Updated",
             "case": 1,
+            "region": 1,
             "target": 2000,
             "adult": 4,
             "child": 2,
@@ -123,6 +130,7 @@ class TestSegmentRoute():
         assert res == [{
             'id': 1,
             'case': 1,
+            "region": 1,
             'name': 'Segment 1 Updated',
             'target': 2000.0,
             "adult": 4.0,
@@ -133,6 +141,7 @@ class TestSegmentRoute():
             "id": 1,
             "name": "Segment 1",
             "case": 1,
+            "region": 1,
             "target": 2000,
             "adult": 5,
             "child": 0,
@@ -140,6 +149,7 @@ class TestSegmentRoute():
             "id": 2,
             "name": "Segment 2",
             "case": 1,
+            "region": 2,
             "target": 2000,
             "household_size": 50,
             "adult": 6,
@@ -148,6 +158,7 @@ class TestSegmentRoute():
             "id": 3,
             "name": "Segment 3",
             "case": 1,
+            "region": 1,
             "target": 3000,
             "adult": 4,
             "child": 2,
@@ -178,6 +189,7 @@ class TestSegmentRoute():
         assert res == [{
             'id': 1,
             'case': 1,
+            "region": 1,
             'name': 'Segment 1',
             'target': 2000.0,
             "adult": 5.0,
@@ -185,6 +197,7 @@ class TestSegmentRoute():
         }, {
             'id': 2,
             'case': 1,
+            "region": 2,
             'name': 'Segment 2',
             'target': 2000.0,
             "adult": 6.0,
@@ -192,11 +205,9 @@ class TestSegmentRoute():
         }, {
             'id': 3,
             'case': 1,
+            "region": 1,
             'name': 'Segment 3',
             'target': 3000.0,
             "adult": 4.0,
             "child": 2.0,
         }]
-
-    # test_get_all_segment
-    # test_get_segment_by_id

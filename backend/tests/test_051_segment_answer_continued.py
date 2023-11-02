@@ -47,6 +47,7 @@ class TestSegmentAnswerRouteContinued():
         assert res == [{
             'id': 2,
             'case': 1,
+            'region': 2,
             'name': 'Segment 2',
             'target': 2000.0,
             'adult': 6.0,
@@ -55,6 +56,7 @@ class TestSegmentAnswerRouteContinued():
         }, {
             'id': 3,
             'case': 1,
+            'region': 1,
             'name': 'Segment 3',
             'target': 3000.0,
             'adult': 4.0,
@@ -70,6 +72,7 @@ class TestSegmentAnswerRouteContinued():
         }, {
             'id': 1,
             'case': 1,
+            'region': 1,
             'name': 'Segment 1',
             'target': 2000.0,
             'adult': 5.0,
@@ -132,6 +135,7 @@ class TestSegmentAnswerRouteContinued():
             "segments": [{
                 'id': 2,
                 'case': 1,
+                'region': 2,
                 'name': 'Segment 2',
                 'target': 2000.0,
                 'adult': 6.0,
@@ -139,6 +143,7 @@ class TestSegmentAnswerRouteContinued():
             }, {
                 'id': 3,
                 'case': 1,
+                'region': 1,
                 'name': 'Segment 3',
                 'target': 3000.0,
                 'adult': 4.0,
@@ -146,6 +151,7 @@ class TestSegmentAnswerRouteContinued():
             }, {
                 'id': 1,
                 'case': 1,
+                'region': 1,
                 'name': 'Segment 1',
                 'target': 2000.0,
                 'adult': 5.0,
