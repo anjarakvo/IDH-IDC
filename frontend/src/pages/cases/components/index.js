@@ -81,7 +81,7 @@ export const indentSize = 37.5;
 
 export const regexQuestionId = /#(\d+)/;
 
-export const getFunctionDefaultValue = (question, prefix, values = {}) => {
+export const getFunctionDefaultValue = (question, prefix, values = []) => {
   const function_name = question.default_value.split(" ");
   const getFunction = function_name.reduce((acc, fn) => {
     const questionValue = fn.match(regexQuestionId);
