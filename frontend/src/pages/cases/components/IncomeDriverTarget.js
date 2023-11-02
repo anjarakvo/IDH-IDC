@@ -16,7 +16,6 @@ const IncomeDriverTarget = ({
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
   const [incomeTarget, setIncomeTarget] = useState(0);
-  const [actualIncome, setActualIncome] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
   const [loadingRegionOptions, setLoadingRegionOptions] = useState(false);
@@ -125,10 +124,12 @@ const IncomeDriverTarget = ({
           const { data } = res;
           if (data?.cpi) {
             setIncomeTarget(data.cpi);
-            updateFormValues({ target: data.cpi });
+            setHouseholdSize(data.household_size);
+            updateFormValues({ target: data.cpi, benchmark: data });
           } else {
             setIncomeTarget(data.value.usd);
-            updateFormValues({ target: data.value.usd });
+            setHouseholdSize(data.household_size);
+            updateFormValues({ target: data.value.usd, benchmark: data });
           }
         });
       }
@@ -226,8 +227,8 @@ const IncomeDriverTarget = ({
           <h2>{incomeTarget.toFixed(2)}</h2>
         </Col>
         <Col span={12}>
-          <p>Calculated Living Income</p>
-          <h2>{actualIncome.toFixed(2)}</h2>
+          <p>Household Size</p>
+          <h2>{householdSize}</h2>
         </Col>
       </Row>
     </Form>
