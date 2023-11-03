@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { Row, Col, Card, Radio } from "antd";
 import Chart from "../../../components/chart";
+import { getFunctionDefaultValue } from "./";
 
 const SegmentSelector = ({
   dashboardData,
@@ -159,29 +160,37 @@ const MonetaryContributionChart = ({ dashboardData }) => {
       .filter((d) => d.name === "current")
       .map((d) => d.question.text);
 
-    const additionalData = indicators
-      .map((d) => {
-        const feasibleValue = dataSeries.find(
-          (dd) => dd.name === "feasible" && dd.question.text === d
-        );
-        if (feasibleValue) {
-          if (feasibleValue.question.text.toLowerCase().includes("cost")) {
-            return -feasibleValue.value || 0;
-          }
-          return feasibleValue?.value || 0;
-        }
-        return 0;
-      })
-      .reduce((c, u) => {
-        if (c.length === 0) {
-          return [u];
-        }
-        return [...c, c[c.length - 1] + u];
-      }, []);
-
-    const increasingData = additionalData.map(
-      (d) => d + data.total_current_focus_income
+    const totalValueData = data.answers.find(
+      (dd) => dd.name === "current" && !dd.parent
     );
+
+    const currentValues = dataSeries.filter((d) => d.name === "current");
+    const currentValuesArray = currentValues.reduce((c, d) => {
+      return [...c, { id: `custom-${d.questionId}`, value: d.value || 0 }];
+    }, []);
+
+    const additionalData = indicators.map((d) => {
+      const feasibleValue = dataSeries.find(
+        (dd) => dd.name === "feasible" && dd.question.text === d
+      );
+      if (feasibleValue) {
+        const customValueId = `custom-${feasibleValue.questionId}`;
+        const replacedCurrentValues = [
+          ...currentValuesArray.filter((c) => c.id !== customValueId),
+          {
+            id: customValueId,
+            value: feasibleValue.value || 0,
+          },
+        ];
+        const newTotalValue = getFunctionDefaultValue(
+          totalValueData.question,
+          "custom",
+          replacedCurrentValues
+        );
+        return newTotalValue - data.total_current_focus_income;
+      }
+      return 0;
+    });
 
     return {
       tooltip: {
@@ -217,10 +226,14 @@ const MonetaryContributionChart = ({ dashboardData }) => {
               color: "transparent",
             },
           },
-          data: [0, ...increasingData, 0],
+          data: [
+            0,
+            ...indicators.map(() => data.total_current_focus_income),
+            0,
+          ],
         },
         {
-          name: "Life Cost",
+          name: "Income",
           type: "bar",
           stack: "Total",
           label: {
