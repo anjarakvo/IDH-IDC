@@ -228,7 +228,7 @@ def register(
         url = f"{webdomain}/invitation/{res_invitation_id}"
         email = Email(recipients=recipients, email=MailTypeEnum.INVITATION, url=url)
         email.send
-    else:
+    if not invitation_id:
         # send registration email
         admins = crud_user.find_business_unit_admin(session=session, user_id=user["id"])
         email = Email(
@@ -312,6 +312,7 @@ def get_user_by_id(
 def update_user_by_id(
     req: Request,
     user_id: int,
+    approved: Optional[bool] = False,
     payload: UserUpdateBase = Depends(UserUpdateBase.as_form),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
@@ -321,6 +322,10 @@ def update_user_by_id(
         payload.password = payload.password.get_secret_value()
         payload.password = get_password_hash(payload.password)
     user = crud_user.update_user(session=session, id=user_id, payload=payload)
+    # send email to approved user
+    if user and approved:
+        email = Email(recipients=[user.recipient], email=MailTypeEnum.REG_APPROVED)
+        email.send
     return user.to_user_info
 
 

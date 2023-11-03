@@ -14,6 +14,7 @@ from models.user import (
 from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
 from models.user_business_unit import UserBusinessUnit, UserBusinessUnitRole
+from db.crud_user_business_unit import find_users_in_same_business_unit
 
 
 def add_user(
@@ -253,7 +254,8 @@ def find_same_business_unit(session: Session, user_id: int):
 
 def find_business_unit_admin(session: Session, user_id: int):
     business_units = find_same_business_unit(session=session, user_id=user_id)
-    user_ids = [bu.user for bu in business_units]
+    bu_ids = [bu.business_unit for bu in business_units]
+    user_ids = find_users_in_same_business_unit(session=session, business_units=bu_ids)
     admins = (
         session.query(User)
         .filter(and_(User.id.in_(user_ids), User.role == UserRole.admin))
