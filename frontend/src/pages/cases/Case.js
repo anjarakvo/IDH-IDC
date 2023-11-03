@@ -68,6 +68,11 @@ const Case = () => {
     return qs.flatMap((q) => q);
   }, [questionGroups]);
 
+  const flattenedQuestionGroups = useMemo(() => {
+    const qg = questionGroups.map((group) => flatten(group.questions));
+    return qg.flatMap((q) => q);
+  }, [questionGroups]);
+
   const dashboardData = useMemo(() => {
     const mappedData = caseData.map((d) => {
       const answers = Object.keys(d.answers).map((k) => {
@@ -93,8 +98,12 @@ const Case = () => {
         const cost = costQuestions.find(
           (q) => q.id === parseInt(questionId) && q.parent === 1
         );
+        const question = flattenedQuestionGroups.find(
+          (q) => q.id === parseInt(questionId)
+        );
         return {
           name: dataType,
+          question: question,
           commodityFocus: commodityFocus,
           caseCommodityId: parseInt(caseCommodityId),
           commodityId: parseInt(commodityId),
@@ -154,7 +163,13 @@ const Case = () => {
       };
     });
     return mappedData;
-  }, [caseData, commodityList, costQuestions, questionGroups]);
+  }, [
+    caseData,
+    commodityList,
+    costQuestions,
+    questionGroups,
+    flattenedQuestionGroups,
+  ]);
 
   useEffect(() => {
     if (caseId && isEmpty(formData) && !loading) {
