@@ -171,11 +171,16 @@ const UserForm = () => {
       business_units,
       cases,
     } = values;
+    const allCasesValue = adminRole.includes(role)
+      ? true
+      : all_cases
+      ? true
+      : false;
     const payload = new FormData();
     payload.append("fullname", fullname);
     payload.append("email", email);
     payload.append("role", role);
-    payload.append("all_cases", all_cases);
+    payload.append("all_cases", allCasesValue);
     payload.append("organisation", organisation);
     if (tags && tags?.length) {
       const tagVal = Array.isArray(tags) ? tags : [tags];
