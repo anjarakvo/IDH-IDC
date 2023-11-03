@@ -257,7 +257,7 @@ def invitation(
 @user_route.post(
     "/user/invitation/{invitation_id:path}",
     response_model=Token,
-    summary="get invitation detail",
+    summary="get set password for invited user",
     name="user:register_password",
     tags=["User"],
 )
@@ -267,7 +267,10 @@ def change_password(
     password: SecretStr = Form(...),
     session: Session = Depends(get_session),
 ):
-    password = get_password_hash(password.get_secret_value())
+    try:
+        password = get_password_hash(password.get_secret_value())
+    except AttributeError:
+        password = password
     user = crud_user.accept_invitation(
         session=session, invitation_id=invitation_id, password=password
     )

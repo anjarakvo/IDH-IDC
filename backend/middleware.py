@@ -64,16 +64,14 @@ def decode_token(token: str = Depends(oauth2_scheme)):
         return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
     except exceptions.ExpiredSignatureError:
         return HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
 
 
 def verify_token(authenticated):
     if authenticated and datetime.now().timestamp() > authenticated.get("exp"):
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Unauthorized"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Unauthorized"
         )
     return authenticated
 
@@ -101,9 +99,7 @@ def verify_user(session: Session, authenticated):
 def verify_super_admin(session: Session, authenticated):
     user = verify_user(session=session, authenticated=authenticated)
     if user.role != UserRole.super_admin:
-        raise HTTPException(
-            status_code=403,
-            detail="You don't have data access")
+        raise HTTPException(status_code=403, detail="You don't have data access")
     return user
 
 
@@ -112,9 +108,7 @@ def verify_admin(session: Session, authenticated):
     if user.role == UserRole.super_admin:
         return user
     if user.role != UserRole.admin:
-        raise HTTPException(
-            status_code=403,
-            detail="You don't have data access")
+        raise HTTPException(status_code=403, detail="You don't have data access")
     return user
 
 
@@ -122,7 +116,5 @@ def verify_user_management(session: Session, authenticated):
     roles = [UserRole.super_admin, UserRole.admin, UserRole.editor]
     user = verify_user(session=session, authenticated=authenticated)
     if user.role not in roles:
-        raise HTTPException(
-            status_code=403,
-            detail="You don't have data access")
+        raise HTTPException(status_code=403, detail="You don't have data access")
     return user

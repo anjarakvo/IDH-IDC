@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import "./login.scss";
+import { useParams, useNavigate } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import {
   Row,
@@ -14,41 +15,68 @@ import {
 } from "antd";
 import { api } from "../../lib";
 import ImageRight from "../../assets/images/login-right-img.png";
+import isEmpty from "lodash/isEmpty";
 
 const ResetPassword = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const navigate = useNavigate();
+  const { tokenId } = useParams();
+  const [userDetail, setUserDetail] = useState({});
+  const [fetchingUser, setFetchingUser] = useState(false);
+
+  const isInvitation = window.location.pathname.includes("invitation");
+
+  const apiUrl = useMemo(() => {
+    let url = "user/";
+    url += isInvitation ? "invitation" : "reset-password";
+    if (!isEmpty(userDetail)) {
+      url += `/${userDetail.invitation_id}`;
+    } else {
+      url += `/${tokenId}`;
+    }
+    return url;
+  }, [isInvitation, tokenId, userDetail]);
+
+  useEffect(() => {
+    if (isEmpty(userDetail)) {
+      setFetchingUser(true);
+      api
+        .get(apiUrl)
+        .then((res) => {
+          setUserDetail(res.data);
+          setFetchingUser(false);
+        })
+        .catch((e) => {
+          console.error(e);
+          navigate("/not-found");
+        });
+    }
+  }, [apiUrl, navigate, userDetail]);
 
   const onFinish = (values) => {
     setLoading(true);
-    const { fullname, email, password, organisation, business_units } = values;
-    const businessUnitValues = business_units.map((x) => ({
-      business_unit: x,
-      role: "member",
-    }));
-
+    const { password } = values;
     const payload = new FormData();
-    payload.append("fullname", fullname);
-    payload.append("email", email);
     payload.append("password", password);
-    payload.append("organisation", organisation);
-    payload.append("business_units", JSON.stringify(businessUnitValues));
-
     api
-      .post("user/ResetPassword", payload)
+      .post(apiUrl, payload)
       .then(() => {
         form.resetFields();
         messageApi.open({
           type: "success",
           content:
-            "Registration complete. You can log in once it's approved by an admin.",
+            "Password already set. Now you can login with your password.",
         });
+        setTimeout(() => {
+          navigate("/login");
+        }, 300);
       })
       .catch(() => {
         messageApi.open({
           type: "error",
-          content: "Registration failed. Please contact your admin.",
+          content: "Set password failed. Please contact your admin.",
         });
       })
       .finally(() => {
@@ -86,6 +114,7 @@ const ResetPassword = () => {
               <Input.Password
                 data-testid="input-password"
                 placeholder="Password (6 digits at least, case sensitive)"
+                disabled={fetchingUser}
               />
             </Form.Item>
             <Form.Item
@@ -113,6 +142,7 @@ const ResetPassword = () => {
               <Input.Password
                 data-testid="input-confirm-password"
                 placeholder="Confirm Password"
+                disabled={fetchingUser}
               />
             </Form.Item>
             <Form.Item>
@@ -122,9 +152,9 @@ const ResetPassword = () => {
                 type="primary"
                 htmlType="submit"
                 block
-                loading={loading}
+                loading={loading || fetchingUser}
               >
-                Save Password
+                {fetchingUser ? "Load user detail..." : "Save Password"}
               </Button>
             </Form.Item>
           </Form>

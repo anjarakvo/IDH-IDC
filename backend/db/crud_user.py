@@ -237,7 +237,7 @@ def accept_invitation(
 ) -> UserInvitation:
     user = get_invitation(session=session, invitation_id=invitation_id)
     user.password = password
-    user.invitation = None
+    user.invitation_id = None
     user.is_active = 1
     session.commit()
     session.flush()

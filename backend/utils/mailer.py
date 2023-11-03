@@ -51,30 +51,30 @@ class EmailBody(enum.Enum):
         "title": "Forgot Password",
         "subject": "Forgot Password",
         "body": "You have requested to reset your password.",
-        "message": '''
+        "message": """
             Please click
-            <a href="#url" target="_blank" rel="noreferrer">
+            <a href="#url#" target="_blank" rel="noreferrer">
                 here
             </a> or the link below to reset your password.
             <br/>
             <br/>
-            #url
-        ''',
+            #url#
+        """,
         "image": f"{image_url}/lock.png",
     }
     INVITATION = {
         "title": "Invitation",
         "subject": "Invitation",
         "body": "You have invited to to IDC portal.",
-        "message": '''
+        "message": """
             Please click
-            <a href="#url" target="_blank" rel="noreferrer">
+            <a href="#url#" target="_blank" rel="noreferrer">
                 here
             </a> or the link below to set your password.
             <br/>
             <br/>
-            #url
-        ''',
+            #url#
+        """,
         "image": f"{image_url}/user.png",
     }
 
