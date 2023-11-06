@@ -5,6 +5,7 @@ import {
   ChartIncomeGap,
   ChartBigImpact,
   ChartMonetaryContribution,
+  ChartExploreBreakdownDrivers,
 } from "../visualizations";
 
 const DashboardIncomeOverview = ({ dashboardData }) => {
@@ -63,6 +64,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   Select the driver for which you want to breakdown to be
                   visualised.
                 </p>
+                <ChartExploreBreakdownDrivers dashboardData={dashboardData} />
               </Col>
             </Row>
           </Card.Grid>
