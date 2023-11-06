@@ -7,7 +7,7 @@ import { PrivateRoutes } from "./components/route";
 import { PageLayout } from "./components/layout";
 import { Home } from "./pages/home";
 import { Landing } from "./pages/landing";
-import { Login } from "./pages/login";
+import { Login, Register, ResetPassword } from "./pages/login";
 import { Cases, Case } from "./pages/cases";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
@@ -129,6 +129,17 @@ const App = () => {
           )}
           <Route exact path="/" element={<Landing />} />
           <Route exact path="/login" element={<Login />} />
+          <Route exact path="/register" element={<Register />} />
+          <Route
+            exact
+            path="/invitation/:tokenId"
+            element={<ResetPassword />}
+          />
+          <Route
+            exact
+            path="/reset-password/:tokenId"
+            element={<ResetPassword />}
+          />
         </Routes>
       )}
     </PageLayout>

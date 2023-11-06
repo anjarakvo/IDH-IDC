@@ -58,6 +58,7 @@ const UserForm = () => {
   const [loadingCaseOptions, setLoadingCaseOptions] = useState(true);
   const [caseOptions, setCaseOptions] = useState([]);
   const [selectedCases, setSelectedCases] = useState([]);
+  const [isUserActive, setIsUserActive] = useState(null);
 
   const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const tagOptions = UIState.useState((s) => s.tagOptions);
@@ -111,12 +112,12 @@ const UserForm = () => {
   useEffect(() => {
     setLoading(true);
     if (userId && !loadingCaseOptions) {
-      //  TODO ::Fix initial user value load when edit
       api
         .get(`user/${userId}`)
         .then((res) => {
           const { data } = res;
           setSelectedRole(data?.role || null);
+          setIsUserActive(data.active);
 
           if (
             data?.all_cases !== null &&
@@ -170,11 +171,16 @@ const UserForm = () => {
       business_units,
       cases,
     } = values;
+    const allCasesValue = adminRole.includes(role)
+      ? true
+      : all_cases
+      ? true
+      : false;
     const payload = new FormData();
     payload.append("fullname", fullname);
     payload.append("email", email);
     payload.append("role", role);
-    payload.append("all_cases", all_cases);
+    payload.append("all_cases", allCasesValue);
     payload.append("organisation", organisation);
     if (tags && tags?.length) {
       const tagVal = Array.isArray(tags) ? tags : [tags];
@@ -196,8 +202,12 @@ const UserForm = () => {
     if (userId) {
       payload.append("is_active", true);
     }
+    let approvedParam = "";
+    if (isUserActive !== null && !isUserActive) {
+      approvedParam = "?approved=true";
+    }
     const apiCall = userId
-      ? api.put(`user/${userId}`, payload)
+      ? api.put(`user/${userId}${approvedParam}`, payload)
       : api.post("/user/register?invitation_id=true", payload);
     apiCall
       .then(() => {
@@ -515,7 +525,9 @@ const UserForm = () => {
               style={{ width: "200px", float: "left" }}
               loading={submitting}
             >
-              Save User
+              {isUserActive !== null && !isUserActive
+                ? "Approve User"
+                : "Save User"}
             </Button>
           </Form.Item>
         </Form>

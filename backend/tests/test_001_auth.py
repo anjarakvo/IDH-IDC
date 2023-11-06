@@ -121,7 +121,7 @@ class TestUserAuthentication():
             })
         assert res.status_code == 401
         res = res.json()
-        assert res == {'detail': 'Incorrect email or password'}
+        assert res == {'detail': 'Incorrect email or password.'}
         # test invalid login with wrong email
         res = await client.post(
             app.url_path_for("user:login"),
@@ -136,7 +136,7 @@ class TestUserAuthentication():
             })
         assert res.status_code == 401
         res = res.json()
-        assert res == {'detail': 'Incorrect email or password'}
+        assert res == {'detail': 'Incorrect email or password.'}
         # test invalid login grant type
         res = await client.post(
             app.url_path_for("user:login"),
@@ -178,10 +178,10 @@ class TestUserAuthentication():
         assert res.status_code == 404
 
     @pytest.mark.asyncio
-    async def test_valid_user_login(
+    async def test_valid_user_login_for_non_approved_user(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        # valid login
+        # valid login but the user not approved yet
         res = await client.post(
             app.url_path_for("user:login"),
             headers={"content-type": "application/x-www-form-urlencoded"},
@@ -193,29 +193,10 @@ class TestUserAuthentication():
                 "client_id": CLIENT_ID,
                 "client_secret": CLIENT_SECRET
             })
-        assert res.status_code == 200
+        assert res.status_code == 401
         res = res.json()
-        assert res['access_token'] is not None
-        account = Acc(email="super_admin@akvo.org", token=res['access_token'])
-        assert account.token == res['access_token']
         assert res == {
-            "access_token": res["access_token"],
-            "token_type": "bearer",
-            "user": {
-                "id": 1,
-                "fullname": "John Doe",
-                "email": "super_admin@akvo.org",
-                "active": False,
-                "role": UserRole.user.value,
-                "all_cases": False,
-                "business_unit_detail": None,
-                "organisation_detail": {
-                    "id": 1,
-                    "name": "Akvo"
-                },
-                "tags_count": 0,
-                "cases_count": 0
-            }
+            'detail': "You can't login until your account is approved."
         }
 
     @pytest.mark.asyncio
