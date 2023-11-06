@@ -7,7 +7,8 @@ import { LoadingOutlined } from "@ant-design/icons";
 import LogoWhite from "../../assets/images/logo-white.png";
 import { adminRole, allUserRole } from "../../store/static";
 
-const pagesWithNoSider = ["/", "/login", "/welcome"];
+const pagesWithNoSider = ["/", "/login", "/welcome", "/register"];
+const pagesWithNoHeader = ["/login", "/register"];
 const { Header, Content } = Layout;
 
 const PageHeader = ({ isLoggedIn, signOut }) => {
@@ -124,10 +125,13 @@ const PageLayout = ({ children, signOut }) => {
     [authTokenAvailable, userId, userActive]
   );
 
-  if (pagesWithNoSider.includes(pathname)) {
+  const isResetPasswordPage =
+    pathname.includes("invitation") || pathname.includes("reset-password");
+
+  if (pagesWithNoSider.includes(pathname) || isResetPasswordPage) {
     return (
       <Layout>
-        {pathname !== "/login" ? (
+        {!pagesWithNoHeader.includes(pathname) && !isResetPasswordPage ? (
           <PageHeader isLoggedIn={isLoggedIn} signOut={signOut} />
         ) : (
           ""

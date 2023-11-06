@@ -32,3 +32,18 @@ class TestMailer:
         assert data["FromEmail"] == "noreply@akvo.org"
         assert data["Subject"] == "Registration"
         # assert email.send is True
+
+    @pytest.mark.asyncio
+    async def test_email_invitation(self, session: Session) -> None:
+        user = get_user_by_email(session=session, email=account.data["email"])
+        email = Email(
+            recipients=[user.recipient],
+            email=MailTypeEnum.INVITATION,
+            url="url"
+        )
+        data = email.data
+        assert data["Recipients"] == [
+            {"Email": "super_admin@akvo.org", "Name": "John Doe"}
+        ]
+        assert data["FromEmail"] == "noreply@akvo.org"
+        assert data["Subject"] == "Invitation"

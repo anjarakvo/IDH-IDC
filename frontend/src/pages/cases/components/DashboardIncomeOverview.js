@@ -1,266 +1,11 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { Row, Col, Card, Radio } from "antd";
-import Chart from "../../../components/chart";
-import { getFunctionDefaultValue } from "./";
-
-const SegmentSelector = ({
-  dashboardData,
-  selectedSegment,
-  setSelectedSegment,
-}) => {
-  return (
-    <Radio.Group
-      value={selectedSegment}
-      onChange={(e) => {
-        setSelectedSegment(e.target.value);
-      }}
-    >
-      {dashboardData.map((d) => (
-        <Radio.Button key={d.id} value={d.id}>
-          {d.name}
-        </Radio.Button>
-      ))}
-    </Radio.Group>
-  );
-};
-
-const CurrentFeasibleChart = ({ dashboardData = [] }) => {
-  const chartData = useMemo(() => {
-    return dashboardData.reduce((c, d) => {
-      return [
-        ...c,
-        {
-          name: `Current\n${d.name}`,
-          title: `Current\n${d.name}`,
-          stack: [
-            {
-              name: "Cost of Production",
-              title: "Cost of Production",
-              value: d.total_current_cost,
-              total: d.total_current_cost,
-              order: 1,
-              color: "#ff5d00",
-            },
-            {
-              name: "Focus Crop Revenue",
-              title: "Focus Crop Revenue",
-              value: d.total_current_focus_income,
-              total: d.total_current_focus_income,
-              color: "#47d985",
-              order: 2,
-            },
-            {
-              name: "Diversified Income",
-              title: "Diversified Income",
-              value: d.total_current_diversified_income,
-              total: d.total_current_diversified_income,
-              color: "#fdc305",
-              order: 3,
-            },
-          ],
-        },
-        {
-          name: `Feasible\n${d.name}`,
-          title: `Feasible\n${d.name}`,
-          stack: [
-            {
-              name: "Cost of Production",
-              title: "Cost of Production",
-              value: d.total_feasible_cost,
-              total: d.total_feasible_cost,
-              order: 1,
-            },
-            {
-              name: "Focus Crop Revenue",
-              title: "Focus Crop Revenue",
-              value: d.total_feasible_focus_income,
-              total: d.total_feasible_focus_income,
-              order: 2,
-            },
-            {
-              name: "Diversified Income",
-              title: "Diversified Income",
-              value: d.total_feasible_diversified_income,
-              total: d.total_feasible_diversified_income,
-              order: 3,
-            },
-          ],
-        },
-      ];
-    }, []);
-  }, [dashboardData]);
-
-  return (
-    <Chart wrapper={false} type="BARSTACK" data={chartData} affix={true} />
-  );
-};
-
-const IncomeGapChart = ({ dashboardData }) => {
-  const chartData = useMemo(() => {
-    return dashboardData.reduce((c, d) => {
-      return [
-        ...c,
-        {
-          name: `Current\n${d.name}`,
-          value: d.total_current_income,
-          total: d.total_current_income,
-          color: "#854634",
-        },
-        {
-          name: `Feasible\n${d.name}`,
-          value: d.total_feasible_income,
-          color: "#ff6c19",
-        },
-      ];
-    }, []);
-  }, [dashboardData]);
-
-  return <Chart wrapper={false} type="BAR" data={chartData} affix={true} />;
-};
-
-const BigImpactChart = ({ dashboardData }) => {
-  const [selectedSegment, setSelectedSegment] = useState(null);
-
-  useEffect(() => {
-    if (dashboardData.length > 0) {
-      setSelectedSegment(dashboardData[0].id);
-    }
-  }, [dashboardData]);
-
-  return (
-    <div>
-      <SegmentSelector
-        dashboardData={dashboardData}
-        selectedSegment={selectedSegment}
-        setSelectedSegment={setSelectedSegment}
-      />
-    </div>
-  );
-};
-
-const MonetaryContributionChart = ({ dashboardData }) => {
-  const [selectedSegment, setSelectedSegment] = useState(null);
-
-  useEffect(() => {
-    if (dashboardData.length > 0) {
-      setSelectedSegment(dashboardData[0].id);
-    }
-  }, [dashboardData]);
-
-  const chartData = useMemo(() => {
-    const data = dashboardData.find((d) => d.id === selectedSegment);
-    if (!data) {
-      return {};
-    }
-    const dataSeries = data.answers.filter(
-      (d) => d.question.parent === 1 && d.commodityFocus
-    );
-
-    const indicators = dataSeries
-      .filter((d) => d.name === "current")
-      .map((d) => d.question.text);
-
-    const totalValueData = data.answers.find(
-      (dd) => dd.name === "current" && !dd.parent
-    );
-
-    const currentValues = dataSeries.filter((d) => d.name === "current");
-    const currentValuesArray = currentValues.reduce((c, d) => {
-      return [...c, { id: `custom-${d.questionId}`, value: d.value || 0 }];
-    }, []);
-
-    const additionalData = indicators.map((d) => {
-      const feasibleValue = dataSeries.find(
-        (dd) => dd.name === "feasible" && dd.question.text === d
-      );
-      if (feasibleValue) {
-        const customValueId = `custom-${feasibleValue.questionId}`;
-        const replacedCurrentValues = [
-          ...currentValuesArray.filter((c) => c.id !== customValueId),
-          {
-            id: customValueId,
-            value: feasibleValue.value || 0,
-          },
-        ];
-        const newTotalValue = getFunctionDefaultValue(
-          totalValueData.question,
-          "custom",
-          replacedCurrentValues
-        );
-        return newTotalValue - data.total_current_focus_income;
-      }
-      return 0;
-    });
-
-    return {
-      tooltip: {
-        trigger: "axis",
-        axisPointer: {
-          type: "shadow",
-        },
-        formatter: function (params) {
-          var tar = params[1];
-          return tar.name + "<br/>" + tar.seriesName + " : " + tar.value;
-        },
-      },
-      xAxis: {
-        type: "category",
-        splitLine: { show: false },
-        data: ["Current\nIncome", ...indicators, "Feasible"],
-      },
-      yAxis: {
-        type: "value",
-      },
-      series: [
-        {
-          name: "Placeholder",
-          type: "bar",
-          stack: "Total",
-          itemStyle: {
-            borderColor: "transparent",
-            color: "transparent",
-          },
-          emphasis: {
-            itemStyle: {
-              borderColor: "transparent",
-              color: "transparent",
-            },
-          },
-          data: [
-            0,
-            ...indicators.map(() => data.total_current_focus_income),
-            0,
-          ],
-        },
-        {
-          name: "Income",
-          type: "bar",
-          stack: "Total",
-          label: {
-            show: true,
-            position: "inside",
-          },
-          data: [
-            data.total_current_focus_income,
-            ...additionalData,
-            data.total_feasible_focus_income,
-          ],
-        },
-      ],
-    };
-  }, [dashboardData, selectedSegment]);
-
-  return (
-    <div>
-      <SegmentSelector
-        dashboardData={dashboardData}
-        selectedSegment={selectedSegment}
-        setSelectedSegment={setSelectedSegment}
-      />
-      <Chart wrapper={false} type="BAR" override={chartData} />
-    </div>
-  );
-};
+import React from "react";
+import { Row, Col, Card } from "antd";
+import {
+  ChartCurrentFeasible,
+  ChartIncomeGap,
+  ChartBigImpact,
+  ChartMonetaryContribution,
+} from "../visualizations";
 
 const DashboardIncomeOverview = ({ dashboardData }) => {
   return (
@@ -283,7 +28,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   This graph shows you the actual household income components,
                   and the income target per segment
                 </p>
-                <CurrentFeasibleChart dashboardData={dashboardData} />
+                <ChartCurrentFeasible dashboardData={dashboardData} />
               </Col>
               <Col span={12}>
                 <h2>How big is the income gap?</h2>
@@ -291,7 +36,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   This graph shows you the actual household income components,
                   and the income target per segment
                 </p>
-                <IncomeGapChart dashboardData={dashboardData} />
+                <ChartIncomeGap dashboardData={dashboardData} />
               </Col>
             </Row>
           </Card.Grid>
@@ -310,7 +55,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   This ranking shows the elasticity of the driver and to which
                   the driver can influence income.
                 </p>
-                <BigImpactChart dashboardData={dashboardData} />
+                <ChartBigImpact dashboardData={dashboardData} />
               </Col>
               <Col span={12}>
                 <h2>Explore the breakdown of drivers</h2>
@@ -332,7 +77,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             <Row className="income-driver-content">
               <Col span={24}>
                 <h2>Monetary contribution of each driver to income.</h2>
-                <MonetaryContributionChart dashboardData={dashboardData} />
+                <ChartMonetaryContribution dashboardData={dashboardData} />
               </Col>
             </Row>
           </Card.Grid>

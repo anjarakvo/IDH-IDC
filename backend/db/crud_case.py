@@ -79,12 +79,14 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
 
 def get_all_case(
     session: Session,
+    skip: int = 0,
+    limit: int = 10,
     show_private: Optional[bool] = 0,
     search: Optional[str] = None,
     tags: Optional[int] = None,
     focus_commodities: Optional[int] = None,
-    skip: int = 0,
-    limit: int = 10,
+    business_unit_users: Optional[List[int]] = None,
+    user_cases: Optional[List[int]] = None,
 ) -> List[CaseListDict]:
     case = session.query(Case)
     if not show_private:
@@ -99,6 +101,10 @@ def get_all_case(
         case_tags = session.query(CaseTag).filter(CaseTag.tag.in_(tags)).all()
         case_ids = [pt.case for pt in case_tags]
         case = case.filter(Case.id.in_(case_ids))
+    if business_unit_users:
+        case = case.filter(Case.created_by.in_(business_unit_users))
+    if user_cases:
+        case = case.filter(Case.id.in_(user_cases))
     count = case.count()
     case = case.order_by(Case.id.desc()).offset(skip).limit(limit).all()
     return PaginatedCaseData(count=count, data=case)
@@ -202,3 +208,16 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     session.flush()
     session.refresh(case)
     return case
+
+
+def get_case_options(
+    session: Session,
+    business_unit_users: Optional[List[int]] = None,
+    user_cases: Optional[List[int]] = None,
+) -> List[CaseListDict]:
+    case = session.query(Case)
+    if business_unit_users:
+        case = case.filter(Case.created_by.in_(business_unit_users))
+    if user_cases:
+        case = case.filter(Case.id.in_(user_cases))
+    return case.all()

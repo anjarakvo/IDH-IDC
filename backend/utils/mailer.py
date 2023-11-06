@@ -51,8 +51,31 @@ class EmailBody(enum.Enum):
         "title": "Forgot Password",
         "subject": "Forgot Password",
         "body": "You have requested to reset your password.",
-        "message": None,
+        "message": """
+            Please click
+            <a href="#url#" target="_blank" rel="noreferrer">
+                here
+            </a> or the link below to reset your password.
+            <br/>
+            <br/>
+            #url#
+        """,
         "image": f"{image_url}/lock.png",
+    }
+    INVITATION = {
+        "title": "Invitation",
+        "subject": "Invitation",
+        "body": "You have invited to to IDC portal.",
+        "message": """
+            Please click
+            <a href="#url#" target="_blank" rel="noreferrer">
+                here
+            </a> or the link below to set your password.
+            <br/>
+            <br/>
+            #url#
+        """,
+        "image": f"{image_url}/user.png",
     }
 
 
@@ -99,6 +122,7 @@ class MailTypeEnum(enum.Enum):
     REG_APPROVED = "USER_REGISTRATION_APPROVED"
     REG_PASSWORD_CREATED = "USER_PASSWORD_CREATED"
     FORGOT_PASSWORD = "FORGOT_PASSWORD"
+    INVITATION = "INVITATION"
 
 
 class Email:
@@ -110,6 +134,7 @@ class Email:
         attachment: Optional[str] = None,
         context: Optional[str] = None,
         body: Optional[str] = None,
+        url: Optional[str] = None,
     ):
         self.email = EmailBody[email.value]
         self.recipients = recipients
@@ -117,20 +142,24 @@ class Email:
         self.attachment = attachment
         self.context = context
         self.body = body
+        self.url = url
 
     @property
     def data(self):
         email = self.email.value
         body = email["body"]
+        message = email["message"]
         if self.body:
             body = self.body
+        if self.url:
+            message = message.replace("#url#", self.url)
         html = html_template.render(
             logo=f"{webdomain}/logo.png",
             webdomain=webdomain,
             title=email["title"],
             body=body,
             image=email["image"],
-            message=email["message"],
+            message=message,
             context=self.context,
         )
         payload = {

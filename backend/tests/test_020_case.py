@@ -11,7 +11,7 @@ from models.case_commodity import CaseCommodityType
 
 sys.path.append("..")
 
-non_admin_account = Acc(email="support@akvo.org", token=None)
+non_admin_account = Acc(email="editor@akvo.org", token=None)
 admin_account = Acc(email="super_admin@akvo.org", token=None)
 
 
@@ -71,7 +71,7 @@ class TestCaseRoute:
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
             json=payload,
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.post(
             app.url_path_for("case:create"),
@@ -161,7 +161,7 @@ class TestCaseRoute:
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
             json=payload,
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.post(
             app.url_path_for("case:create"),
@@ -221,6 +221,23 @@ class TestCaseRoute:
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
         )
         assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            'current': 1,
+            'data': [{
+                'id': 1,
+                'name': 'Bali Rice and Corn Production Comparison',
+                'country': 'Bali',
+                'focus_commodity': 2,
+                'diversified_commodities_count': 2,
+                'year': 2023,
+                "created_at": res["data"][0]["created_at"],
+                'created_by': 'super_admin@akvo.org',
+                'tags': [1]
+            }],
+            'total': 1,
+            'total_page': 1
+        }
         # with admin user cred
         res = await client.get(
             app.url_path_for("case:get_all"),
@@ -288,7 +305,7 @@ class TestCaseRoute:
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
             json=payload,
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.put(
             app.url_path_for("case:update", case_id=1),
@@ -364,7 +381,7 @@ class TestCaseRoute:
             app.url_path_for("case:get_by_id", case_id=1),
             headers={"Authorization": f"Bearer {non_admin_account.token}"},
         )
-        assert res.status_code == 401
+        assert res.status_code == 403
         # with admin user cred
         res = await client.get(
             app.url_path_for("case:get_by_id", case_id=1),
