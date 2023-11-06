@@ -3,6 +3,8 @@ from sqlalchemy import Column, Integer, Float, ForeignKey, String
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+from models.country import Country
+from models.region import Region
 
 
 class LivingIncomeBenchmarkValue(TypedDict):
@@ -25,8 +27,8 @@ class LivingIncomeBenchmark(Base):
     __tablename__ = "living_income_benchmark"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    country = Column(Integer, ForeignKey("country.id"))
-    region = Column(Integer, ForeignKey("region.id"))
+    country = Column(Integer, ForeignKey(Country.id))
+    region = Column(Integer, ForeignKey(Region.id))
     household_size = Column(Float, nullable=False)
     year = Column(Integer, nullable=False)
     source = Column(String, nullable=True)

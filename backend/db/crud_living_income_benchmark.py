@@ -1,9 +1,9 @@
-from typing import List, Optional
+from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from fastapi import HTTPException, status
 from models.living_income_benchmark import (
-    LivingIncomeBenchmark, LivingIncomeBenchmarkDict
+    LivingIncomeBenchmark,
+    LivingIncomeBenchmarkDict,
 )
 from models.cpi import Cpi
 
@@ -13,48 +13,49 @@ def get_all_lib(session: Session) -> List[LivingIncomeBenchmarkDict]:
 
 
 def get_by_country_region_year(
-    session: Session, country: int, region: int, year: int,
-    raise404: Optional[bool] = True
+    session: Session, country: int, region: int, year: int
 ) -> LivingIncomeBenchmarkDict:
     lib = (
         session.query(LivingIncomeBenchmark)
-        .filter(and_(
-            LivingIncomeBenchmark.country == country,
-            LivingIncomeBenchmark.region == region,
-            LivingIncomeBenchmark.year == year,
-        )).first()
+        .filter(
+            and_(
+                LivingIncomeBenchmark.country == country,
+                LivingIncomeBenchmark.region == region,
+                LivingIncomeBenchmark.year == year,
+            )
+        )
+        .first()
     )
     if not lib:
         lib = (
             session.query(LivingIncomeBenchmark)
-            .filter(and_(
-                LivingIncomeBenchmark.country == country,
-                LivingIncomeBenchmark.region == region,
-            )).first()
+            .filter(
+                and_(
+                    LivingIncomeBenchmark.country == country,
+                    LivingIncomeBenchmark.region == region,
+                )
+            )
+            .first()
         )
         if not lib:
-            if not raise404:
-                return None
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Benchmark not found"
+            return None
+        cpi = (
+            session.query(Cpi)
+            .filter(
+                and_(
+                    Cpi.country == country,
+                    Cpi.year == year,
+                )
             )
-        cpi = session.query(Cpi).filter(and_(
-            Cpi.country == country,
-            Cpi.year == year,
-        )).first()
+            .first()
+        )
         if cpi:
             lib = lib.serialize
-            lib['year'] = year
-            lib['cpi'] = cpi.value
+            lib["year"] = year
+            lib["cpi"] = cpi.value
             return lib
     else:
         lib = lib.serialize
-        lib['cpi'] = None
+        lib["cpi"] = None
         return lib
-    if not raise404:
-        return None
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND,
-        detail="Benchmark not found"
-    )
+    return None
