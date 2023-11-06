@@ -30,6 +30,11 @@ class LivingIncomeStudyEnum(enum.Enum):
     living_income = "living_income"
 
 
+class CaseDropdown(TypedDict):
+    label: str
+    value: int
+
+
 class CaseListDict(TypedDict):
     id: int
     name: str
@@ -268,6 +273,13 @@ class Case(Base):
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
             "tags": [ct.tag for ct in self.case_tags],
+        }
+
+    @property
+    def to_dropdown(self) -> CaseDropdown:
+        return {
+            "value": self.id,
+            "label": self.name,
         }
 
 

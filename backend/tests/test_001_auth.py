@@ -207,6 +207,7 @@ class TestUserAuthentication():
                 "email": "super_admin@akvo.org",
                 "active": False,
                 "role": UserRole.user.value,
+                "all_cases": False,
                 "business_unit_detail": None,
                 "organisation_detail": {
                     "id": 1,
@@ -233,6 +234,7 @@ class TestUserAuthentication():
             "email": "super_admin@akvo.org",
             "active": False,
             "role": UserRole.user.value,
+            "all_cases": False,
             "business_unit_detail": None,
             "organisation_detail": {
                 "id": 1,
