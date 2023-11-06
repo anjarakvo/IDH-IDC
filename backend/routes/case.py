@@ -1,5 +1,6 @@
 import db.crud_case as crud_case
 import db.crud_user_business_unit as crud_bu
+import db.crud_living_income_benchmark as crud_lib
 
 from math import ceil
 from fastapi import APIRouter, Request, Depends, HTTPException, Query
@@ -8,8 +9,11 @@ from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
 from models.case import (
-    CaseBase, CaseDict, PaginatedCaseResponse, CaseDetailDict,
-    CaseDropdown
+    CaseBase,
+    CaseDict,
+    PaginatedCaseResponse,
+    CaseDetailDict,
+    CaseDropdown,
 )
 from models.user import UserRole
 from middleware import verify_admin, verify_user
@@ -60,9 +64,7 @@ def get_all_case(
     if user.role != UserRole.super_admin and user.all_cases:
         business_unit_users = crud_bu.find_users_in_same_business_unit(
             session=session,
-            business_units=[
-                bu.business_unit for bu in user.user_business_units
-            ]
+            business_units=[bu.business_unit for bu in user.user_business_units],
         )
         if not business_unit_users:
             raise HTTPException(status_code=404, detail="Not found")
@@ -79,7 +81,7 @@ def get_all_case(
         skip=(limit * (page - 1)),
         limit=limit,
         business_unit_users=business_unit_users,
-        user_cases=user_cases
+        user_cases=user_cases,
     )
     if not cases:
         raise HTTPException(status_code=404, detail="Not found")
@@ -108,9 +110,7 @@ def get_case_options(
     if user.role != UserRole.super_admin and user.all_cases:
         business_unit_users = crud_bu.find_users_in_same_business_unit(
             session=session,
-            business_units=[
-                bu.business_unit for bu in user.user_business_units
-            ]
+            business_units=[bu.business_unit for bu in user.user_business_units],
         )
         if not business_unit_users:
             raise HTTPException(status_code=404, detail="Not found")
@@ -118,9 +118,7 @@ def get_case_options(
     if user.role != UserRole.super_admin or not user.all_cases:
         user_cases = [uc.case for uc in user.user_case_access]
     cases = crud_case.get_case_options(
-        session=session,
-        business_unit_users=business_unit_users,
-        user_cases=user_cases
+        session=session, business_unit_users=business_unit_users, user_cases=user_cases
     )
     if not cases:
         raise HTTPException(status_code=404, detail="Not found")
@@ -163,4 +161,13 @@ def get_case_by_id(
     # TODO :: verify by user, then check user role and access
     verify_admin(session=session, authenticated=req.state.authenticated)
     case = crud_case.get_case_by_id(session=session, id=case_id)
-    return case.to_case_detail
+    case = case.to_case_detail
+    for segment in case["segments"]:
+        benchmark = crud_lib.get_by_country_region_year(
+            session=session,
+            country=case["country"],
+            region=segment["region"],
+            year=case["year"],
+        )
+        segment["benchmark"] = benchmark
+    return case

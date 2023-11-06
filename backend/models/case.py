@@ -21,7 +21,7 @@ from models.case_commodity import (
     SimplifiedCaseCommodityDict,
     CaseCommodityType,
 )
-from models.segment import Segment, SegmentDict
+from models.segment import Segment, SegmentDict, SegmentWithAnswersDict
 from models.case_tag import CaseTag
 
 
@@ -90,7 +90,7 @@ class CaseDetailDict(TypedDict):
     created_by: str
     created_at: str
     updated_at: Optional[str]
-    segments: Optional[List[SegmentDict]]
+    segments: Optional[List[SegmentWithAnswersDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
     private: bool
     tags: Optional[List[int]] = []
@@ -143,10 +143,7 @@ class Case(Base):
         back_populates="case_detail",
     )
     country_detail = relationship(
-        'Country',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='cases'
+        "Country", cascade="all, delete", passive_deletes=True, backref="cases"
     )
     # commodity_detail = relationship(
     #     'Commodity',
@@ -269,7 +266,7 @@ class Case(Base):
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "segments": [ps.serialize for ps in self.case_segments],
+            "segments": [ps.serialize_with_answers for ps in self.case_segments],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
             "tags": [ct.tag for ct in self.case_tags],
