@@ -17,4 +17,5 @@ Now you will be able to access [http://localhost:3000](http://localhost:3000)
 docker compose exec backend python -m seeder.user
 ```
 
+
 Password for the new user added via CLI is: `password`
