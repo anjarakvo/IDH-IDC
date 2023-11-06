@@ -202,11 +202,12 @@ const UserForm = () => {
     if (userId) {
       payload.append("is_active", true);
     }
+    let approvedParam = "";
     if (isUserActive !== null && !isUserActive) {
-      payload.append("approved", true);
+      approvedParam = "?approved=true";
     }
     const apiCall = userId
-      ? api.put(`user/${userId}`, payload)
+      ? api.put(`user/${userId}${approvedParam}`, payload)
       : api.post("/user/register?invitation_id=true", payload);
     apiCall
       .then(() => {
