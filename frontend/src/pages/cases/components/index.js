@@ -7,6 +7,7 @@ const commodities = commodityCategories
       []
     )
   : [];
+
 export const commodityOptions = commodities.map((commodity) => ({
   label: commodity.name,
   value: commodity.id,
@@ -163,6 +164,7 @@ export const generateSegmentPayloads = (
 export { default as AreaUnitFields } from "./AreaUnitFields";
 export { default as SideMenu } from "./SideMenu";
 export { default as CaseProfile } from "./CaseProfile";
+export { default as DataFields } from "./DataFields";
 export { default as IncomeDriverDataEntry } from "./IncomeDriverDataEntry";
 export { default as IncomeDriverForm } from "./IncomeDriverForm";
 export { default as IncomeDriverTarget } from "./IncomeDriverTarget";
