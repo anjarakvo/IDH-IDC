@@ -149,4 +149,26 @@
   .binning-input {
     width: 100% !important;
   }
+  .income-driver-table {
+    table {
+      border-radius: 5px;
+      th,
+      td {
+        font-family: "TabletGothic";
+        background: $secondary-color;
+        border: none;
+      }
+      th {
+        border-bottom: solid $primary-color 1px;
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+  #sensitivity-analysis {
+    .ant-form-item {
+      margin-bottom: 0px;
+    }
+  }
 }

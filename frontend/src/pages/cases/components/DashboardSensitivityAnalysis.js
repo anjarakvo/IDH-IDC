@@ -1,6 +1,17 @@
 import React, { useState, useMemo } from "react";
-import { Row, Col, Card, Alert, Select, InputNumber, Table } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Divider,
+  Alert,
+  Select,
+  InputNumber,
+  Table,
+  Form,
+} from "antd";
 import { groupBy, map } from "lodash";
+import { ChartBinningHeatmap } from "../visualizations";
 
 const columns = [
   {
@@ -20,90 +31,91 @@ const columns = [
   },
 ];
 
-const BinningForm = ({ hidden }) => {
+const BinningForm = ({ segment, drivers = [], hidden }) => {
   return (
     <Row gutter={[8, 8]} style={{ display: hidden ? "none" : "" }}>
       <Col span={12}>
         <b>Binning driver:</b>
       </Col>
       <Col span={12}>
-        <Select
-          size="small"
-          className="binning-input"
-          options={[
-            {
-              value: "A",
-              label: "B",
-            },
-          ]}
-        />
+        <Form.Item name={`${segment.id}_binning-driver-name`}>
+          <Select size="small" className="binning-input" options={drivers} />
+        </Form.Item>
       </Col>
       <Col span={12}>Number of Bins:</Col>
-      <Col span={12}>
-        <InputNumber size="small" className="binning-input" />
+      <Col span={4}>
+        <Form.Item name={`${segment.id}_binning-driver-number`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
       </Col>
       <Col span={12}>Bin Values:</Col>
       <Col span={4}>
-        <InputNumber size="small" className="binning-input" />
+        <Form.Item name={`${segment.id}_binning-value-1`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
       </Col>
       <Col span={4}>
-        <InputNumber size="small" className="binning-input" />
+        <Form.Item name={`${segment.id}_binning-value-2`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
       </Col>
       <Col span={4}>
-        <InputNumber size="small" className="binning-input" />
+        <Form.Item name={`${segment.id}_binning-value-3`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
       </Col>
+      <Divider />
       <Col span={12}>
         <b>X-Axis Driver:</b>
       </Col>
       <Col span={12}>
-        <Select
-          size="small"
-          className="binning-input"
-          options={[
-            {
-              value: "A",
-              label: "B",
-            },
-          ]}
-        />
-      </Col>
-      <Col span={12}>Maximum Value</Col>
-      <Col span={12}>
-        <InputNumber size="small" className="binning-input" />
+        <Form.Item name={`${segment.id}_x-axis-driver`}>
+          <Select size="small" className="binning-input" options={drivers} />
+        </Form.Item>
       </Col>
       <Col span={12}>Minimum Value:</Col>
-      <Col span={12}>
-        <InputNumber size="small" className="binning-input" />
+      <Col span={4}>
+        <Form.Item name={`${segment.id}_x-axis-min-value`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
       </Col>
+      <Col span={12}>Maximum Value</Col>
+      <Col span={4}>
+        <Form.Item name={`${segment.id}_x-axis-max-value`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
+      </Col>
+      <Divider />
       <Col span={12}>
         <b>Y-Axis Driver:</b>
       </Col>
       <Col span={12}>
-        <Select
-          size="small"
-          className="binning-input"
-          options={[
-            {
-              value: "A",
-              label: "B",
-            },
-          ]}
-        />
-      </Col>
-      <Col span={12}>Maximum Value</Col>
-      <Col span={12}>
-        <InputNumber size="small" className="binning-input" />
+        <Form.Item name={`${segment.id}_y-axis-driver`}>
+          <Select size="small" className="binning-input" options={drivers} />
+        </Form.Item>
       </Col>
       <Col span={12}>Minimum Value:</Col>
-      <Col span={12}>
-        <InputNumber size="small" className="binning-input" />
+      <Col span={4}>
+        <Form.Item name={`${segment.id}_y-axis-min-value`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
       </Col>
+      <Col span={12}>Maximum Value</Col>
+      <Col span={4}>
+        <Form.Item name={`${segment.id}_y-axis-max-value`}>
+          <InputNumber size="small" className="binning-input" />
+        </Form.Item>
+      </Col>
+      <Divider />
     </Row>
   );
 };
 
 const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
   const [currentSegment, setCurrentSegment] = useState(null);
+  const [binningData, setBinningData] = useState({});
+  const [form] = Form.useForm();
+
   const dataSource = useMemo(() => {
     if (!currentSegment) {
       return [];
@@ -134,8 +146,45 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
     ];
   }, [currentSegment, dashboardData]);
 
+  const drivers = useMemo(() => {
+    if (!currentSegment) {
+      return [];
+    }
+    return dataSource.filter((d) => d.name !== "Diversified Income");
+  }, [currentSegment, dataSource]);
+
+  const onValuesChange = (c, values) => {
+    const objectName = Object.keys(c)[0];
+    const [segmentId, valueName] = objectName.split("_");
+    const value = c[objectName];
+
+    if (valueName === "x-axis-driver") {
+      const dataValue = dataSource.find((d) => d.name === value);
+      values = {
+        ...values,
+        [`${segmentId}_x-axis-min-value`]: dataValue.current,
+        [`${segmentId}_x-axis-max-value`]: dataValue.feasible,
+      };
+    }
+    if (valueName === "y-axis-driver") {
+      const dataValue = dataSource.find((d) => d.name === value);
+      values = {
+        ...values,
+        [`${segmentId}_y-axis-min-value`]: dataValue.current,
+        [`${segmentId}_y-axis-max-value`]: dataValue.feasible,
+      };
+    }
+    form.setFieldsValue(values);
+    setBinningData((prev) => {
+      return {
+        ...prev,
+        ...values,
+      };
+    });
+  };
+
   return (
-    <Row>
+    <Row id="sensitivity-analysis">
       <Col span={24}>
         <Alert
           message="On this page you can explore how different combinations of drivers lead to different income levels. Whether it's optimizing land use, pricing strategies, or diversifying income sources, this page empowers you to explore various scenarios and find the best path towards improving farmer household income."
@@ -170,6 +219,7 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                   }))}
                 />
               </Col>
+              <Divider />
               <Col span={24}>
                 <b>Step 2</b>: Select three drivers you want to model. The other
                 two drivers remain at their current level. Use the driver
@@ -193,22 +243,48 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                   </li>
                 </ul>
               </Col>
+              <Divider />
               <Col span={12}>
-                {dashboardData.map((segment, key) => (
-                  <BinningForm
-                    key={key}
-                    segment={segment}
-                    hidden={currentSegment !== segment.id}
-                  />
-                ))}
+                <Form
+                  name="sensitivity-analysis"
+                  layout="horizontal"
+                  form={form}
+                  onValuesChange={onValuesChange}
+                >
+                  {dashboardData.map((segment, key) => (
+                    <BinningForm
+                      key={key}
+                      segment={segment}
+                      drivers={drivers.map((x) => {
+                        return {
+                          value: x.name,
+                          label: x.name,
+                        };
+                      })}
+                      hidden={currentSegment !== segment.id}
+                    />
+                  ))}
+                </Form>
               </Col>
               <Col span={12}>
                 <Table
                   size="small"
+                  className="income-driver-table"
                   dataSource={dataSource}
                   columns={columns}
                   pagination={false}
                 />
+              </Col>
+              <Divider />
+              <Col span={24}>
+                {dashboardData.map((segment) => (
+                  <ChartBinningHeatmap
+                    key={segment.id}
+                    data={binningData}
+                    segment={segment}
+                    hidden={currentSegment !== segment.id}
+                  />
+                ))}
               </Col>
             </Row>
           </Card.Grid>
