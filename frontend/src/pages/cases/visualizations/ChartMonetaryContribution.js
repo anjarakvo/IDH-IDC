@@ -91,11 +91,7 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
               color: "transparent",
             },
           },
-          data: [
-            0,
-            ...indicators.map(() => data.total_current_focus_income),
-            0,
-          ],
+          data: [0, ...indicators.map(() => data.total_current_income), 0],
         },
         {
           name: "Income",
@@ -106,9 +102,9 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
             position: "inside",
           },
           data: [
-            data.total_current_focus_income,
+            data.total_current_income,
             ...additionalData,
-            data.total_feasible_focus_income,
+            data.total_feasible_income,
           ],
         },
       ],
