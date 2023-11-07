@@ -138,27 +138,30 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
     return [
       ...data,
       {
-        key: data.length + 1,
+        key: data.length + 10,
         name: "Diversified Income",
         current: segmentData.total_current_diversified_income,
         feasible: segmentData.total_feasible_diversified_income,
       },
       {
-        key: data.length + 2,
+        key: data.length + 11,
         name: "Total Focus Income",
         current: segmentData.total_current_focus_income?.toFixed(2) || 0,
         feasible: segmentData.total_feasible_focus_income?.toFixed(2) || 0,
       },
       {
-        key: data.length + 2,
+        key: data.length + 12,
         name: "Total Income",
         current: segmentData.total_current_income?.toFixed(2) || 0,
         feasible: segmentData.total_feasible_income?.toFixed(2) || 0,
       },
       {
-        key: data.length + 3,
+        key: data.length + 13,
         name: "Income Target",
         current: segmentData.target?.toFixed(2) || 0,
+        render: (i) => {
+          <div>test {i}</div>;
+        },
       },
     ];
   }, [currentSegment, dashboardData]);
@@ -167,7 +170,15 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
     if (!currentSegment) {
       return [];
     }
-    return dataSource.filter((d) => d.name !== "Diversified Income");
+    return dataSource.filter(
+      (d) =>
+        ![
+          "Diversified Income",
+          "Total Focus Income",
+          "Total Income",
+          "Income Target",
+        ].includes(d.name)
+    );
   }, [currentSegment, dataSource]);
 
   const onValuesChange = (c, values) => {
@@ -283,9 +294,27 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                   <Table
                     size="small"
                     className="income-driver-table"
-                    dataSource={dataSource}
+                    dataSource={dataSource.filter(
+                      (d) => d.name !== "Income Target"
+                    )}
                     columns={columns}
                     pagination={false}
+                    summary={() => (
+                      <Table.Summary>
+                        <Table.Summary.Row>
+                          <Table.Summary.Cell index={0}>
+                            Income Target
+                          </Table.Summary.Cell>
+                          <Table.Summary.Cell index={1}>
+                            {
+                              dataSource.find((d) => d.name === "Income Target")
+                                .current
+                            }
+                          </Table.Summary.Cell>
+                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                        </Table.Summary.Row>
+                      </Table.Summary>
+                    )}
                   />
                 ) : null}
               </Col>

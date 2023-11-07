@@ -172,6 +172,14 @@
           display: none;
         }
       }
+      tfoot.ant-table-summary {
+        background: $secondary-color;
+        td {
+          background: $secondary-color;
+          border-top: solid $primary-color 1px;
+          font-family: "TabletGothic";
+        }
+      }
     }
   }
   #sensitivity-analysis {
