@@ -70,11 +70,12 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
               a.name === x &&
               a.questionId === q.id
           );
+          const value = answer && answer.value ? answer.value : 0;
           return {
             name: q.text,
             title: q.text,
-            value: answer.value || 0,
-            total: answer.value || 0,
+            value: value,
+            total: value,
             order: qi,
             color: colors[qi],
           };
