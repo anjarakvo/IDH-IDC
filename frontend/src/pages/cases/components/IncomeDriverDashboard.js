@@ -34,7 +34,13 @@ const IncomeDriverDashboard = ({
             {
               key: "sensitivity-analysis",
               label: "Sensitivity Analysis",
-              children: <DashboardSensitivityAnalysis />,
+              children: (
+                <DashboardSensitivityAnalysis
+                  currentCaseId={currentCaseId}
+                  commodityList={commodityList}
+                  dashboardData={dashboardData}
+                />
+              ),
             },
             {
               key: "scenario-modeling",
