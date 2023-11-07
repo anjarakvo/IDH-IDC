@@ -11,11 +11,6 @@ const tabItems = [
     value: "user",
   },
   {
-    key: "/admin/cases",
-    label: "Manage Cases",
-    value: "case",
-  },
-  {
     key: "/admin/tags",
     label: "Manage Tags",
     value: "tag",

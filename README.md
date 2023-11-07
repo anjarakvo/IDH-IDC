@@ -1,4 +1,5 @@
 # IDH-IDC
+
 Income Drive Calculator
 
 ## Dev Setup
@@ -15,5 +16,6 @@ Now you will be able to access [http://localhost:3000](http://localhost:3000)
 ```bash
 docker compose exec backend python -m seeder.user
 ```
+
 
 Password for the new user added via CLI is: `password`
