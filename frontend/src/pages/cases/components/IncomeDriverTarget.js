@@ -12,7 +12,7 @@ const IncomeDriverTarget = ({
   formValues,
   setFormValues,
   segmentItem,
-  totalCurrentIncome,
+  totalIncome,
 }) => {
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
@@ -35,6 +35,19 @@ const IncomeDriverTarget = ({
       household_adult === 1 ? 1 : 1 + (household_adult - 1) * 0.5;
     const children_size = household_children * 0.3;
     return adult_size + children_size;
+  };
+
+  const updateFormValues = (value) => {
+    const updatedFv = formValues.map((fv) => {
+      if (fv.key === segment) {
+        return {
+          ...fv,
+          ...value,
+        };
+      }
+      return fv;
+    });
+    setFormValues(updatedFv);
   };
 
   // load initial target& hh size
@@ -64,15 +77,13 @@ const IncomeDriverTarget = ({
   }, [segmentItem, currentSegmentId, form]);
 
   useEffect(() => {
-    if (benchmark) {
+    if (benchmark && !isEmpty(benchmark)) {
       const targetValue =
         currentCase.currency === "usd"
           ? benchmark.value.usd
           : benchmark.value.lcu;
-      setIncomeTarget((householdSize / benchmark.household_size) * targetValue);
-      updateFormValues({
-        target: (benchmark.household_size / householdSize) * targetValue,
-      });
+      const targetHH = (householdSize / benchmark.household_size) * targetValue;
+      setIncomeTarget(targetHH);
     }
   }, [benchmark, householdSize, currentCase]);
 
@@ -96,19 +107,6 @@ const IncomeDriverTarget = ({
     }
   }, [currentCase?.country]);
 
-  const updateFormValues = (value) => {
-    const updatedFv = formValues.map((fv) => {
-      if (fv.key === segment) {
-        return {
-          ...fv,
-          ...value,
-        };
-      }
-      return fv;
-    });
-    setFormValues(updatedFv);
-  };
-
   const handleOnChangeHouseholdAdult = (value) => {
     updateFormValues({ adult: value });
   };
@@ -118,12 +116,7 @@ const IncomeDriverTarget = ({
   };
 
   const onValuesChange = (changedValues, allValues) => {
-    const {
-      household_adult = 0,
-      household_children = 0,
-      target,
-      region,
-    } = allValues;
+    const { target, region } = allValues;
     const regionData = { region: region };
     const HHSize = calculateHouseholdSize(allValues);
     setHouseholdSize(HHSize);
@@ -164,10 +157,10 @@ const IncomeDriverTarget = ({
           } else {
             const targetValue =
               currentCase.currency === "usd" ? data.value.usd : data.value.lcu;
-            setIncomeTarget((householdSize / targetHH) * targetValue);
+            setIncomeTarget((HHSize / targetHH) * targetValue);
             updateFormValues({
               ...regionData,
-              target: (targetHH / householdSize) * targetValue,
+              target: (targetHH / HHSize) * targetValue,
               benchmark: data,
             });
           }
@@ -271,7 +264,7 @@ const IncomeDriverTarget = ({
         <Col span={16}>
           <p>Calculated Living Income</p>
           <h2>
-            {totalCurrentIncome} {currentCase.currency}
+            {totalIncome.current} {currentCase.currency}
           </h2>
         </Col>
       </Row>

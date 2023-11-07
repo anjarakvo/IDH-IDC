@@ -143,6 +143,23 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
         current: segmentData.total_current_diversified_income,
         feasible: segmentData.total_feasible_diversified_income,
       },
+      {
+        key: data.length + 2,
+        name: "Total Focus Income",
+        current: segmentData.total_current_focus_income?.toFixed(2) || 0,
+        feasible: segmentData.total_feasible_focus_income?.toFixed(2) || 0,
+      },
+      {
+        key: data.length + 2,
+        name: "Total Income",
+        current: segmentData.total_current_income?.toFixed(2) || 0,
+        feasible: segmentData.total_feasible_income?.toFixed(2) || 0,
+      },
+      {
+        key: data.length + 3,
+        name: "Income Target",
+        current: segmentData.target?.toFixed(2) || 0,
+      },
     ];
   }, [currentSegment, dashboardData]);
 

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Form } from "antd";
+import { Row, Col, Space, Form, InputNumber } from "antd";
 import { Questions, indentSize, getFunctionDefaultValue } from "./";
 import { flatten } from "../../../lib";
 import isEmpty from "lodash/isEmpty";
+import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
 
 const IncomeDriverForm = ({
   group,
@@ -12,9 +13,7 @@ const IncomeDriverForm = ({
   setFormValues,
   segmentItem,
   currentCaseId,
-  totalIncomeQuestion,
-  setTotalCurrentIncome,
-  setTotalFeasibleIncome,
+  totalDiversifiedIncome,
 }) => {
   const [form] = Form.useForm();
   const [refresh, setRefresh] = useState(false);
@@ -37,27 +36,6 @@ const IncomeDriverForm = ({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCaseId]);
-
-  useEffect(() => {
-    // for total income
-    const currentFormValue = formValues.find((x) => x.key === segmentItem.key);
-    const totalCurrentIncomeAnswer = totalIncomeQuestion
-      .map((qs) => currentFormValue?.answers[`current-${qs}`])
-      .filter((a) => a)
-      .reduce((acc, a) => acc + a, 0);
-    setTotalCurrentIncome(totalCurrentIncomeAnswer);
-    const totalFeasibleIncomeAnswer = totalIncomeQuestion
-      .map((qs) => currentFormValue?.answers[`feasible-${qs}`])
-      .filter((a) => a)
-      .reduce((acc, a) => acc + a, 0);
-    setTotalFeasibleIncome(totalFeasibleIncomeAnswer);
-  }, [
-    formValues,
-    segmentItem,
-    totalIncomeQuestion,
-    setTotalCurrentIncome,
-    setTotalFeasibleIncome,
-  ]);
 
   const flattenQuestionList = flatten(group.questions);
 
@@ -166,7 +144,55 @@ const IncomeDriverForm = ({
       }}
     >
       {groupIndex === 1 && (
-        <h3 className="diversified-income-title">Diversified Income</h3>
+        <Row
+          gutter={[8, 8]}
+          align="middle"
+          className="total-diversified-income"
+          style={{ marginLeft: "-4px", marginRight: "-4px" }}
+        >
+          <Col span={14}>
+            <h3 className="diversified-income-title">Diversified Income</h3>
+          </Col>
+          <Col span={4}>
+            <InputNumber
+              style={{ width: "100%" }}
+              value={totalDiversifiedIncome.current}
+              disabled
+            />
+          </Col>
+          <Col span={4}>
+            <InputNumber
+              value={totalDiversifiedIncome.feasible}
+              style={{ width: "100%" }}
+              disabled
+            />
+          </Col>
+          <Col span={2}>
+            <Space>
+              {totalDiversifiedIncome.percent ===
+              0 ? null : totalDiversifiedIncome.percent > 0 ? (
+                <CaretUpFilled className="ceret-up" />
+              ) : (
+                <CaretDownFilled className="ceret-down" />
+              )}
+              <div
+                className={
+                  totalDiversifiedIncome.percent === 0
+                    ? ""
+                    : totalDiversifiedIncome.percent > 0
+                    ? "ceret-up"
+                    : "ceret-down"
+                }
+              >
+                {totalDiversifiedIncome.feasible <
+                totalDiversifiedIncome.current
+                  ? -totalDiversifiedIncome.percent.toFixed(0)
+                  : totalDiversifiedIncome.percent.toFixed(0)}
+                %
+              </div>
+            </Space>
+          </Col>
+        </Row>
       )}
       <h3
         style={{

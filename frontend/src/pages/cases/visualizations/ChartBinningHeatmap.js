@@ -47,7 +47,7 @@ const getOptions = ({
           "c",
           newValues
         );
-        return [h, d, newTotalValue + diversified];
+        return [h, d, (newTotalValue + diversified).toFixed(2)];
       });
     })
     .flatMap((x) => x);
