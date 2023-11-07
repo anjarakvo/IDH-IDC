@@ -1,6 +1,17 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { Row, Col } from "antd";
 import { SegmentSelector } from "./";
 import { getFunctionDefaultValue } from "../components";
+import { orderBy } from "lodash";
+import Chart from "../../../components/chart";
+import {
+  AxisShortLabelFormatter,
+  Legend,
+  TextStyle,
+  Easing,
+} from "../../../components/chart/options/common";
+
+const legendColors = ["#47D985", "#00625F"];
 
 const ChartBigImpact = ({ dashboardData }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
@@ -32,10 +43,20 @@ const ChartBigImpact = ({ dashboardData }) => {
       return [...c, { id: `custom-${d.questionId}`, value: d.value || 0 }];
     }, []);
     // populate impact values for focus commodity
-    const transformedData = indicators.map((ind) => {
+    let transformedData = indicators.map((ind) => {
+      const currentValue =
+        focusCommodityData.find(
+          (fcd) => fcd.questionId === ind.id && fcd.name === "current"
+        )?.value || 0;
       const feasibleValue = focusCommodityData.find(
         (fcd) => fcd.questionId === ind.id && fcd.name === "feasible"
       );
+
+      const feasibleValueTemp = feasibleValue?.value || 0;
+      let possibleValue = (feasibleValueTemp / currentValue - 1) * 100;
+      possibleValue =
+        feasibleValueTemp < currentValue ? -possibleValue : possibleValue;
+
       if (feasibleValue) {
         const customValueId = `custom-${feasibleValue.questionId}`;
         const replacedCurrentValues = [
@@ -50,39 +71,132 @@ const ChartBigImpact = ({ dashboardData }) => {
           "custom",
           replacedCurrentValues
         );
-        const value =
+        const incomeValue =
           ((newTotalValue - currentSegmentData.total_current_focus_income) /
             currentSegmentData.total_current_focus_income) *
           100;
         return {
           name: ind.text,
-          value: value,
+          income: incomeValue,
+          possible: possibleValue,
         };
       }
       return {
         name: ind.text,
-        value: 0,
+        income: 0,
+        possible: possibleValue,
       };
     });
     // add diversified value
     transformedData.push({
       name: "Diversified Income",
-      value:
-        (currentSegmentData.total_feasible_diversified_income /
-          currentSegmentData.total_current_diversified_income) *
+      income:
+        (currentSegmentData.total_current_diversified_income /
+          currentSegmentData.total_feasible_diversified_income) *
+        100,
+      possible:
+        ((currentSegmentData.total_current_focus_income +
+          currentSegmentData.total_feasible_diversified_income) /
+          currentSegmentData.total_current_income) *
         100,
     });
+    // reorder
+    transformedData = orderBy(
+      transformedData,
+      ["possible", "income"],
+      ["asc", "asc"]
+    );
+    const finalData = ["possible", "income"].map((x, xi) => {
+      const title = x === "income" ? "% income increase" : "% change possible";
+      const data = transformedData.map((d) => ({
+        name: d.name,
+        value: d[x].toFixed(2),
+        label: {
+          position: d[x] < 0 ? "insideLeft" : "insideRight",
+        },
+      }));
+      return {
+        name: title,
+        data: data,
+        color: legendColors[xi],
+      };
+    });
 
-    console.log(transformedData, dashboardData);
+    return {
+      tooltip: {
+        trigger: "axis",
+        axisPointer: {
+          type: "shadow",
+        },
+        ...TextStyle,
+      },
+      legend: {
+        ...Legend,
+        data: finalData.map((x) => x.name),
+        top: 15,
+        left: "center",
+      },
+      grid: {
+        left: 100,
+        right: 0,
+        label: {
+          color: "#222",
+          ...TextStyle,
+        },
+      },
+      xAxis: {
+        type: "value",
+        axisLabel: {
+          ...TextStyle,
+          color: "#9292ab",
+        },
+      },
+      yAxis: {
+        type: "category",
+        splitLine: { show: false },
+        data: transformedData.map((d) => d.name),
+        axisLabel: {
+          width: 90,
+          overflow: "break",
+          interval: 0,
+          ...TextStyle,
+          color: "#4b4b4e",
+          formatter: AxisShortLabelFormatter?.formatter,
+        },
+        axisTick: {
+          alignWithLabel: true,
+        },
+      },
+      series: finalData.map((d) => {
+        return {
+          ...d,
+          type: "bar",
+          label: {
+            show: true,
+            formatter: function (params) {
+              return params.value;
+            },
+          },
+        };
+      }),
+      ...Easing,
+    };
   }, [dashboardData, selectedSegment]);
 
   return (
     <div>
-      <SegmentSelector
-        dashboardData={dashboardData}
-        selectedSegment={selectedSegment}
-        setSelectedSegment={setSelectedSegment}
-      />
+      <Row gutter={[16, 16]}>
+        <Col span={24}>
+          <SegmentSelector
+            dashboardData={dashboardData}
+            selectedSegment={selectedSegment}
+            setSelectedSegment={setSelectedSegment}
+          />
+        </Col>
+        <Col span={24}>
+          <Chart wrapper={false} type="BAR" override={chartData} />
+        </Col>
+      </Row>
     </div>
   );
 };
