@@ -15,14 +15,27 @@ const IncomeDriverTarget = ({
   totalCurrentIncome,
 }) => {
   const [form] = Form.useForm();
-  const [, setHouseholdSize] = useState(0);
-  const [, setBenchmark] = useState(null);
+  const [householdSize, setHouseholdSize] = useState(0);
+  const [benchmark, setBenchmark] = useState(segmentItem?.benchmark || null);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
   const [loadingRegionOptions, setLoadingRegionOptions] = useState(false);
   const currentSegmentId = segmentItem?.currentSegmentId || null;
   const [regionOptionStatus, setRegionOptionStatus] = useState(null);
+
+  const calculateHouseholdSize = ({
+    household_adult = 0,
+    household_children = 0,
+  }) => {
+    // OECD average household size
+    // first adult = 1, next adult 0.5
+    // 1 child = 0.3
+    const adult_size =
+      household_adult === 1 ? 1 : 1 + (household_adult - 1) * 0.5;
+    const children_size = household_children * 0.3;
+    return adult_size + children_size;
+  };
 
   // load initial target& hh size
   useEffect(() => {
@@ -42,9 +55,26 @@ const IncomeDriverTarget = ({
       form.setFieldsValue({
         household_children: segmentItem?.child || null,
       });
-      calculateHouseholdSize(segmentItem?.adult || 0, segmentItem?.child || 0);
+      const HHSize = calculateHouseholdSize({
+        household_adult: segmentItem?.adult || 0,
+        household_children: segmentItem?.child || 0,
+      });
+      setHouseholdSize(HHSize);
     }
   }, [segmentItem, currentSegmentId, form]);
+
+  useEffect(() => {
+    if (benchmark) {
+      const targetValue =
+        currentCase.currency === "usd"
+          ? benchmark.value.usd
+          : benchmark.value.lcu;
+      setIncomeTarget((householdSize / benchmark.household_size) * targetValue);
+      updateFormValues({
+        target: (benchmark.household_size / householdSize) * targetValue,
+      });
+    }
+  }, [benchmark, householdSize, currentCase]);
 
   // call region api
   useEffect(() => {
@@ -87,17 +117,6 @@ const IncomeDriverTarget = ({
     updateFormValues({ child: value });
   };
 
-  const calculateHouseholdSize = (household_adult, household_children) => {
-    // OECD average household size
-    // first adult = 1, next adult 0.5
-    // 1 child = 0.3
-    const adult_size =
-      household_adult === 1 ? 1 : 1 + (household_adult - 1) * 0.5;
-    const children_size = household_children * 0.3;
-    const size = adult_size + children_size;
-    setHouseholdSize(size);
-  };
-
   const onValuesChange = (changedValues, allValues) => {
     const {
       household_adult = 0,
@@ -106,9 +125,8 @@ const IncomeDriverTarget = ({
       region,
     } = allValues;
     const regionData = { region: region };
-    if (household_adult || household_children) {
-      calculateHouseholdSize(household_adult, household_children);
-    }
+    const HHSize = calculateHouseholdSize(allValues);
+    setHouseholdSize(HHSize);
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
       setDisableTarget(!changedValues.manual_target);
@@ -134,21 +152,22 @@ const IncomeDriverTarget = ({
         url = `${url}&region_id=${region}&year=${currentCase.year}`;
         api.get(url).then((res) => {
           const { data } = res;
+          const targetHH = data.household_size;
           setBenchmark(data);
           if (data?.cpi) {
             setIncomeTarget(data.cpi);
-            setHouseholdSize(data.household_size);
             updateFormValues({
               ...regionData,
               target: data.cpi,
               benchmark: data,
             });
           } else {
-            setIncomeTarget(data.value.usd);
-            setHouseholdSize(data.household_size);
+            const targetValue =
+              currentCase.currency === "usd" ? data.value.usd : data.value.lcu;
+            setIncomeTarget((householdSize / targetHH) * targetValue);
             updateFormValues({
               ...regionData,
-              target: data.value.usd,
+              target: (targetHH / householdSize) * targetValue,
               benchmark: data,
             });
           }
@@ -245,7 +264,9 @@ const IncomeDriverTarget = ({
       >
         <Col span={8}>
           <p>Living Income Target</p>
-          <h2>{incomeTarget.toFixed(2)} USD</h2>
+          <h2>
+            {incomeTarget.toFixed(2)} {currentCase.currency}
+          </h2>
         </Col>
         <Col span={16}>
           <p>Calculated Living Income</p>
