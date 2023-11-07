@@ -82,6 +82,7 @@ const getOptions = ({
       calculable: true,
       orient: "horizontal",
       left: "center",
+      show: false,
       bottom: "15%",
     },
     series: [
