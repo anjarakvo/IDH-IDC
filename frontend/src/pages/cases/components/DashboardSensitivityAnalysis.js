@@ -106,7 +106,6 @@ const BinningForm = ({ segment, drivers = [], hidden }) => {
           <InputNumber size="small" className="binning-input" />
         </Form.Item>
       </Col>
-      <Divider />
     </Row>
   );
 };
@@ -223,11 +222,16 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
             }}
             hoverable={false}
           >
-            <Row className="income-driver-content" align="top" gutter={[8, 8]}>
+            <Row
+              className="income-driver-content"
+              align="middle"
+              justify="space-evenly"
+              gutter={[8, 8]}
+            >
               <Col span={24}>
                 <h2>Settings for Analysis</h2>
               </Col>
-              <Col>
+              <Col span={20}>
                 <b>Step 1</b>: Select segment for which you want to perform the
                 sensitivity analysis
               </Col>
@@ -267,7 +271,7 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                 </ul>
               </Col>
               <Divider />
-              <Col span={12}>
+              <Col span={10}>
                 <Form
                   name="sensitivity-analysis"
                   layout="horizontal"
@@ -289,7 +293,7 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                   ))}
                 </Form>
               </Col>
-              <Col span={12}>
+              <Col span={10}>
                 {currentSegment ? (
                   <Table
                     size="small"
