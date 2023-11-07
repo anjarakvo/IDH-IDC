@@ -1,16 +1,17 @@
 import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
-import { filter, range } from "lodash";
+import { range } from "lodash";
 import { getFunctionDefaultValue } from "../components";
 
-const getOptions = (
-  {
-    xAxis = { name: "", min: 0, max: 0 },
-    yAxis = { name: "", min: 0, max: 0 },
-  },
-  currentIncomeIndicators = [],
-  incomeQuestion = {}
-) => {
+const getOptions = ({
+  xAxis = { name: "", min: 0, max: 0 },
+  yAxis = { name: "", min: 0, max: 0 },
+  answers = [],
+  incomeQuestion = {},
+  min = 0,
+  max = 0,
+  diversified = 0,
+}) => {
   const xAxisData = [
     ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 4).map((x) =>
       x.toFixed(2)
@@ -27,31 +28,26 @@ const getOptions = (
   const dt = xAxisData
     .map((h) => {
       return yAxisData.map((d) => {
-        const fixedIndicators = filter(
-          currentIncomeIndicators,
-          (x) => x.name === yAxis.name || x.name === xAxis.name
-        );
-        const modifiedIndicators = filter(
-          currentIncomeIndicators,
-          (x) => x.name !== yAxis.name && x.name !== xAxis.name
-        ).map((m) => {
-          if (m.name === yAxis.name) {
-            return { ...m, value: d };
-          }
-          if (m.name === xAxis.name) {
-            return { ...m, value: h };
-          }
-          return m;
-        });
-        const replaced = [...fixedIndicators, ...modifiedIndicators].map(
-          (x) => ({ id: `c-${x.id}`, value: x.value })
-        );
+        const newValues = answers
+          .map((m) => {
+            if (m.name === yAxis.name) {
+              return { ...m, value: d };
+            }
+            if (m.name === xAxis.name) {
+              return { ...m, value: h };
+            }
+            return m;
+          })
+          .map((x) => ({
+            id: `c-${x.qid}`,
+            value: x.value,
+          }));
         const newTotalValue = getFunctionDefaultValue(
           incomeQuestion.question,
           "c",
-          replaced
+          newValues
         );
-        return [h, d, newTotalValue];
+        return [h, d, newTotalValue + diversified];
       });
     })
     .flatMap((x) => x);
@@ -81,8 +77,8 @@ const getOptions = (
       },
     },
     visualMap: {
-      min: 0,
-      max: 10,
+      min: min,
+      max: max,
       calculable: true,
       orient: "horizontal",
       left: "center",
@@ -107,14 +103,20 @@ const getOptions = (
   return options;
 };
 
-const ChartBinningHeatmap = ({ hidden, segment = {}, data = {} }) => {
+const ChartBinningHeatmap = ({ segment, data }) => {
   const binningData = useMemo(() => {
+    if (!segment?.id) {
+      return {};
+    }
     const bins = Object.keys(data)
       .map((x) => {
         const [segmentId, name] = x.split("_");
         return { id: parseInt(segmentId), name, value: data[x] };
       })
       .filter((x) => x.id === segment.id && x.value);
+    const answers = segment.answers.filter(
+      (s) => s.question.parent === 1 && s.name === "current" && s.commodityFocus
+    );
     return {
       xAxis: {
         name: bins.find((b) => b.name === "x-axis-driver")?.value || "",
@@ -126,41 +128,23 @@ const ChartBinningHeatmap = ({ hidden, segment = {}, data = {} }) => {
         min: bins.find((b) => b.name === "y-axis-min-value")?.value || 0,
         max: bins.find((b) => b.name === "y-axis-max-value")?.value || 0,
       },
+      answers: answers.map((s) => ({
+        qid: s.question.id,
+        name: s.question.text,
+        value: s.value,
+      })),
+      incomeQuestion: segment.answers.find(
+        (s) =>
+          s.question.parent === null && s.name === "current" && s.commodityFocus
+      ),
+      min: segment.total_current_income,
+      max: segment.total_feasible_income,
+      diversified: segment.total_current_diversified_income,
     };
   }, [data, segment]);
 
-  const currentIncomeIndicators = useMemo(() => {
-    if (!segment?.answers) {
-      return [];
-    }
-    const answers = segment.answers.filter(
-      (s) => s.question.parent === 1 && s.name === "current" && s.commodityFocus
-    );
-    return answers.map((s) => ({
-      qid: s.question.id,
-      name: s.question.text,
-      value: s.value,
-    }));
-  }, [segment]);
+  const chartData = getOptions(binningData);
 
-  const incomeQuestion = useMemo(() => {
-    if (!segment?.answers) {
-      return null;
-    }
-    return segment.answers.find(
-      (s) =>
-        s.question.parent === null && s.name === "current" && s.commodityFocus
-    );
-  }, [segment]);
-
-  const chartData = useMemo(() => {
-    return getOptions(binningData, currentIncomeIndicators, incomeQuestion);
-  }, [binningData, currentIncomeIndicators, incomeQuestion]);
-
-  return (
-    <div style={{ display: hidden ? "none" : "" }}>
-      <Chart wrapper={false} type="BAR" override={chartData} />
-    </div>
-  );
+  return <Chart wrapper={false} type="BAR" override={chartData} />;
 };
 export default ChartBinningHeatmap;

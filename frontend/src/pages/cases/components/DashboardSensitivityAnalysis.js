@@ -174,13 +174,8 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
         [`${segmentId}_y-axis-max-value`]: dataValue.feasible,
       };
     }
+    setBinningData(values);
     form.setFieldsValue(values);
-    setBinningData((prev) => {
-      return {
-        ...prev,
-        ...values,
-      };
-    });
   };
 
   return (
@@ -267,24 +262,27 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                 </Form>
               </Col>
               <Col span={12}>
-                <Table
-                  size="small"
-                  className="income-driver-table"
-                  dataSource={dataSource}
-                  columns={columns}
-                  pagination={false}
-                />
+                {currentSegment ? (
+                  <Table
+                    size="small"
+                    className="income-driver-table"
+                    dataSource={dataSource}
+                    columns={columns}
+                    pagination={false}
+                  />
+                ) : null}
               </Col>
               <Divider />
               <Col span={24}>
-                {dashboardData.map((segment) => (
-                  <ChartBinningHeatmap
-                    key={segment.id}
-                    data={binningData}
-                    segment={segment}
-                    hidden={currentSegment !== segment.id}
-                  />
-                ))}
+                {dashboardData.map((segment) =>
+                  currentSegment === segment.id ? (
+                    <ChartBinningHeatmap
+                      key={segment.id}
+                      data={binningData}
+                      segment={segment}
+                    />
+                  ) : null
+                )}
               </Col>
             </Row>
           </Card.Grid>
