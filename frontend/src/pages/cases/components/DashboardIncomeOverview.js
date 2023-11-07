@@ -6,6 +6,7 @@ import {
   ChartBigImpact,
   ChartMonetaryContribution,
   ChartExploreBreakdownDrivers,
+  ChartIncomeLevelPerCommodities,
 } from "../visualizations";
 
 const DashboardIncomeOverview = ({ dashboardData }) => {
@@ -80,6 +81,31 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
               <Col span={24}>
                 <h2>Monetary contribution of each driver to income.</h2>
                 <ChartMonetaryContribution dashboardData={dashboardData} />
+              </Col>
+            </Row>
+          </Card.Grid>
+        </Card>
+        <Card className="income-driver-dashboard">
+          <Card.Grid
+            style={{
+              width: "100%",
+            }}
+            hoverable={false}
+          >
+            <Row className="income-driver-content">
+              <Col span={24}>
+                <h2>
+                  <i>For landscape studies</i>
+                </h2>
+                <h2>
+                  What are the income levels for the different commodities in
+                  each segment?
+                </h2>
+                <p>
+                  If you have data for different commodities, this graph
+                  compares the income levels.
+                </p>
+                <ChartIncomeLevelPerCommodities dashboardData={dashboardData} />
               </Col>
             </Row>
           </Card.Grid>

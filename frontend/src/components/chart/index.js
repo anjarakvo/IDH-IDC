@@ -1,7 +1,7 @@
 import React from "react";
 import { Col, Card } from "antd";
 import ReactECharts from "echarts-for-react";
-import { Bar, BarStack } from "./options";
+import { Bar, BarStack, ColumnBar } from "./options";
 import { Easing } from "./options/common";
 
 export const generateOptions = (
@@ -16,6 +16,15 @@ export const generateOptions = (
   switch (type) {
     case "BARSTACK":
       return BarStack({
+        data: data,
+        percentage: percentage,
+        chartTitle: chartTitle,
+        extra: extra,
+        horizontal: horizontal,
+        highlighted: highlighted,
+      });
+    case "COLUMN-BAR":
+      return ColumnBar({
         data: data,
         percentage: percentage,
         chartTitle: chartTitle,
