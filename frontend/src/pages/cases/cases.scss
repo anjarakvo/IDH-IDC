@@ -52,6 +52,14 @@
       }
       .ant-card-body {
         padding: 0px;
+        .total-diversified-income {
+          margin-left: -4px;
+          margin-right: -4px;
+          row-gap: 8px;
+          background: white;
+          padding-left: 8px;
+          padding-right: 8px;
+        }
         .ant-card-grid {
           padding: 10px 24px;
           h2 {
@@ -76,7 +84,7 @@
             font-weight: bold;
             margin: 0px;
             &.diversified-income-title {
-              padding: 22px 45px !important;
+              padding: 22px 40px !important;
             }
           }
           h4 {
@@ -145,5 +153,30 @@
   }
   .data-fields-title {
     background: $primary-color;
+  }
+  .binning-input {
+    width: 100% !important;
+  }
+  .income-driver-table {
+    table {
+      border-radius: 5px;
+      th,
+      td {
+        font-family: "TabletGothic";
+        background: $secondary-color;
+        border: none;
+      }
+      th {
+        border-bottom: solid $primary-color 1px;
+        &::before {
+          display: none;
+        }
+      }
+    }
+  }
+  #sensitivity-analysis {
+    .ant-form-item {
+      margin-bottom: 0px;
+    }
   }
 }
