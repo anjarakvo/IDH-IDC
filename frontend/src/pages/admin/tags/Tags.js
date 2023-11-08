@@ -55,6 +55,7 @@ const Tags = () => {
       title: "Description",
       dataIndex: "description",
       key: "description",
+      render: (text) => (text ? text : "-"),
     },
     {
       key: "action",

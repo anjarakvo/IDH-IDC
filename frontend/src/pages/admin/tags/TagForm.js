@@ -14,6 +14,39 @@ const TagForm = () => {
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
+  const onFinish = (values) => {
+    setSubmitting(true);
+    const { name, description } = values;
+    const payload = {
+      name: name,
+      description: description,
+    };
+    const apiCall = tagId
+      ? api.put(`tag/${tagId}`, payload)
+      : api.post("tag", payload);
+    apiCall
+      .then(() => {
+        messageApi.open({
+          type: "success",
+          content: "Tag saved successfully.",
+        });
+        setTimeout(() => {
+          form.resetFields();
+          navigate("/admin/tags");
+        }, 500);
+      })
+      .catch((e) => {
+        console.error(e);
+        messageApi.open({
+          type: "error",
+          content: "Failed! Something went wrong.",
+        });
+      })
+      .finally(() => {
+        setSubmitting(false);
+      });
+  };
+
   return (
     <ContentLayout
       breadcrumbItems={[
@@ -38,7 +71,7 @@ const TagForm = () => {
           name="tag-form"
           layout="vertical"
           initialValues={initValues}
-          // onFinish={onFinish}
+          onFinish={onFinish}
           className="tag-form-container"
         >
           <Card>
