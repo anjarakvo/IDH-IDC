@@ -165,7 +165,7 @@ const Questions = ({
           </Form.Item>
         </Col>
         <Col span={2}>
-          <Space>
+          <Space className="percentage-wrapper">
             {percentage === 0 ? null : percentage > 0 ? (
               <CaretUpFilled className="ceret-up" />
             ) : (
@@ -181,8 +181,8 @@ const Questions = ({
               }
             >
               {feasibleValue < currentValue
-                ? -percentage.toFixed(0)
-                : percentage.toFixed(0)}
+                ? -percentage.toFixed(2)
+                : percentage.toFixed(2)}
               %
             </div>
           </Space>

@@ -96,11 +96,14 @@
               }
             }
           }
-          .ceret-up {
-            color: green;
-          }
-          .ceret-down {
-            color: red;
+          .percentage-wrapper {
+            font-size: 0.8rem;
+            .ceret-up {
+              color: green;
+            }
+            .ceret-down {
+              color: red;
+            }
           }
         }
         .ant-input-number-disabled {
