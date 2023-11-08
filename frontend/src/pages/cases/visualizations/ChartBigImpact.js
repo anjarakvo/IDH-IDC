@@ -53,10 +53,7 @@ const ChartBigImpact = ({ dashboardData }) => {
       );
 
       const feasibleValueTemp = feasibleValue?.value || 0;
-      let possibleValue = (feasibleValueTemp / currentValue - 1) * 100;
-      possibleValue =
-        feasibleValueTemp < currentValue ? -possibleValue : possibleValue;
-
+      const possibleValue = (feasibleValueTemp / currentValue - 1) * 100;
       if (feasibleValue) {
         const customValueId = `custom-${feasibleValue.questionId}`;
         const replacedCurrentValues = [
@@ -72,8 +69,8 @@ const ChartBigImpact = ({ dashboardData }) => {
           replacedCurrentValues
         );
         const incomeValue =
-          ((newTotalValue - currentSegmentData.total_current_focus_income) /
-            currentSegmentData.total_current_focus_income) *
+          ((currentSegmentData.total_current_income - newTotalValue) /
+            currentSegmentData.total_current_income) *
           100;
         return {
           name: ind.text,
