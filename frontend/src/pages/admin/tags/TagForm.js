@@ -100,7 +100,7 @@ const TagForm = () => {
               name="name"
               rules={[{ required: true, message: "Tag is required" }]}
             >
-              <Input style={{ width: "75%" }} />
+              <Input />
             </Form.Item>
             <Form.Item label="Description" name="description">
               <Input.TextArea rows={5} />
