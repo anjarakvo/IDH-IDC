@@ -5,7 +5,7 @@ import { EditOutlined } from "@ant-design/icons";
 import upperFirst from "lodash/upperFirst";
 import { api } from "../../../lib";
 import { Checkbox } from "antd";
-import "./users.scss";
+import "./user.scss";
 
 const perPage = 10;
 const defData = {
@@ -50,7 +50,7 @@ const Users = () => {
       title: "Fullname",
       dataIndex: "fullname",
       key: "fullname",
-      width: "10%",
+      width: "35%",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.fullname.localeCompare(b.fullname),
     },
