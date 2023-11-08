@@ -9,6 +9,7 @@ import {
   Title,
   axisTitle,
   NoData,
+  LabelStyle,
 } from "./common";
 import { uniq, flatten, uniqBy, isEmpty, upperFirst, sumBy } from "lodash";
 
@@ -186,7 +187,15 @@ const BarStack = ({
         alignWithLabel: true,
       },
     },
-    series: series,
+    series: series.map((d) => {
+      return {
+        ...d,
+        label: {
+          ...LabelStyle.label,
+          position: "right",
+        },
+      };
+    }),
     ...Color,
     ...backgroundColor,
     ...Easing,

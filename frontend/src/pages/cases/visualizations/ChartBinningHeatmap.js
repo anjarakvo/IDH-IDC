@@ -89,9 +89,6 @@ const getOptions = ({
       {
         type: "heatmap",
         data: dt,
-        label: {
-          show: true,
-        },
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
