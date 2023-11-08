@@ -11,6 +11,7 @@ const getOptions = ({
   min = 0,
   max = 0,
   diversified = 0,
+  target = 0,
 }) => {
   const xAxisData = [
     ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 4).map((x) =>
@@ -55,6 +56,15 @@ const getOptions = ({
   const options = {
     tooltip: {
       position: "top",
+      formatter: (params) => {
+        const value = params.value[2];
+        const x = params.value[0];
+        const y = params.value[1];
+        let text = `<span style="color: #000;">${value}</span><br>`;
+        text += `<span>${xAxis.name}: ${x}</span><br>`;
+        text += `<span>${yAxis.name}: ${y}</span><br>`;
+        return text;
+      },
     },
     grid: {
       height: "50%",
@@ -89,6 +99,20 @@ const getOptions = ({
       {
         type: "heatmap",
         data: dt,
+        label: {
+          show: true,
+          color: "#fff",
+          padding: 5,
+          backgroundColor: "rgba(0,0,0,.3)",
+          formatter: (params) => {
+            const value = params.value[2];
+            return value > target
+              ? `⬆ ${value}`
+              : value === target
+              ? `= ${value}`
+              : `⬇ ${value}`;
+          },
+        },
         emphasis: {
           itemStyle: {
             shadowBlur: 10,
@@ -138,6 +162,7 @@ const ChartBinningHeatmap = ({ segment, data }) => {
       min: segment.total_current_income,
       max: segment.total_feasible_income,
       diversified: segment.total_current_diversified_income,
+      target: segment.target,
     };
   }, [data, segment]);
 
