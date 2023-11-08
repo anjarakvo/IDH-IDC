@@ -35,7 +35,10 @@ const ChartBigImpact = ({ dashboardData }) => {
     const driverQuestion = focusCommodityData.find(
       (a) => a.name === "current" && !a.parent
     );
-    const indicators = driverQuestion.question.childrens;
+    const indicators =
+      driverQuestion && driverQuestion?.question?.childrens
+        ? driverQuestion.question.childrens
+        : [];
     const currentValues = focusCommodityData.filter(
       (d) => d.name === "current"
     );

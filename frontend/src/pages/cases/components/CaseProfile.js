@@ -32,6 +32,7 @@ import dayjs from "dayjs";
 
 const CaseForm = ({
   setCaseTitle,
+  selectedCountry,
   setSelectedCountry,
   filteredCurrencyOptions,
 }) => {
@@ -150,6 +151,7 @@ const CaseForm = ({
               placeholder="Select Currency"
               options={filteredCurrencyOptions}
               {...selectProps}
+              disabled={!selectedCountry}
             />
           </Form.Item>
         </Col>
@@ -238,15 +240,17 @@ const CaseProfile = ({
     if (!selectedCountry) {
       return uniqBy(currencyOptions, "value");
     }
-    const countryCurrency = currencyOptions.filter(
+    const countryCurrency = currencyOptions.find(
       (co) => co.country === selectedCountry
     );
+    // set default currency value
+    form.setFieldsValue({ currency: countryCurrency.value });
     let additonalCurrencies = currencyOptions.filter((co) =>
       ["eur", "usd"].includes(co.value.toLowerCase())
     );
     additonalCurrencies = uniqBy(additonalCurrencies, "value");
-    return [...countryCurrency, ...additonalCurrencies];
-  }, [selectedCountry]);
+    return [countryCurrency, ...additonalCurrencies];
+  }, [selectedCountry, form]);
 
   useEffect(() => {
     // initial case profile value
@@ -414,6 +418,7 @@ const CaseProfile = ({
           <Card title="Case Details">
             <CaseForm
               setCaseTitle={setCaseTitle}
+              selectedCountry={selectedCountry}
               setSelectedCountry={setSelectedCountry}
               filteredCurrencyOptions={filteredCurrencyOptions}
             />
