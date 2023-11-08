@@ -107,6 +107,7 @@ const ChartBigImpact = ({ dashboardData }) => {
       ["possible", "income"],
       ["asc", "asc"]
     );
+    // TODO :: Sort descending by income increase
     const finalData = ["possible", "income"].map((x, xi) => {
       const title = x === "income" ? "% income increase" : "% change possible";
       const data = transformedData.map((d) => ({

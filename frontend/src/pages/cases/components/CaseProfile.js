@@ -245,6 +245,7 @@ const CaseProfile = ({
     );
     // set default currency value
     form.setFieldsValue({ currency: countryCurrency.value });
+    // TODO: Wrong format when store to db
     let additonalCurrencies = currencyOptions.filter((co) =>
       ["eur", "usd"].includes(co.value.toLowerCase())
     );

@@ -99,18 +99,37 @@ const getOptions = ({
       {
         type: "heatmap",
         data: dt,
+        /*
+        markLine: {
+          lineStyle: {
+            type: "solid",
+          },
+          data: [{ xAxis: 2 }],
+        },
+        */
         label: {
           show: true,
           color: "#fff",
           padding: 5,
-          backgroundColor: "rgba(0,0,0,.3)",
           formatter: (params) => {
             const value = params.value[2];
             return value > target
-              ? `⬆ ${value}`
+              ? `{up|⬆ ${value}}`
               : value === target
               ? `= ${value}`
-              : `⬇ ${value}`;
+              : `{down|⬇ ${value}}`;
+          },
+          rich: {
+            up: {
+              color: "#fff",
+              backgroundColor: "rgba(0,255,0,.3)",
+              padding: 5,
+            },
+            down: {
+              color: "#fff",
+              backgroundColor: "rgba(255,0,0,.3)",
+              padding: 5,
+            },
           },
         },
         emphasis: {
