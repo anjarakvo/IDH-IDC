@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Form,
   Input,
@@ -26,10 +26,15 @@ import {
 import { api } from "../../../lib";
 import { UIState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
+import uniqBy from "lodash/uniqBy";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
-const CaseForm = ({ setCaseTitle }) => {
+const CaseForm = ({
+  setCaseTitle,
+  setSelectedCountry,
+  filteredCurrencyOptions,
+}) => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
   return (
@@ -108,6 +113,7 @@ const CaseForm = ({ setCaseTitle }) => {
           placeholder="Select Country"
           options={countryOptions}
           {...selectProps}
+          onChange={setSelectedCountry}
         />
       </Form.Item>
       <Row gutter={[12, 12]}>
@@ -142,7 +148,7 @@ const CaseForm = ({ setCaseTitle }) => {
           >
             <Select
               placeholder="Select Currency"
-              options={currencyOptions}
+              options={filteredCurrencyOptions}
               {...selectProps}
             />
           </Form.Item>
@@ -226,6 +232,21 @@ const CaseProfile = ({
   const [isSaving, setIsSaving] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const { caseId } = useParams();
+  const [selectedCountry, setSelectedCountry] = useState(null);
+
+  const filteredCurrencyOptions = useMemo(() => {
+    if (!selectedCountry) {
+      return uniqBy(currencyOptions, "value");
+    }
+    const countryCurrency = currencyOptions.filter(
+      (co) => co.country === selectedCountry
+    );
+    let additonalCurrencies = currencyOptions.filter((co) =>
+      ["eur", "usd"].includes(co.value.toLowerCase())
+    );
+    additonalCurrencies = uniqBy(additonalCurrencies, "value");
+    return [...countryCurrency, ...additonalCurrencies];
+  }, [selectedCountry]);
 
   useEffect(() => {
     // initial case profile value
@@ -236,6 +257,9 @@ const CaseProfile = ({
       }
       if (initialOtherCommodityTypes?.includes("tertiary")) {
         setTertiary(true);
+      }
+      if (formData?.country) {
+        setSelectedCountry(formData.country);
       }
       setFinished([...completed, "Case Profile"]);
     }
@@ -388,7 +412,11 @@ const CaseProfile = ({
       <Row gutter={[16, 16]}>
         <Col span={12}>
           <Card title="Case Details">
-            <CaseForm setCaseTitle={setCaseTitle} />
+            <CaseForm
+              setCaseTitle={setCaseTitle}
+              setSelectedCountry={setSelectedCountry}
+              filteredCurrencyOptions={filteredCurrencyOptions}
+            />
           </Card>
         </Col>
         <Col span={12}>
