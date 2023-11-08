@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { ContentLayout, TableContent } from "../../../components/layout";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import upperFirst from "lodash/upperFirst";
 import { api } from "../../../lib";
-import { Checkbox } from "antd";
-import "./user.scss";
+import "./tag.scss";
 
 const perPage = 10;
 const defData = {
@@ -15,16 +13,15 @@ const defData = {
   total_page: 1,
 };
 
-const Users = () => {
+const Tags = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(null);
   const [data, setData] = useState(defData);
-  const [showApprovedUser, setShowApprovedUser] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    let url = `user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
+    let url = `tag?page=${currentPage}&limit=${perPage}`;
     if (search) {
       url = `${url}&search=${search}`;
     }
@@ -43,42 +40,29 @@ const Users = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [currentPage, search, showApprovedUser]);
+  }, [currentPage, search]);
 
   const columns = [
     {
-      title: "Fullname",
-      dataIndex: "fullname",
-      key: "fullname",
-      width: "35%",
+      title: "Tag",
+      dataIndex: "name",
+      key: "name",
+      width: "25%",
       defaultSortOrder: "descend",
-      sorter: (a, b) => a.fullname.localeCompare(b.fullname),
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.email.localeCompare(b.email),
-    },
-    {
-      title: "User Role",
-      dataIndex: "role",
-      key: "role",
-      defaultSortOrder: "descend",
-      sorter: (a, b) => a.role.localeCompare(b.role),
-      render: (text) =>
-        text
-          .split("_")
-          .map((x) => upperFirst(x))
-          .join(" "),
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      render: (text) => (text ? text : "-"),
     },
     {
       key: "action",
       width: "5%",
       align: "center",
       render: (text, record) => (
-        <Link to={`/admin/user/${record.id}`}>
+        <Link to={`/admin/tag/${record.id}`}>
           <EditOutlined />
         </Link>
       ),
@@ -91,34 +75,23 @@ const Users = () => {
     <ContentLayout
       breadcrumbItems={[
         { title: "Home", href: "/welcome" },
-        { title: "Users", href: "/admin/users" },
+        { title: "Tags", href: "/admin/tags" },
       ]}
-      title="Users"
-      wrapperId="user"
+      title="Tag Management"
+      wrapperId="tag"
     >
       <TableContent
-        title="All Users"
-        filterComponent={
-          <>
-            <Checkbox
-              checked={showApprovedUser}
-              onChange={(e) => setShowApprovedUser(e.target.checked)}
-            >
-              {" "}
-              Show Approved User
-            </Checkbox>
-          </>
-        }
+        title="All Tags"
         dataSource={data.data}
         columns={columns}
         searchProps={{
-          placeholder: "Find User",
-          style: { width: 200 },
+          placeholder: "Find Tag",
+          style: { width: 300 },
           onSearch: onSearch,
         }}
         buttonProps={{
-          text: "Add User",
-          to: "/admin/user/new",
+          text: "Add Tag",
+          to: "/admin/tag/new",
         }}
         loading={loading}
         paginationProps={{
@@ -132,4 +105,4 @@ const Users = () => {
   );
 };
 
-export default Users;
+export default Tags;
