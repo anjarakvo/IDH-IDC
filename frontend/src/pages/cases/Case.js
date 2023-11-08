@@ -195,19 +195,21 @@ const Case = () => {
           );
           // set commodity list and order by id to match
           // focus, secondary, tertiary, diversified order
-          const commodities = commodityOrder.map((co) => {
-            const temp = data.case_commodities.find(
-              (d) => d.commodity_type === co
-            );
-            if (!temp) {
-              return false;
-            }
-            return {
-              ...temp,
-              currency: data.currency,
-              case_commodity: temp.id,
-            };
-          });
+          const commodities = commodityOrder
+            .map((co) => {
+              const temp = data.case_commodities.find(
+                (d) => d.commodity_type === co
+              );
+              if (!temp) {
+                return false;
+              }
+              return {
+                ...temp,
+                currency: data.currency,
+                case_commodity: temp.id,
+              };
+            })
+            .filter((x) => x);
           setCommodityList(commodities);
           // focus commodity
           const focusCommodityValue = {
