@@ -171,8 +171,13 @@ const ChartBigImpact = ({ dashboardData }) => {
           type: "bar",
           label: {
             show: true,
+            position: "left",
+            verticalAlign: "middle",
+            color: "#fff",
+            padding: 2,
+            backgroundColor: "rgba(0,0,0,.3)",
             formatter: function (params) {
-              return params.value;
+              return params.value + "%";
             },
           },
         };

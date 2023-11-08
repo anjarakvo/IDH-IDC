@@ -30,6 +30,16 @@ export const TextStyle = {
   fontWeight: "bold",
 };
 
+export const LabelStyle = {
+  label: {
+    show: true,
+    position: "top",
+    color: "#fff",
+    padding: 5,
+    backgroundColor: "rgba(0,0,0,.3)",
+  },
+};
+
 export const AxisLabelFormatter = {
   formatter: function (params) {
     let newParamsName = String(params).split(" ");

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Chart from "../../../components/chart";
+import { LabelStyle } from "../../../components/chart/options/common";
 import { SegmentSelector } from "./";
 import { getFunctionDefaultValue } from "../components";
 
@@ -52,7 +53,7 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
           "custom",
           replacedCurrentValues
         );
-        return newTotalValue - data.total_current_focus_income;
+        return (newTotalValue - data.total_current_focus_income).toFixed(2);
       }
       return 0;
     });
@@ -97,15 +98,12 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
           name: "Income",
           type: "bar",
           stack: "Total",
-          label: {
-            show: true,
-            position: "inside",
-          },
           data: [
-            data.total_current_income,
+            data.total_current_income.toFixed(2),
             ...additionalData,
-            data.total_feasible_income,
+            data.total_feasible_income.toFixed(2),
           ],
+          ...LabelStyle,
         },
       ],
     };
