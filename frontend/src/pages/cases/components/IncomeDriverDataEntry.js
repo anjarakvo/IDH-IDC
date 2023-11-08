@@ -73,7 +73,6 @@ const IncomeDriverDataEntry = ({
         // set currentSegmentId to items state
         const transformItems = items.map((it) => {
           const findNewItem = data.find((d) => d.name === it.label);
-          console.log(findNewItem, "findNewItem");
           return {
             ...it,
             ...findNewItem,
@@ -94,7 +93,6 @@ const IncomeDriverDataEntry = ({
             ...fv,
           };
         });
-        console.log(transformFormValues, "transformFormValues");
         setFormValues(transformFormValues);
         messageApi.open({
           type: "success",
