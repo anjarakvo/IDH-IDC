@@ -33,7 +33,7 @@ class Tag(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    created_by = Column(Integer, ForeignKey("user.id"), nullable=False)
+    created_by = Column(Integer, ForeignKey("user.id"), nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
@@ -54,10 +54,12 @@ class Tag(Base):
         name: str,
         id: Optional[int] = None,
         description: Optional[str] = None,
+        created_by: Optional[int] = None,
     ):
         self.id = id
         self.name = name
         self.description = description
+        self.created_by = created_by
 
     def __repr__(self) -> int:
         return f"<Tag {self.id}>"

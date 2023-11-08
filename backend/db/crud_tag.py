@@ -6,6 +6,7 @@ from fastapi import HTTPException, status
 
 from models.tag import Tag, TagListDict, TagBase, UpdateTagBase, TagDict
 from models.case_tag import CaseTag
+from models.user import User
 
 
 class PaginatedTagData(TypedDict):
@@ -24,12 +25,13 @@ def get_all_tag(
     return PaginatedTagData(count=count, data=tag)
 
 
-def add_tag(session: Session, payload: TagBase) -> TagListDict:
+def add_tag(session: Session, payload: TagBase, user: User) -> TagListDict:
     last_tag = session.query(Tag).order_by(desc(Tag.id)).first()
     tag = Tag(
         id=last_tag.id + 1 if last_tag else None,
         name=payload.name,
         description=payload.description,
+        created_by=user.id if user else None,
     )
     if payload.cases:
         for proj in payload.cases:
