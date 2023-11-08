@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Row,
   Col,
@@ -37,13 +37,11 @@ const DataFields = ({
   isSaving,
   currentCaseId,
   currentCase,
+  dashboardData,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(segmentLabel);
-  const [totalCurrentIncome, setTotalCurrentIncome] = useState(0);
-  const [totalFeasibleIncome, setTotalFeasibleIncome] = useState(0);
-  const [percentage, setPercentage] = useState(0);
 
   const finishEditing = () => {
     renameItem(segment, newName);
@@ -54,11 +52,34 @@ const DataFields = ({
     setEditing(false);
   };
 
-  useEffect(() => {
-    const percent =
-      ((totalFeasibleIncome - totalCurrentIncome) / totalCurrentIncome) * 100;
-    setPercentage(percent || 0);
-  }, [totalCurrentIncome, totalFeasibleIncome]);
+  const totalIncome = useMemo(() => {
+    const currentFormValue = formValues.find((x) => x.key === segmentItem.key);
+    const current = totalIncomeQuestion
+      .map((qs) => currentFormValue?.answers[`current-${qs}`])
+      .filter((a) => a)
+      .reduce((acc, a) => acc + a, 0);
+    const feasible = totalIncomeQuestion
+      .map((qs) => currentFormValue?.answers[`feasible-${qs}`])
+      .filter((a) => a)
+      .reduce((acc, a) => acc + a, 0);
+    const percent = ((feasible - current) / current) * 100;
+    const other = dashboardData.find((x) => x.key === segmentItem.key);
+    return {
+      current: current,
+      feasible: feasible,
+      percent: percent,
+      diversified: {
+        current: other?.total_current_diversified_income || 0,
+        feasible: other?.total_feasible_diversified_income || 0,
+        percent: other?.total_feasible_diversified_income
+          ? ((other?.total_feasible_diversified_income -
+              other?.total_current_diversified_income) /
+              other?.total_current_diversified_income) *
+            100
+          : 0,
+      },
+    };
+  }, [formValues, segmentItem, dashboardData, totalIncomeQuestion]);
 
   const chartData = useMemo(() => {
     if (!formValues.length) {
@@ -120,16 +141,16 @@ const DataFields = ({
         {
           name: "Current",
           title: "Current",
-          value: totalCurrentIncome,
-          total: totalCurrentIncome,
+          value: totalIncome.current,
+          total: totalIncome.current,
           order: 2,
           color: "#6aa84f",
         },
         {
           name: "Feasible",
           title: "Additional income if feasible values are reached",
-          value: totalFeasibleIncome - totalCurrentIncome,
-          total: totalFeasibleIncome,
+          value: totalIncome.feasible - totalIncome.current,
+          total: totalIncome.feasible,
           order: 1,
           color: "#d9ead3",
         },
@@ -142,8 +163,7 @@ const DataFields = ({
     segment,
     questionGroups,
     commodityList,
-    totalCurrentIncome,
-    totalFeasibleIncome,
+    totalIncome,
   ]);
 
   const ButtonEdit = () => (
@@ -248,7 +268,7 @@ const DataFields = ({
               formValues={formValues}
               setFormValues={setFormValues}
               segmentItem={segmentItem}
-              totalCurrentIncome={totalCurrentIncome}
+              totalIncome={totalIncome}
             />
             <h2 className="section-title">
               Income Drivers
@@ -279,37 +299,38 @@ const DataFields = ({
               </Col>
               <Col span={4}>
                 <InputNumber
-                  value={totalCurrentIncome}
+                  value={totalIncome.current}
                   disabled
                   style={{ width: "100%" }}
                 />
               </Col>
               <Col span={4}>
                 <InputNumber
-                  value={totalFeasibleIncome}
+                  value={totalIncome.feasible}
                   disabled
                   style={{ width: "100%" }}
                 />
               </Col>
               <Col span={2}>
                 <Space>
-                  {percentage === 0 ? null : percentage > 0 ? (
+                  {totalIncome.percent === 0 ? null : totalIncome.percent >
+                    0 ? (
                     <CaretUpFilled className="ceret-up" />
                   ) : (
                     <CaretDownFilled className="ceret-down" />
                   )}
                   <div
                     className={
-                      percentage === 0
+                      totalIncome.percent === 0
                         ? ""
-                        : percentage > 0
+                        : totalIncome.percent > 0
                         ? "ceret-up"
                         : "ceret-down"
                     }
                   >
-                    {totalFeasibleIncome < totalCurrentIncome
-                      ? -percentage.toFixed(0)
-                      : percentage.toFixed(0)}
+                    {totalIncome.feasible < totalIncome.current
+                      ? -totalIncome.percent.toFixed(0)
+                      : totalIncome.percent.toFixed(0)}
                     %
                   </div>
                 </Space>
@@ -325,9 +346,7 @@ const DataFields = ({
                 setFormValues={setFormValues}
                 segmentItem={segmentItem}
                 currentCaseId={currentCaseId}
-                totalIncomeQuestion={totalIncomeQuestion}
-                setTotalCurrentIncome={setTotalCurrentIncome}
-                setTotalFeasibleIncome={setTotalFeasibleIncome}
+                totalDiversifiedIncome={totalIncome.diversified}
               />
             ))}
           </Card.Grid>

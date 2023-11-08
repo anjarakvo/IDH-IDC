@@ -13,6 +13,7 @@ const IncomeDriverDataEntry = ({
   questionGroups,
   setQuestionGroups,
   totalIncomeQuestion,
+  dashboardData,
 }) => {
   const [activeKey, setActiveKey] = useState("1");
   const [items, setItems] = useState([]);
@@ -217,6 +218,7 @@ const IncomeDriverDataEntry = ({
         item.children = (
           <DataFields
             segment={activeKey}
+            dashboardData={dashboardData}
             segmentLabel={newLabel}
             questionGroups={questionGroups}
             totalIncomeQuestion={totalIncomeQuestion}
@@ -296,6 +298,7 @@ const IncomeDriverDataEntry = ({
               item.key === "add" ? null : (
                 <DataFields
                   segment={item.key}
+                  dashboardData={dashboardData}
                   segmentLabel={item.label}
                   onDelete={itemIndex ? () => onDelete(item.key) : false}
                   questionGroups={questionGroups}

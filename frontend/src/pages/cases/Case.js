@@ -101,6 +101,8 @@ const Case = () => {
         const question = flattenedQuestionGroups.find(
           (q) => q.id === parseInt(questionId)
         );
+        const totalOtherDiversifiedIncome =
+          question.question_type === "diversified" && !question.parent;
         return {
           name: dataType,
           question: question,
@@ -117,6 +119,8 @@ const Case = () => {
           isTotalFeasibleDiversifiedIncome:
             totalCommodityValue && !commodityFocus && dataType === "feasible"
               ? true
+              : totalOtherDiversifiedIncome && dataType === "feasible"
+              ? true
               : false,
           isTotalCurrentFocusIncome:
             totalCommodityValue && commodityFocus && dataType === "current"
@@ -124,6 +128,8 @@ const Case = () => {
               : false,
           isTotalCurrentDiversifiedIncome:
             totalCommodityValue && !commodityFocus && dataType === "current"
+              ? true
+              : totalOtherDiversifiedIncome && dataType === "current"
               ? true
               : false,
           feasibleCost:
@@ -315,6 +321,7 @@ const Case = () => {
                 totalIncomeQuestion={totalIncomeQuestion}
                 questionGroups={questionGroups}
                 setQuestionGroups={setQuestionGroups}
+                dashboardData={dashboardData}
               />
             )}
             {page === "Income Driver Dashboard" && (
