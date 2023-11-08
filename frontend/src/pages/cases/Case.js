@@ -19,6 +19,8 @@ const pageDependencies = {
   "Income Driver Dashboard": ["Case Profile", "Income Driver Data Entry"],
 };
 
+const commodityOrder = ["focus", "secondary", "tertiary", "diversified"];
+
 const masterCommodityCategories = window.master?.commodity_categories || [];
 const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
   const commodities = curr.commodities.reduce((a, c) => {
@@ -168,7 +170,7 @@ const Case = () => {
         answers: answers,
       };
     });
-    return mappedData;
+    return orderBy(mappedData, ["id", "key"]);
   }, [
     caseData,
     commodityList,
@@ -176,8 +178,6 @@ const Case = () => {
     questionGroups,
     flattenedQuestionGroups,
   ]);
-  console.log(caseData, "CASE DATA");
-  console.log(dashboardData, "DASHBOARD DATA");
 
   useEffect(() => {
     if (caseId && isEmpty(formData) && !loading) {
@@ -195,11 +195,19 @@ const Case = () => {
           );
           // set commodity list and order by id to match
           // focus, secondary, tertiary, diversified order
-          const commodities = orderBy(data.case_commodities, "id").map((d) => ({
-            ...d,
-            currency: data.currency,
-            case_commodity: d.id,
-          }));
+          const commodities = commodityOrder.map((co) => {
+            const temp = data.case_commodities.find(
+              (d) => d.commodity_type === co
+            );
+            if (!temp) {
+              return false;
+            }
+            return {
+              ...temp,
+              currency: data.currency,
+              case_commodity: temp.id,
+            };
+          });
           setCommodityList(commodities);
           // focus commodity
           const focusCommodityValue = {
