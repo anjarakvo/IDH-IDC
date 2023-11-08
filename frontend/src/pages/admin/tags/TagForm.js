@@ -14,6 +14,26 @@ const TagForm = () => {
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
 
+  useEffect(() => {
+    if (tagId) {
+      setLoading(true);
+      api
+        .get(`tag/${tagId}`)
+        .then((res) => {
+          const { data } = res;
+          setInitValues(data);
+        })
+        .catch((e) => {
+          console.error(e);
+        })
+        .finally(() => {
+          setTimeout(() => {
+            setLoading(false);
+          }, 500);
+        });
+    }
+  }, [tagId]);
+
   const onFinish = (values) => {
     setSubmitting(true);
     const { name, description } = values;
