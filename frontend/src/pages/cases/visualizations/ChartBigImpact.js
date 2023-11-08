@@ -138,7 +138,7 @@ const ChartBigImpact = ({ dashboardData }) => {
       },
       grid: {
         left: 100,
-        right: 0,
+        right: 58,
         label: {
           color: "#222",
           ...TextStyle,

@@ -20,7 +20,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             }}
             hoverable={false}
           >
-            <Row className="income-driver-content">
+            <Row className="income-driver-content" gutter={[16, 16]}>
               <Col span={12}>
                 <h2>
                   What are the current and feasible income levels for the
@@ -50,7 +50,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             }}
             hoverable={false}
           >
-            <Row className="income-driver-content">
+            <Row className="income-driver-content" gutter={[16, 16]}>
               <Col span={12}>
                 <h2>Which drivers have the biggest impact on income?</h2>
                 <p>

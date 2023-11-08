@@ -42,8 +42,8 @@ const Bar = ({
     grid: {
       top: grid?.top ? grid.top : horizontal ? 80 : 58,
       bottom: grid?.bottom ? grid.bottom : horizontal ? 80 : 58,
-      left: grid?.left ? grid.left : horizontal ? 100 : 58,
-      right: grid?.right ? grid.right : horizontal ? 58 : 0,
+      left: grid?.left ? grid.left : horizontal ? 100 : 75,
+      right: grid?.right ? grid.right : horizontal ? 58 : 58,
       show: true,
       label: {
         color: "#222",
