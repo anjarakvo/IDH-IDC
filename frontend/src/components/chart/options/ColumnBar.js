@@ -8,12 +8,30 @@ import {
   Title,
   axisTitle,
   NoData,
+  Legend,
 } from "./common";
-import { sortBy, isEmpty, sumBy } from "lodash";
+import { sortBy, isEmpty, groupBy, orderBy } from "lodash";
 
-const Bar = ({
+const customFormatter = {
+  formatter: function (params) {
+    if (!params?.data?.stack) {
+      return `${params.name}: ${params.value}`;
+    }
+    let customTooltip = "<div>";
+    customTooltip += `<p><b>${params.name}</b></p>`;
+    customTooltip += "<ul'>";
+    orderBy(params.data.stack, "order").forEach((it) => {
+      customTooltip += `<li key=${it.order}>
+        <b>${it.name}</b>: ${it.value}
+      </li>`;
+    });
+    customTooltip += "</ul></div>";
+    return customTooltip;
+  },
+};
+
+const ColumnBar = ({
   data,
-  percentage,
   chartTitle,
   extra = {},
   horizontal = false,
@@ -25,12 +43,42 @@ const Bar = ({
 
   // Custom Axis Title
   const { xAxisTitle, yAxisTitle } = axisTitle(extra);
-  const total = sumBy(data, "value");
   data = sortBy(data, "order");
-  if (percentage) {
-    data = data.map((x) => ({ ...x, percentage: (x.value / total) * 100 }));
-  }
+
   const labels = data.map((x) => x.name);
+
+  const grouped = groupBy(
+    data.flatMap((d) => d.data),
+    "name"
+  );
+  const series = Object.keys(grouped).map((key, ki) => {
+    const values = grouped[key];
+    return {
+      name: key,
+      title: key,
+      data: values.map((v, vi) => ({
+        ...v,
+        itemStyle: { color: v.color || Color.color[vi] },
+      })),
+      type: "bar",
+      barMaxWidth: 50,
+      label: {
+        colorBy: "data",
+        position: horizontal ? "insideLeft" : "top",
+        show: true,
+        padding: 5,
+        backgroundColor: "rgba(0,0,0,.3)",
+        ...TextStyle,
+        color: "#fff",
+      },
+      color: values?.[0]?.color || Color.color[ki],
+    };
+  });
+  const legends = series.map((s, si) => ({
+    name: s.name,
+    itemStyle: { color: s.color || Color.color[si] },
+  }));
+
   const option = {
     ...Color,
     title: {
@@ -39,10 +87,16 @@ const Bar = ({
       text: chartTitle?.title,
       subtext: chartTitle?.subTitle,
     },
+    legend: {
+      ...Legend,
+      data: legends,
+      top: 15,
+      left: "center",
+    },
     grid: {
-      top: grid?.top ? grid.top : horizontal ? 80 : 58,
+      top: grid?.top ? grid.top : horizontal ? 80 : 70,
       bottom: grid?.bottom ? grid.bottom : horizontal ? 80 : 58,
-      left: grid?.left ? grid.left : horizontal ? 100 : 75,
+      left: grid?.left ? grid.left : horizontal ? 100 : 100,
       right: grid?.right ? grid.right : horizontal ? 58 : 58,
       show: true,
       label: {
@@ -53,7 +107,7 @@ const Bar = ({
     tooltip: {
       show: true,
       trigger: "item",
-      formatter: '<div class="no-border">{b}</div>',
+      formatter: customFormatter.formatter,
       padding: 5,
       backgroundColor: "#f2f2f2",
       ...TextStyle,
@@ -90,30 +144,7 @@ const Bar = ({
         alignWithLabel: true,
       },
     },
-    series: [
-      {
-        data: data.map((v, vi) => ({
-          name: v.name,
-          value: percentage ? v.percentage?.toFixed(2) : v.value,
-          count: v.value,
-          itemStyle: { color: v.color || Color.color[vi] },
-        })),
-        type: "bar",
-        barMaxWidth: 50,
-        label: {
-          colorBy: "data",
-          position: horizontal ? "insideLeft" : "top",
-          show: true,
-          padding: 5,
-          backgroundColor: "rgba(0,0,0,.3)",
-          ...TextStyle,
-          color: "#fff",
-          formatter: (s) => {
-            return `${s.value}${percentage ? " %" : ""}`;
-          },
-        },
-      },
-    ],
+    series: series,
     ...Color,
     ...backgroundColor,
     ...Easing,
@@ -123,4 +154,4 @@ const Bar = ({
   return option;
 };
 
-export default Bar;
+export default ColumnBar;
