@@ -30,14 +30,25 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
     if (!currentSegmentData) {
       return [];
     }
+    const parentQuestion = currentSegmentData.answers.find(
+      (a) => !a.question.parent
+    ).question;
+    if (!parentQuestion) {
+      return [];
+    }
     // list commodities exclude diversified income
     const commoditiesTemp = currentSegmentData.answers
-      .filter((a) => a.commodityId && a.commodityName && !a.question.parent)
+      .filter(
+        (a) =>
+          a.commodityId &&
+          a.commodityName &&
+          a.question.parent === parentQuestion.id
+      )
       .map((a) => ({
         commodityId: a.commodityId,
         commodityName: a.commodityName,
         commodityFocus: a.commodityFocus,
-        questions: a.question.childrens.map((q) => ({
+        questions: parentQuestion.childrens.map((q) => ({
           id: q.id,
           text: q.text,
         })),
