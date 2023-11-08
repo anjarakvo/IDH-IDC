@@ -28,29 +28,25 @@ class TagOption(TypedDict):
 
 
 class Tag(Base):
-    __tablename__ = 'tag'
+    __tablename__ = "tag"
 
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     description = Column(String, nullable=True)
-    created_by = Column(Integer, ForeignKey('user.id'), nullable=False)
+    created_by = Column(Integer, ForeignKey("user.id"), nullable=False)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime, nullable=False,
-        server_default=func.now(), onupdate=func.now()
+        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
     )
 
     created_by_user = relationship(
-        'User',
-        cascade="all, delete",
-        passive_deletes=True,
-        backref='Tags'
+        "User", cascade="all, delete", passive_deletes=True, backref="Tags"
     )
     tag_cases = relationship(
         CaseTag,
         cascade="all, delete",
         passive_deletes=True,
-        back_populates='case_tag_detail'
+        back_populates="case_tag_detail",
     )
 
     def __init__(
@@ -80,7 +76,7 @@ class Tag(Base):
             "id": self.id,
             "name": self.name,
             "description": self.description,
-            "cases_count": len(self.tag_cases)
+            "cases_count": len(self.tag_cases),
         }
 
     @property
