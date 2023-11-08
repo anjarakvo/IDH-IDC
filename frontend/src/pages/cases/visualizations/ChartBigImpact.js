@@ -63,13 +63,14 @@ const ChartBigImpact = ({ dashboardData }) => {
             value: feasibleValue.value || 0,
           },
         ];
-        const newTotalValue = getFunctionDefaultValue(
-          driverQuestion.question,
-          "custom",
-          replacedCurrentValues
-        );
+        const newTotalValue =
+          getFunctionDefaultValue(
+            driverQuestion.question,
+            "custom",
+            replacedCurrentValues
+          ) + currentSegmentData.total_current_diversified_income;
         const incomeValue =
-          ((currentSegmentData.total_current_income - newTotalValue) /
+          ((newTotalValue - currentSegmentData.total_current_income) /
             currentSegmentData.total_current_income) *
           100;
         return {
