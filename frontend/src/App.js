@@ -11,7 +11,7 @@ import { Login, Register, ResetPassword } from "./pages/login";
 import { Cases, Case } from "./pages/cases";
 import { NotFound } from "./pages/not-found";
 import { Welcome } from "./pages/welcome";
-import { Users, UserForm, Tags } from "./pages/admin";
+import { Users, UserForm, Tags, TagForm } from "./pages/admin";
 import { UserState, UIState } from "./store";
 import { api } from "./lib";
 import { adminRole } from "./store/static";
@@ -124,6 +124,8 @@ const App = () => {
               <Route exact path="/admin/user/new" element={<UserForm />} />
               <Route path="/admin/user/:userId" element={<UserForm />} />
               <Route path="/admin/tags" element={<Tags />} />
+              <Route path="/admin/tag/new" element={<TagForm />} />
+              <Route path="/admin/tag/:tagId" element={<TagForm />} />
             </Route>
           ) : (
             ""

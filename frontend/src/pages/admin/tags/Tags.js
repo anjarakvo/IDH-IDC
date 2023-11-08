@@ -3,6 +3,7 @@ import { ContentLayout, TableContent } from "../../../components/layout";
 import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import { api } from "../../../lib";
+import "./tag.scss";
 
 const perPage = 10;
 const defData = {
