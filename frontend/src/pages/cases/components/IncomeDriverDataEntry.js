@@ -14,6 +14,8 @@ const IncomeDriverDataEntry = ({
   setQuestionGroups,
   totalIncomeQuestion,
   dashboardData,
+  finished,
+  setFinished,
 }) => {
   const [activeKey, setActiveKey] = useState("1");
   const [items, setItems] = useState([]);
@@ -45,6 +47,9 @@ const IncomeDriverDataEntry = ({
   // handle save here
   const handleSave = () => {
     setIsSaving(true);
+    const completed = finished.filter(
+      (item) => item !== "Income Driver Data Entry"
+    );
     const apiCalls = [];
     const postFormValues = formValues.filter((fv) => !fv.currentSegmentId);
     const putFormValues = formValues.filter((fv) => fv.currentSegmentId);
@@ -98,6 +103,9 @@ const IncomeDriverDataEntry = ({
           type: "success",
           content: "Segments saved successfully.",
         });
+        setTimeout(() => {
+          setFinished([...completed, "Income Driver Data Entry"]);
+        }, 100);
       })
       .catch((e) => {
         console.error(e);
@@ -105,6 +113,7 @@ const IncomeDriverDataEntry = ({
           type: "error",
           content: "Failed to save segments.",
         });
+        setFinished(completed);
       })
       .finally(() => {
         setIsSaving(false);
