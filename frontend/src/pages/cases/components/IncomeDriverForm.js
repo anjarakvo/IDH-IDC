@@ -168,7 +168,7 @@ const IncomeDriverForm = ({
             />
           </Col>
           <Col span={2}>
-            <Space>
+            <Space className="percentage-wrapper">
               {totalDiversifiedIncome.percent ===
               0 ? null : totalDiversifiedIncome.percent > 0 ? (
                 <CaretUpFilled className="ceret-up" />
@@ -186,8 +186,8 @@ const IncomeDriverForm = ({
               >
                 {totalDiversifiedIncome.feasible <
                 totalDiversifiedIncome.current
-                  ? -totalDiversifiedIncome.percent.toFixed(0)
-                  : totalDiversifiedIncome.percent.toFixed(0)}
+                  ? -totalDiversifiedIncome.percent.toFixed(2)
+                  : totalDiversifiedIncome.percent.toFixed(2)}
                 %
               </div>
             </Space>

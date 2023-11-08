@@ -364,6 +364,7 @@ const CaseProfile = ({
           type: "error",
           content: "Failed to save case profile.",
         });
+        setFinished(completed);
       })
       .finally(() => {
         setIsSaving(false);

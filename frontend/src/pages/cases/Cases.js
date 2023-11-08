@@ -66,10 +66,12 @@ const Cases = () => {
       title: "Tags",
       key: "tags",
       render: (record) => {
-        const tags = record.tags.map((tag_id) => {
-          const findTag = tagOptions.find((x) => x.value === tag_id);
-          return findTag.label;
-        });
+        const tags = record.tags
+          .map((tag_id) => {
+            const findTag = tagOptions.find((x) => x.value === tag_id);
+            return findTag?.label || null;
+          })
+          .filter((x) => x);
         if (!tags.length) {
           return "-";
         }

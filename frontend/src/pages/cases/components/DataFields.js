@@ -312,7 +312,7 @@ const DataFields = ({
                 />
               </Col>
               <Col span={2}>
-                <Space>
+                <Space className="percentage-wrapper">
                   {totalIncome.percent === 0 ? null : totalIncome.percent >
                     0 ? (
                     <CaretUpFilled className="ceret-up" />
@@ -329,8 +329,8 @@ const DataFields = ({
                     }
                   >
                     {totalIncome.feasible < totalIncome.current
-                      ? -totalIncome.percent.toFixed(0)
-                      : totalIncome.percent.toFixed(0)}
+                      ? -totalIncome.percent.toFixed(2)
+                      : totalIncome.percent.toFixed(2)}
                     %
                   </div>
                 </Space>

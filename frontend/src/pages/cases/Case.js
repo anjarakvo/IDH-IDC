@@ -19,6 +19,8 @@ const pageDependencies = {
   "Income Driver Dashboard": ["Case Profile", "Income Driver Data Entry"],
 };
 
+const commodityOrder = ["focus", "secondary", "tertiary", "diversified"];
+
 const masterCommodityCategories = window.master?.commodity_categories || [];
 const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
   const commodities = curr.commodities.reduce((a, c) => {
@@ -168,7 +170,7 @@ const Case = () => {
         answers: answers,
       };
     });
-    return mappedData;
+    return orderBy(mappedData, ["id", "key"]);
   }, [
     caseData,
     commodityList,
@@ -193,11 +195,21 @@ const Case = () => {
           );
           // set commodity list and order by id to match
           // focus, secondary, tertiary, diversified order
-          const commodities = orderBy(data.case_commodities, "id").map((d) => ({
-            ...d,
-            currency: data.currency,
-            case_commodity: d.id,
-          }));
+          const commodities = commodityOrder
+            .map((co) => {
+              const temp = data.case_commodities.find(
+                (d) => d.commodity_type === co
+              );
+              if (!temp) {
+                return false;
+              }
+              return {
+                ...temp,
+                currency: data.currency,
+                case_commodity: temp.id,
+              };
+            })
+            .filter((x) => x);
           setCommodityList(commodities);
           // focus commodity
           const focusCommodityValue = {
@@ -322,6 +334,8 @@ const Case = () => {
                 questionGroups={questionGroups}
                 setQuestionGroups={setQuestionGroups}
                 dashboardData={dashboardData}
+                finished={finished}
+                setFinished={setFinished}
               />
             )}
             {page === "Income Driver Dashboard" && (
