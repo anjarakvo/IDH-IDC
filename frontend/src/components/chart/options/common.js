@@ -279,11 +279,22 @@ export const axisTitle = (extra) => {
 
 export const NoData = {
   title: {
-    subtext: "",
+    subtext: "No Data",
     left: "center",
     top: "20px",
     ...TextStyle,
   },
+  xAxis: [
+    {
+      type: "category",
+    },
+  ],
+  yAxis: [
+    {
+      type: "value",
+    },
+  ],
+  series: [],
 };
 
 export const incomeTargetChartOption = {
