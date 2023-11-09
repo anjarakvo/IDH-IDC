@@ -4,7 +4,6 @@ import uniqBy from "lodash/uniqBy";
 import capitalize from "lodash/capitalize";
 import { SegmentSelector, DriverDropdown } from "./";
 import Chart from "../../../components/chart";
-// import { getFunctionDefaultValue } from "../components";
 
 const otherCommodities = ["secondary", "tertiary"];
 const colors = ["#0098FF", "#FFC505", "#47D985", "#FF5D00", "#00625F"];
@@ -44,6 +43,7 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
       label: q.text,
       type: "focus",
       value: q.id,
+      childrens: q.childrens.map((q) => ({ ...q, type: "focus" })),
     }));
     // add secondary - tertiary value
     const additonalCommodities = otherCommodities
@@ -56,11 +56,11 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
           return false;
         }
         return {
-          label: `Total ${capitalize(x)} / Non Focus - ${
+          text: `Total ${capitalize(x)} / Non Focus - ${
             commodity.commodityName
           }`,
           type: x,
-          value: x,
+          id: x,
         };
       })
       .filter((x) => x);
@@ -73,11 +73,18 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
       )
       .flatMap((a) => a.question);
     diversifiedQuestions = uniqBy(diversifiedQuestions, "id").map((q) => ({
-      label: q.text,
-      value: q.id,
+      ...q,
       type: "diversified",
     }));
-    return [...focusRes, ...additonalCommodities, ...diversifiedQuestions];
+    const diversifiedRes = [
+      {
+        label: "Diversified Income",
+        type: "diversified",
+        value: "diversified",
+        childrens: [...additonalCommodities, ...diversifiedQuestions],
+      },
+    ];
+    return [...focusRes, ...diversifiedRes];
   }, [currentSegmentData]);
 
   const chartType = useMemo(
@@ -91,14 +98,9 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
     }
     const res = ["current", "feasible"].map((x, xi) => {
       const title = `${capitalize(x)}\n${currentSegmentData.name}`;
-      const stack = driverOptionsDropdown
-        .filter((d) => {
-          if (!selectedDriver) {
-            return d;
-          }
-          return d.value === selectedDriver;
-        })
-        .map((d, di) => {
+      let stack = [];
+      if (!selectedDriver) {
+        stack = driverOptionsDropdown.map((d, di) => {
           let value = 0;
           // Calculate focus commodity
           if (d.type === "focus") {
@@ -107,43 +109,34 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
               .find((a) => a.questionId === d.value);
             value = answer && answer.value ? answer.value : 0;
           }
+
           // Calculate others commodity
-          if (
-            otherCommodities.includes(d.value) &&
-            otherCommodities.includes(d.type)
-          ) {
-            const nonFocusCommodity = currentSegmentData.answers.find(
-              (a) =>
-                a.name === x &&
-                a.commodityType === d.type &&
-                !a.question.parent &&
-                a.question.question_type !== "diversified"
-            );
-            // const nonFocusAnswers = currentSegmentData.answers
-            //   .filter((a) => a.name === x)
-            //   .map((a) => ({
-            //     id: `${a.name}-${a.commodityId}-${a.questionId}`,
-            //     value: a.value,
-            //   }));
-            // const nonFocusTotalValue = getFunctionDefaultValue(
-            //   nonFocusCommodity.question,
-            //   `${x}-${nonFocusCommodity.commodityId}`,
-            //   nonFocusAnswers
-            // );
-            value =
-              nonFocusCommodity && nonFocusCommodity?.value
-                ? nonFocusCommodity.value
-                : 0;
-          }
+          // if (
+          //   otherCommodities.includes(d.value) &&
+          //   otherCommodities.includes(d.type)
+          // ) {
+          //   const nonFocusCommodity = currentSegmentData.answers.find(
+          //     (a) =>
+          //       a.name === x &&
+          //       a.commodityType === d.type &&
+          //       !a.question.parent &&
+          //       a.question.question_type !== "diversified"
+          //   );
+          //   value =
+          //     nonFocusCommodity && nonFocusCommodity?.value
+          //       ? nonFocusCommodity.value
+          //       : 0;
+          // }
           // Calculate diversified
-          if (d.type === "diversified") {
-            const diversified = currentSegmentData.answers.find(
-              (a) =>
-                a.name === x &&
-                a.commodityType === d.type &&
-                a.questionId === d.value
-            );
-            value = diversified && diversified?.value ? diversified.value : 0;
+          if (d.type === "diversified" && d.value === "diversified") {
+            // const diversified = currentSegmentData.answers.find(
+            //   (a) =>
+            //     a.name === x &&
+            //     a.commodityType === d.type &&
+            //     a.questionId === d.value
+            // );
+            // value = diversified && diversified?.value ? diversified.value : 0;
+            value = currentSegmentData?.[`total_${x}_diversified_income`] || 0;
           }
           return {
             name: d.label,
@@ -154,14 +147,46 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
             color: colors[di],
           };
         });
+      }
       if (selectedDriver) {
-        // normal bar chart
-        return {
-          name: title,
-          value: stack[0].value,
-          total: stack[0].total,
-          color: colors[xi],
-        };
+        const findDriver = driverOptionsDropdown.find(
+          (d) => d.value === selectedDriver
+        );
+        if (findDriver.type === "focus") {
+          stack = findDriver.childrens.map((d, di) => {
+            const answer = currentSegmentData.answers
+              .filter((a) => a.commodityFocus && a.name === x)
+              .find((a) => a.questionId === d.id);
+            const value = answer && answer.value ? answer.value : 0;
+            return {
+              name: d.text,
+              title: d.text,
+              value: value,
+              total: value,
+              order: di,
+              color: colors[di],
+            };
+          });
+          const check = stack.filter((x) => x.value);
+          if (!check.length) {
+            const parentAnswer = currentSegmentData.answers
+              .filter((a) => a.commodityFocus && a.name === x)
+              .find((a) => a.questionId === findDriver.value);
+            const value =
+              parentAnswer && parentAnswer.value ? parentAnswer.value : 0;
+            stack = [
+              {
+                name: findDriver.label,
+                title: findDriver.label,
+                value: value,
+                total: value,
+                order: 0,
+                color: colors[0],
+              },
+            ];
+          }
+        }
+        // childrens doesn't have value / answers
       }
       // stack bar chart
       return {
@@ -193,7 +218,7 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
         <Col span={24}>
           <Chart
             wrapper={false}
-            type={chartType}
+            type={"BARSTACK"}
             data={chartData}
             affix={true}
           />
