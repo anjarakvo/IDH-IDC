@@ -120,6 +120,7 @@ const IncomeDriverTarget = ({
     setHouseholdSize(HHSize);
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
+      // manual target
       setDisableTarget(!changedValues.manual_target);
       if (changedValues.manual_target && target) {
         form.setFieldsValue({ region: null });
@@ -132,9 +133,10 @@ const IncomeDriverTarget = ({
         updateFormValues({ region: null, target: 0 });
       }
     }
+    // manual target
     if (changedValues.target && !disableTarget) {
       setIncomeTarget(target);
-      updateFormValues({ target: target });
+      updateFormValues({ region: null, target: target });
     }
     if (changedValues.region && disableTarget) {
       const regionData = { region: region };
