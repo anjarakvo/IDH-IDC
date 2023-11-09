@@ -274,6 +274,16 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
         [`${segmentId}_y-axis-max-value`]: dataValue.feasible,
       };
     }
+    if (valueName === "binning-driver-name") {
+      const dataValue = dataSource.find((d) => d.name === value);
+      values = {
+        ...values,
+        [`${segmentId}_binning-value-1`]: dataValue.current,
+        [`${segmentId}_binning-value-2`]:
+          (dataValue.current + dataValue.feasible) / 2,
+        [`${segmentId}_binning-value-3`]: dataValue.feasible,
+      };
+    }
     setBinningData(values);
     form.setFieldsValue(values);
   };

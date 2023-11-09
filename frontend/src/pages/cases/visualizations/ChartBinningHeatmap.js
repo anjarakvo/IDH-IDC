@@ -6,6 +6,8 @@ import { getFunctionDefaultValue } from "../components";
 const getOptions = ({
   xAxis = { name: "", min: 0, max: 0 },
   yAxis = { name: "", min: 0, max: 0 },
+  binName = "",
+  binValue = 0,
   answers = [],
   incomeQuestion = {},
   min = 0,
@@ -31,6 +33,9 @@ const getOptions = ({
       return yAxisData.map((d) => {
         const newValues = answers
           .map((m) => {
+            if (m.name === binName) {
+              return { ...m, value: binValue };
+            }
             if (m.name === yAxis.name) {
               return { ...m, value: d };
             }
@@ -158,7 +163,19 @@ const ChartBinningHeatmap = ({ segment, data }) => {
     const answers = segment.answers.filter(
       (s) => s.question.parent === 1 && s.name === "current" && s.commodityFocus
     );
+    const binCharts = bins.filter(
+      (b) => b.name.startsWith("binning-value") && b.value
+    );
+    const binName =
+      bins.find((b) => b.name === "binning-driver-name")?.value || false;
+
     return {
+      binCharts: binName
+        ? binCharts.map((b) => ({
+            binName: binName,
+            binValue: b.value,
+          }))
+        : [],
       xAxis: {
         name: bins.find((b) => b.name === "x-axis-driver")?.value || "",
         min: bins.find((b) => b.name === "x-axis-min-value")?.value || 0,
@@ -185,8 +202,17 @@ const ChartBinningHeatmap = ({ segment, data }) => {
     };
   }, [data, segment]);
 
-  const chartData = getOptions(binningData);
-
-  return <Chart wrapper={false} type="BAR" override={chartData} />;
+  return binningData.binCharts.map((b, key) => (
+    <div key={key}>
+      <h2>
+        Income Levels for {b.binName} : {b.binValue}
+      </h2>
+      <Chart
+        wrapper={false}
+        type="BAR"
+        override={getOptions({ ...binningData, ...b })}
+      />
+    </div>
+  ));
 };
 export default ChartBinningHeatmap;
