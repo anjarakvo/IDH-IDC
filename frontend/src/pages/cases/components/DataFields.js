@@ -21,6 +21,7 @@ import {
 import { map, groupBy } from "lodash";
 import { IncomeDriverForm, IncomeDriverTarget, commodityOptions } from "./";
 import Chart from "../../../components/chart";
+import { incomeTargetChartOption } from "../../../components/chart/options/common";
 
 const DataFields = ({
   segment,
@@ -81,15 +82,16 @@ const DataFields = ({
     };
   }, [formValues, segmentItem, dashboardData, totalIncomeQuestion]);
 
+  const segmentValues = formValues.find((v) => v.key === segment);
+
   const chartData = useMemo(() => {
-    if (!formValues.length) {
+    if (!formValues.length || !segmentValues) {
       return [];
     }
     const chartQuestion = totalIncomeQuestion.map((qid) => {
       const [caseCommodity, questionId] = qid.split("-");
       const feasibleId = `feasible-${qid}`;
       const currentId = `current-${qid}`;
-      const segmentValues = formValues.find((v) => v.key === segment);
       const feasibleValue = segmentValues.answers?.[feasibleId] || 0;
       const currentValue = segmentValues.answers?.[currentId];
       const question = questionGroups
@@ -160,11 +162,27 @@ const DataFields = ({
   }, [
     totalIncomeQuestion,
     formValues,
-    segment,
     questionGroups,
     commodityList,
     totalIncome,
+    segmentValues,
   ]);
+
+  const targetChartData = useMemo(() => {
+    if (!chartData.length || !segmentValues) {
+      return [];
+    }
+    return [
+      {
+        ...incomeTargetChartOption,
+        data: chartData.map((x) => ({
+          name: "Income Target",
+          symbol: x.name === "Total\nIncome" ? "diamond" : "none",
+          value: segmentValues.target.toFixed(2),
+        })),
+      },
+    ];
+  }, [chartData, segmentValues]);
 
   const ButtonEdit = () => (
     <Button
@@ -367,6 +385,8 @@ const DataFields = ({
         type="BARSTACK"
         data={chartData}
         affix={true}
+        targetData={targetChartData}
+        loading={!chartData.length || !targetChartData.length}
       />
     </Row>
   );

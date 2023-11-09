@@ -279,9 +279,40 @@ export const axisTitle = (extra) => {
 
 export const NoData = {
   title: {
-    subtext: "",
+    subtext: "No Data",
     left: "center",
     top: "20px",
     ...TextStyle,
   },
+  grid: {
+    show: true,
+    containLabel: true,
+    label: {
+      color: "#222",
+      ...TextStyle,
+    },
+  },
+  xAxis: [
+    {
+      type: "category",
+    },
+  ],
+  yAxis: [
+    {
+      type: "value",
+    },
+  ],
+  series: [],
+};
+
+export const incomeTargetChartOption = {
+  name: "Income Target",
+  type: "line",
+  symbol: "diamond",
+  symbolSize: 15,
+  color: "#00625F",
+  lineStyle: {
+    width: 0,
+  },
+  data: [],
 };

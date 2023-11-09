@@ -5,7 +5,7 @@ import { Bar, BarStack, ColumnBar } from "./options";
 import { Easing } from "./options/common";
 
 export const generateOptions = (
-  { type, data, chartTitle, percentage, extra },
+  { type, data, chartTitle, percentage, extra, targetData },
   series,
   legend,
   horizontal,
@@ -22,6 +22,7 @@ export const generateOptions = (
         extra: extra,
         horizontal: horizontal,
         highlighted: highlighted,
+        targetData: targetData,
       });
     case "COLUMN-BAR":
       return ColumnBar({
@@ -80,6 +81,7 @@ const Chart = ({
   loadingOption = loadingStyle,
   grid = {},
   override = false,
+  targetData = [], // to show income target symbol
 }) => {
   const chartTitle = wrapper ? {} : { title: title, subTitle: subTitle };
   const option = generateOptions(
@@ -89,6 +91,7 @@ const Chart = ({
       chartTitle: chartTitle,
       percentage: percentage,
       extra: extra,
+      targetData: targetData,
     },
     series,
     legend,

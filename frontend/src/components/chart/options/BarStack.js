@@ -49,6 +49,7 @@ const BarStack = ({
   extra = {},
   horizontal = false,
   highlighted = null,
+  targetData = [], // to show income target symbol
 }) => {
   if (isEmpty(data) || !data) {
     return NoData;
@@ -59,7 +60,7 @@ const BarStack = ({
   const stacked = uniqBy(flatten(data.map((d) => d.stack)), "title") || [];
 
   const xAxis = uniq(data.map((x) => x.title || x.name));
-  const series = stacked.map((s, si) => {
+  let series = stacked.map((s, si) => {
     const temp = data.map((d) => {
       const vals = d.stack?.filter((c) => c.title === s.title);
       const stackSum = sumBy(d.stack, "value");
@@ -75,8 +76,8 @@ const BarStack = ({
       }
       return {
         name: s.title || s.name,
-        value: resValue,
-        percentage: resValue,
+        value: resValue.toFixed(2),
+        percentage: resValue.toFixed(2),
         itemStyle: {
           color: vals[0]?.color || s.color,
           opacity: highlighted ? (d.name === highlighted ? 1 : 0.4) : 1,
@@ -118,6 +119,23 @@ const BarStack = ({
     name: s.name,
     itemStyle: { color: s.color || Color.color[si] },
   }));
+  let additionalLegends = [];
+  if (targetData.length) {
+    additionalLegends = targetData.map((t, ti) => ({
+      name: t.name,
+      itemStyle: { color: t.color || Color.color[ti] },
+    }));
+  }
+  // override label position
+  series = series.map((d) => {
+    return {
+      ...d,
+      label: {
+        ...LabelStyle.label,
+        position: "right",
+      },
+    };
+  });
   const option = {
     ...Color,
     title: {
@@ -128,15 +146,15 @@ const BarStack = ({
     },
     legend: {
       ...Legend,
-      data: legends,
-      top: 30,
+      data: [...additionalLegends, ...legends],
+      top: 20,
       left: "center",
     },
     grid: {
-      top: 80,
+      top: 95,
       bottom: 28,
-      left: 10,
-      right: 20,
+      left: 30,
+      right: 50,
       show: true,
       containLabel: true,
       label: {
@@ -187,15 +205,7 @@ const BarStack = ({
         alignWithLabel: true,
       },
     },
-    series: series.map((d) => {
-      return {
-        ...d,
-        label: {
-          ...LabelStyle.label,
-          position: "right",
-        },
-      };
-    }),
+    series: [...series, ...targetData],
     ...Color,
     ...backgroundColor,
     ...Easing,

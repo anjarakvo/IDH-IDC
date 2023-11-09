@@ -30,12 +30,13 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
     if (!currentSegmentData) {
       return [];
     }
-    const parentQuestion = currentSegmentData.answers.find(
+    let parentQuestion = currentSegmentData.answers.find(
       (a) => !a.question.parent
-    ).question;
-    if (!parentQuestion) {
+    );
+    if (!parentQuestion && !parentQuestion?.question) {
       return [];
     }
+    parentQuestion = parentQuestion.question;
     // list commodities exclude diversified income
     const commoditiesTemp = currentSegmentData.answers
       .filter(

@@ -78,8 +78,8 @@ const ChartBigImpact = ({ dashboardData }) => {
           100;
         return {
           name: ind.text,
-          income: incomeValue,
-          possible: possibleValue,
+          income: incomeValue || 0,
+          possible: possibleValue || 0,
         };
       }
       return {
@@ -89,25 +89,27 @@ const ChartBigImpact = ({ dashboardData }) => {
       };
     });
     // add diversified value
-    transformedData.push({
-      name: "Diversified Income",
-      income:
-        (currentSegmentData.total_current_diversified_income /
-          currentSegmentData.total_feasible_diversified_income) *
-        100,
-      possible:
-        ((currentSegmentData.total_current_focus_income +
-          currentSegmentData.total_feasible_diversified_income) /
-          currentSegmentData.total_current_income) *
-        100,
-    });
+    if (transformedData.length) {
+      transformedData.push({
+        name: "Diversified Income",
+        income:
+          (currentSegmentData.total_current_diversified_income /
+            currentSegmentData.total_feasible_diversified_income) *
+            100 || 0,
+        possible:
+          ((currentSegmentData.total_current_focus_income +
+            currentSegmentData.total_feasible_diversified_income) /
+            currentSegmentData.total_current_income) *
+            100 || 0,
+      });
+    }
     // reorder
+    // TODO :: Sort descending by income increase
     transformedData = orderBy(
       transformedData,
       ["possible", "income"],
       ["asc", "asc"]
     );
-    // TODO :: Sort descending by income increase
     const finalData = ["possible", "income"].map((x, xi) => {
       const title = x === "income" ? "% income increase" : "% change possible";
       const data = transformedData.map((d) => ({
@@ -123,7 +125,6 @@ const ChartBigImpact = ({ dashboardData }) => {
         color: legendColors[xi],
       };
     });
-
     return {
       tooltip: {
         trigger: "axis",
@@ -139,8 +140,10 @@ const ChartBigImpact = ({ dashboardData }) => {
         left: "center",
       },
       grid: {
-        left: 100,
-        right: 58,
+        show: true,
+        containLabel: true,
+        left: 30,
+        right: 50,
         label: {
           color: "#222",
           ...TextStyle,
