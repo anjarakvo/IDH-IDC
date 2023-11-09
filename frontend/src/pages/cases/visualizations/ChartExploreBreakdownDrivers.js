@@ -87,16 +87,11 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
     return [...focusRes, ...diversifiedRes];
   }, [currentSegmentData]);
 
-  const chartType = useMemo(
-    () => (selectedDriver ? "BAR" : "BARSTACK"),
-    [selectedDriver]
-  );
-
   const chartData = useMemo(() => {
     if (!currentSegmentData || !driverOptionsDropdown.length) {
       return [];
     }
-    const res = ["current", "feasible"].map((x, xi) => {
+    const res = ["current", "feasible"].map((x) => {
       const title = `${capitalize(x)}\n${currentSegmentData.name}`;
       let stack = [];
       if (!selectedDriver) {
@@ -109,33 +104,8 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
               .find((a) => a.questionId === d.value);
             value = answer && answer.value ? answer.value : 0;
           }
-
-          // Calculate others commodity
-          // if (
-          //   otherCommodities.includes(d.value) &&
-          //   otherCommodities.includes(d.type)
-          // ) {
-          //   const nonFocusCommodity = currentSegmentData.answers.find(
-          //     (a) =>
-          //       a.name === x &&
-          //       a.commodityType === d.type &&
-          //       !a.question.parent &&
-          //       a.question.question_type !== "diversified"
-          //   );
-          //   value =
-          //     nonFocusCommodity && nonFocusCommodity?.value
-          //       ? nonFocusCommodity.value
-          //       : 0;
-          // }
-          // Calculate diversified
+          // diversified
           if (d.type === "diversified" && d.value === "diversified") {
-            // const diversified = currentSegmentData.answers.find(
-            //   (a) =>
-            //     a.name === x &&
-            //     a.commodityType === d.type &&
-            //     a.questionId === d.value
-            // );
-            // value = diversified && diversified?.value ? diversified.value : 0;
             value = currentSegmentData?.[`total_${x}_diversified_income`] || 0;
           }
           return {
@@ -167,6 +137,7 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
               color: colors[di],
             };
           });
+          // childrens doesn't have value / answers
           const check = stack.filter((x) => x.value);
           if (!check.length) {
             const parentAnswer = currentSegmentData.answers
@@ -186,7 +157,43 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
             ];
           }
         }
-        // childrens doesn't have value / answers
+        if (findDriver.type === "diversified") {
+          stack = findDriver.childrens.map((d, di) => {
+            let value = 0;
+            // Calculate others commodity
+            if (otherCommodities.includes(d.type)) {
+              const nonFocusCommodity = currentSegmentData.answers.find(
+                (a) =>
+                  a.name === x &&
+                  a.commodityType === d.type &&
+                  !a.question.parent &&
+                  a.question.question_type !== "diversified"
+              );
+              value =
+                nonFocusCommodity && nonFocusCommodity?.value
+                  ? nonFocusCommodity.value
+                  : 0;
+            }
+            // Calculate diversified
+            if (d.type === "diversified") {
+              const diversified = currentSegmentData.answers.find(
+                (a) =>
+                  a.name === x &&
+                  a.commodityType === d.type &&
+                  a.questionId === d.id
+              );
+              value = diversified && diversified?.value ? diversified.value : 0;
+            }
+            return {
+              name: d.text,
+              title: d.text,
+              value: value,
+              total: value,
+              order: di,
+              color: colors[di],
+            };
+          });
+        }
       }
       // stack bar chart
       return {
