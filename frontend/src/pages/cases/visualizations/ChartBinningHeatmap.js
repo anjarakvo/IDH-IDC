@@ -110,7 +110,12 @@ const getOptions = ({
           lineStyle: {
             type: "solid",
           },
-          data: [{ xAxis: 2 }],
+          data: [
+            { xAxis: xAxis.min, yAxis: 0 },
+            { xAxis: xAxis.max, yAxis: 0 },
+            { xAxis: 0, yAxis: yAxis.min },
+            { xAxis: 0, yAxis: yAxis.max },
+          ],
         },
         */
         label: {
