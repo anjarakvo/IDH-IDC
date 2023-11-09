@@ -263,42 +263,27 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
 
     if (valueName === "x-axis-driver") {
       const dataValue = dataSource.find((d) => d.name === value);
-      if (!dataValue) {
-        values = {
-          ...values,
-          [`${segmentId}_x-axis-driver`]: undefined,
-        };
-      }
       values = {
         ...values,
+        [`${segmentId}_x-axis-driver`]: dataValue?.name,
         [`${segmentId}_x-axis-min-value`]: dataValue?.current,
         [`${segmentId}_x-axis-max-value`]: dataValue?.feasible,
       };
     }
     if (valueName === "y-axis-driver") {
       const dataValue = dataSource.find((d) => d.name === value);
-      if (!dataValue) {
-        values = {
-          ...values,
-          [`${segmentId}_y-axis-driver`]: undefined,
-        };
-      }
       values = {
         ...values,
+        [`${segmentId}_y-axis-driver`]: dataValue?.name,
         [`${segmentId}_y-axis-min-value`]: dataValue?.current,
         [`${segmentId}_y-axis-max-value`]: dataValue?.feasible,
       };
     }
     if (valueName === "binning-driver-name") {
       const dataValue = dataSource.find((d) => d.name === value);
-      if (!dataValue) {
-        values = {
-          ...values,
-          [`${segmentId}_binning-driver-name`]: undefined,
-        };
-      }
       values = {
         ...values,
+        [`${segmentId}_binning-driver-name`]: dataValue?.name,
         [`${segmentId}_binning-value-1`]: dataValue?.current,
         [`${segmentId}_binning-value-2`]: dataValue
           ? (dataValue.current + dataValue.feasible) / 2
