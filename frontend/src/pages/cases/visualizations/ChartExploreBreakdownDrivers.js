@@ -4,7 +4,7 @@ import uniqBy from "lodash/uniqBy";
 import capitalize from "lodash/capitalize";
 import { SegmentSelector, DriverDropdown } from "./";
 import Chart from "../../../components/chart";
-import { getFunctionDefaultValue } from "../components";
+// import { getFunctionDefaultValue } from "../components";
 
 const otherCommodities = ["secondary", "tertiary"];
 const colors = ["#0098FF", "#FFC505", "#47D985", "#FF5D00", "#00625F"];
@@ -119,18 +119,21 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
                 !a.question.parent &&
                 a.question.question_type !== "diversified"
             );
-            const nonFocusAnswers = currentSegmentData.answers
-              .filter((a) => a.name === x)
-              .map((a) => ({
-                id: `${a.name}-${a.commodityId}-${a.questionId}`,
-                value: a.value,
-              }));
-            const nonFocusTotalValue = getFunctionDefaultValue(
-              nonFocusCommodity.question,
-              `${x}-${nonFocusCommodity.commodityId}`,
-              nonFocusAnswers
-            );
-            value = nonFocusTotalValue;
+            // const nonFocusAnswers = currentSegmentData.answers
+            //   .filter((a) => a.name === x)
+            //   .map((a) => ({
+            //     id: `${a.name}-${a.commodityId}-${a.questionId}`,
+            //     value: a.value,
+            //   }));
+            // const nonFocusTotalValue = getFunctionDefaultValue(
+            //   nonFocusCommodity.question,
+            //   `${x}-${nonFocusCommodity.commodityId}`,
+            //   nonFocusAnswers
+            // );
+            value =
+              nonFocusCommodity && nonFocusCommodity?.value
+                ? nonFocusCommodity.value
+                : 0;
           }
           // Calculate diversified
           if (d.type === "diversified") {
