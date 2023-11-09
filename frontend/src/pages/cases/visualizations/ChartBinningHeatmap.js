@@ -99,6 +99,7 @@ const getOptions = ({
       left: "center",
       show: false,
       bottom: "15%",
+      color: ["#007800", "#ffffff"],
     },
     series: [
       {
@@ -118,21 +119,17 @@ const getOptions = ({
           padding: 5,
           formatter: (params) => {
             const value = params.value[2];
-            return value > target
-              ? `{up|⬆ ${value}}`
-              : value === target
-              ? `= ${value}`
-              : `{down|⬇ ${value}}`;
+            return value >= target ? `{up|${value}}` : `{down|${value}}`;
           },
           rich: {
             up: {
               color: "#fff",
-              backgroundColor: "rgba(0,255,0,.3)",
+              backgroundColor: "green",
               padding: 5,
             },
             down: {
               color: "#fff",
-              backgroundColor: "rgba(255,0,0,.3)",
+              backgroundColor: "gray",
               padding: 5,
             },
           },
@@ -202,17 +199,24 @@ const ChartBinningHeatmap = ({ segment, data }) => {
     };
   }, [data, segment]);
 
-  return binningData.binCharts.map((b, key) => (
-    <div key={key}>
-      <h2>
-        Income Levels for {b.binName} : {b.binValue}
-      </h2>
-      <Chart
-        wrapper={false}
-        type="BAR"
-        override={getOptions({ ...binningData, ...b })}
-      />
+  return (
+    <div>
+      The following tables represent income levels for levels of land area and
+      volume, for a each price bin.
+      {binningData.binCharts.map((b, key) => (
+        <div key={key}>
+          <h3>
+            Income Levels for {b.binName} : {b.binValue}
+          </h3>
+          <Chart
+            height={350}
+            wrapper={false}
+            type="BAR"
+            override={getOptions({ ...binningData, ...b })}
+          />
+        </div>
+      ))}
     </div>
-  ));
+  );
 };
 export default ChartBinningHeatmap;
