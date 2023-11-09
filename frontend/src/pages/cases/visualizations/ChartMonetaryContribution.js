@@ -3,6 +3,10 @@ import Chart from "../../../components/chart";
 import { LabelStyle } from "../../../components/chart/options/common";
 import { SegmentSelector } from "./";
 import { getFunctionDefaultValue } from "../components";
+import {
+  TextStyle,
+  AxisLabelFormatter,
+} from "../../../components/chart/options/common";
 
 const ChartMonetaryContribution = ({ dashboardData }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
@@ -64,18 +68,46 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
         axisPointer: {
           type: "shadow",
         },
+        ...TextStyle,
         formatter: function (params) {
           var tar = params[1];
           return tar.name + "<br/>" + tar.seriesName + " : " + tar.value;
         },
       },
+      grid: {
+        show: true,
+        containLabel: true,
+        left: 30,
+        right: 50,
+        label: {
+          color: "#222",
+          ...TextStyle,
+        },
+      },
       xAxis: {
         type: "category",
         splitLine: { show: false },
-        data: ["Current\nIncome", ...indicators, "Feasible"],
+        data: [
+          "Current\nIncome",
+          ...indicators,
+          "Diversified Income",
+          "Feasible",
+        ],
+        axisLabel: {
+          width: 100,
+          overflow: "break",
+          interval: 0,
+          ...TextStyle,
+          color: "#4b4b4e",
+          formatter: AxisLabelFormatter?.formatter,
+        },
       },
       yAxis: {
         type: "value",
+        axisLabel: {
+          ...TextStyle,
+          color: "#9292ab",
+        },
       },
       series: [
         {
@@ -92,7 +124,13 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
               color: "transparent",
             },
           },
-          data: [0, ...indicators.map(() => data.total_current_income), 0],
+          data: [
+            0,
+            ...indicators.map(() => data.total_current_income),
+            // diversified value
+            data.total_current_income,
+            0,
+          ],
         },
         {
           name: "Income",
@@ -101,6 +139,8 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
           data: [
             data.total_current_income.toFixed(2),
             ...additionalData,
+            // diversified value
+            data.total_feasible_diversified_income.toFixed(2),
             data.total_feasible_income.toFixed(2),
           ],
           ...LabelStyle,
