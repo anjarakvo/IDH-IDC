@@ -14,6 +14,7 @@ const getOptions = ({
   max = 0,
   diversified = 0,
   target = 0,
+  origin = [],
 }) => {
   const xAxisData = [
     ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 4).map((x) =>
@@ -123,7 +124,24 @@ const getOptions = ({
           color: "#fff",
           padding: 5,
           formatter: (params) => {
+            const binRange = origin.find((x) => x.name === binName);
+            const isOutRange =
+              binValue < binRange.current || binValue > binRange.feasible;
+            if (isOutRange) {
+              return `{out|${params.value[2]}}`;
+            }
             const value = params.value[2];
+            const xAxisRange = origin.find((x) => x.name === xAxis.name);
+            const inX =
+              params.value[0] >= xAxisRange.current &&
+              params.value[0] <= xAxisRange.feasible;
+            const yAxisRange = origin.find((x) => x.name === yAxis.name);
+            const inY =
+              params.value[1] >= yAxisRange.current &&
+              params.value[1] <= yAxisRange.feasible;
+            if (!inX || !inY) {
+              return `{out|${value}}`;
+            }
             return value >= target ? `{up|${value}}` : `{down|${value}}`;
           },
           rich: {
@@ -132,9 +150,14 @@ const getOptions = ({
               backgroundColor: "green",
               padding: 5,
             },
-            down: {
+            out: {
               color: "#fff",
               backgroundColor: "gray",
+              padding: 5,
+            },
+            down: {
+              color: "#fff",
+              backgroundColor: "red",
               padding: 5,
             },
           },
@@ -151,7 +174,7 @@ const getOptions = ({
   return options;
 };
 
-const ChartBinningHeatmap = ({ segment, data }) => {
+const ChartBinningHeatmap = ({ segment, data, origin }) => {
   const binningData = useMemo(() => {
     if (!segment?.id) {
       return {};
@@ -217,7 +240,7 @@ const ChartBinningHeatmap = ({ segment, data }) => {
             height={350}
             wrapper={false}
             type="BAR"
-            override={getOptions({ ...binningData, ...b })}
+            override={getOptions({ ...binningData, ...b, origin: origin })}
           />
         </div>
       ))}

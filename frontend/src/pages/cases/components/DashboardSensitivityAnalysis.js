@@ -416,6 +416,7 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                       key={segment.id}
                       data={binningData}
                       segment={segment}
+                      origin={dataSource}
                     />
                   ) : null
                 )}

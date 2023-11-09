@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Row, Col, Alert, Card } from "antd";
 
 const DashboardScenarioModeling = () => {
-  const [scenario, setScenario] = useState(1);
   return (
     <Row id="scenario-modeling">
       <Col span={24}>
