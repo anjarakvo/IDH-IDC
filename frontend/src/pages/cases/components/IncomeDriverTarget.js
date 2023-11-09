@@ -79,9 +79,8 @@ const IncomeDriverTarget = ({
   useEffect(() => {
     if (benchmark && !isEmpty(benchmark)) {
       const targetValue =
-        currentCase.currency === "usd"
-          ? benchmark.value.usd
-          : benchmark.value.lcu;
+        benchmark.value?.[currentCase.currency.toLowerCase()] ||
+        benchmark.value.lcu;
       const targetHH = (householdSize / benchmark.household_size) * targetValue;
       setIncomeTarget(targetHH);
     }
@@ -156,11 +155,12 @@ const IncomeDriverTarget = ({
             });
           } else {
             const targetValue =
-              currentCase.currency === "usd" ? data.value.usd : data.value.lcu;
+              data.value?.[currentCase.currency.toLowerCase()] ||
+              data.value.lcu;
             setIncomeTarget((HHSize / targetHH) * targetValue);
             updateFormValues({
               ...regionData,
-              target: (targetHH / HHSize) * targetValue,
+              target: (HHSize / targetHH) * targetValue,
               benchmark: data,
             });
           }
