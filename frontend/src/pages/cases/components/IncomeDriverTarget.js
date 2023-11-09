@@ -116,11 +116,11 @@ const IncomeDriverTarget = ({
 
   const onValuesChange = (changedValues, allValues) => {
     const { target, region } = allValues;
-    const regionData = { region: region };
     const HHSize = calculateHouseholdSize(allValues);
     setHouseholdSize(HHSize);
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
+      // manual target
       setDisableTarget(!changedValues.manual_target);
       if (changedValues.manual_target && target) {
         form.setFieldsValue({ region: null });
@@ -133,11 +133,13 @@ const IncomeDriverTarget = ({
         updateFormValues({ region: null, target: 0 });
       }
     }
+    // manual target
     if (changedValues.target && !disableTarget) {
       setIncomeTarget(target);
-      updateFormValues({ ...regionData, target: target });
+      updateFormValues({ region: null, target: target });
     }
     if (changedValues.region && disableTarget) {
+      const regionData = { region: region };
       // get from API
       if (currentCase?.country && currentCase?.year && region) {
         let url = `country_region_benchmark?country_id=${currentCase.country}`;
