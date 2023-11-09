@@ -58,6 +58,7 @@ const ColumnBar = ({
       title: key,
       data: values.map((v, vi) => ({
         ...v,
+        value: v.value.toFixed(2),
         itemStyle: { color: v.color || Color.color[vi] },
       })),
       type: "bar",
