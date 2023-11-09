@@ -109,6 +109,7 @@ const Case = () => {
           name: dataType,
           question: question,
           commodityFocus: commodityFocus,
+          commodityType: commodity.commodity_type,
           caseCommodityId: parseInt(caseCommodityId),
           commodityId: parseInt(commodityId),
           commodityName: commodityNames[commodityId],

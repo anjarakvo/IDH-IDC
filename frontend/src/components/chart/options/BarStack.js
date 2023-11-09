@@ -147,7 +147,7 @@ const BarStack = ({
     legend: {
       ...Legend,
       data: [...additionalLegends, ...legends],
-      top: 20,
+      top: 15,
       left: "center",
     },
     grid: {
