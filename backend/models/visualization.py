@@ -75,8 +75,8 @@ class Visualization(Base):
 
 
 class VisualizationBase(BaseModel):
-    id: int
     case: int
     segment: int
     tab: VisualizationTab
     config: dict
+    id: Optional[int] = None
