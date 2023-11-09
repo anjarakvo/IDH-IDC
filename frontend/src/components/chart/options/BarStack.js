@@ -76,8 +76,8 @@ const BarStack = ({
       }
       return {
         name: s.title || s.name,
-        value: resValue,
-        percentage: resValue,
+        value: resValue.toFixed(2),
+        percentage: resValue.toFixed(2),
         itemStyle: {
           color: vals[0]?.color || s.color,
           opacity: highlighted ? (d.name === highlighted ? 1 : 0.4) : 1,
