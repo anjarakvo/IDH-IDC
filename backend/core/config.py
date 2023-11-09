@@ -15,6 +15,7 @@ from routes.organisation import organisation_route
 from routes.region import region_route
 from routes.living_income_benchmark import lib_route
 from routes.cpi import cpi_route
+from routes.visualization import visualization_route
 
 from models.business_unit import BusinessUnit
 from models.commodity_category import CommodityCategory
@@ -91,6 +92,7 @@ app.include_router(tag_route)
 app.include_router(region_route)
 app.include_router(lib_route)
 app.include_router(cpi_route)
+app.include_router(visualization_route)
 
 
 @app.get("/", tags=["Dev"])
