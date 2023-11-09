@@ -160,7 +160,7 @@ const IncomeDriverTarget = ({
             setIncomeTarget((HHSize / targetHH) * targetValue);
             updateFormValues({
               ...regionData,
-              target: (targetHH / HHSize) * targetValue,
+              target: (HHSize / targetHH) * targetValue,
               benchmark: data,
             });
           }

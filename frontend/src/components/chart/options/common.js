@@ -285,3 +285,15 @@ export const NoData = {
     ...TextStyle,
   },
 };
+
+export const incomeTargetChartOption = {
+  name: "Income Target",
+  type: "line",
+  symbol: "diamond",
+  symbolSize: 15,
+  color: "#00625F",
+  lineStyle: {
+    width: 0,
+  },
+  data: [],
+};
