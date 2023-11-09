@@ -101,6 +101,9 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
           color: "#4b4b4e",
           formatter: AxisLabelFormatter?.formatter,
         },
+        axisTick: {
+          alignWithLabel: true,
+        },
       },
       yAxis: {
         type: "value",

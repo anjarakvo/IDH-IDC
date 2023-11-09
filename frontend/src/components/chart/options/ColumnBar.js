@@ -14,8 +14,8 @@ import { sortBy, isEmpty, groupBy, orderBy } from "lodash";
 
 const customFormatter = {
   formatter: function (params) {
-    if (!params?.data?.stack) {
-      return `${params.name}: ${params.value}`;
+    if (!params?.data?.stack?.length) {
+      return `<b>${params.name}</b>: ${params.value}`;
     }
     let customTooltip = "<div>";
     customTooltip += `<p><b>${params.name}</b></p>`;
