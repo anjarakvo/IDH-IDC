@@ -9,7 +9,6 @@ import {
   Legend,
   TextStyle,
   Easing,
-  NoData,
 } from "../../../components/chart/options/common";
 
 const legendColors = ["#47D985", "#00625F"];
@@ -141,8 +140,10 @@ const ChartBigImpact = ({ dashboardData }) => {
         left: "center",
       },
       grid: {
-        left: 100,
-        right: 58,
+        show: true,
+        containLabel: true,
+        left: 30,
+        right: 50,
         label: {
           color: "#222",
           ...TextStyle,

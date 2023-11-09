@@ -10,7 +10,6 @@ import {
 } from "../visualizations";
 
 const DashboardIncomeOverview = ({ dashboardData }) => {
-  console.log(dashboardData);
   return (
     <Row>
       <Col span={24}>

@@ -115,7 +115,7 @@ const BarStack = ({
       data: temp,
     };
   });
-  let legends = series.map((s, si) => ({
+  const legends = series.map((s, si) => ({
     name: s.name,
     itemStyle: { color: s.color || Color.color[si] },
   }));

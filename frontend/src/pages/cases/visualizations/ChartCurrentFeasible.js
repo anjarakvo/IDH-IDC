@@ -1,5 +1,6 @@
 import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
+import { incomeTargetChartOption } from "../../../components/chart/options/common";
 
 const ChartCurrentFeasible = ({ dashboardData = [] }) => {
   const chartData = useMemo(() => {
@@ -9,6 +10,7 @@ const ChartCurrentFeasible = ({ dashboardData = [] }) => {
         {
           name: `Current\n${d.name}`,
           title: `Current\n${d.name}`,
+          target: d.target,
           stack: [
             {
               name: "Cost of Production",
@@ -39,6 +41,7 @@ const ChartCurrentFeasible = ({ dashboardData = [] }) => {
         {
           name: `Feasible\n${d.name}`,
           title: `Feasible\n${d.name}`,
+          target: d.target,
           stack: [
             {
               name: "Cost of Production",
@@ -67,8 +70,30 @@ const ChartCurrentFeasible = ({ dashboardData = [] }) => {
     }, []);
   }, [dashboardData]);
 
+  const targetChartData = useMemo(() => {
+    if (!chartData.length) {
+      return [];
+    }
+    return [
+      {
+        ...incomeTargetChartOption,
+        data: chartData.map((cd) => ({
+          name: "Income Target",
+          value: cd.target.toFixed(2),
+        })),
+      },
+    ];
+  }, [chartData]);
+
   return (
-    <Chart wrapper={false} type="BARSTACK" data={chartData} affix={true} />
+    <Chart
+      wrapper={false}
+      type="BARSTACK"
+      data={chartData}
+      affix={true}
+      loading={!chartData.length || !targetChartData.length}
+      targetData={targetChartData}
+    />
   );
 };
 

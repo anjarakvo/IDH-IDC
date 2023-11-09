@@ -284,6 +284,14 @@ export const NoData = {
     top: "20px",
     ...TextStyle,
   },
+  grid: {
+    show: true,
+    containLabel: true,
+    label: {
+      color: "#222",
+      ...TextStyle,
+    },
+  },
   xAxis: [
     {
       type: "category",
