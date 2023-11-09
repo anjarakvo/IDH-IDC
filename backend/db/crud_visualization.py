@@ -1,8 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from typing import Optional, List
-from typing_extensions import TypedDict
-from fastapi import HTTPException, status
+from typing import List
 
 from models.visualization import Visualization, VisualizationBase, VisualizationDict
 
