@@ -31,7 +31,39 @@ const columns = [
   },
 ];
 
-const BinningForm = ({ segment, drivers = [], hidden }) => {
+const generateDriverOptions = (drivers, selected, excludes) => {
+  const options = selected.filter((s) => excludes.includes(s.name));
+  return drivers.map((d) => ({
+    ...d,
+    disabled: options.find((o) => o.value === d.value),
+  }));
+};
+
+const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
+  const options = useMemo(() => {
+    if (!selected.length) {
+      return {
+        "binning-driver-name": drivers,
+        "x-axis-driver": drivers,
+        "y-axis-driver": drivers,
+      };
+    }
+    return {
+      "binning-driver-name": generateDriverOptions(drivers, selected, [
+        "x-axis-driver",
+        "y-axis-driver",
+      ]),
+      "x-axis-driver": generateDriverOptions(drivers, selected, [
+        "binning-driver-name",
+        "y-axis-driver",
+      ]),
+      "y-axis-driver": generateDriverOptions(drivers, selected, [
+        "binning-driver-name",
+        "x-axis-driver",
+      ]),
+    };
+  }, [drivers, selected]);
+
   return (
     <Row gutter={[8, 8]} style={{ display: hidden ? "none" : "" }}>
       <Col span={12}>
@@ -39,13 +71,11 @@ const BinningForm = ({ segment, drivers = [], hidden }) => {
       </Col>
       <Col span={12}>
         <Form.Item name={`${segment.id}_binning-driver-name`}>
-          <Select size="small" className="binning-input" options={drivers} />
-        </Form.Item>
-      </Col>
-      <Col span={12}>Number of Bins:</Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_binning-driver-number`}>
-          <InputNumber size="small" className="binning-input" />
+          <Select
+            size="small"
+            className="binning-input"
+            options={options["binning-driver-name"]}
+          />
         </Form.Item>
       </Col>
       <Col span={12}>Bin Values:</Col>
@@ -70,7 +100,11 @@ const BinningForm = ({ segment, drivers = [], hidden }) => {
       </Col>
       <Col span={12}>
         <Form.Item name={`${segment.id}_x-axis-driver`}>
-          <Select size="small" className="binning-input" options={drivers} />
+          <Select
+            size="small"
+            className="binning-input"
+            options={options["x-axis-driver"]}
+          />
         </Form.Item>
       </Col>
       <Col span={12}>Minimum Value:</Col>
@@ -91,7 +125,11 @@ const BinningForm = ({ segment, drivers = [], hidden }) => {
       </Col>
       <Col span={12}>
         <Form.Item name={`${segment.id}_y-axis-driver`}>
-          <Select size="small" className="binning-input" options={drivers} />
+          <Select
+            size="small"
+            className="binning-input"
+            options={options["y-axis-driver"]}
+          />
         </Form.Item>
       </Col>
       <Col span={12}>Minimum Value:</Col>
@@ -179,6 +217,41 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
         ].includes(d.name)
     );
   }, [currentSegment, dataSource]);
+
+  const binningValues = useMemo(() => {
+    const allBining = Object.keys(binningData);
+    const groupBinning = Object.keys(
+      groupBy(allBining, (b) => b.split("_")[0])
+    ).map((g) => {
+      const binning = allBining.filter((b) => b.split("_")[0] === g);
+      const binningValue = binning.reduce((acc, b) => {
+        const value = binningData[b];
+        return {
+          ...acc,
+          [b.split("_")[1]]: value,
+        };
+      }, {});
+      const selected = [
+        "binning-driver-name",
+        "x-axis-driver",
+        "y-axis-driver",
+      ];
+      return {
+        id: parseInt(g),
+        binning: binning,
+        values: binningValue,
+        selected: selected
+          .map((s) => {
+            return {
+              name: s,
+              value: binningValue?.[s],
+            };
+          })
+          .filter((s) => s),
+      };
+    });
+    return groupBinning;
+  }, [binningData]);
 
   const onValuesChange = (c, values) => {
     const objectName = Object.keys(c)[0];
@@ -288,6 +361,9 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                           label: x.name,
                         };
                       })}
+                      selected={
+                        binningValues.find((b) => b.id === segment.id)?.selected
+                      }
                       hidden={currentSegment !== segment.id}
                     />
                   ))}
