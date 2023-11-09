@@ -20,7 +20,9 @@ const tableFormatter = (e, percentage) => {
   }>${e[0]?.axisValueLabel || "-"}</th></tr></thead><tbody>`;
   e.map((eI) => {
     table += "<tr>";
-    table += '<td style="width: 18px;">' + eI.marker + "</td>";
+    if (e.length > 1) {
+      table += '<td style="width: 18px;">' + eI.marker + "</td>";
+    }
     table += '<td><span style="font-weight:600;">';
     table += upperFirst(eI.seriesName);
     table += "</span></td>";
@@ -147,7 +149,7 @@ const BarStack = ({
     legend: {
       ...Legend,
       data: [...additionalLegends, ...legends],
-      top: 20,
+      top: 15,
       left: "center",
     },
     grid: {

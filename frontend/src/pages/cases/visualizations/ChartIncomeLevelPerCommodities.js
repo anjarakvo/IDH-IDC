@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col } from "antd";
 import { SegmentSelector } from ".";
-import { uniqBy, capitalize } from "lodash";
+import { uniqBy, capitalize, sum } from "lodash";
 import Chart from "../../../components/chart";
 import { getFunctionDefaultValue } from "../components";
 
@@ -56,6 +56,8 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
       }));
     const commodities = uniqBy(commoditiesTemp, "commodityId");
     // populate chart data
+    const currentCommodityValuesExceptFocus = [];
+    const feasibleCommodityValuesExceptFocus = [];
     const res = commodities.map((cm, cmi) => {
       const data = ["current", "feasible"].map((x, xi) => {
         const title = `${capitalize(x)}\n${currentSegmentData.name}`;
@@ -74,6 +76,13 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
           `${x}-${cm.commodityId}`,
           allAnswers
         );
+        // add newTotalValue to temp variable for diversified value calculation
+        if (x === "current" && !cm.commodityFocus) {
+          currentCommodityValuesExceptFocus.push(newTotalValue);
+        }
+        if (x === "feasible" && !cm.commodityFocus) {
+          feasibleCommodityValuesExceptFocus.push(newTotalValue);
+        }
         // map drivers value
         const stack = cm.questions.map((q, qi) => {
           const answer = currentSegmentData.answers.find(
@@ -109,6 +118,64 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
         order: cmi,
         data: data,
       };
+    });
+    // DIVERSIFIED CALCULATION - add diversified income value
+    let diversifiedQUestions = currentSegmentData.answers
+      .filter(
+        (a) =>
+          (!a.commodityId || !a.commodityName) &&
+          a.question.question_type === "diversified" &&
+          !a.question.parent
+      )
+      .flatMap((a) => a.question);
+    diversifiedQUestions = uniqBy(diversifiedQUestions, "id");
+    // populate diversified income value
+    const diversifiedData = ["current", "feasible"].map((x, xi) => {
+      const title = `${capitalize(x)}\n${currentSegmentData.name}`;
+      let newValue = 0;
+      if (x === "current") {
+        newValue =
+          currentSegmentData.total_current_diversified_income -
+          sum(currentCommodityValuesExceptFocus);
+      }
+      if (x === "feasible") {
+        newValue =
+          currentSegmentData.total_feasible_diversified_income -
+          sum(feasibleCommodityValuesExceptFocus);
+      }
+      const stack = diversifiedQUestions.map((q, qi) => {
+        const answer = currentSegmentData.answers.find(
+          (a) =>
+            (!a.commodityId || !a.commodityName) &&
+            a.name === x &&
+            a.questionId === q.id
+        );
+        const value = answer && answer.value ? answer.value : 0;
+        return {
+          name: q.text,
+          title: q.text,
+          value: value,
+          total: value,
+          order: qi,
+          color: colors[qi],
+        };
+      });
+      return {
+        name: title,
+        title: title,
+        stack: stack,
+        value: newValue,
+        total: newValue,
+        commodityId: null,
+        commodityName: null,
+        color: legendColors[xi],
+      };
+    });
+    res.push({
+      name: "Diversified Income",
+      title: "Diversified Income",
+      order: res.length,
+      data: diversifiedData,
     });
     return res;
   }, [currentSegmentData]);
