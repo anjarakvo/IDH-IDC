@@ -32,9 +32,9 @@ def create_visualization(
 
 
 @visualization_route.get(
-    "/visualization/{case_id:path}",
+    "/visualization/case/{case_id:path}",
     response_model=List[VisualizationDict],
-    summary="get visualization by case id",
+    summary="get visualization data by case id",
     name="visualization:get_by_case_id",
     tags=["Visualization"],
 )
