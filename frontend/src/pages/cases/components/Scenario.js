@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Card,
   Col,
@@ -17,6 +17,8 @@ import {
   CloseCircleTwoTone,
   DeleteTwoTone,
 } from "@ant-design/icons";
+import { getFunctionDefaultValue } from "./";
+import { ChartScenarioModeling } from "../visualizations";
 
 const Question = ({
   id,
@@ -32,8 +34,6 @@ const Question = ({
 }) => {
   const { commodity_name, commodity_type, case_commodity, currency } =
     commodity;
-  const [absoluteIncrease, setAbsoluteIncrease] = useState(0);
-  const [percentageIncrease, setPercentageIncrease] = useState(0);
 
   const unitName = useMemo(() => {
     return unit
@@ -51,27 +51,6 @@ const Question = ({
         s.name === "current"
     );
   }, [segment, id, case_commodity]);
-
-  const onChange = (value) => {
-    const currentValue = answer?.value || 0;
-    if (percentage) {
-      const absoluteValue = (currentValue * value) / 100;
-      setPercentageIncrease(value.toFixed(2));
-      const absoluteIncrease = (absoluteValue + currentValue).toFixed(2);
-      setAbsoluteIncrease(absoluteIncrease);
-      form.setFieldsValue({
-        [`absolute-${case_commodity}-${id}`]: absoluteIncrease,
-      });
-    } else {
-      const percentageValue = (value - currentValue) / currentValue;
-      setAbsoluteIncrease(value);
-      const percentageIncrease = (percentageValue * 100).toFixed(2);
-      setPercentageIncrease(percentageIncrease);
-      form.setFieldsValue({
-        [`percentage-${case_commodity}-${id}`]: percentageIncrease,
-      });
-    }
-  };
 
   return (
     <>
@@ -115,18 +94,15 @@ const Question = ({
                 style={{
                   width: "100%",
                 }}
-                onChange={onChange}
                 addonAfter={qtype === "percentage" ? "%" : ""}
               />
             </Form.Item>
           ))}
         </Col>
         <Col span={5} align="right">
-          {answer?.value?.toFixed(1) || ""}
+          {answer?.value?.toFixed(2) || ""}
         </Col>
-        <Col span={5} align="right">
-          {percentage ? absoluteIncrease : `${percentageIncrease}%`}
-        </Col>
+        <Col span={5} align="right"></Col>
       </Row>
       {!parent && commodity_type === "focus"
         ? childrens.map((child) => (
@@ -144,11 +120,99 @@ const Question = ({
   );
 };
 
-const ScenarioInput = ({ segment, commodityQuestions, percentage }) => {
+const ScenarioInput = ({
+  segment,
+  commodityQuestions,
+  percentage,
+  setScenarioValue,
+}) => {
   const [form] = Form.useForm();
 
   const onValuesChange = (changedValues, allValues) => {
-    console.info(changedValues, allValues);
+    const objectId = Object.keys(changedValues)[0];
+    const [, case_commodity, id] = objectId.split("-");
+    const segmentAnswer = segment.answers.find(
+      (s) =>
+        s.questionId === parseInt(id) &&
+        s.caseCommodityId === parseInt(case_commodity) &&
+        s.name === "current"
+    );
+
+    const parentQuestion = segment.answers.find(
+      (s) =>
+        s.questionId === segmentAnswer.question.parent &&
+        s.caseCommodityId === parseInt(case_commodity) &&
+        s.name === "current"
+    );
+
+    const currentValue = segmentAnswer?.value || 0;
+    const value = parseFloat(changedValues[objectId]);
+    const newFieldsValue = {};
+
+    let absoluteIncrease = 0;
+    if (percentage) {
+      const absoluteValue = (currentValue * value) / 100;
+      absoluteIncrease = (absoluteValue + currentValue).toFixed(2);
+      newFieldsValue[`absolute-${case_commodity}-${id}`] = absoluteIncrease;
+    } else {
+      absoluteIncrease = value;
+      const percentageValue = (value - currentValue) / currentValue;
+      const percentageIncrease = (percentageValue * 100).toFixed(2);
+      newFieldsValue[`percentage-${case_commodity}-${id}`] = percentageIncrease;
+    }
+
+    if (parentQuestion) {
+      const allObjectValues = Object.keys(allValues).reduce((acc, key) => {
+        const [type, , id] = key.split("-");
+        acc.push({
+          id: `${type}-${id}`,
+          value: allValues[key] || absoluteIncrease,
+        });
+        return acc;
+      }, []);
+      const newParentAnswerAbsoluteValue = getFunctionDefaultValue(
+        parentQuestion.question,
+        "absolute",
+        allObjectValues
+      );
+      newFieldsValue[
+        `absolute-${case_commodity}-${parentQuestion.question.id}`
+      ] = newParentAnswerAbsoluteValue.toFixed(2);
+      const newParentAnswerPercentageValue = parentQuestion?.value
+        ? ((newParentAnswerAbsoluteValue - parentQuestion.value) /
+            parentQuestion.value) *
+          100
+        : 0;
+      newFieldsValue[
+        `percentage-${case_commodity}-${parentQuestion.question.id}`
+      ] = newParentAnswerPercentageValue.toFixed(2);
+    }
+
+    const allParentQuestions = segment.answers.filter(
+      (s) => s.question.parent === null && s.name === "current"
+    );
+    const allNewValues = { ...allValues, ...newFieldsValue };
+
+    const totalValues = allParentQuestions.reduce((acc, p) => {
+      const questionId = `absolute-${p.caseCommodityId}-${p.question.id}`;
+      const value = allNewValues[questionId];
+      if (value) {
+        acc += parseFloat(value);
+      }
+      return acc;
+    }, 0);
+
+    setScenarioValue((prev) => {
+      return [
+        ...prev.filter((p) => p.segmentId !== segment.id),
+        {
+          segmentId: segment.id,
+          name: segment.name,
+          value: totalValues,
+        },
+      ];
+    });
+    form.setFieldsValue(allNewValues);
   };
 
   return (
@@ -201,6 +265,7 @@ const Scenario = ({
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
   const [newName, setNewName] = useState(scenarioItem.name);
   const [confirmationModal, setConfimationModal] = useState(false);
+  const [scenarioValue, setScenarioValue] = useState([]);
 
   const finishEditing = () => {
     renameScenario(index, newName);
@@ -211,6 +276,46 @@ const Scenario = ({
     setNewName(scenarioItem.name);
     setEditing(false);
   };
+
+  useEffect(() => {
+    if (dashboardData.length > 0) {
+      const scenarioInitialData = dashboardData.map((segment) => ({
+        segmentId: segment.id,
+        name: segment.name,
+      }));
+      setScenarioValue(scenarioInitialData);
+    }
+  }, [dashboardData]);
+
+  const chartData = useMemo(() => {
+    const data = dashboardData.map((segment) => ({
+      name: segment.name,
+      title: segment.name,
+      stack: [
+        {
+          name: "Current Income",
+          title: "Current Income",
+          order: 1,
+          total: segment.total_current_income,
+          value: segment.total_current_income,
+          color: "#3b78d8",
+        },
+        {
+          name: "Scenario Income",
+          title: "Scenario Income",
+          order: 2,
+          total:
+            scenarioValue.find((s) => s.segmentId === segment.id)?.value +
+              segment.total_current_income || 0,
+          value:
+            scenarioValue.find((s) => s.segmentId === segment.id)?.value +
+              segment.total_current_income || 0,
+          color: "#c9daf8",
+        },
+      ],
+    }));
+    return data;
+  }, [dashboardData, scenarioValue]);
 
   const ButtonEdit = () => (
     <Button
@@ -323,10 +428,13 @@ const Scenario = ({
                   segment={segment}
                   commodityQuestions={commodityQuestions}
                   percentage={percentage}
+                  setScenarioValue={setScenarioValue}
                 />
               </Col>
             ))}
-            <Col span={12}>Charts</Col>
+            <Col span={12}>
+              <ChartScenarioModeling data={chartData || []} />
+            </Col>
           </Row>
         </Card.Grid>
       </Card>
