@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Card,
   Col,
@@ -25,43 +25,117 @@ const Question = ({
   text,
   commodity,
   childrens,
+  segment,
+  percentage,
+  unit,
+  form,
 }) => {
-  const { commodity_name, id: commodity_id, commodity_type } = commodity;
+  const { commodity_name, commodity_type, case_commodity, currency } =
+    commodity;
+  const [absoluteIncrease, setAbsoluteIncrease] = useState(0);
+  const [percentageIncrease, setPercentageIncrease] = useState(0);
+
+  const unitName = useMemo(() => {
+    return unit
+      .split("/")
+      .map((u) => u.trim())
+      .map((u) => commodity?.[u])
+      .join(" / ");
+  }, [unit, commodity]);
+
+  const answer = useMemo(() => {
+    return segment.answers.find(
+      (s) =>
+        s.question.id === id &&
+        s.caseCommodityId === case_commodity &&
+        s.name === "current"
+    );
+  }, [segment, id, case_commodity]);
+
+  const onChange = (value) => {
+    const currentValue = answer?.value || 0;
+    if (percentage) {
+      const absoluteValue = (currentValue * value) / 100;
+      setPercentageIncrease(value.toFixed(2));
+      const absoluteIncrease = (absoluteValue + currentValue).toFixed(2);
+      setAbsoluteIncrease(absoluteIncrease);
+      form.setFieldsValue({
+        [`absolute-${case_commodity}-${id}`]: absoluteIncrease,
+      });
+    } else {
+      const percentageValue = (value - currentValue) / currentValue;
+      setAbsoluteIncrease(value);
+      const percentageIncrease = (percentageValue * 100).toFixed(2);
+      setPercentageIncrease(percentageIncrease);
+      form.setFieldsValue({
+        [`percentage-${case_commodity}-${id}`]: percentageIncrease,
+      });
+    }
+  };
+
   return (
     <>
       <Row
         gutter={[8, 8]}
         align="middle"
+        justify="space-between"
         display={
           question_type === "aggregator" && commodity_type === "focus"
             ? "none"
             : ""
         }
       >
-        <Col span={12}>
-          {!parent && question_type === "aggregator"
-            ? `Total Income from ${commodity_name}`
-            : text}
+        <Col span={9}>
+          {!parent && question_type === "aggregator" ? (
+            <h4>
+              Total Income from {commodity_name} <small>({currency})</small>
+            </h4>
+          ) : (
+            <h4>
+              {text} <small>({unitName})</small>
+            </h4>
+          )}
         </Col>
-        <Col span={6}>
-          <Form.Item
-            name={`${commodity_id}-${id}`}
-            className="scenario-field-item"
-          >
-            <InputNumber
+        <Col span={5}>
+          {["absolute", "percentage"].map((qtype) => (
+            <Form.Item
+              key={`${qtype}-${case_commodity}-${id}`}
+              name={`${qtype}-${case_commodity}-${id}`}
+              className="scenario-field-item"
               style={{
-                width: "100%",
+                display:
+                  qtype !== "percentage" && percentage
+                    ? "none"
+                    : qtype === "percentage" && !percentage
+                    ? "none"
+                    : "",
               }}
-            />
-          </Form.Item>
+            >
+              <InputNumber
+                style={{
+                  width: "100%",
+                }}
+                onChange={onChange}
+                addonAfter={qtype === "percentage" ? "%" : ""}
+              />
+            </Form.Item>
+          ))}
         </Col>
-        <Col span={6}>xx %</Col>
+        <Col span={5} align="right">
+          {answer?.value?.toFixed(1) || ""}
+        </Col>
+        <Col span={5} align="right">
+          {percentage ? absoluteIncrease : `${percentageIncrease}%`}
+        </Col>
       </Row>
       {!parent && commodity_type === "focus"
         ? childrens.map((child) => (
             <Question
-              key={`${commodity_id}-${child.id}`}
+              key={`scenario-${segment.id}-${case_commodity}-${child.id}`}
               commodity={commodity}
+              percentage={percentage}
+              segment={segment}
+              form={form}
               {...child}
             />
           ))
@@ -70,7 +144,7 @@ const Question = ({
   );
 };
 
-const ScenarioInput = ({ commodityQuestions }) => {
+const ScenarioInput = ({ segment, commodityQuestions, percentage }) => {
   const [form] = Form.useForm();
 
   const onValuesChange = (changedValues, allValues) => {
@@ -79,14 +153,30 @@ const ScenarioInput = ({ commodityQuestions }) => {
 
   return (
     <Form form={form} onValuesChange={onValuesChange} layout="vertical">
+      <Row gutter={[8, 8]} align="middle" justify="space-between">
+        <Col span={9}>
+          <h4>Commodity</h4>
+        </Col>
+        <Col span={5} align="center">
+          <h4>New Value</h4>
+        </Col>
+        <Col span={5} align="right">
+          <h4>Current</h4>
+        </Col>
+        <Col span={5} align="right">
+          <h4>Increase</h4>
+        </Col>
+      </Row>
       {commodityQuestions.map((c) => (
         <div key={c.commodity_id}>
           <Divider />
-          {c.questions.map((question, index) => (
+          {c.questions.map((question) => (
             <Question
-              key={`${c.commodity_id}-${c.id}`}
+              key={`scenario-${segment.id}-${c.case_commodity}-${question.id}`}
+              form={form}
+              segment={segment}
               commodity={c}
-              index={index}
+              percentage={percentage}
               {...question}
             />
           ))}
@@ -105,6 +195,7 @@ const Scenario = ({
   dashboardData,
   commodityQuestions,
   segmentTabs,
+  percentage,
 }) => {
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
@@ -231,6 +322,7 @@ const Scenario = ({
                 <ScenarioInput
                   segment={segment}
                   commodityQuestions={commodityQuestions}
+                  percentage={percentage}
                 />
               </Col>
             ))}

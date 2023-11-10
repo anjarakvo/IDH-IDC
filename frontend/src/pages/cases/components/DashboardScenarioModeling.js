@@ -10,6 +10,7 @@ const DashboardScenarioModeling = ({
   const [scenarioData, setScenarioData] = useState([
     { name: "Scenario 1", description: "" },
   ]);
+  const [percentage, setPercentage] = useState(true);
 
   const segmentTabs = useMemo(
     () =>
@@ -39,6 +40,14 @@ const DashboardScenarioModeling = ({
     setScenarioData(newScenarioData);
   };
 
+  const onChangePercentage = (value) => {
+    if (value === "percentage") {
+      setPercentage(true);
+    } else {
+      setPercentage(false);
+    }
+  };
+
   return (
     <Row id="scenario-modeling">
       <Col span={24}>
@@ -66,6 +75,7 @@ const DashboardScenarioModeling = ({
                     { label: "Percentage", value: "percentage" },
                     { label: "Absolute", value: "absolute" },
                   ]}
+                  onChange={onChangePercentage}
                 />
               </Col>
             </Row>
@@ -83,6 +93,7 @@ const DashboardScenarioModeling = ({
           dashboardData={dashboardData}
           commodityQuestions={commodityQuestions}
           segmentTabs={segmentTabs}
+          percentage={percentage}
         />
       ))}
       <Col span={24}>
