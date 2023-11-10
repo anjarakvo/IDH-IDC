@@ -52,6 +52,13 @@ const Question = ({
     );
   }, [segment, id, case_commodity]);
 
+  const currentIncrease = useMemo(() => {
+    if (percentage) {
+      return form.getFieldValue(`absolute-${case_commodity}-${id}`) || "-";
+    }
+    return form.getFieldValue(`percentage-${case_commodity}-${id}`) || "-";
+  }, [form, case_commodity, id, percentage]);
+
   return (
     <>
       <Row
@@ -102,7 +109,9 @@ const Question = ({
         <Col span={5} align="right">
           {answer?.value?.toFixed(2) || ""}
         </Col>
-        <Col span={5} align="right"></Col>
+        <Col span={5} align="right">
+          {percentage ? currentIncrease : `${currentIncrease} %`}
+        </Col>
       </Row>
       {!parent && commodity_type === "focus"
         ? childrens.map((child) => (
@@ -124,9 +133,27 @@ const ScenarioInput = ({
   segment,
   commodityQuestions,
   percentage,
-  setScenarioValue,
+  setScenarioValues,
+  scenarioValue,
 }) => {
   const [form] = Form.useForm();
+
+  const scenarioIncrease = useMemo(() => {
+    if (scenarioValue?.value) {
+      const { value: absoluteValue } = scenarioValue;
+      const { total_current_income: totalIncome } = segment;
+      return {
+        totalPercentage: ((absoluteValue / totalIncome) * 100).toFixed(2),
+        totalAbsolute: absoluteValue.toFixed(2),
+      };
+    }
+    return {
+      totalPercentage: 0,
+      totalAbsolute: 0,
+    };
+  }, [scenarioValue, segment]);
+
+  console.log(scenarioIncrease);
 
   const onValuesChange = (changedValues, allValues) => {
     const objectId = Object.keys(changedValues)[0];
@@ -202,7 +229,7 @@ const ScenarioInput = ({
       return acc;
     }, 0);
 
-    setScenarioValue((prev) => {
+    setScenarioValues((prev) => {
       return [
         ...prev.filter((p) => p.segmentId !== segment.id),
         {
@@ -229,6 +256,28 @@ const ScenarioInput = ({
         </Col>
         <Col span={5} align="right">
           <h4>Increase</h4>
+        </Col>
+      </Row>
+      <Row gutter={[8, 8]} align="middle" justify="space-between">
+        <Col span={9}>
+          <h4>Total Income</h4>
+        </Col>
+        <Col span={5} align="center">
+          <h4>
+            {percentage
+              ? `${scenarioIncrease.totalPercentage}%`
+              : scenarioIncrease?.totalAbsolute}
+          </h4>
+        </Col>
+        <Col span={5} align="right">
+          <h4>{segment.total_current_income}</h4>
+        </Col>
+        <Col span={5} align="right">
+          <h4>
+            {percentage
+              ? scenarioIncrease?.totalAbsolute
+              : `${scenarioIncrease.totalPercentage}%`}
+          </h4>
         </Col>
       </Row>
       {commodityQuestions.map((c) => (
@@ -265,7 +314,7 @@ const Scenario = ({
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
   const [newName, setNewName] = useState(scenarioItem.name);
   const [confirmationModal, setConfimationModal] = useState(false);
-  const [scenarioValue, setScenarioValue] = useState([]);
+  const [scenarioValues, setScenarioValues] = useState([]);
 
   const finishEditing = () => {
     renameScenario(index, newName);
@@ -283,11 +332,12 @@ const Scenario = ({
         segmentId: segment.id,
         name: segment.name,
       }));
-      setScenarioValue(scenarioInitialData);
+      setScenarioValues(scenarioInitialData);
     }
   }, [dashboardData]);
 
   const chartData = useMemo(() => {
+    console.log("scenarioValues", scenarioValues);
     const data = dashboardData.map((segment) => ({
       name: segment.name,
       title: segment.name,
@@ -305,17 +355,17 @@ const Scenario = ({
           title: "Scenario Income",
           order: 2,
           total:
-            scenarioValue.find((s) => s.segmentId === segment.id)?.value +
-              segment.total_current_income || 0,
+            scenarioValues.find((s) => s.segmentId === segment.id)?.value ||
+            0 - segment.total_current_income,
           value:
-            scenarioValue.find((s) => s.segmentId === segment.id)?.value +
-              segment.total_current_income || 0,
+            scenarioValues.find((s) => s.segmentId === segment.id)?.value ||
+            0 - segment.total_current_income,
           color: "#c9daf8",
         },
       ],
     }));
     return data;
-  }, [dashboardData, scenarioValue]);
+  }, [dashboardData, scenarioValues]);
 
   const ButtonEdit = () => (
     <Button
@@ -428,7 +478,10 @@ const Scenario = ({
                   segment={segment}
                   commodityQuestions={commodityQuestions}
                   percentage={percentage}
-                  setScenarioValue={setScenarioValue}
+                  setScenarioValues={setScenarioValues}
+                  scenarioValue={scenarioValues.find(
+                    (s) => s.segmentId === segment.id
+                  )}
                 />
               </Col>
             ))}
