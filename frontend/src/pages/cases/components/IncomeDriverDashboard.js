@@ -45,7 +45,13 @@ const IncomeDriverDashboard = ({
             {
               key: "scenario-modeling",
               label: "Scenario Modeling",
-              children: <DashboardScenarioModeling />,
+              children: (
+                <DashboardScenarioModeling
+                  currentCaseId={currentCaseId}
+                  commodityList={commodityList}
+                  dashboardData={dashboardData}
+                />
+              ),
             },
           ]}
         />
