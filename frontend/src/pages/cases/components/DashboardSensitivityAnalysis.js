@@ -75,6 +75,7 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
             size="small"
             className="binning-input"
             options={options["binning-driver-name"]}
+            allowClear
           />
         </Form.Item>
       </Col>
@@ -104,6 +105,7 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
             size="small"
             className="binning-input"
             options={options["x-axis-driver"]}
+            allowClear
           />
         </Form.Item>
       </Col>
@@ -129,6 +131,7 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
             size="small"
             className="binning-input"
             options={options["y-axis-driver"]}
+            allowClear
           />
         </Form.Item>
       </Col>
@@ -262,26 +265,30 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
       const dataValue = dataSource.find((d) => d.name === value);
       values = {
         ...values,
-        [`${segmentId}_x-axis-min-value`]: dataValue.current,
-        [`${segmentId}_x-axis-max-value`]: dataValue.feasible,
+        [`${segmentId}_x-axis-driver`]: dataValue?.name,
+        [`${segmentId}_x-axis-min-value`]: dataValue?.current,
+        [`${segmentId}_x-axis-max-value`]: dataValue?.feasible,
       };
     }
     if (valueName === "y-axis-driver") {
       const dataValue = dataSource.find((d) => d.name === value);
       values = {
         ...values,
-        [`${segmentId}_y-axis-min-value`]: dataValue.current,
-        [`${segmentId}_y-axis-max-value`]: dataValue.feasible,
+        [`${segmentId}_y-axis-driver`]: dataValue?.name,
+        [`${segmentId}_y-axis-min-value`]: dataValue?.current,
+        [`${segmentId}_y-axis-max-value`]: dataValue?.feasible,
       };
     }
     if (valueName === "binning-driver-name") {
       const dataValue = dataSource.find((d) => d.name === value);
       values = {
         ...values,
-        [`${segmentId}_binning-value-1`]: dataValue.current,
-        [`${segmentId}_binning-value-2`]:
-          (dataValue.current + dataValue.feasible) / 2,
-        [`${segmentId}_binning-value-3`]: dataValue.feasible,
+        [`${segmentId}_binning-driver-name`]: dataValue?.name,
+        [`${segmentId}_binning-value-1`]: dataValue?.current,
+        [`${segmentId}_binning-value-2`]: dataValue
+          ? (dataValue.current + dataValue.feasible) / 2
+          : dataValue,
+        [`${segmentId}_binning-value-3`]: dataValue?.feasible,
       };
     }
     setBinningData(values);
