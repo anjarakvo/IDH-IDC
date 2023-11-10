@@ -30,6 +30,14 @@ import uniqBy from "lodash/uniqBy";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
+const responsiveCol = {
+  xs: { span: 24 },
+  sm: { span: 24 },
+  md: { span: 24 },
+  lg: { span: 12 },
+  xl: { span: 12 },
+};
+
 const CaseForm = ({
   form,
   setCaseTitle,
@@ -119,7 +127,7 @@ const CaseForm = ({
         />
       </Form.Item>
       <Row gutter={[12, 12]}>
-        <Col span={12}>
+        <Col {...responsiveCol}>
           <Form.Item
             label="Select Commodity"
             name="focus_commodity"
@@ -137,7 +145,7 @@ const CaseForm = ({
             />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col {...responsiveCol}>
           <Form.Item
             label="Select Currency"
             name="currency"
@@ -257,7 +265,7 @@ const CaseProfile = ({
       (co) => co.country === selectedCountry
     );
     // set default currency value
-    form.setFieldsValue({ currency: countryCurrency.value });
+    form.setFieldsValue({ currency: countryCurrency?.value });
     // TODO: Wrong format when store to db
     let additonalCurrencies = currencyOptions.filter((co) =>
       ["eur", "usd"].includes(co.value.toLowerCase())
