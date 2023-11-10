@@ -31,6 +31,7 @@ import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
 const CaseForm = ({
+  form,
   setCaseTitle,
   selectedCountry,
   setSelectedCountry,
@@ -156,7 +157,7 @@ const CaseForm = ({
           </Form.Item>
         </Col>
       </Row>
-      <AreaUnitFields disabled={false} />
+      <AreaUnitFields form={form} disabled={false} />
       <Form.Item
         label="Reporting Period"
         name="reporting_period"
@@ -177,7 +178,12 @@ const CaseForm = ({
   );
 };
 
-const SecondaryForm = ({ index, indexLabel, disabled }) => {
+const SecondaryForm = ({
+  index,
+  indexLabel,
+  disabled,
+  disableAreaSizeUnitField,
+}) => {
   return (
     <>
       <Form.Item
@@ -209,7 +215,10 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
       >
         <Radio.Group disabled={disabled} options={yesNoOptions} />
       </Form.Item>
-      <AreaUnitFields disabled={disabled} index={index} />
+      <AreaUnitFields
+        disabled={disabled || disableAreaSizeUnitField}
+        index={index}
+      />
     </>
   );
 };
@@ -235,6 +244,10 @@ const CaseProfile = ({
   const [messageApi, contextHolder] = message.useMessage();
   const { caseId } = useParams();
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [disableAreaSizeSecondaryField, setDisableAreaSizeSecondaryField] =
+    useState(true);
+  const [disableAreaSizeTertiaryField, setDisableAreaSizeTertiaryField] =
+    useState(true);
 
   const filteredCurrencyOptions = useMemo(() => {
     if (!selectedCountry) {
@@ -404,12 +417,32 @@ const CaseProfile = ({
     setFinished(finished.filter((item) => item !== "Case Profile"));
   };
 
+  const onValuesChange = (changedValues, allValues) => {
+    // secondary breakdown handle
+    if (changedValues?.["1-breakdown"] === 0) {
+      form.setFieldsValue({
+        ["1-area_size_unit"]: null,
+        ["1-volume_measurement_unit"]: null,
+      });
+    }
+    // tertiary breakdown handle
+    if (changedValues?.["2-breakdown"] === 0) {
+      form.setFieldsValue({
+        ["2-area_size_unit"]: null,
+        ["2-volume_measurement_unit"]: null,
+      });
+    }
+    setDisableAreaSizeSecondaryField(allValues?.["1-breakdown"] ? false : true);
+    setDisableAreaSizeTertiaryField(allValues?.["2-breakdown"] ? false : true);
+  };
+
   return (
     <Form
       form={form}
       name="basic"
       layout="vertical"
       initialValues={formData}
+      onValuesChange={onValuesChange}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
@@ -439,6 +472,7 @@ const CaseProfile = ({
               index={1}
               indexLabel="Secondary"
               disabled={!secondary}
+              disableAreaSizeUnitField={disableAreaSizeSecondaryField}
             />
           </Card>
           <Card
@@ -458,6 +492,7 @@ const CaseProfile = ({
               index={2}
               indexLabel="Teritary"
               disabled={!tertiary}
+              disableAreaSizeUnitField={disableAreaSizeTertiaryField}
             />
           </Card>
           <Row>
