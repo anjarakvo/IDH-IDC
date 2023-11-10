@@ -63,19 +63,25 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData }) => {
         const title = `${capitalize(x)}\n${currentSegmentData.name}`;
         // recalculate total value
         const incomeQuestion = currentSegmentData.answers.find(
-          (a) => a.name === x && !a.question.parent
-        ).question;
-        const allAnswers = currentSegmentData.answers
-          .filter((a) => a.name === x)
-          .map((a) => ({
-            id: `${a.name}-${a.commodityId}-${a.questionId}`,
-            value: a.value,
-          }));
-        const newTotalValue = getFunctionDefaultValue(
-          incomeQuestion,
-          `${x}-${cm.commodityId}`,
-          allAnswers
+          (a) =>
+            a.name === x &&
+            a.commodityId === cm.commodityId &&
+            !a.question.parent &&
+            a.question.question_type !== "diversified"
         );
+        // const allAnswers = currentSegmentData.answers
+        //   .filter((a) => a.name === x)
+        //   .map((a) => ({
+        //     id: `${a.name}-${a.commodityId}-${a.questionId}`,
+        //     value: a.value,
+        //   }));
+        // const newTotalValue = getFunctionDefaultValue(
+        //   incomeQuestion,
+        //   `${x}-${cm.commodityId}`,
+        //   allAnswers
+        // );
+        const newTotalValue =
+          incomeQuestion && incomeQuestion?.value ? incomeQuestion.value : 0;
         // add newTotalValue to temp variable for diversified value calculation
         if (x === "current" && !cm.commodityFocus) {
           currentCommodityValuesExceptFocus.push(newTotalValue);
