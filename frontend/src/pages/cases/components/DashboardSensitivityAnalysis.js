@@ -36,24 +36,6 @@ const columns = [
   },
 ];
 
-const staticViz = {
-  case: 11,
-  segment: 9,
-  tab: "sensitivity_analysis",
-  config: {
-    "9_binning-driver-name": "Area",
-    "9_binning-value-1": 1.1,
-    "9_binning-value-2": 1.3,
-    "9_binning-value-3": 1.5,
-    "9_x-axis-driver": "Volume",
-    "9_x-axis-min-value": 200,
-    "9_x-axis-max-value": 230,
-    "9_y-axis-driver": "Price",
-    "9_y-axis-min-value": 18,
-    "9_y-axis-max-value": 21,
-  },
-};
-
 const generateDriverOptions = (drivers, selected, excludes) => {
   const options = selected.filter((s) => excludes.includes(s.name));
   return drivers.map((d) => ({
@@ -176,7 +158,7 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
 
 const DashboardSensitivityAnalysis = ({
   dashboardData = [],
-  visualizationData = [staticViz],
+  visualizationData = [],
 }) => {
   const [loading, setLoading] = useState(false);
   const [currentSegment, setCurrentSegment] = useState(null);
@@ -186,17 +168,26 @@ const DashboardSensitivityAnalysis = ({
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    if (currentSegment && !isEmpty(visualizationData) && isEmpty(binningData)) {
+    if (!isEmpty(visualizationData) && isEmpty(binningData)) {
       setLoading(true);
-      const current = visualizationData.find(
-        (v) => v.segment === currentSegment && v.tab === "sensitivity_analysis"
-      );
-      setBinningData(!isEmpty(current?.config) ? current.config : {});
+      const currentConfig = visualizationData
+        .filter((v) => v.tab === "sensitivity_analysis")
+        .reduce(
+          (res, curr) => ({
+            ...res,
+            ...curr.config,
+          }),
+          {}
+        );
+      setBinningData((prev) => ({
+        ...prev,
+        ...currentConfig,
+      }));
       setTimeout(() => {
         setLoading(false);
       }, 100);
     }
-  }, [currentSegment, visualizationData, binningData]);
+  }, [visualizationData, binningData]);
 
   const dataSource = useMemo(() => {
     if (!currentSegment) {
@@ -298,6 +289,10 @@ const DashboardSensitivityAnalysis = ({
     return groupBinning;
   }, [binningData]);
 
+  const handleOnChangeSegmentDropdown = (value) => {
+    setCurrentSegment(value);
+  };
+
   const onValuesChange = (c, values) => {
     const objectName = Object.keys(c)[0];
     const [segmentId, valueName] = objectName.split("_");
@@ -376,6 +371,7 @@ const DashboardSensitivityAnalysis = ({
 
   return (
     <Row id="sensitivity-analysis">
+      {contextHolder}
       <Col span={24}>
         <Alert
           message="On this page you can explore how different combinations of drivers lead to different income levels. Whether it's optimizing land use, pricing strategies, or diversifying income sources, this page empowers you to explore various scenarios and find the best path towards improving farmer household income."
@@ -408,7 +404,7 @@ const DashboardSensitivityAnalysis = ({
                 <Select
                   size="small"
                   style={{ width: "100%", marginLeft: "10px" }}
-                  onChange={setCurrentSegment}
+                  onChange={handleOnChangeSegmentDropdown}
                   options={dashboardData.map((segment) => ({
                     value: segment.id,
                     label: segment.name,

@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Row, Col, Tabs } from "antd";
 import {
   DashboardIncomeOverview,
   DashboardSensitivityAnalysis,
   DashboardScenarioModeling,
 } from "./";
+import { api } from "../../../lib";
 
 const IncomeDriverDashboard = ({
   commodityList,
@@ -12,6 +13,15 @@ const IncomeDriverDashboard = ({
   dashboardData,
 }) => {
   const [activeKey, setActiveKey] = useState("income-overview");
+  const [visualizationData, setVisualizationData] = useState([]);
+
+  useEffect(() => {
+    if (currentCaseId) {
+      api.get(`visualization/case/${currentCaseId}`).then((res) => {
+        setVisualizationData(res.data);
+      });
+    }
+  }, [currentCaseId]);
 
   return (
     <Row gutter={[16, 16]}>
@@ -39,6 +49,7 @@ const IncomeDriverDashboard = ({
                   currentCaseId={currentCaseId}
                   commodityList={commodityList}
                   dashboardData={dashboardData}
+                  visualizationData={visualizationData}
                 />
               ),
             },
