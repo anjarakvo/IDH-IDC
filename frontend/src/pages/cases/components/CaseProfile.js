@@ -277,6 +277,15 @@ const CaseProfile = ({
   useEffect(() => {
     // initial case profile value
     if (!isEmpty(formData)) {
+      commodityList.forEach((cm) => {
+        // handle enable disable area size field for other commodities
+        if (cm.commodity_type === "secondary") {
+          setDisableAreaSizeSecondaryField(!cm.breakdown);
+        }
+        if (cm.commodity_type === "tertiary") {
+          setDisableAreaSizeTertiaryField(!cm.breakdown);
+        }
+      });
       const completed = finished.filter((item) => item !== "Case Profile");
       if (initialOtherCommodityTypes?.includes("secondary")) {
         setSecondary(true);
