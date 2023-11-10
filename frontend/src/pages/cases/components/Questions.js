@@ -151,10 +151,8 @@ const Questions = ({
           </Space>
         </Col>
         <Col span={2}>
-          {childrens.length > 0 &&
-          !hidden &&
-          checkFocus &&
-          !checkBreakdownValue ? (
+          {(childrens.length > 0 && !hidden && checkFocus) ||
+          (!hidden && checkBreakdownValue) ? (
             <Switch size="small" onChange={() => setDisabled(!disabled)} />
           ) : null}
         </Col>
@@ -165,7 +163,7 @@ const Questions = ({
           >
             <InputNumber
               style={{ width: "100%" }}
-              disabled={checkFocus ? disabled : hidden}
+              disabled={checkFocus ? disabled : checkBreakdownValue}
             />
           </Form.Item>
         </Col>
@@ -176,7 +174,7 @@ const Questions = ({
           >
             <InputNumber
               style={{ width: "100%" }}
-              disabled={checkFocus ? disabled : hidden}
+              disabled={checkFocus ? disabled : checkBreakdownValue}
             />
           </Form.Item>
         </Col>
