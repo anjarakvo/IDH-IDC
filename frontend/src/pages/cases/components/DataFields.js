@@ -8,6 +8,7 @@ import {
   Popover,
   Input,
   InputNumber,
+  Affix,
 } from "antd";
 import {
   DeleteTwoTone,
@@ -251,7 +252,7 @@ const DataFields = ({
 
   return (
     <Row gutter={[16, 16]}>
-      <Col span={16}>
+      <Col span={14}>
         <Card
           title={
             <h3>
@@ -381,7 +382,7 @@ const DataFields = ({
       </Col>
       <Chart
         title="Calculated Household Income"
-        span={8}
+        span={10}
         type="BARSTACK"
         data={chartData}
         affix={true}
