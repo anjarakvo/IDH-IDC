@@ -8,7 +8,6 @@ import {
   Popover,
   Input,
   InputNumber,
-  Affix,
 } from "antd";
 import {
   DeleteTwoTone,
@@ -313,7 +312,7 @@ const DataFields = ({
               }}
               align="middle"
             >
-              <Col span={14}>
+              <Col span={13}>
                 <h2>Total Income</h2>
               </Col>
               <Col span={4}>
@@ -330,7 +329,7 @@ const DataFields = ({
                   style={{ width: "100%" }}
                 />
               </Col>
-              <Col span={2}>
+              <Col span={3}>
                 <Space className="percentage-wrapper">
                   {totalIncome.percent === 0 ? null : totalIncome.percent >
                     0 ? (
