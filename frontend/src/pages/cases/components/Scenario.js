@@ -54,10 +54,13 @@ const Question = ({
   }, [segment, id, case_commodity]);
 
   const currentIncrease = useMemo(() => {
+    let value = 0;
     if (percentage) {
-      return form.getFieldValue(`absolute-${case_commodity}-${id}`) || "-";
+      value = form.getFieldValue(`absolute-${case_commodity}-${id}`) || "-";
+    } else {
+      value = form.getFieldValue(`percentage-${case_commodity}-${id}`) || "-";
     }
-    return form.getFieldValue(`percentage-${case_commodity}-${id}`) || "-";
+    return !isNaN(value) ? value : 0;
   }, [form, case_commodity, id, percentage]);
 
   return (
@@ -168,7 +171,7 @@ const ScenarioInput = ({
 
     const parentQuestion = segment.answers.find(
       (s) =>
-        s.questionId === segmentAnswer.question.parent &&
+        s.questionId === segmentAnswer?.question?.parent &&
         s.caseCommodityId === parseInt(case_commodity) &&
         s.name === "current"
     );
@@ -233,7 +236,7 @@ const ScenarioInput = ({
     const newScenarioValue = {
       segmentId: segment.id,
       name: segment.name,
-      value: totalValues,
+      value: !isNaN(totalValues) ? totalValues : 0,
     };
     setScenarioValues((prev) => {
       return [
@@ -266,7 +269,7 @@ const ScenarioInput = ({
       form={form}
       layout="vertical"
       onValuesChange={onValuesChange}
-      initialValues={scenarioValue?.allNewValues || {}}
+      // initialValues={scenarioValue?.allNewValues || {}}
     >
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>
@@ -382,34 +385,69 @@ const Scenario = ({
   }, [dashboardData]);
 
   const chartData = useMemo(() => {
-    const data = dashboardData.map((segment) => ({
-      name: segment.name,
-      title: segment.name,
-      stack: [
+    const data = dashboardData.map((segment) => {
+      const scenarioIncome =
+        scenarioValues.find((s) => s.segmentId === segment.id)?.value || 0;
+      const increaseIncome = scenarioIncome
+        ? scenarioIncome - segment.total_current_income
+        : scenarioIncome;
+      const gapValue = scenarioIncome
+        ? scenarioIncome >= segment.target
+          ? 0
+          : segment.target - scenarioIncome
+        : segment.target - segment.total_current_income;
+      return {
+        name: segment.name,
+        title: segment.name,
+        stack: [
+          {
+            name: "Current Income",
+            title: "Current Income",
+            order: 1,
+            total: segment.total_current_income,
+            value: segment.total_current_income,
+            color: "#00625F",
+          },
+          {
+            name: "Income Increase",
+            title: "Income Increase",
+            order: 2,
+            total: increaseIncome,
+            value: increaseIncome,
+            color: "#47D985",
+          },
+          {
+            name: "GAP",
+            title: "GAP",
+            order: 3,
+            total: gapValue,
+            value: gapValue,
+            color: "#F1C5B2",
+          },
+        ],
+      };
+    });
+    return data;
+  }, [dashboardData, scenarioValues]);
+
+  const targetChartData = useMemo(() => {
+    return dashboardData.map((d) => ({
+      name: "Benchmark",
+      type: "line",
+      symbol: "diamond",
+      symbolSize: 15,
+      color: "#FF5D00",
+      lineStyle: {
+        width: 0,
+      },
+      data: [
         {
-          name: "Current Income",
-          title: "Current Income",
-          order: 1,
-          total: segment.total_current_income,
-          value: segment.total_current_income,
-          color: "#3b78d8",
-        },
-        {
-          name: "Scenario Income",
-          title: "Scenario Income",
-          order: 2,
-          total:
-            scenarioValues.find((s) => s.segmentId === segment.id)?.value ||
-            0 - segment.total_current_income,
-          value:
-            scenarioValues.find((s) => s.segmentId === segment.id)?.value ||
-            0 - segment.total_current_income,
-          color: "#c9daf8",
+          name: "Benchmark",
+          value: d.target,
         },
       ],
     }));
-    return data;
-  }, [dashboardData, scenarioValues]);
+  }, [dashboardData]);
 
   const ButtonEdit = () => (
     <Button
@@ -532,7 +570,10 @@ const Scenario = ({
               </Col>
             ))}
             <Col span={12}>
-              <ChartScenarioModeling data={chartData || []} />
+              <ChartScenarioModeling
+                data={chartData || []}
+                targetChartData={targetChartData}
+              />
             </Col>
           </Row>
         </Card.Grid>

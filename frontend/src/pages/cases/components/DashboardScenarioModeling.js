@@ -81,6 +81,7 @@ const DashboardScenarioModeling = ({
                     { label: "Absolute", value: "absolute" },
                   ]}
                   onChange={onChangePercentage}
+                  value={percentage ? "percentage" : "absolute"}
                 />
               </Col>
             </Row>
