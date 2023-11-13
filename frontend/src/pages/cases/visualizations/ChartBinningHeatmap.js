@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import Chart from "../../../components/chart";
 import { range } from "lodash";
 import { getFunctionDefaultValue } from "../components";
+import { Space } from "antd";
 
 const getOptions = ({
   xAxis = { name: "", min: 0, max: 0 },
@@ -182,6 +183,21 @@ const getOptions = ({
   return options;
 };
 
+const legends = [
+  {
+    color: "#F50902",
+    text: "Income target not reached",
+  },
+  {
+    color: "#808080",
+    text: "Income target reached outside feasible values",
+  },
+  {
+    color: "#218400",
+    text: "Income target reached within feasible values",
+  },
+];
+
 const ChartBinningHeatmap = ({ segment, data, origin }) => {
   const [label, setLabel] = useState(null);
 
@@ -246,7 +262,25 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
 
   return (
     <div>
-      {binningData.binCharts?.length ? <div>{label}</div> : ""}
+      {binningData.binCharts?.length ? (
+        <Space direction="vertical">
+          <div>{label}</div>
+          <div style={{ float: "right" }}>
+            <Space direction="vertical">
+              {legends.map((l, li) => (
+                <Space key={li}>
+                  <div
+                    style={{ backgroundColor: l.color, width: 16, height: 16 }}
+                  />
+                  <div>{l.text}</div>
+                </Space>
+              ))}
+            </Space>
+          </div>
+        </Space>
+      ) : (
+        ""
+      )}
       {binningData.binCharts.map((b, key) => (
         <div key={key}>
           <h3>
