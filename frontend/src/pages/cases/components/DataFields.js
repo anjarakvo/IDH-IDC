@@ -145,7 +145,7 @@ const DataFields = ({
       stack: [
         {
           name: "Current",
-          title: "Current",
+          title: "Current Income",
           value: totalIncome.current,
           total: totalIncome.current,
           order: 2,
@@ -153,7 +153,7 @@ const DataFields = ({
         },
         {
           name: "Feasible",
-          title: "Additional income if feasible values are reached",
+          title: "Feasible additional income",
           value: totalIncome.feasible - totalIncome.current,
           total: totalIncome.feasible,
           order: 1,
