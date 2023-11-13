@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Chart from "../../../components/chart";
 import { range } from "lodash";
 import { getFunctionDefaultValue } from "../components";
@@ -183,6 +183,8 @@ const getOptions = ({
 };
 
 const ChartBinningHeatmap = ({ segment, data, origin }) => {
+  const [label, setLabel] = useState(null);
+
   const binningData = useMemo(() => {
     if (!segment?.id) {
       return {};
@@ -202,6 +204,13 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
     const binName =
       bins.find((b) => b.name === "binning-driver-name")?.value || false;
 
+    const xAxisName = bins.find((b) => b.name === "x-axis-driver")?.value || "";
+    const yAxisName = bins.find((b) => b.name === "y-axis-driver")?.value || "";
+    // label
+    const label = `The following tables represent income levels for levels of ${xAxisName}
+      and ${yAxisName}, for a each ${binName ? binName : ""} bin.`;
+    setLabel(label);
+
     return {
       binCharts: binName
         ? binCharts.map((b) => ({
@@ -210,12 +219,12 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
           }))
         : [],
       xAxis: {
-        name: bins.find((b) => b.name === "x-axis-driver")?.value || "",
+        name: xAxisName,
         min: bins.find((b) => b.name === "x-axis-min-value")?.value || 0,
         max: bins.find((b) => b.name === "x-axis-max-value")?.value || 0,
       },
       yAxis: {
-        name: bins.find((b) => b.name === "y-axis-driver")?.value || "",
+        name: yAxisName,
         min: bins.find((b) => b.name === "y-axis-min-value")?.value || 0,
         max: bins.find((b) => b.name === "y-axis-max-value")?.value || 0,
       },
@@ -237,14 +246,7 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
 
   return (
     <div>
-      {binningData.binCharts?.length ? (
-        <div>
-          The following tables represent income levels for levels of land area
-          and volume, for a each price bin.
-        </div>
-      ) : (
-        ""
-      )}
+      {binningData.binCharts?.length ? <div>{label}</div> : ""}
       {binningData.binCharts.map((b, key) => (
         <div key={key}>
           <h3>
