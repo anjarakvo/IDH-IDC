@@ -14,21 +14,21 @@ visualization_route = APIRouter()
 
 @visualization_route.post(
     "/visualization",
-    response_model=VisualizationDict,
+    response_model=List[VisualizationDict],
     summary="create or update visualization",
     name="visualization:create_or_update",
     tags=["Visualization"],
 )
 def create_visualization(
     req: Request,
-    payload: VisualizationBase,
+    payload: List[VisualizationBase],
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
     data = crud_visualization.create_or_update_visualization(
-        session=session, payload=payload
+        session=session, payloads=payload
     )
-    return data.serialize
+    return [d.serialize for d in data]
 
 
 @visualization_route.get(

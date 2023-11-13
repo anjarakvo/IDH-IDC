@@ -17,14 +17,16 @@ class TestVisualizationRoute:
     async def test_create_visualization(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        payload = {
-            "case": 1,
-            "tab": VisualizationTab.sensitivity_analysis.value,
-            "config": {
-                "key": "value 1",
-                "another_key": "value 2",
-            },
-        }
+        payload = [
+            {
+                "case": 1,
+                "tab": VisualizationTab.sensitivity_analysis.value,
+                "config": {
+                    "key": "value 1",
+                    "another_key": "value 2",
+                },
+            }
+        ]
         # with admin user cred
         res = await client.post(
             app.url_path_for("visualization:create_or_update"),
@@ -33,24 +35,28 @@ class TestVisualizationRoute:
         )
         assert res.status_code == 200
         res = res.json()
-        assert res == {
-            "id": 1,
-            "case": 1,
-            "tab": VisualizationTab.sensitivity_analysis.value,
-            "config": {"key": "value 1", "another_key": "value 2"},
-        }
+        assert res == [
+            {
+                "id": 1,
+                "case": 1,
+                "tab": VisualizationTab.sensitivity_analysis.value,
+                "config": {"key": "value 1", "another_key": "value 2"},
+            }
+        ]
 
     @pytest.mark.asyncio
     async def test_create_second_visualization(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        payload = {
-            "case": 1,
-            "tab": VisualizationTab.scenario_modeling.value,
-            "config": {
-                "key": "value",
-            },
-        }
+        payload = [
+            {
+                "case": 1,
+                "tab": VisualizationTab.scenario_modeling.value,
+                "config": {
+                    "key": "value",
+                },
+            }
+        ]
         # with admin user cred
         res = await client.post(
             app.url_path_for("visualization:create_or_update"),
@@ -59,26 +65,30 @@ class TestVisualizationRoute:
         )
         assert res.status_code == 200
         res = res.json()
-        assert res == {
-            "id": 2,
-            "case": 1,
-            "tab": VisualizationTab.scenario_modeling.value,
-            "config": {"key": "value"},
-        }
+        assert res == [
+            {
+                "id": 2,
+                "case": 1,
+                "tab": VisualizationTab.scenario_modeling.value,
+                "config": {"key": "value"},
+            }
+        ]
 
     @pytest.mark.asyncio
     async def test_update_visualization(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        payload = {
-            "case": 1,
-            "tab": VisualizationTab.sensitivity_analysis.value,
-            "config": {
-                "key": "value 1",
-                "second_key": "value 2",
-                "another_key": "another value",
-            },
-        }
+        payload = [
+            {
+                "case": 1,
+                "tab": VisualizationTab.sensitivity_analysis.value,
+                "config": {
+                    "key": "value 1",
+                    "second_key": "value 2",
+                    "another_key": "another value",
+                },
+            }
+        ]
         # with admin user cred
         res = await client.post(
             app.url_path_for("visualization:create_or_update"),
@@ -87,16 +97,18 @@ class TestVisualizationRoute:
         )
         assert res.status_code == 200
         res = res.json()
-        assert res == {
-            "id": 1,
-            "case": 1,
-            "tab": VisualizationTab.sensitivity_analysis.value,
-            "config": {
-                "key": "value 1",
-                "second_key": "value 2",
-                "another_key": "another value",
-            },
-        }
+        assert res == [
+            {
+                "id": 1,
+                "case": 1,
+                "tab": VisualizationTab.sensitivity_analysis.value,
+                "config": {
+                    "key": "value 1",
+                    "second_key": "value 2",
+                    "another_key": "another value",
+                },
+            }
+        ]
 
     @pytest.mark.asyncio
     async def test_get_visualization_by_case_id(
