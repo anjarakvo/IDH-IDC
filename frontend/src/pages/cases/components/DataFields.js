@@ -181,7 +181,7 @@ const DataFields = ({
         data: chartData.map((x) => ({
           name: "Income Target",
           symbol: x.name === "Total\nIncome" ? "diamond" : "none",
-          value: segmentValues.target.toFixed(2),
+          value: segmentValues?.target ? segmentValues.target.toFixed(2) : 0,
         })),
       },
     ];
