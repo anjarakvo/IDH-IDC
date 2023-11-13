@@ -308,7 +308,7 @@ const Case = () => {
       ) : (
         <Row gutter={[16, 16]} className="case-content">
           <SideMenu active={page} setActive={setActive} finished={finished} />
-          <Col span={20}>
+          <Col span={24}>
             {page === "Case Profile" && (
               <CaseProfile
                 setCaseTitle={setCaseTitle}

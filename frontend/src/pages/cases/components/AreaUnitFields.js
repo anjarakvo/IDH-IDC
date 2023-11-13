@@ -15,7 +15,7 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
     <Row gutter={[12, 12]}>
       <Col {...responsiveCol}>
         <Form.Item
-          label="Select Area Unit"
+          label="Area Unit"
           name={index ? `${index}-area_size_unit` : "area_size_unit"}
           rules={[
             {
@@ -55,7 +55,7 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
       </Col>
       <Col {...responsiveCol}>
         <Form.Item
-          label="Select Weight Measurement Unit"
+          label="Weight Measurement Unit"
           name={
             index
               ? `${index}-volume_measurement_unit`

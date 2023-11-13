@@ -111,7 +111,7 @@ const CaseForm = ({
 
       <Form.Item
         name="country"
-        label="Select Country"
+        label="Country"
         rules={[
           {
             required: true,
@@ -129,7 +129,7 @@ const CaseForm = ({
       <Row gutter={[12, 12]}>
         <Col {...responsiveCol}>
           <Form.Item
-            label="Select Commodity"
+            label="Commodity"
             name="focus_commodity"
             rules={[
               {
@@ -147,7 +147,7 @@ const CaseForm = ({
         </Col>
         <Col {...responsiveCol}>
           <Form.Item
-            label="Select Currency"
+            label="Currency"
             name="currency"
             rules={[
               {
@@ -196,7 +196,7 @@ const SecondaryForm = ({
     <>
       <Form.Item
         name={`${index}-commodity`}
-        label={`Select ${indexLabel} Commodity`}
+        label={`${indexLabel} Commodity`}
         rules={[
           {
             required: !disabled,

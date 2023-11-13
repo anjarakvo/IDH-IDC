@@ -152,7 +152,7 @@ const IncomeDriverForm = ({
           className="total-diversified-income"
           style={{ marginLeft: "-4px", marginRight: "-4px" }}
         >
-          <Col span={14}>
+          <Col span={13}>
             <h3 className="diversified-income-title">Diversified Income</h3>
           </Col>
           <Col span={4}>
@@ -169,7 +169,7 @@ const IncomeDriverForm = ({
               disabled
             />
           </Col>
-          <Col span={2}>
+          <Col span={3}>
             <Space className="percentage-wrapper">
               {totalDiversifiedIncome.percent ===
               0 ? null : totalDiversifiedIncome.percent > 0 ? (

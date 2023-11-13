@@ -113,7 +113,7 @@ const Questions = ({
         align="middle"
       >
         <Col
-          span={12}
+          span={11}
           style={{
             paddingLeft: indent
               ? childrens.length > 0 && question_type !== "aggregator"
@@ -178,7 +178,7 @@ const Questions = ({
             />
           </Form.Item>
         </Col>
-        <Col span={2}>
+        <Col span={3}>
           <Space className="percentage-wrapper">
             {percentage === 0 ? null : percentage > 0 ? (
               <CaretUpFilled className="ceret-up" />
