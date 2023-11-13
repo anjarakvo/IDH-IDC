@@ -135,6 +135,8 @@ const ScenarioInput = ({
   percentage,
   setScenarioValues,
   scenarioValue,
+  scenarioItem,
+  setScenarioData,
 }) => {
   const [form] = Form.useForm();
 
@@ -227,13 +229,31 @@ const ScenarioInput = ({
       return acc;
     }, 0);
 
+    const newScenarioValue = {
+      segmentId: segment.id,
+      name: segment.name,
+      value: totalValues,
+    };
     setScenarioValues((prev) => {
       return [
         ...prev.filter((p) => p.segmentId !== segment.id),
+        newScenarioValue,
+      ];
+    });
+    // add scenarioValues into scenarioData
+    setScenarioData((prev) => {
+      const updated = prev.find((p) => p.key === scenarioItem.key);
+      return [
+        ...prev.filter((p) => p.key !== scenarioItem.key),
         {
-          segmentId: segment.id,
-          name: segment.name,
-          value: totalValues,
+          ...updated,
+          scenarioValues: [
+            ...updated.scenarioValues.filter((p) => p.segmentId !== segment.id),
+            {
+              ...newScenarioValue,
+              allNewValues: allNewValues,
+            },
+          ],
         },
       ];
     });
@@ -307,6 +327,7 @@ const Scenario = ({
   commodityQuestions,
   segmentTabs,
   percentage,
+  setScenarioData,
 }) => {
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
@@ -331,7 +352,19 @@ const Scenario = ({
         name: segment.name,
       }));
       setScenarioValues(scenarioInitialData);
+      // add scenarioValues into scenarioData
+      setScenarioData((prev) => {
+        const updated = prev.find((p) => p.key === scenarioItem.key);
+        return [
+          ...prev.filter((p) => p.key !== scenarioItem.key),
+          {
+            ...updated,
+            scenarioValues: scenarioInitialData,
+          },
+        ];
+      });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardData]);
 
   const chartData = useMemo(() => {
@@ -479,6 +512,8 @@ const Scenario = ({
                   scenarioValue={scenarioValues.find(
                     (s) => s.segmentId === segment.id
                   )}
+                  scenarioItem={scenarioItem}
+                  setScenarioData={setScenarioData}
                 />
               </Col>
             ))}

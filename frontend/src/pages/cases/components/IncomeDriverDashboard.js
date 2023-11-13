@@ -17,10 +17,19 @@ const IncomeDriverDashboard = ({
   setPage,
 }) => {
   const [activeKey, setActiveKey] = useState("income-overview");
-  const [binningData, setBinningData] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  // sensitivity analysis data
+  const [binningData, setBinningData] = useState({});
+
+  // scenario modeling data
+  const [percentage, setPercentage] = useState(true);
+  const [scenarioData, setScenarioData] = useState([
+    { key: 1, name: "Scenario 1", description: "", scenarioValues: [] },
+  ]);
+  console.log("scenarioData", scenarioData);
 
   useEffect(() => {
     if (currentCaseId) {
@@ -133,6 +142,10 @@ const IncomeDriverDashboard = ({
                   commodityList={commodityList}
                   dashboardData={dashboardData}
                   questionGroups={questionGroups}
+                  percentage={percentage}
+                  setPercentage={setPercentage}
+                  scenarioData={scenarioData}
+                  setScenarioData={setScenarioData}
                 />
               ),
             },
