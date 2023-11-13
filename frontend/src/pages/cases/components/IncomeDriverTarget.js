@@ -12,7 +12,7 @@ const IncomeDriverTarget = ({
   formValues,
   setFormValues,
   segmentItem,
-  totalIncome,
+  // totalIncome,
 }) => {
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
@@ -229,10 +229,7 @@ const IncomeDriverTarget = ({
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item
-            label="Avg # of adults in HH"
-            name="household_adult"
-          >
+          <Form.Item label="Avg # of adults in HH" name="household_adult">
             <InputNumber
               style={formStyle}
               onChange={handleOnChangeHouseholdAdult}
@@ -240,10 +237,7 @@ const IncomeDriverTarget = ({
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item
-            label="Avg # of children in HH"
-            name="household_children"
-          >
+          <Form.Item label="Avg # of children in HH" name="household_children">
             <InputNumber
               style={formStyle}
               onChange={handleOnChangeHouseholdChild}
