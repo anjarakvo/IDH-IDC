@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, Space, Form, InputNumber } from "antd";
 import { Questions, indentSize, getFunctionDefaultValue } from "./";
 import { flatten } from "../../../lib";
@@ -37,7 +37,9 @@ const IncomeDriverForm = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentCaseId]);
 
-  const flattenQuestionList = flatten(group.questions);
+  const flattenQuestionList = useMemo(() => {
+    return flatten(group.questions);
+  }, [group]);
 
   const onValuesChange = (value, currentValues) => {
     // handle form values

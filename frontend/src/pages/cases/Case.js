@@ -341,6 +341,7 @@ const Case = () => {
             )}
             {page === "Income Driver Dashboard" && (
               <IncomeDriverDashboard
+                questionGroups={questionGroups}
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
                 dashboardData={dashboardData}

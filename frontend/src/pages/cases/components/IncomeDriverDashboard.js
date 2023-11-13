@@ -10,6 +10,7 @@ const IncomeDriverDashboard = ({
   commodityList,
   currentCaseId,
   dashboardData,
+  questionGroups,
 }) => {
   const [activeKey, setActiveKey] = useState("income-overview");
 
@@ -45,7 +46,14 @@ const IncomeDriverDashboard = ({
             {
               key: "scenario-modeling",
               label: "Scenario Modeling",
-              children: <DashboardScenarioModeling />,
+              children: (
+                <DashboardScenarioModeling
+                  currentCaseId={currentCaseId}
+                  commodityList={commodityList}
+                  dashboardData={dashboardData}
+                  questionGroups={questionGroups}
+                />
+              ),
             },
           ]}
         />
