@@ -346,6 +346,7 @@ const Case = () => {
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
                 dashboardData={dashboardData}
+                setPage={setPage}
               />
             )}
           </Col>

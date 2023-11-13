@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Tabs } from "antd";
+import { Row, Col, Tabs, Button, Space } from "antd";
 import {
   DashboardIncomeOverview,
   DashboardSensitivityAnalysis,
   DashboardScenarioModeling,
 } from "./";
 import { api } from "../../../lib";
+import { StepBackwardOutlined } from "@ant-design/icons";
 
 const IncomeDriverDashboard = ({
   commodityList,
   currentCaseId,
   dashboardData,
   questionGroups,
+  setPage,
 }) => {
   const [activeKey, setActiveKey] = useState("income-overview");
   const [visualizationData, setVisualizationData] = useState([]);
@@ -68,6 +70,40 @@ const IncomeDriverDashboard = ({
             },
           ]}
         />
+      </Col>
+      {/* Button */}
+      <Col span={24}>
+        <Row>
+          <Col span={12}>
+            <Button
+              className="button button-submit button-secondary"
+              onClick={() => setPage("Income Driver Data Entry")}
+            >
+              <StepBackwardOutlined />
+              Previous
+            </Button>
+          </Col>
+          {activeKey !== "income-overview" ? (
+            <Col
+              span={12}
+              style={{
+                justifyContent: "flex-end",
+                display: "grid",
+              }}
+            >
+              <Space size={[8, 16]} wrap>
+                <Button
+                  htmlType="submit"
+                  className="button button-submit button-secondary"
+                  // loading={isSaving}
+                  // onClick={handleSave}
+                >
+                  Save
+                </Button>
+              </Space>
+            </Col>
+          ) : null}
+        </Row>
       </Col>
     </Row>
   );
