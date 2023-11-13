@@ -139,7 +139,7 @@ const Chart = ({
         style={{ height: height, ...styles, ...affixStyle }}
       >
         <Card
-          title={<h3 className="segment-group">{title}</h3>}
+          title={<h3 className="segment-group chart-title">{title}</h3>}
           className="chart-container"
         >
           <ReactECharts {...chartOptions} />
