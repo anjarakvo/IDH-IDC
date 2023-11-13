@@ -29,7 +29,6 @@ const IncomeDriverDashboard = ({
   const [scenarioData, setScenarioData] = useState([
     { key: 1, name: "Scenario 1", description: "", scenarioValues: [] },
   ]);
-  console.log("scenarioData", scenarioData);
 
   useEffect(() => {
     if (currentCaseId) {
@@ -46,18 +45,30 @@ const IncomeDriverDashboard = ({
             }),
             {}
           );
-        setBinningData((prev) => ({
-          ...prev,
-          ...sensitivityAnalysisConfig,
-        }));
+        if (!isEmpty(sensitivityAnalysisConfig)) {
+          setBinningData((prev) => ({
+            ...prev,
+            ...sensitivityAnalysisConfig,
+          }));
+        }
+        // Scenario modeling
+        const scenarioModelingConfig =
+          data.find((v) => v.tab === "scenario_modeling")?.config || {};
+        if (!isEmpty(scenarioModelingConfig)) {
+          setPercentage(scenarioModelingConfig.percentage);
+          setScenarioData(scenarioModelingConfig.scenarioData);
+        }
         setTimeout(() => {
           setLoading(false);
         }, 100);
       });
     }
   }, [currentCaseId]);
+  console.log("scenarioData", scenarioData);
 
-  const disableSaveButton = isEmpty(binningData);
+  const disableSaveButton =
+    isEmpty(binningData) &&
+    isEmpty(scenarioData.filter((x) => x.scenarioValues.length));
 
   const handleSaveVisualization = () => {
     if (disableSaveButton) {
@@ -67,12 +78,26 @@ const IncomeDriverDashboard = ({
     let payloads = [];
     // Sensitivity analysis
     payloads = [
+      ...payloads,
       {
         case: currentCaseId,
         tab: "sensitivity_analysis",
         config: binningData,
       },
     ];
+    // Scenario modeling
+    payloads = [
+      ...payloads,
+      {
+        case: currentCaseId,
+        tab: "scenario_modeling",
+        config: {
+          percentage: percentage,
+          scenarioData: scenarioData,
+        },
+      },
+    ];
+    // Save
     api
       .post("visualization", payloads)
       .then(() => {
