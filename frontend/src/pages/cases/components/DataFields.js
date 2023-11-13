@@ -17,6 +17,8 @@ import {
   CloseCircleTwoTone,
   CaretDownFilled,
   CaretUpFilled,
+  StepForwardOutlined,
+  StepBackwardOutlined,
 } from "@ant-design/icons";
 import { map, groupBy } from "lodash";
 import { IncomeDriverForm, IncomeDriverTarget, commodityOptions } from "./";
@@ -39,6 +41,7 @@ const DataFields = ({
   currentCaseId,
   currentCase,
   dashboardData,
+  setPage,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -369,15 +372,46 @@ const DataFields = ({
             ))}
           </Card.Grid>
         </Card>
-        <Button
-          htmlType="submit"
-          className="button button-submit button-secondary"
-          style={{ float: "right" }}
-          loading={isSaving}
-          onClick={handleSave}
-        >
-          Save
-        </Button>
+        <Row>
+          <Col span={12}>
+            <Button
+              className="button button-submit button-secondary"
+              onClick={() => setPage("Case Profile")}
+            >
+              <StepBackwardOutlined />
+              Previous
+            </Button>
+          </Col>
+          <Col
+            span={12}
+            style={{
+              justifyContent: "flex-end",
+              display: "grid",
+            }}
+          >
+            <Space size={[8, 16]} wrap>
+              <Button
+                htmlType="submit"
+                className="button button-submit button-secondary"
+                loading={isSaving}
+                onClick={handleSave}
+              >
+                Save
+              </Button>
+              <Button
+                htmlType="submit"
+                className="button button-submit button-secondary"
+                loading={isSaving}
+                onClick={() => {
+                  handleSave({ isNextButton: true });
+                }}
+              >
+                Next
+                <StepForwardOutlined />
+              </Button>
+            </Space>
+          </Col>
+        </Row>
       </Col>
       <Chart
         title="Calculated Household Income"

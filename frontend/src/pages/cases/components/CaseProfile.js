@@ -27,7 +27,7 @@ import { api } from "../../../lib";
 import { UIState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
 import uniqBy from "lodash/uniqBy";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 
 const responsiveCol = {
@@ -256,6 +256,7 @@ const CaseProfile = ({
     useState(true);
   const [disableAreaSizeTertiaryField, setDisableAreaSizeTertiaryField] =
     useState(true);
+  const navigate = useNavigate();
 
   const filteredCurrencyOptions = useMemo(() => {
     if (!selectedCountry) {
@@ -514,7 +515,10 @@ const CaseProfile = ({
           </Card>
           <Row>
             <Col span={12}>
-              <Button className="button button-submit button-secondary">
+              <Button
+                className="button button-submit button-secondary"
+                onClick={() => navigate("/cases")}
+              >
                 Cancel
               </Button>
             </Col>

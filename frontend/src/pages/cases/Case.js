@@ -337,6 +337,7 @@ const Case = () => {
                 dashboardData={dashboardData}
                 finished={finished}
                 setFinished={setFinished}
+                setPage={setPage}
               />
             )}
             {page === "Income Driver Dashboard" && (

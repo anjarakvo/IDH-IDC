@@ -16,6 +16,7 @@ const IncomeDriverDataEntry = ({
   dashboardData,
   finished,
   setFinished,
+  setPage,
 }) => {
   const [activeKey, setActiveKey] = useState("1");
   const [items, setItems] = useState([]);
@@ -45,7 +46,7 @@ const IncomeDriverDataEntry = ({
   }, [formValues, setCaseData, totalIncomeQuestion]);
 
   // handle save here
-  const handleSave = () => {
+  const handleSave = ({ isNextButton = false }) => {
     setIsSaving(true);
     const completed = finished.filter(
       (item) => item !== "Income Driver Data Entry"
@@ -105,6 +106,10 @@ const IncomeDriverDataEntry = ({
         });
         setTimeout(() => {
           setFinished([...completed, "Income Driver Data Entry"]);
+          // move to next page
+          if (isNextButton) {
+            setPage("Income Driver Dashboard");
+          }
         }, 100);
       })
       .catch((e) => {
@@ -241,6 +246,7 @@ const IncomeDriverDataEntry = ({
             isSaving={isSaving}
             currentCaseId={currentCaseId}
             currentCase={currentCase}
+            setPage={setPage}
           />
         );
         // handle form values
@@ -321,6 +327,7 @@ const IncomeDriverDataEntry = ({
                   isSaving={isSaving}
                   currentCaseId={currentCaseId}
                   currentCase={currentCase}
+                  setPage={setPage}
                 />
               ),
           }))}
