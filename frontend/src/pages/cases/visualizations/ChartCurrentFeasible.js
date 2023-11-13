@@ -79,7 +79,7 @@ const ChartCurrentFeasible = ({ dashboardData = [] }) => {
         ...incomeTargetChartOption,
         data: chartData.map((cd) => ({
           name: "Income Target",
-          value: cd.target.toFixed(2),
+          value: cd?.target ? cd.target.toFixed(2) : 0,
         })),
       },
     ];

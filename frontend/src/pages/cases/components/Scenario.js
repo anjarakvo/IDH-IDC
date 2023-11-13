@@ -443,7 +443,7 @@ const Scenario = ({
         },
         data: dashboardData.map((d) => ({
           name: "Benchmark",
-          value: d.target.toFixed(2),
+          value: d?.target ? d.target.toFixed(2) : 0,
         })),
       },
     ];
