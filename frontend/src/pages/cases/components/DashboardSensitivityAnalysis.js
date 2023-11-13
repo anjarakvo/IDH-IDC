@@ -166,6 +166,7 @@ const DashboardSensitivityAnalysis = ({
       );
       setCurrentSegment(parseInt(segmentIds[0]));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const dataSource = useMemo(() => {
