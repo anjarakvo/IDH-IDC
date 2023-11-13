@@ -100,6 +100,10 @@ const DashboardScenarioModeling = ({
           segmentTabs={segmentTabs}
           percentage={percentage}
           setScenarioData={setScenarioData}
+          currentScenarioValues={
+            scenarioData.find((d) => d.key === scenarioItem.key)
+              ?.scenarioValues || {}
+          }
         />
       ))}
       <Col span={24}>

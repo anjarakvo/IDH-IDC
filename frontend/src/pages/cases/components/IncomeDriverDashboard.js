@@ -64,7 +64,6 @@ const IncomeDriverDashboard = ({
       });
     }
   }, [currentCaseId]);
-  console.log("scenarioData", scenarioData);
 
   const disableSaveButton =
     isEmpty(binningData) &&

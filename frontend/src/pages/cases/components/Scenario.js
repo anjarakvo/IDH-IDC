@@ -19,6 +19,7 @@ import {
 } from "@ant-design/icons";
 import { getFunctionDefaultValue } from "./";
 import { ChartScenarioModeling } from "../visualizations";
+import { isEmpty } from "lodash";
 
 const Question = ({
   id,
@@ -261,7 +262,12 @@ const ScenarioInput = ({
   };
 
   return (
-    <Form form={form} onValuesChange={onValuesChange} layout="vertical">
+    <Form
+      form={form}
+      layout="vertical"
+      onValuesChange={onValuesChange}
+      initialValues={scenarioValue?.allNewValues || {}}
+    >
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>
           <h4>Commodity</h4>
@@ -328,6 +334,7 @@ const Scenario = ({
   segmentTabs,
   percentage,
   setScenarioData,
+  currentScenarioValues = {},
 }) => {
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
@@ -347,10 +354,17 @@ const Scenario = ({
 
   useEffect(() => {
     if (dashboardData.length > 0) {
-      const scenarioInitialData = dashboardData.map((segment) => ({
-        segmentId: segment.id,
-        name: segment.name,
-      }));
+      let scenarioInitialData = [];
+      if (isEmpty(currentScenarioValues)) {
+        scenarioInitialData = dashboardData.map((segment) => ({
+          segmentId: segment.id,
+          name: segment.name,
+        }));
+      }
+      // load scenario values
+      if (!isEmpty(currentScenarioValues)) {
+        scenarioInitialData = currentScenarioValues;
+      }
       setScenarioValues(scenarioInitialData);
       // add scenarioValues into scenarioData
       setScenarioData((prev) => {
