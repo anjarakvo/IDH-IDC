@@ -68,12 +68,21 @@ const Questions = ({
   const [disabled, setDisabled] = useState(childrens.length > 0);
 
   const fieldKey = `${units.case_commodity}-${id}`;
+
   const checkFocus = units.commodity_type === "focus";
+
   const checkBreakdownValue =
     commoditiesBreakdown.includes(units.commodity_type) && units.breakdown;
+
   const hidden =
     (question_type === "aggregator" && checkFocus) ||
     (question_type === "aggregator" && checkBreakdownValue);
+
+  const disableInput = checkFocus
+    ? disabled
+    : checkBreakdownValue
+    ? disabled
+    : checkBreakdownValue;
 
   const unitName = unit
     .split("/")
@@ -161,10 +170,7 @@ const Questions = ({
             name={`current-${fieldKey}`}
             className="current-feasible-field"
           >
-            <InputNumber
-              style={{ width: "100%" }}
-              disabled={checkFocus ? disabled : checkBreakdownValue}
-            />
+            <InputNumber style={{ width: "100%" }} disabled={disableInput} />
           </Form.Item>
         </Col>
         <Col span={4}>
@@ -172,10 +178,7 @@ const Questions = ({
             name={`feasible-${fieldKey}`}
             className="current-feasible-field"
           >
-            <InputNumber
-              style={{ width: "100%" }}
-              disabled={checkFocus ? disabled : checkBreakdownValue}
-            />
+            <InputNumber style={{ width: "100%" }} disabled={disableInput} />
           </Form.Item>
         </Col>
         <Col span={3}>

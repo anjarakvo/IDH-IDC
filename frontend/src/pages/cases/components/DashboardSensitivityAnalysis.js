@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Row,
   Col,
@@ -10,7 +10,7 @@ import {
   Table,
   Form,
 } from "antd";
-import { groupBy, map } from "lodash";
+import { groupBy, map, isEmpty, uniq } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
 
 const columns = [
@@ -151,10 +151,23 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
   );
 };
 
-const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
+const DashboardSensitivityAnalysis = ({
+  dashboardData = [],
+  binningData,
+  setBinningData,
+}) => {
   const [currentSegment, setCurrentSegment] = useState(null);
-  const [binningData, setBinningData] = useState({});
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (!isEmpty(binningData)) {
+      const segmentIds = uniq(
+        Object.keys(binningData).map((key) => key.split("_")[0])
+      );
+      setCurrentSegment(parseInt(segmentIds[0]));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const dataSource = useMemo(() => {
     if (!currentSegment) {
@@ -256,6 +269,10 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
     return groupBinning;
   }, [binningData]);
 
+  const handleOnChangeSegmentDropdown = (value) => {
+    setCurrentSegment(value);
+  };
+
   const onValuesChange = (c, values) => {
     const objectName = Object.keys(c)[0];
     const [segmentId, valueName] = objectName.split("_");
@@ -329,11 +346,12 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                 <Select
                   size="small"
                   style={{ width: "100%", marginLeft: "10px" }}
-                  onChange={setCurrentSegment}
+                  onChange={handleOnChangeSegmentDropdown}
                   options={dashboardData.map((segment) => ({
                     value: segment.id,
                     label: segment.name,
                   }))}
+                  value={currentSegment}
                 />
               </Col>
               <Divider />
@@ -361,73 +379,84 @@ const DashboardSensitivityAnalysis = ({ dashboardData = [] }) => {
                 </ul>
               </Col>
               <Divider />
-              <Col span={10}>
-                <Form
-                  name="sensitivity-analysis"
-                  layout="horizontal"
-                  form={form}
-                  onValuesChange={onValuesChange}
-                >
-                  {dashboardData.map((segment, key) => (
-                    <BinningForm
-                      key={key}
-                      segment={segment}
-                      drivers={drivers.map((x) => {
-                        return {
-                          value: x.name,
-                          label: x.name,
-                        };
-                      })}
-                      selected={
-                        binningValues.find((b) => b.id === segment.id)?.selected
-                      }
-                      hidden={currentSegment !== segment.id}
+              <Row
+                className="income-driver-content"
+                align="middle"
+                justify="space-evenly"
+                gutter={[8, 8]}
+              >
+                <Col span={10}>
+                  <Form
+                    name="sensitivity-analysis"
+                    layout="horizontal"
+                    form={form}
+                    onValuesChange={onValuesChange}
+                    // onFinish={handleOnFinish}
+                    initialValues={binningData}
+                  >
+                    {dashboardData.map((segment, key) => (
+                      <BinningForm
+                        key={key}
+                        segment={segment}
+                        drivers={drivers.map((x) => {
+                          return {
+                            value: x.name,
+                            label: x.name,
+                          };
+                        })}
+                        selected={
+                          binningValues.find((b) => b.id === segment.id)
+                            ?.selected
+                        }
+                        hidden={currentSegment !== segment.id}
+                      />
+                    ))}
+                  </Form>
+                </Col>
+                <Col span={10}>
+                  {currentSegment ? (
+                    <Table
+                      size="small"
+                      className="income-driver-table"
+                      dataSource={dataSource.filter(
+                        (d) => d.name !== "Income Target"
+                      )}
+                      columns={columns}
+                      pagination={false}
+                      summary={() => (
+                        <Table.Summary>
+                          <Table.Summary.Row>
+                            <Table.Summary.Cell index={0}>
+                              Income Target
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={1}>
+                              {
+                                dataSource.find(
+                                  (d) => d.name === "Income Target"
+                                ).current
+                              }
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )}
                     />
-                  ))}
-                </Form>
-              </Col>
-              <Col span={10}>
-                {currentSegment ? (
-                  <Table
-                    size="small"
-                    className="income-driver-table"
-                    dataSource={dataSource.filter(
-                      (d) => d.name !== "Income Target"
-                    )}
-                    columns={columns}
-                    pagination={false}
-                    summary={() => (
-                      <Table.Summary>
-                        <Table.Summary.Row>
-                          <Table.Summary.Cell index={0}>
-                            Income Target
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={1}>
-                            {
-                              dataSource.find((d) => d.name === "Income Target")
-                                .current
-                            }
-                          </Table.Summary.Cell>
-                          <Table.Summary.Cell index={2}></Table.Summary.Cell>
-                        </Table.Summary.Row>
-                      </Table.Summary>
-                    )}
-                  />
-                ) : null}
-              </Col>
-              <Divider />
-              <Col span={24}>
-                {dashboardData.map((segment) =>
-                  currentSegment === segment.id ? (
-                    <ChartBinningHeatmap
-                      key={segment.id}
-                      data={binningData}
-                      segment={segment}
-                      origin={dataSource}
-                    />
-                  ) : null
-                )}
-              </Col>
+                  ) : null}
+                </Col>
+                <Divider />
+                <Col span={24}>
+                  {dashboardData.map((segment) =>
+                    currentSegment === segment.id ? (
+                      <ChartBinningHeatmap
+                        key={segment.id}
+                        data={binningData}
+                        segment={segment}
+                        origin={dataSource}
+                      />
+                    ) : null
+                  )}
+                </Col>
+              </Row>
             </Row>
           </Card.Grid>
         </Card>

@@ -1,16 +1,21 @@
-import React, { useState, useMemo } from "react";
+import React, { useMemo } from "react";
 import { Row, Col, Alert, Button, Select, Card } from "antd";
 import { Scenario } from "./";
+import { orderBy } from "lodash";
 
 const DashboardScenarioModeling = ({
   dashboardData,
   commodityList,
   questionGroups,
+  percentage,
+  setPercentage,
+  scenarioData,
+  setScenarioData,
 }) => {
-  const [scenarioData, setScenarioData] = useState([
-    { name: "Scenario 1", description: "" },
-  ]);
-  const [percentage, setPercentage] = useState(true);
+  // const [scenarioData, setScenarioData] = useState([
+  //   { name: "Scenario 1", description: "" },
+  // ]);
+  // const [percentage, setPercentage] = useState(true);
 
   const segmentTabs = useMemo(
     () =>
@@ -76,13 +81,14 @@ const DashboardScenarioModeling = ({
                     { label: "Absolute", value: "absolute" },
                   ]}
                   onChange={onChangePercentage}
+                  value={percentage ? "percentage" : "absolute"}
                 />
               </Col>
             </Row>
           </Card.Grid>
         </Card>
       </Col>
-      {scenarioData.map((scenarioItem, index) => (
+      {orderBy(scenarioData, "key").map((scenarioItem, index) => (
         <Scenario
           key={index}
           index={index}
@@ -94,15 +100,26 @@ const DashboardScenarioModeling = ({
           commodityQuestions={commodityQuestions}
           segmentTabs={segmentTabs}
           percentage={percentage}
+          setScenarioData={setScenarioData}
+          currentScenarioValues={
+            scenarioData.find((d) => d.key === scenarioItem.key)
+              ?.scenarioValues || {}
+          }
         />
       ))}
       <Col span={24}>
         <Button
           onClick={() =>
-            setScenarioData([
-              ...scenarioData,
-              { name: `Scenario ${scenarioData.length + 1}` },
-            ])
+            setScenarioData((prev) => {
+              return [
+                ...prev,
+                {
+                  key: prev.length + 1,
+                  name: `Scenario ${prev.length + 1}`,
+                  scenarioValues: [],
+                },
+              ];
+            })
           }
           type="primary"
           style={{ width: "100%" }}
