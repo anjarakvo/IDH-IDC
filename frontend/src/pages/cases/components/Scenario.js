@@ -153,8 +153,6 @@ const ScenarioInput = ({
     };
   }, [scenarioValue, segment]);
 
-  console.log(scenarioIncrease);
-
   const onValuesChange = (changedValues, allValues) => {
     const objectId = Object.keys(changedValues)[0];
     const [, case_commodity, id] = objectId.split("-");
@@ -337,7 +335,6 @@ const Scenario = ({
   }, [dashboardData]);
 
   const chartData = useMemo(() => {
-    console.log("scenarioValues", scenarioValues);
     const data = dashboardData.map((segment) => ({
       name: segment.name,
       title: segment.name,
