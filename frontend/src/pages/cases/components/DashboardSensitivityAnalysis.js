@@ -10,13 +10,10 @@ import {
   Table,
   Form,
   Spin,
-  Button,
-  message,
 } from "antd";
 import { groupBy, map } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
 import { isEmpty } from "lodash";
-import { api } from "../../../lib";
 
 const columns = [
   {
@@ -164,10 +161,7 @@ const DashboardSensitivityAnalysis = ({
 }) => {
   const [loading, setLoading] = useState(false);
   const [currentSegment, setCurrentSegment] = useState(null);
-  // const [binningData, setBinningData] = useState({});
   const [form] = Form.useForm();
-  // const [messageApi, contextHolder] = message.useMessage();
-  // const [saving, setSaving] = useState(false);
 
   // useEffect(() => {
   //   if (!isEmpty(visualizationData) && isEmpty(binningData)) {
@@ -334,43 +328,6 @@ const DashboardSensitivityAnalysis = ({
     form.setFieldsValue(values);
   };
 
-  // const handleOnFinish = (values) => {
-  //   setSaving(true);
-  //   let currentSegmentConfig = {};
-  //   Object.keys(values).map((key) => {
-  //     if (key.includes(currentSegment)) {
-  //       currentSegmentConfig = {
-  //         ...currentSegmentConfig,
-  //         [key]: values[key],
-  //       };
-  //     }
-  //   });
-  //   const payload = {
-  //     case: dashboardData[0].case,
-  //     segment: currentSegment,
-  //     tab: "sensitivity_analysis",
-  //     config: currentSegmentConfig,
-  //   };
-  //   api
-  //     .post("visualization", payload)
-  //     .then(() => {
-  //       messageApi.open({
-  //         type: "success",
-  //         content: "Sensitivity analysis dashboard saved successfully.",
-  //       });
-  //     })
-  //     .catch((e) => {
-  //       console.error(e);
-  //       messageApi.open({
-  //         type: "error",
-  //         content: "Failed! Something went wrong.",
-  //       });
-  //     })
-  //     .finally(() => {
-  //       setSaving(false);
-  //     });
-  // };
-
   return (
     <Row id="sensitivity-analysis">
       {/* {contextHolder} */}
@@ -527,17 +484,6 @@ const DashboardSensitivityAnalysis = ({
             </Row>
           </Card.Grid>
         </Card>
-        {/* Save Button */}
-        {/* {currentSegment && !loading ? (
-          <Button
-            className="button button-submit button-secondary"
-            style={{ float: "right" }}
-            loading={saving}
-            onClick={() => form.submit()}
-          >
-            Save
-          </Button>
-        ) : null} */}
       </Col>
     </Row>
   );
