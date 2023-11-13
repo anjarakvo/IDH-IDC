@@ -180,7 +180,7 @@ const IncomeDriverTarget = ({
     >
       <Row gutter={[8, 8]}>
         <Col span={12}>
-          <Form.Item label="Manual Target" name="manual_target">
+          <Form.Item label="Better income target" name="manual_target">
             <Switch checked={!disableTarget} />
           </Form.Item>
         </Col>
@@ -229,7 +229,7 @@ const IncomeDriverTarget = ({
         </Col>
         <Col span={8}>
           <Form.Item
-            label="Number of Average Adult in Household"
+            label="Avg # of adults in HH"
             name="household_adult"
           >
             <InputNumber
@@ -240,7 +240,7 @@ const IncomeDriverTarget = ({
         </Col>
         <Col span={8}>
           <Form.Item
-            label="Number of Average Children in Household"
+            label="Avg # of children in HH"
             name="household_children"
           >
             <InputNumber
@@ -263,12 +263,12 @@ const IncomeDriverTarget = ({
             {incomeTarget.toFixed(2)} {currentCase.currency}
           </h2>
         </Col>
-        <Col span={16}>
-          <p>Calculated Living Income</p>
+        {/* <Col span={16}>
+          <p>Current HH Living Income</p>
           <h2>
             {totalIncome.current} {currentCase.currency}
           </h2>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   );
