@@ -19,7 +19,6 @@ class TestVisualizationRoute:
     ) -> None:
         payload = {
             "case": 1,
-            "segment": 3,
             "tab": VisualizationTab.sensitivity_analysis.value,
             "config": {
                 "key": "value 1",
@@ -37,7 +36,6 @@ class TestVisualizationRoute:
         assert res == {
             "id": 1,
             "case": 1,
-            "segment": 3,
             "tab": VisualizationTab.sensitivity_analysis.value,
             "config": {"key": "value 1", "another_key": "value 2"},
         }
@@ -48,7 +46,6 @@ class TestVisualizationRoute:
     ) -> None:
         payload = {
             "case": 1,
-            "segment": 2,
             "tab": VisualizationTab.scenario_modeling.value,
             "config": {
                 "key": "value",
@@ -65,7 +62,6 @@ class TestVisualizationRoute:
         assert res == {
             "id": 2,
             "case": 1,
-            "segment": 2,
             "tab": VisualizationTab.scenario_modeling.value,
             "config": {"key": "value"},
         }
@@ -76,7 +72,6 @@ class TestVisualizationRoute:
     ) -> None:
         payload = {
             "case": 1,
-            "segment": 3,
             "tab": VisualizationTab.sensitivity_analysis.value,
             "config": {
                 "key": "value 1",
@@ -95,7 +90,6 @@ class TestVisualizationRoute:
         assert res == {
             "id": 1,
             "case": 1,
-            "segment": 3,
             "tab": VisualizationTab.sensitivity_analysis.value,
             "config": {
                 "key": "value 1",
@@ -119,14 +113,12 @@ class TestVisualizationRoute:
             {
                 "id": 2,
                 "case": 1,
-                "segment": 2,
                 "tab": VisualizationTab.scenario_modeling.value,
                 "config": {"key": "value"},
             },
             {
                 "id": 1,
                 "case": 1,
-                "segment": 3,
                 "tab": VisualizationTab.sensitivity_analysis.value,
                 "config": {
                     "key": "value 1",

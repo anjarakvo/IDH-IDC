@@ -13,7 +13,6 @@ def create_or_update_visualization(
         .filter(
             and_(
                 Visualization.case == payload.case,
-                Visualization.segment == payload.segment,
                 Visualization.tab == payload.tab,
             )
         )
@@ -29,7 +28,6 @@ def create_or_update_visualization(
     # add
     data = Visualization(
         case=payload.case,
-        segment=payload.segment,
         tab=payload.tab,
         config=payload.config,
     )
