@@ -421,6 +421,7 @@ const DataFields = ({
         affix={true}
         targetData={targetChartData}
         loading={!chartData.length || !targetChartData.length}
+        height={window.innerHeight * 0.45}
       />
     </Row>
   );
