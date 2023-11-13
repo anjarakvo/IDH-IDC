@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import {
   Row,
   Col,
@@ -9,11 +9,9 @@ import {
   InputNumber,
   Table,
   Form,
-  Spin,
 } from "antd";
 import { groupBy, map } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
-import { isEmpty } from "lodash";
 
 const columns = [
   {
@@ -155,35 +153,11 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
 
 const DashboardSensitivityAnalysis = ({
   dashboardData = [],
-  visualizationData = [],
   binningData,
   setBinningData,
 }) => {
-  const [loading, setLoading] = useState(false);
   const [currentSegment, setCurrentSegment] = useState(null);
   const [form] = Form.useForm();
-
-  // useEffect(() => {
-  //   if (!isEmpty(visualizationData) && isEmpty(binningData)) {
-  //     setLoading(true);
-  //     const currentConfig = visualizationData
-  //       .filter((v) => v.tab === "sensitivity_analysis")
-  //       .reduce(
-  //         (res, curr) => ({
-  //           ...res,
-  //           ...curr.config,
-  //         }),
-  //         {}
-  //       );
-  //     setBinningData((prev) => ({
-  //       ...prev,
-  //       ...currentConfig,
-  //     }));
-  //     setTimeout(() => {
-  //       setLoading(false);
-  //     }, 100);
-  //   }
-  // }, [visualizationData, binningData]);
 
   const dataSource = useMemo(() => {
     if (!currentSegment) {
@@ -330,7 +304,6 @@ const DashboardSensitivityAnalysis = ({
 
   return (
     <Row id="sensitivity-analysis">
-      {/* {contextHolder} */}
       <Col span={24}>
         <Alert
           message="On this page you can explore how different combinations of drivers lead to different income levels. Whether it's optimizing land use, pricing strategies, or diversifying income sources, this page empowers you to explore various scenarios and find the best path towards improving farmer household income."
@@ -395,92 +368,84 @@ const DashboardSensitivityAnalysis = ({
                 </ul>
               </Col>
               <Divider />
-              {loading ? (
-                <div className="loading-container">
-                  <Spin />
-                </div>
-              ) : (
-                <Row
-                  className="income-driver-content"
-                  align="middle"
-                  justify="space-evenly"
-                  gutter={[8, 8]}
-                >
-                  <Col span={10}>
-                    <Form
-                      name="sensitivity-analysis"
-                      layout="horizontal"
-                      form={form}
-                      onValuesChange={onValuesChange}
-                      // onFinish={handleOnFinish}
-                      initialValues={binningData}
-                    >
-                      {dashboardData.map((segment, key) => (
-                        <BinningForm
-                          key={key}
-                          segment={segment}
-                          drivers={drivers.map((x) => {
-                            return {
-                              value: x.name,
-                              label: x.name,
-                            };
-                          })}
-                          selected={
-                            binningValues.find((b) => b.id === segment.id)
-                              ?.selected
-                          }
-                          hidden={currentSegment !== segment.id}
-                        />
-                      ))}
-                    </Form>
-                  </Col>
-                  <Col span={10}>
-                    {currentSegment ? (
-                      <Table
-                        size="small"
-                        className="income-driver-table"
-                        dataSource={dataSource.filter(
-                          (d) => d.name !== "Income Target"
-                        )}
-                        columns={columns}
-                        pagination={false}
-                        summary={() => (
-                          <Table.Summary>
-                            <Table.Summary.Row>
-                              <Table.Summary.Cell index={0}>
-                                Income Target
-                              </Table.Summary.Cell>
-                              <Table.Summary.Cell index={1}>
-                                {
-                                  dataSource.find(
-                                    (d) => d.name === "Income Target"
-                                  ).current
-                                }
-                              </Table.Summary.Cell>
-                              <Table.Summary.Cell
-                                index={2}
-                              ></Table.Summary.Cell>
-                            </Table.Summary.Row>
-                          </Table.Summary>
-                        )}
+              <Row
+                className="income-driver-content"
+                align="middle"
+                justify="space-evenly"
+                gutter={[8, 8]}
+              >
+                <Col span={10}>
+                  <Form
+                    name="sensitivity-analysis"
+                    layout="horizontal"
+                    form={form}
+                    onValuesChange={onValuesChange}
+                    // onFinish={handleOnFinish}
+                    initialValues={binningData}
+                  >
+                    {dashboardData.map((segment, key) => (
+                      <BinningForm
+                        key={key}
+                        segment={segment}
+                        drivers={drivers.map((x) => {
+                          return {
+                            value: x.name,
+                            label: x.name,
+                          };
+                        })}
+                        selected={
+                          binningValues.find((b) => b.id === segment.id)
+                            ?.selected
+                        }
+                        hidden={currentSegment !== segment.id}
                       />
-                    ) : null}
-                  </Col>
-                  <Divider />
-                  <Col span={24}>
-                    {dashboardData.map((segment) =>
-                      currentSegment === segment.id ? (
-                        <ChartBinningHeatmap
-                          key={segment.id}
-                          data={binningData}
-                          segment={segment}
-                          origin={dataSource}
-                        />
-                      ) : null
-                    )}
-                  </Col>
-                </Row>
-              )}
+                    ))}
+                  </Form>
+                </Col>
+                <Col span={10}>
+                  {currentSegment ? (
+                    <Table
+                      size="small"
+                      className="income-driver-table"
+                      dataSource={dataSource.filter(
+                        (d) => d.name !== "Income Target"
+                      )}
+                      columns={columns}
+                      pagination={false}
+                      summary={() => (
+                        <Table.Summary>
+                          <Table.Summary.Row>
+                            <Table.Summary.Cell index={0}>
+                              Income Target
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={1}>
+                              {
+                                dataSource.find(
+                                  (d) => d.name === "Income Target"
+                                ).current
+                              }
+                            </Table.Summary.Cell>
+                            <Table.Summary.Cell index={2}></Table.Summary.Cell>
+                          </Table.Summary.Row>
+                        </Table.Summary>
+                      )}
+                    />
+                  ) : null}
+                </Col>
+                <Divider />
+                <Col span={24}>
+                  {dashboardData.map((segment) =>
+                    currentSegment === segment.id ? (
+                      <ChartBinningHeatmap
+                        key={segment.id}
+                        data={binningData}
+                        segment={segment}
+                        origin={dataSource}
+                      />
+                    ) : null
+                  )}
+                </Col>
+              </Row>
             </Row>
           </Card.Grid>
         </Card>

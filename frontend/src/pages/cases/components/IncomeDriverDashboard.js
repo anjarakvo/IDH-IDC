@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Tabs, Button, Space, message } from "antd";
+import { Row, Col, Tabs, Button, Space, message, Spin } from "antd";
 import {
   DashboardIncomeOverview,
   DashboardSensitivityAnalysis,
@@ -17,15 +17,33 @@ const IncomeDriverDashboard = ({
   setPage,
 }) => {
   const [activeKey, setActiveKey] = useState("income-overview");
-  const [visualizationData, setVisualizationData] = useState([]);
   const [binningData, setBinningData] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
   const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (currentCaseId) {
+      setLoading(true);
       api.get(`visualization/case/${currentCaseId}`).then((res) => {
-        setVisualizationData(res.data);
+        const { data } = res;
+        // Sensitivity analysis
+        const sensitivityAnalysisConfig = data
+          .filter((v) => v.tab === "sensitivity_analysis")
+          .reduce(
+            (res, curr) => ({
+              ...res,
+              ...curr.config,
+            }),
+            {}
+          );
+        setBinningData((prev) => ({
+          ...prev,
+          ...sensitivityAnalysisConfig,
+        }));
+        setTimeout(() => {
+          setLoading(false);
+        }, 100);
       });
     }
   }, [currentCaseId]);
@@ -38,7 +56,7 @@ const IncomeDriverDashboard = ({
     }
     setSaving(true);
     let payloads = [];
-    // Sensituvity analysis
+    // Sensitivity analysis
     payloads = [
       {
         case: currentCaseId,
@@ -65,6 +83,14 @@ const IncomeDriverDashboard = ({
         setSaving(false);
       });
   };
+
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <Spin />
+      </div>
+    );
+  }
 
   return (
     <Row gutter={[16, 16]}>
@@ -93,7 +119,6 @@ const IncomeDriverDashboard = ({
                   currentCaseId={currentCaseId}
                   commodityList={commodityList}
                   dashboardData={dashboardData}
-                  visualizationData={visualizationData}
                   binningData={binningData}
                   setBinningData={setBinningData}
                 />
