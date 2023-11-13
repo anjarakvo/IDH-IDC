@@ -148,24 +148,25 @@ const IncomeDriverTarget = ({
           const { data } = res;
           const targetHH = data.household_size;
           setBenchmark(data);
-          if (data?.cpi) {
-            setIncomeTarget(data.cpi);
-            updateFormValues({
-              ...regionData,
-              target: data.cpi,
-              benchmark: data,
-            });
-          } else {
-            const targetValue =
-              data.value?.[currentCase.currency.toLowerCase()] ||
-              data.value.lcu;
-            setIncomeTarget((HHSize / targetHH) * targetValue);
-            updateFormValues({
-              ...regionData,
-              target: (HHSize / targetHH) * targetValue,
-              benchmark: data,
-            });
-          }
+          // comment cpi calculation for now, until we fix the calculation and endpoint
+          // cpi get by country not region
+          // if (data?.cpi) {
+          //   setIncomeTarget(data.cpi);
+          //   updateFormValues({
+          //     ...regionData,
+          //     target: data.cpi,
+          //     benchmark: data,
+          //   });
+          // } else {
+          const targetValue =
+            data.value?.[currentCase.currency.toLowerCase()] || data.value.lcu;
+          setIncomeTarget((HHSize / targetHH) * targetValue);
+          updateFormValues({
+            ...regionData,
+            target: (HHSize / targetHH) * targetValue,
+            benchmark: data,
+          });
+          // }
         });
       }
     }
