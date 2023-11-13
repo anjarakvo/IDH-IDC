@@ -251,7 +251,7 @@ const DataFields = ({
 
   return (
     <Row gutter={[16, 16]}>
-      <Col span={16}>
+      <Col span={14}>
         <Card
           title={
             <h3>
@@ -312,7 +312,7 @@ const DataFields = ({
               }}
               align="middle"
             >
-              <Col span={14}>
+              <Col span={13}>
                 <h2>Total Income</h2>
               </Col>
               <Col span={4}>
@@ -329,7 +329,7 @@ const DataFields = ({
                   style={{ width: "100%" }}
                 />
               </Col>
-              <Col span={2}>
+              <Col span={3}>
                 <Space className="percentage-wrapper">
                   {totalIncome.percent === 0 ? null : totalIncome.percent >
                     0 ? (
@@ -381,7 +381,7 @@ const DataFields = ({
       </Col>
       <Chart
         title="Calculated Household Income"
-        span={8}
+        span={10}
         type="BARSTACK"
         data={chartData}
         affix={true}

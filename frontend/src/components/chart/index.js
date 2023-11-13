@@ -81,6 +81,7 @@ const Chart = ({
   loadingOption = loadingStyle,
   grid = {},
   override = false,
+  affix = false,
   targetData = [], // to show income target symbol
 }) => {
   const chartTitle = wrapper ? {} : { title: title, subTitle: subTitle };
@@ -121,13 +122,21 @@ const Chart = ({
       option: { ...override, ...Easing },
     };
   }
+  const affixStyle = affix
+    ? {
+        position: "fixed",
+        right: 0,
+        width: "100%",
+        paddingRight: "5rem",
+      }
+    : {};
   if (wrapper) {
     return (
       <Col
         sm={24}
         md={span * 2}
         lg={span}
-        style={{ height: height, ...styles }}
+        style={{ height: height, ...styles, ...affixStyle }}
       >
         <Card
           title={<h3 className="segment-group">{title}</h3>}

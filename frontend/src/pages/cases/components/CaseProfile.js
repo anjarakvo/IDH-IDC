@@ -30,7 +30,16 @@ import uniqBy from "lodash/uniqBy";
 import { useParams } from "react-router-dom";
 import dayjs from "dayjs";
 
+const responsiveCol = {
+  xs: { span: 24 },
+  sm: { span: 24 },
+  md: { span: 24 },
+  lg: { span: 12 },
+  xl: { span: 12 },
+};
+
 const CaseForm = ({
+  form,
   setCaseTitle,
   selectedCountry,
   setSelectedCountry,
@@ -102,7 +111,7 @@ const CaseForm = ({
 
       <Form.Item
         name="country"
-        label="Select Country"
+        label="Country"
         rules={[
           {
             required: true,
@@ -118,9 +127,9 @@ const CaseForm = ({
         />
       </Form.Item>
       <Row gutter={[12, 12]}>
-        <Col span={12}>
+        <Col {...responsiveCol}>
           <Form.Item
-            label="Select Commodity"
+            label="Commodity"
             name="focus_commodity"
             rules={[
               {
@@ -136,9 +145,9 @@ const CaseForm = ({
             />
           </Form.Item>
         </Col>
-        <Col span={12}>
+        <Col {...responsiveCol}>
           <Form.Item
-            label="Select Currency"
+            label="Currency"
             name="currency"
             rules={[
               {
@@ -156,7 +165,7 @@ const CaseForm = ({
           </Form.Item>
         </Col>
       </Row>
-      <AreaUnitFields disabled={false} />
+      <AreaUnitFields form={form} disabled={false} />
       <Form.Item
         label="Reporting Period"
         name="reporting_period"
@@ -177,12 +186,17 @@ const CaseForm = ({
   );
 };
 
-const SecondaryForm = ({ index, indexLabel, disabled }) => {
+const SecondaryForm = ({
+  index,
+  indexLabel,
+  disabled,
+  disableAreaSizeUnitField,
+}) => {
   return (
     <>
       <Form.Item
         name={`${index}-commodity`}
-        label={`Select ${indexLabel} Commodity`}
+        label={`${indexLabel} Commodity`}
         rules={[
           {
             required: !disabled,
@@ -209,7 +223,10 @@ const SecondaryForm = ({ index, indexLabel, disabled }) => {
       >
         <Radio.Group disabled={disabled} options={yesNoOptions} />
       </Form.Item>
-      <AreaUnitFields disabled={disabled} index={index} />
+      <AreaUnitFields
+        disabled={disabled || disableAreaSizeUnitField}
+        index={index}
+      />
     </>
   );
 };
@@ -235,6 +252,10 @@ const CaseProfile = ({
   const [messageApi, contextHolder] = message.useMessage();
   const { caseId } = useParams();
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [disableAreaSizeSecondaryField, setDisableAreaSizeSecondaryField] =
+    useState(true);
+  const [disableAreaSizeTertiaryField, setDisableAreaSizeTertiaryField] =
+    useState(true);
 
   const filteredCurrencyOptions = useMemo(() => {
     if (!selectedCountry) {
@@ -244,7 +265,7 @@ const CaseProfile = ({
       (co) => co.country === selectedCountry
     );
     // set default currency value
-    form.setFieldsValue({ currency: countryCurrency.value });
+    form.setFieldsValue({ currency: countryCurrency?.value });
     // TODO: Wrong format when store to db
     let additonalCurrencies = currencyOptions.filter((co) =>
       ["eur", "usd"].includes(co.value.toLowerCase())
@@ -256,6 +277,15 @@ const CaseProfile = ({
   useEffect(() => {
     // initial case profile value
     if (!isEmpty(formData)) {
+      commodityList.forEach((cm) => {
+        // handle enable disable area size field for other commodities
+        if (cm.commodity_type === "secondary") {
+          setDisableAreaSizeSecondaryField(!cm.breakdown);
+        }
+        if (cm.commodity_type === "tertiary") {
+          setDisableAreaSizeTertiaryField(!cm.breakdown);
+        }
+      });
       const completed = finished.filter((item) => item !== "Case Profile");
       if (initialOtherCommodityTypes?.includes("secondary")) {
         setSecondary(true);
@@ -404,12 +434,32 @@ const CaseProfile = ({
     setFinished(finished.filter((item) => item !== "Case Profile"));
   };
 
+  const onValuesChange = (changedValues, allValues) => {
+    // secondary breakdown handle
+    if (changedValues?.["1-breakdown"] === 0) {
+      form.setFieldsValue({
+        ["1-area_size_unit"]: null,
+        ["1-volume_measurement_unit"]: null,
+      });
+    }
+    // tertiary breakdown handle
+    if (changedValues?.["2-breakdown"] === 0) {
+      form.setFieldsValue({
+        ["2-area_size_unit"]: null,
+        ["2-volume_measurement_unit"]: null,
+      });
+    }
+    setDisableAreaSizeSecondaryField(allValues?.["1-breakdown"] ? false : true);
+    setDisableAreaSizeTertiaryField(allValues?.["2-breakdown"] ? false : true);
+  };
+
   return (
     <Form
       form={form}
       name="basic"
       layout="vertical"
       initialValues={formData}
+      onValuesChange={onValuesChange}
       onFinish={onFinish}
       onFinishFailed={onFinishFailed}
       autoComplete="off"
@@ -439,6 +489,7 @@ const CaseProfile = ({
               index={1}
               indexLabel="Secondary"
               disabled={!secondary}
+              disableAreaSizeUnitField={disableAreaSizeSecondaryField}
             />
           </Card>
           <Card
@@ -458,6 +509,7 @@ const CaseProfile = ({
               index={2}
               indexLabel="Teritary"
               disabled={!tertiary}
+              disableAreaSizeUnitField={disableAreaSizeTertiaryField}
             />
           </Card>
           <Row>

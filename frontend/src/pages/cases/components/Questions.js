@@ -18,6 +18,8 @@ import {
 } from "@ant-design/icons";
 import { indentSize, regexQuestionId } from "./";
 
+const commoditiesBreakdown = ["secondary", "tertiary"];
+
 const getQuestionFunctionInfo = (allQuestions, fnString) => {
   const fn = fnString.split(" ");
   const fnName = fn.reduce((acc, f) => {
@@ -66,7 +68,12 @@ const Questions = ({
   const [disabled, setDisabled] = useState(childrens.length > 0);
 
   const fieldKey = `${units.case_commodity}-${id}`;
-  const hidden = question_type === "aggregator";
+  const checkFocus = units.commodity_type === "focus";
+  const checkBreakdownValue =
+    commoditiesBreakdown.includes(units.commodity_type) && units.breakdown;
+  const hidden =
+    (question_type === "aggregator" && checkFocus) ||
+    (question_type === "aggregator" && checkBreakdownValue);
 
   const unitName = unit
     .split("/")
@@ -106,7 +113,7 @@ const Questions = ({
         align="middle"
       >
         <Col
-          span={12}
+          span={11}
           style={{
             paddingLeft: indent
               ? childrens.length > 0 && question_type !== "aggregator"
@@ -144,7 +151,8 @@ const Questions = ({
           </Space>
         </Col>
         <Col span={2}>
-          {childrens.length > 0 && !hidden ? (
+          {(childrens.length > 0 && !hidden && checkFocus) ||
+          (!hidden && checkBreakdownValue) ? (
             <Switch size="small" onChange={() => setDisabled(!disabled)} />
           ) : null}
         </Col>
@@ -153,7 +161,10 @@ const Questions = ({
             name={`current-${fieldKey}`}
             className="current-feasible-field"
           >
-            <InputNumber style={{ width: "100%" }} disabled={disabled} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={checkFocus ? disabled : checkBreakdownValue}
+            />
           </Form.Item>
         </Col>
         <Col span={4}>
@@ -161,10 +172,13 @@ const Questions = ({
             name={`feasible-${fieldKey}`}
             className="current-feasible-field"
           >
-            <InputNumber style={{ width: "100%" }} disabled={disabled} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={checkFocus ? disabled : checkBreakdownValue}
+            />
           </Form.Item>
         </Col>
-        <Col span={2}>
+        <Col span={3}>
           <Space className="percentage-wrapper">
             {percentage === 0 ? null : percentage > 0 ? (
               <CaretUpFilled className="ceret-up" />
@@ -188,7 +202,7 @@ const Questions = ({
           </Space>
         </Col>
       </Row>
-      {!collapsed
+      {!collapsed && (checkFocus || checkBreakdownValue)
         ? childrens.map((child) => (
             <Questions
               key={child.id}
