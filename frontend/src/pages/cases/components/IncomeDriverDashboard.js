@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Row, Col, Tabs, Button, Space } from "antd";
+import { Row, Col, Tabs, Button, Space, message } from "antd";
 import {
   DashboardIncomeOverview,
   DashboardSensitivityAnalysis,
@@ -7,6 +7,7 @@ import {
 } from "./";
 import { api } from "../../../lib";
 import { StepBackwardOutlined } from "@ant-design/icons";
+import { isEmpty } from "lodash";
 
 const IncomeDriverDashboard = ({
   commodityList,
@@ -17,6 +18,9 @@ const IncomeDriverDashboard = ({
 }) => {
   const [activeKey, setActiveKey] = useState("income-overview");
   const [visualizationData, setVisualizationData] = useState([]);
+  const [binningData, setBinningData] = useState({});
+  const [messageApi, contextHolder] = message.useMessage();
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     if (currentCaseId) {
@@ -26,8 +30,45 @@ const IncomeDriverDashboard = ({
     }
   }, [currentCaseId]);
 
+  const disableSaveButton = isEmpty(binningData);
+
+  const handleSaveVisualization = () => {
+    if (disableSaveButton) {
+      return;
+    }
+    setSaving(true);
+    let payloads = [];
+    // Sensituvity analysis
+    payloads = [
+      {
+        case: currentCaseId,
+        tab: "sensitivity_analysis",
+        config: binningData,
+      },
+    ];
+    api
+      .post("visualization", payloads)
+      .then(() => {
+        messageApi.open({
+          type: "success",
+          content: "Visualization Dashboard saved successfully.",
+        });
+      })
+      .catch((e) => {
+        console.error(e);
+        messageApi.open({
+          type: "error",
+          content: "Failed! Something went wrong.",
+        });
+      })
+      .finally(() => {
+        setSaving(false);
+      });
+  };
+
   return (
     <Row gutter={[16, 16]}>
+      {contextHolder}
       <Col span={24}>
         <Tabs
           onChange={setActiveKey}
@@ -53,6 +94,8 @@ const IncomeDriverDashboard = ({
                   commodityList={commodityList}
                   dashboardData={dashboardData}
                   visualizationData={visualizationData}
+                  binningData={binningData}
+                  setBinningData={setBinningData}
                 />
               ),
             },
@@ -95,8 +138,9 @@ const IncomeDriverDashboard = ({
                 <Button
                   htmlType="submit"
                   className="button button-submit button-secondary"
-                  // loading={isSaving}
-                  // onClick={handleSave}
+                  loading={saving}
+                  onClick={handleSaveVisualization}
+                  disabled={disableSaveButton}
                 >
                   Save
                 </Button>

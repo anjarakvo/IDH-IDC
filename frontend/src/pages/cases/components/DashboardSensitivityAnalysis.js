@@ -159,35 +159,37 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
 const DashboardSensitivityAnalysis = ({
   dashboardData = [],
   visualizationData = [],
+  binningData,
+  setBinningData,
 }) => {
   const [loading, setLoading] = useState(false);
   const [currentSegment, setCurrentSegment] = useState(null);
-  const [binningData, setBinningData] = useState({});
+  // const [binningData, setBinningData] = useState({});
   const [form] = Form.useForm();
-  const [messageApi, contextHolder] = message.useMessage();
-  const [saving, setSaving] = useState(false);
+  // const [messageApi, contextHolder] = message.useMessage();
+  // const [saving, setSaving] = useState(false);
 
-  useEffect(() => {
-    if (!isEmpty(visualizationData) && isEmpty(binningData)) {
-      setLoading(true);
-      const currentConfig = visualizationData
-        .filter((v) => v.tab === "sensitivity_analysis")
-        .reduce(
-          (res, curr) => ({
-            ...res,
-            ...curr.config,
-          }),
-          {}
-        );
-      setBinningData((prev) => ({
-        ...prev,
-        ...currentConfig,
-      }));
-      setTimeout(() => {
-        setLoading(false);
-      }, 100);
-    }
-  }, [visualizationData, binningData]);
+  // useEffect(() => {
+  //   if (!isEmpty(visualizationData) && isEmpty(binningData)) {
+  //     setLoading(true);
+  //     const currentConfig = visualizationData
+  //       .filter((v) => v.tab === "sensitivity_analysis")
+  //       .reduce(
+  //         (res, curr) => ({
+  //           ...res,
+  //           ...curr.config,
+  //         }),
+  //         {}
+  //       );
+  //     setBinningData((prev) => ({
+  //       ...prev,
+  //       ...currentConfig,
+  //     }));
+  //     setTimeout(() => {
+  //       setLoading(false);
+  //     }, 100);
+  //   }
+  // }, [visualizationData, binningData]);
 
   const dataSource = useMemo(() => {
     if (!currentSegment) {
@@ -332,46 +334,46 @@ const DashboardSensitivityAnalysis = ({
     form.setFieldsValue(values);
   };
 
-  const handleOnFinish = (values) => {
-    setSaving(true);
-    let currentSegmentConfig = {};
-    Object.keys(values).map((key) => {
-      if (key.includes(currentSegment)) {
-        currentSegmentConfig = {
-          ...currentSegmentConfig,
-          [key]: values[key],
-        };
-      }
-    });
-    const payload = {
-      case: dashboardData[0].case,
-      segment: currentSegment,
-      tab: "sensitivity_analysis",
-      config: currentSegmentConfig,
-    };
-    api
-      .post("visualization", payload)
-      .then(() => {
-        messageApi.open({
-          type: "success",
-          content: "Sensitivity analysis dashboard saved successfully.",
-        });
-      })
-      .catch((e) => {
-        console.error(e);
-        messageApi.open({
-          type: "error",
-          content: "Failed! Something went wrong.",
-        });
-      })
-      .finally(() => {
-        setSaving(false);
-      });
-  };
+  // const handleOnFinish = (values) => {
+  //   setSaving(true);
+  //   let currentSegmentConfig = {};
+  //   Object.keys(values).map((key) => {
+  //     if (key.includes(currentSegment)) {
+  //       currentSegmentConfig = {
+  //         ...currentSegmentConfig,
+  //         [key]: values[key],
+  //       };
+  //     }
+  //   });
+  //   const payload = {
+  //     case: dashboardData[0].case,
+  //     segment: currentSegment,
+  //     tab: "sensitivity_analysis",
+  //     config: currentSegmentConfig,
+  //   };
+  //   api
+  //     .post("visualization", payload)
+  //     .then(() => {
+  //       messageApi.open({
+  //         type: "success",
+  //         content: "Sensitivity analysis dashboard saved successfully.",
+  //       });
+  //     })
+  //     .catch((e) => {
+  //       console.error(e);
+  //       messageApi.open({
+  //         type: "error",
+  //         content: "Failed! Something went wrong.",
+  //       });
+  //     })
+  //     .finally(() => {
+  //       setSaving(false);
+  //     });
+  // };
 
   return (
     <Row id="sensitivity-analysis">
-      {contextHolder}
+      {/* {contextHolder} */}
       <Col span={24}>
         <Alert
           message="On this page you can explore how different combinations of drivers lead to different income levels. Whether it's optimizing land use, pricing strategies, or diversifying income sources, this page empowers you to explore various scenarios and find the best path towards improving farmer household income."
@@ -453,7 +455,7 @@ const DashboardSensitivityAnalysis = ({
                       layout="horizontal"
                       form={form}
                       onValuesChange={onValuesChange}
-                      onFinish={handleOnFinish}
+                      // onFinish={handleOnFinish}
                       initialValues={binningData}
                     >
                       {dashboardData.map((segment, key) => (
@@ -526,7 +528,7 @@ const DashboardSensitivityAnalysis = ({
           </Card.Grid>
         </Card>
         {/* Save Button */}
-        {currentSegment && !loading ? (
+        {/* {currentSegment && !loading ? (
           <Button
             className="button button-submit button-secondary"
             style={{ float: "right" }}
@@ -535,7 +537,7 @@ const DashboardSensitivityAnalysis = ({
           >
             Save
           </Button>
-        ) : null}
+        ) : null} */}
       </Col>
     </Row>
   );
