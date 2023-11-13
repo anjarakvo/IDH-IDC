@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import {
   Row,
   Col,
@@ -10,7 +10,7 @@ import {
   Table,
   Form,
 } from "antd";
-import { groupBy, map } from "lodash";
+import { groupBy, map, isEmpty, uniq } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
 
 const columns = [
@@ -158,6 +158,15 @@ const DashboardSensitivityAnalysis = ({
 }) => {
   const [currentSegment, setCurrentSegment] = useState(null);
   const [form] = Form.useForm();
+
+  useEffect(() => {
+    if (!isEmpty(binningData)) {
+      const segmentIds = uniq(
+        Object.keys(binningData).map((key) => key.split("_")[0])
+      );
+      setCurrentSegment(parseInt(segmentIds[0]));
+    }
+  }, []);
 
   const dataSource = useMemo(() => {
     if (!currentSegment) {
@@ -341,6 +350,7 @@ const DashboardSensitivityAnalysis = ({
                     value: segment.id,
                     label: segment.name,
                   }))}
+                  value={currentSegment}
                 />
               </Col>
               <Divider />
