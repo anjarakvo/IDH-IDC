@@ -126,6 +126,9 @@
     padding: 0px 24px 10px;
     font-weight: normal;
   }
+  h4 {
+    margin: 10px 0px;
+  }
   .ant-timeline-item {
     cursor: pointer;
   }
@@ -187,6 +190,12 @@
   }
   #sensitivity-analysis {
     .ant-form-item {
+      margin-bottom: 0px;
+    }
+  }
+  #scenario-modeling {
+    font-family: "TabletGothic";
+    .scenario-field-item {
       margin-bottom: 0px;
     }
   }
