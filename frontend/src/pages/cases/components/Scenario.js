@@ -431,22 +431,22 @@ const Scenario = ({
   }, [dashboardData, scenarioValues]);
 
   const targetChartData = useMemo(() => {
-    return dashboardData.map((d) => ({
-      name: "Benchmark",
-      type: "line",
-      symbol: "diamond",
-      symbolSize: 15,
-      color: "#FF5D00",
-      lineStyle: {
-        width: 0,
-      },
-      data: [
-        {
+    return [
+      {
+        name: "Benchmark",
+        type: "line",
+        symbol: "diamond",
+        symbolSize: 15,
+        color: "#FF5D00",
+        lineStyle: {
+          width: 0,
+        },
+        data: dashboardData.map((d) => ({
           name: "Benchmark",
           value: d.target,
-        },
-      ],
-    }));
+        })),
+      },
+    ];
   }, [dashboardData]);
 
   const ButtonEdit = () => (
