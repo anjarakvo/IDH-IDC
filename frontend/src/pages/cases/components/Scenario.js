@@ -420,8 +420,8 @@ const Scenario = ({
             name: "GAP",
             title: "GAP",
             order: 3,
-            total: gapValue,
-            value: gapValue,
+            total: gapValue > 0 ? gapValue : 0,
+            value: gapValue > 0 ? gapValue : 0,
             color: "#F1C5B2",
           },
         ],
@@ -443,7 +443,7 @@ const Scenario = ({
         },
         data: dashboardData.map((d) => ({
           name: "Benchmark",
-          value: d.target,
+          value: d.target.toFixed(2),
         })),
       },
     ];
