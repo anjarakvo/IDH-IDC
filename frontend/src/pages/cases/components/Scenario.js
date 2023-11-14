@@ -297,7 +297,7 @@ const ScenarioInput = ({
           </h4>
         </Col>
         <Col span={5} align="right">
-          <h4>{segment.total_current_income}</h4>
+          <h4>{segment.total_current_income?.toFixed(2)}</h4>
         </Col>
         <Col span={5} align="right">
           <h4>
@@ -417,8 +417,8 @@ const Scenario = ({
             color: "#47D985",
           },
           {
-            name: "GAP",
-            title: "GAP",
+            name: "Gap",
+            title: "Gap",
             order: 3,
             total: gapValue > 0 ? gapValue : 0,
             value: gapValue > 0 ? gapValue : 0,

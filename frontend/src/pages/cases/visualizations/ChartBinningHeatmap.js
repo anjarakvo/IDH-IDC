@@ -284,7 +284,7 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
       {binningData.binCharts.map((b, key) => (
         <div key={key}>
           <h3>
-            Income Levels for {b.binName} : {b.binValue}
+            Income Levels for {b.binName} : {b.binValue.toFixed(2)}
           </h3>
           <Chart
             height={350}

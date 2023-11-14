@@ -5,18 +5,20 @@ const ChartIncomeGap = ({ dashboardData }) => {
   const chartData = useMemo(() => {
     return dashboardData.reduce((c, d) => {
       const target = d?.target || 0;
+      const currentValue = target - d.total_current_income;
+      const feasibleValue = target - d.total_feasible_income;
       return [
         ...c,
         {
           name: `Current\n${d.name}`,
-          value: target - d.total_current_income,
-          total: target - d.total_current_income,
+          value: currentValue.toFixed(2),
+          total: currentValue.toFixed(2),
           color: "#854634",
         },
         {
           name: `Feasible\n${d.name}`,
-          value: target - d.total_feasible_income,
-          total: target - d.total_feasible_income,
+          value: feasibleValue.toFixed(2),
+          total: feasibleValue.toFixed(2),
           color: "#ff6c19",
         },
       ];
