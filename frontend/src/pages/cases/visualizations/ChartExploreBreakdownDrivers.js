@@ -87,6 +87,12 @@ const ChartExploreBreakdownDrivers = ({ dashboardData }) => {
     return [...focusRes, ...diversifiedRes];
   }, [currentSegmentData]);
 
+  useEffect(() => {
+    if (driverOptionsDropdown.length > 0) {
+      setSelectedDriver("diversified");
+    }
+  }, [driverOptionsDropdown]);
+
   const chartData = useMemo(() => {
     if (!currentSegmentData || !driverOptionsDropdown.length) {
       return [];

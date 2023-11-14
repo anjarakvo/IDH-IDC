@@ -122,7 +122,7 @@ const DataFields = ({
         stack: [
           {
             name: "Current",
-            title: "Current",
+            title: "Current Income",
             value: g.reduce((a, b) => a + b.currentValue, 0),
             total: g.reduce((a, b) => a + b.currentValue, 0),
             order: 2,
@@ -130,7 +130,7 @@ const DataFields = ({
           },
           {
             name: "Feasible",
-            title: "Additional income if feasible values are reached",
+            title: "Feasible additional income ",
             value: additionalIncome < 0 ? 0 : additionalIncome,
             total: additionalIncome < 0 ? 0 : additionalIncome,
             order: 1,
@@ -145,7 +145,7 @@ const DataFields = ({
       stack: [
         {
           name: "Current",
-          title: "Current",
+          title: "Current Income",
           value: totalIncome.current,
           total: totalIncome.current,
           order: 2,
@@ -153,7 +153,7 @@ const DataFields = ({
         },
         {
           name: "Feasible",
-          title: "Additional income if feasible values are reached",
+          title: "Feasible additional income",
           value: totalIncome.feasible - totalIncome.current,
           total: totalIncome.feasible,
           order: 1,
@@ -421,6 +421,7 @@ const DataFields = ({
         affix={true}
         targetData={targetChartData}
         loading={!chartData.length || !targetChartData.length}
+        height={window.innerHeight * 0.45}
       />
     </Row>
   );

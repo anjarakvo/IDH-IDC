@@ -12,7 +12,7 @@ const IncomeDriverTarget = ({
   formValues,
   setFormValues,
   segmentItem,
-  totalIncome,
+  // totalIncome,
 }) => {
   const [form] = Form.useForm();
   const [householdSize, setHouseholdSize] = useState(0);
@@ -148,24 +148,25 @@ const IncomeDriverTarget = ({
           const { data } = res;
           const targetHH = data.household_size;
           setBenchmark(data);
-          if (data?.cpi) {
-            setIncomeTarget(data.cpi);
-            updateFormValues({
-              ...regionData,
-              target: data.cpi,
-              benchmark: data,
-            });
-          } else {
-            const targetValue =
-              data.value?.[currentCase.currency.toLowerCase()] ||
-              data.value.lcu;
-            setIncomeTarget((HHSize / targetHH) * targetValue);
-            updateFormValues({
-              ...regionData,
-              target: (HHSize / targetHH) * targetValue,
-              benchmark: data,
-            });
-          }
+          // comment cpi calculation for now, until we fix the calculation and endpoint
+          // cpi get by country not region
+          // if (data?.cpi) {
+          //   setIncomeTarget(data.cpi);
+          //   updateFormValues({
+          //     ...regionData,
+          //     target: data.cpi,
+          //     benchmark: data,
+          //   });
+          // } else {
+          const targetValue =
+            data.value?.[currentCase.currency.toLowerCase()] || data.value.lcu;
+          setIncomeTarget((HHSize / targetHH) * targetValue);
+          updateFormValues({
+            ...regionData,
+            target: (HHSize / targetHH) * targetValue,
+            benchmark: data,
+          });
+          // }
         });
       }
     }
@@ -180,7 +181,7 @@ const IncomeDriverTarget = ({
     >
       <Row gutter={[8, 8]}>
         <Col span={12}>
-          <Form.Item label="Manual Target" name="manual_target">
+          <Form.Item label="Better income target" name="manual_target">
             <Switch checked={!disableTarget} />
           </Form.Item>
         </Col>
@@ -192,6 +193,13 @@ const IncomeDriverTarget = ({
         >
           <Form.Item label="Target" name="target">
             <InputNumber style={formStyle} disabled={disableTarget} />
+            {/* <Row align="middle">
+              <Col span={21}>
+              </Col>
+              <Col span={3} align="start">
+                <h3>{currentCase.currency}</h3>
+              </Col>
+            </Row> */}
           </Form.Item>
         </Col>
       </Row>
@@ -228,10 +236,7 @@ const IncomeDriverTarget = ({
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item
-            label="Number of Average Adult in Household"
-            name="household_adult"
-          >
+          <Form.Item label="Avg # of adults in HH" name="household_adult">
             <InputNumber
               style={formStyle}
               onChange={handleOnChangeHouseholdAdult}
@@ -239,10 +244,7 @@ const IncomeDriverTarget = ({
           </Form.Item>
         </Col>
         <Col span={8}>
-          <Form.Item
-            label="Number of Average Children in Household"
-            name="household_children"
-          >
+          <Form.Item label="Avg # of children in HH" name="household_children">
             <InputNumber
               style={formStyle}
               onChange={handleOnChangeHouseholdChild}
@@ -263,12 +265,12 @@ const IncomeDriverTarget = ({
             {incomeTarget.toFixed(2)} {currentCase.currency}
           </h2>
         </Col>
-        <Col span={16}>
-          <p>Calculated Living Income</p>
+        {/* <Col span={16}>
+          <p>Current HH Living Income</p>
           <h2>
             {totalIncome.current} {currentCase.currency}
           </h2>
-        </Col>
+        </Col> */}
       </Row>
     </Form>
   );
