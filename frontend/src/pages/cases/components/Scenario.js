@@ -10,6 +10,7 @@ import {
   Space,
   Form,
   Popover,
+  Spin,
 } from "antd";
 import {
   EditTwoTone,
@@ -143,6 +144,13 @@ const ScenarioInput = ({
   setScenarioData,
 }) => {
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    setTimeout(() => {
+      setLoading(false);
+    }, 300);
+  }, []);
 
   const scenarioIncrease = useMemo(() => {
     if (scenarioValue?.value) {
@@ -264,12 +272,20 @@ const ScenarioInput = ({
     form.setFieldsValue(allNewValues);
   };
 
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <Spin />
+      </div>
+    );
+  }
+
   return (
     <Form
       form={form}
       layout="vertical"
       onValuesChange={onValuesChange}
-      // initialValues={scenarioValue?.allNewValues || {}}
+      initialValues={scenarioValue?.allNewValues || {}}
     >
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>

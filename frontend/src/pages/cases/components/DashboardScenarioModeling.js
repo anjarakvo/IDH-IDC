@@ -12,11 +12,6 @@ const DashboardScenarioModeling = ({
   scenarioData,
   setScenarioData,
 }) => {
-  // const [scenarioData, setScenarioData] = useState([
-  //   { name: "Scenario 1", description: "" },
-  // ]);
-  // const [percentage, setPercentage] = useState(true);
-
   const segmentTabs = useMemo(
     () =>
       dashboardData.map((segment) => ({
