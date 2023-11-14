@@ -52,6 +52,7 @@ def get_all_case(
     page: int = 1,
     limit: int = 10,
     search: Optional[str] = None,
+    country: Optional[int] = Query(None),
     tags: Optional[List[int]] = Query(None),
     focus_commodity: Optional[List[int]] = Query(None),
     session: Session = Depends(get_session),
@@ -82,6 +83,7 @@ def get_all_case(
         limit=limit,
         business_unit_users=business_unit_users,
         user_cases=user_cases,
+        country=country,
     )
     if not cases:
         raise HTTPException(status_code=404, detail="Not found")

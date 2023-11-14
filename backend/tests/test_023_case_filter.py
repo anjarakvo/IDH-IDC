@@ -164,3 +164,39 @@ class TestCaseWithFilterRoute:
             "total": 1,
             "total_page": 1,
         }
+
+    @pytest.mark.asyncio
+    async def test_get_case_filtered_by_country(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        res = await client.get(
+            app.url_path_for("case:get_all"),
+            params={"country": 100},
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 404
+        res = await client.get(
+            app.url_path_for("case:get_all"),
+            params={"country": 2},
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "current": 1,
+            "data": [
+                {
+                    "id": 1,
+                    "name": "Bali Rice and Corn Production",
+                    "country": "Bali",
+                    "focus_commodity": 2,
+                    "year": 2023,
+                    "diversified_commodities_count": 2,
+                    "created_at": res["data"][0]["created_at"],
+                    "created_by": "super_admin@akvo.org",
+                    "tags": [2, 1],
+                }
+            ],
+            "total": 1,
+            "total_page": 1,
+        }
