@@ -27,6 +27,7 @@ def get_by_country_region_year(
         .first()
     )
     if not lib:
+        # get LI benchmark from last year
         lib = (
             session.query(LivingIncomeBenchmark)
             .filter(
@@ -35,6 +36,7 @@ def get_by_country_region_year(
                     LivingIncomeBenchmark.region == region,
                 )
             )
+            .order_by(LivingIncomeBenchmark.year.desc())
             .first()
         )
         if not lib:
