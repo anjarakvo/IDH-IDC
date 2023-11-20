@@ -104,7 +104,12 @@ const CaseForm = ({
           },
         ]}
       >
-        <DatePicker picker="year" />
+        <DatePicker
+          picker="year"
+          disabledDate={(current) => {
+            return current && dayjs(current).year() > dayjs().year();
+          }}
+        />
       </Form.Item>
 
       <h3>Driver Details</h3>
@@ -266,14 +271,16 @@ const CaseProfile = ({
       (co) => co.country === selectedCountry
     );
     // set default currency value
-    form.setFieldsValue({ currency: countryCurrency?.value });
+    if (isEmpty(formData)) {
+      form.setFieldsValue({ currency: countryCurrency?.value });
+    }
     // TODO: Wrong format when store to db
     let additonalCurrencies = currencyOptions.filter((co) =>
       ["eur", "usd"].includes(co.value.toLowerCase())
     );
     additonalCurrencies = uniqBy(additonalCurrencies, "value");
     return [countryCurrency, ...additonalCurrencies];
-  }, [selectedCountry, form]);
+  }, [selectedCountry, form, formData]);
 
   useEffect(() => {
     // initial case profile value
