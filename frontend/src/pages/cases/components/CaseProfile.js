@@ -104,7 +104,12 @@ const CaseForm = ({
           },
         ]}
       >
-        <DatePicker picker="year" />
+        <DatePicker
+          picker="year"
+          disabledDate={(current) => {
+            return current && dayjs(current).year() > dayjs().year();
+          }}
+        />
       </Form.Item>
 
       <h3>Driver Details</h3>
