@@ -15,8 +15,8 @@ const IncomeDriverTarget = ({
   // totalIncome,
 }) => {
   const [form] = Form.useForm();
-  const [householdSize, setHouseholdSize] = useState(0);
-  const [benchmark, setBenchmark] = useState(segmentItem?.benchmark || null);
+  // const [householdSize, setHouseholdSize] = useState(0);
+  // const [benchmark, setBenchmark] = useState(segmentItem?.benchmark || null);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
@@ -50,7 +50,7 @@ const IncomeDriverTarget = ({
     setFormValues(updatedFv);
   };
 
-  // load initial target& hh size
+  // load initial target & hh size
   useEffect(() => {
     if (!isEmpty(segmentItem) && currentSegmentId) {
       setIncomeTarget(segmentItem?.target || 0);
@@ -68,23 +68,24 @@ const IncomeDriverTarget = ({
       form.setFieldsValue({
         household_children: segmentItem?.child || null,
       });
-      const HHSize = calculateHouseholdSize({
-        household_adult: segmentItem?.adult || 0,
-        household_children: segmentItem?.child || 0,
-      });
-      setHouseholdSize(HHSize);
+      // const HHSize = calculateHouseholdSize({
+      //   household_adult: segmentItem?.adult || 0,
+      //   household_children: segmentItem?.child || 0,
+      // });
+      // setHouseholdSize(HHSize);
     }
   }, [segmentItem, currentSegmentId, form]);
 
-  useEffect(() => {
-    if (benchmark && !isEmpty(benchmark)) {
-      const targetValue =
-        benchmark.value?.[currentCase.currency.toLowerCase()] ||
-        benchmark.value.lcu;
-      const targetHH = (householdSize / benchmark.household_size) * targetValue;
-      setIncomeTarget(targetHH);
-    }
-  }, [benchmark, householdSize, currentCase]);
+  // load initial target from segment item instead of recalculated (above useEffect)
+  // useEffect(() => {
+  //   if (benchmark && !isEmpty(benchmark)) {
+  //     const targetValue =
+  //       benchmark.value?.[currentCase.currency.toLowerCase()] ||
+  //       benchmark.value.lcu;
+  //     const targetHH = (householdSize / benchmark.household_size) * targetValue;
+  //     setIncomeTarget(targetHH);
+  //   }
+  // }, [benchmark, householdSize, currentCase]);
 
   // call region api
   useEffect(() => {
@@ -117,7 +118,7 @@ const IncomeDriverTarget = ({
   const onValuesChange = (changedValues, allValues) => {
     const { target, region } = allValues;
     const HHSize = calculateHouseholdSize(allValues);
-    setHouseholdSize(HHSize);
+    // setHouseholdSize(HHSize);
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
       // manual target
@@ -145,28 +146,31 @@ const IncomeDriverTarget = ({
         let url = `country_region_benchmark?country_id=${currentCase.country}`;
         url = `${url}&region_id=${region}&year=${currentCase.year}`;
         api.get(url).then((res) => {
+          // data represent LI Benchmark value
           const { data } = res;
           const targetHH = data.household_size;
-          setBenchmark(data);
-          // comment cpi calculation for now, until we fix the calculation and endpoint
-          // cpi get by country not region
-          // if (data?.cpi) {
-          //   setIncomeTarget(data.cpi);
-          //   updateFormValues({
-          //     ...regionData,
-          //     target: data.cpi,
-          //     benchmark: data,
-          //   });
-          // } else {
           const targetValue =
             data.value?.[currentCase.currency.toLowerCase()] || data.value.lcu;
-          setIncomeTarget((HHSize / targetHH) * targetValue);
-          updateFormValues({
-            ...regionData,
-            target: (HHSize / targetHH) * targetValue,
-            benchmark: data,
-          });
-          // }
+          // setBenchmark(data);
+          // with CPI calculation
+          // Case year LI Benchmark = Latest Benchmark*(1-CPI factor)
+          if (data?.cpi_factor) {
+            const caseYearLIB = targetValue * (1 - data.cpi_factor);
+            setIncomeTarget(caseYearLIB);
+            updateFormValues({
+              ...regionData,
+              target: caseYearLIB,
+              benchmark: data,
+            });
+          } else {
+            const LITarget = (HHSize / targetHH) * targetValue;
+            setIncomeTarget(LITarget);
+            updateFormValues({
+              ...regionData,
+              target: LITarget,
+              benchmark: data,
+            });
+          }
         });
       }
     }
