@@ -156,10 +156,11 @@ const IncomeDriverTarget = ({
           // Case year LI Benchmark = Latest Benchmark*(1-CPI factor)
           if (data?.cpi_factor) {
             const caseYearLIB = targetValue * (1 - data.cpi_factor);
-            setIncomeTarget(caseYearLIB);
+            const LITarget = (HHSize / targetHH) * caseYearLIB;
+            setIncomeTarget(LITarget);
             updateFormValues({
               ...regionData,
-              target: caseYearLIB,
+              target: LITarget,
               benchmark: data,
             });
           } else {
