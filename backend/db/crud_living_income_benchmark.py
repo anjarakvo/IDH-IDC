@@ -51,15 +51,27 @@ def get_by_country_region_year(
         ).first()
         # get CPI from lastest year
         last_year_cpi = cpi.order_by(Cpi.year.desc()).first()
+        # add CPI value
         if case_year_cpi:
+            # Calculate CPI factor
+            # CPI Factor logic
+            case_year_cpi_value = case_year_cpi.value if case_year_cpi else 0
+            last_year_cpi_value = last_year_cpi.value if last_year_cpi else 0
+            # (Latest  Year CPI - Case year CPI)/(Case Year CPI) = CPI factor
+            cpi_factor = (
+                last_year_cpi_value - case_year_cpi_value
+            ) / case_year_cpi_value
+            #
             lib = lib.serialize
             lib["year"] = year
-            lib["case_year_cpi"] = case_year_cpi.value
-            lib["last_year_cpi"] = last_year_cpi.value
+            lib["case_year_cpi"] = case_year_cpi_value
+            lib["last_year_cpi"] = last_year_cpi_value
+            lib["cpi_factor"] = cpi_factor
             return lib
     else:
         lib = lib.serialize
         lib["case_year_cpi"] = None
         lib["last_year_cpi"] = None
+        lib["cpi_factor"] = None
         return lib
     return None

@@ -38,6 +38,7 @@ class TestBenchmarkRoute:
             "value": {"lcu": 1200.5, "usd": 2200.5, "eur": 3200.5},
             "case_year_cpi": None,
             "last_year_cpi": None,
+            "cpi_factor": None,
         }
 
     @pytest.mark.asyncio
@@ -66,6 +67,7 @@ class TestBenchmarkRoute:
             "value": {"lcu": 1200.5, "usd": 2200.5, "eur": 3200.5},
             "case_year_cpi": 6000.0,
             "last_year_cpi": 7000.0,
+            "cpi_factor": 0.16666666666666666,
         }
 
     @pytest.mark.asyncio
