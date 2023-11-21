@@ -1,8 +1,10 @@
-import React from "react";
-import { Col, Card } from "antd";
+import React, { useRef } from "react";
+import { Col, Card, Button, Row } from "antd";
 import ReactECharts from "echarts-for-react";
 import { Bar, BarStack, ColumnBar } from "./options";
 import { Easing } from "./options/common";
+import { DownloadOutlined } from "@ant-design/icons";
+import { toPng } from "html-to-image";
 
 export const generateOptions = (
   { type, data, chartTitle, percentage, extra, targetData },
@@ -45,6 +47,19 @@ export const generateOptions = (
   }
 };
 
+const htmlToImageConvert = (elementRef, filename) => {
+  toPng(elementRef.current, { cacheBust: false })
+    .then((dataUrl) => {
+      const link = document.createElement("a");
+      link.download = `${filename}.png`;
+      link.href = dataUrl;
+      link.click();
+    })
+    .catch((err) => {
+      console.log("Error while downloading content", err);
+    });
+};
+
 const loadingStyle = {
   text: "Loading",
   color: "#1890ff",
@@ -84,6 +99,8 @@ const Chart = ({
   affix = false,
   targetData = [], // to show income target symbol
 }) => {
+  const elementRef = useRef();
+
   const chartTitle = wrapper ? {} : { title: title, subTitle: subTitle };
   const option = generateOptions(
     {
@@ -139,7 +156,21 @@ const Chart = ({
         style={{ height: height, ...styles, ...affixStyle }}
       >
         <Card
-          title={<h3 className="segment-group chart-title">{title}</h3>}
+          ref={elementRef}
+          title={
+            <Row style={{ width: "100%" }} align="middle">
+              <Col span={22}>
+                <h3 className="segment-group chart-title">{title}</h3>
+              </Col>
+              <Col span={2} align="end" style={{ float: "right" }}>
+                <Button
+                  icon={<DownloadOutlined />}
+                  type="ghost"
+                  onClick={() => htmlToImageConvert(elementRef, title)}
+                />
+              </Col>
+            </Row>
+          }
           className="chart-container"
         >
           <ReactECharts {...chartOptions} />
