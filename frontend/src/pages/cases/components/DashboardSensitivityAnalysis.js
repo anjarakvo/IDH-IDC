@@ -82,7 +82,8 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       <Col span={12}>
         <b>
           Binning driver{" "}
-          <small>({selectedDriverUnit["binning-driver-name"]?.unit})</small>:
+          <small>({selectedDriverUnit["binning-driver-name"]?.unitName})</small>{" "}
+          :
         </b>
       </Col>
       <Col span={12}>
@@ -115,7 +116,7 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       <Col span={12}>
         <b>
           X-Axis Driver{" "}
-          <small>({selectedDriverUnit["x-axis-driver"]?.unit})</small>:
+          <small>({selectedDriverUnit["x-axis-driver"]?.unitName})</small> :
         </b>
       </Col>
       <Col span={12}>
@@ -144,7 +145,7 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       <Col span={12}>
         <b>
           Y-Axis Driver{" "}
-          <small>({selectedDriverUnit["y-axis-driver"]?.unit})</small>:
+          <small>({selectedDriverUnit["y-axis-driver"]?.unitName})</small> :
         </b>
       </Col>
       <Col span={12}>
@@ -208,7 +209,7 @@ const DashboardSensitivityAnalysis = ({
     );
     const data = map(groupBy(drivers, "question.id"), (d, i) => {
       const currentQuestion = d[0].question;
-      const unit = currentQuestion.unit
+      const unitName = currentQuestion.unit
         .split("/")
         .map((u) => u.trim())
         .map((u) => focusCommodity?.[u])
@@ -218,7 +219,7 @@ const DashboardSensitivityAnalysis = ({
         name: currentQuestion.text,
         current: d.find((a) => a.name === "current")?.value || 0,
         feasible: d.find((a) => a.name === "feasible")?.value || 0,
-        unit: unit,
+        unitName: unitName,
       };
     });
     const currencyUnit = focusCommodity["currency"];
@@ -229,27 +230,27 @@ const DashboardSensitivityAnalysis = ({
         name: "Diversified Income",
         current: segmentData.total_current_diversified_income,
         feasible: segmentData.total_feasible_diversified_income,
-        unit: currencyUnit,
+        unitName: currencyUnit,
       },
       {
         key: data.length + 11,
         name: "Total Focus Income",
         current: segmentData.total_current_focus_income?.toFixed(2) || 0,
         feasible: segmentData.total_feasible_focus_income?.toFixed(2) || 0,
-        unit: currencyUnit,
+        unitName: currencyUnit,
       },
       {
         key: data.length + 12,
         name: "Total Income",
         current: segmentData.total_current_income?.toFixed(2) || 0,
         feasible: segmentData.total_feasible_income?.toFixed(2) || 0,
-        unit: currencyUnit,
+        unitName: currencyUnit,
       },
       {
         key: data.length + 13,
         name: "Income Target",
         current: segmentData.target?.toFixed(2) || 0,
-        unit: currencyUnit,
+        unitName: currencyUnit,
         render: (i) => {
           <div>test {i}</div>;
         },
@@ -440,7 +441,7 @@ const DashboardSensitivityAnalysis = ({
                           return {
                             value: x.name,
                             label: x.name,
-                            unit: x.unit,
+                            unitName: x.unitName,
                           };
                         })}
                         selected={
