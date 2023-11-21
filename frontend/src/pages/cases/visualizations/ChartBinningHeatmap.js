@@ -14,6 +14,7 @@ const getOptions = ({
   min = 0,
   max = 0,
   diversified = 0,
+  // diversified_feasible = 0,
   target = 0,
   origin = [],
 }) => {
@@ -55,7 +56,19 @@ const getOptions = ({
           "c",
           newValues
         );
-        return [h, d, (newTotalValue + diversified).toFixed(2)];
+        // calculate diversified value
+        let diversifiedValue = diversified;
+        if (binName === "Diversified Income") {
+          diversifiedValue = binValue;
+        }
+        if (yAxis.name === "Diversified Income") {
+          diversifiedValue = parseFloat(d);
+        }
+        if (xAxis.name === "Diversified Income") {
+          diversifiedValue = parseFloat(h);
+        }
+        // EOL calculate diversified value
+        return [h, d, (newTotalValue + diversifiedValue).toFixed(2)];
       });
     })
     .flatMap((x) => x);
@@ -256,6 +269,7 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
       min: segment.total_current_income,
       max: segment.total_feasible_income,
       diversified: segment.total_current_diversified_income,
+      diversified_feasible: segment.total_feasible_diversified_income,
       target: segment.target,
     };
   }, [data, segment]);
