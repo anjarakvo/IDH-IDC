@@ -223,14 +223,12 @@ const DashboardSensitivityAnalysis = ({
     if (!currentSegment) {
       return [];
     }
+    // filter drivers to include in BinningForm options
     return dataSource.filter(
       (d) =>
-        ![
-          "Diversified Income",
-          "Total Focus Income",
-          "Total Income",
-          "Income Target",
-        ].includes(d.name)
+        !["Total Focus Income", "Total Income", "Income Target"].includes(
+          d.name
+        )
     );
   }, [currentSegment, dataSource]);
 
@@ -391,7 +389,6 @@ const DashboardSensitivityAnalysis = ({
                     layout="horizontal"
                     form={form}
                     onValuesChange={onValuesChange}
-                    // onFinish={handleOnFinish}
                     initialValues={binningData}
                   >
                     {dashboardData.map((segment, key) => (
