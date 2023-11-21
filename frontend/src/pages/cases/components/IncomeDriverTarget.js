@@ -15,6 +15,8 @@ const IncomeDriverTarget = ({
   // totalIncome,
 }) => {
   const [form] = Form.useForm();
+  const [householdSize, setHouseholdSize] = useState(0);
+  const [benchmark, setBenchmark] = useState(segmentItem?.benchmark || null);
   const [incomeTarget, setIncomeTarget] = useState(0);
   const [disableTarget, setDisableTarget] = useState(true);
   const [regionOptions, setRegionOptions] = useState([]);
@@ -66,8 +68,34 @@ const IncomeDriverTarget = ({
       form.setFieldsValue({
         household_children: segmentItem?.child || null,
       });
+      const HHSize = calculateHouseholdSize({
+        household_adult: segmentItem?.adult || 0,
+        household_children: segmentItem?.child || 0,
+      });
+      setHouseholdSize(HHSize);
     }
   }, [segmentItem, currentSegmentId, form]);
+
+  useEffect(() => {
+    // handle income target value when householdSize updated
+    if (benchmark && !isEmpty(benchmark)) {
+      const targetValue =
+        benchmark.value?.[currentCase.currency.toLowerCase()] ||
+        benchmark.value.lcu;
+      // with CPI calculation
+      // Case year LI Benchmark = Latest Benchmark*(1-CPI factor)
+      if (benchmark?.cpi_factor) {
+        const caseYearLIB = targetValue * (1 - benchmark.cpi_factor);
+        const LITarget =
+          (householdSize / benchmark.household_size) * caseYearLIB;
+        setIncomeTarget(LITarget);
+      } else {
+        const LITarget =
+          (householdSize / benchmark.household_size) * targetValue;
+        setIncomeTarget(LITarget);
+      }
+    }
+  }, [benchmark, householdSize, currentCase]);
 
   // call region api
   useEffect(() => {
@@ -100,6 +128,7 @@ const IncomeDriverTarget = ({
   const onValuesChange = (changedValues, allValues) => {
     const { target, region } = allValues;
     const HHSize = calculateHouseholdSize(allValues);
+    setHouseholdSize(HHSize);
     // eslint-disable-next-line no-undefined
     if (changedValues.manual_target !== undefined) {
       // manual target
@@ -129,6 +158,7 @@ const IncomeDriverTarget = ({
         api.get(url).then((res) => {
           // data represent LI Benchmark value
           const { data } = res;
+          setBenchmark(data);
           const targetHH = data.household_size;
           const targetValue =
             data.value?.[currentCase.currency.toLowerCase()] || data.value.lcu;
