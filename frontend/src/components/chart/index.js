@@ -145,10 +145,10 @@ const Chart = ({
           ref={elementRef}
           title={
             <Row style={{ width: "100%" }} align="middle">
-              <Col span={22}>
+              <Col span={14}>
                 <h3 className="segment-group chart-title">{title}</h3>
               </Col>
-              <Col span={2} align="end" style={{ float: "right" }}>
+              <Col span={10} align="end" style={{ float: "right" }}>
                 <SaveAsImageButton elementRef={elementRef} filename={title} />
               </Col>
             </Row>

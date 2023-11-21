@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef } from "react";
 import { Row, Col, Card } from "antd";
 import {
   ChartCurrentFeasible,
@@ -8,8 +8,12 @@ import {
   ChartExploreBreakdownDrivers,
   ChartIncomeLevelPerCommodities,
 } from "../visualizations";
+import { SaveAsImageButton } from "../../../components/utils";
 
 const DashboardIncomeOverview = ({ dashboardData }) => {
+  const elCurrentFeasibleChart = useRef();
+  const elIncomeGap = useRef();
+
   return (
     <Row>
       <Col span={24}>
@@ -21,7 +25,7 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
             hoverable={false}
           >
             <Row className="income-driver-content" gutter={[16, 16]}>
-              <Col span={12}>
+              <Col span={12} ref={elCurrentFeasibleChart}>
                 <h2>
                   What are the current and feasible income levels for the
                   different segments?
@@ -30,14 +34,23 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   This graph shows you the actual household income components,
                   and the income target per segment
                 </p>
+                <SaveAsImageButton
+                  elementRef={elCurrentFeasibleChart}
+                  filename="What are the current and feasible income levels for the
+                  different segments?"
+                />
                 <ChartCurrentFeasible dashboardData={dashboardData} />
               </Col>
-              <Col span={12}>
+              <Col span={12} ref={elIncomeGap}>
                 <h2>How big is the income gap?</h2>
                 <p>
                   This graph shows you the actual household income components,
                   and the income target per segment
                 </p>
+                <SaveAsImageButton
+                  elementRef={elIncomeGap}
+                  filename="How big is the income gap?"
+                />
                 <ChartIncomeGap dashboardData={dashboardData} />
               </Col>
             </Row>
