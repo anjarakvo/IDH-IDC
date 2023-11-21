@@ -4,7 +4,11 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { toPng } from "html-to-image";
 
 const htmlToImageConvert = (elementRef, filename) => {
-  toPng(elementRef.current, { cacheBust: false, backgroundColor: "#fff" })
+  toPng(elementRef.current, {
+    cacheBust: false,
+    backgroundColor: "#fff",
+    style: { padding: "24px" },
+  })
     .then((dataUrl) => {
       const link = document.createElement("a");
       link.download = `${filename}.png`;
@@ -16,13 +20,17 @@ const htmlToImageConvert = (elementRef, filename) => {
     });
 };
 
-const SaveAsImageButton = ({ elementRef, filename = "Undefined" }) => {
+const SaveAsImageButton = ({
+  elementRef,
+  filename = "Undefined",
+  style = {},
+}) => {
   return (
     <Button
       icon={<DownloadOutlined />}
       size="small"
       onClick={() => htmlToImageConvert(elementRef, filename)}
-      style={{ fontSize: 12 }}
+      style={{ fontSize: 12, ...style }}
     >
       Save as Image
     </Button>
