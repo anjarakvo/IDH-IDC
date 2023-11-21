@@ -64,6 +64,9 @@ const Question = ({
     return !isNaN(value) ? value : 0;
   }, [form, case_commodity, id, percentage]);
 
+  const disableTotalIncomeFocusCommodityField =
+    !parent && question_type === "aggregator" && commodity_type === "focus";
+
   return (
     <>
       <Row
@@ -101,12 +104,14 @@ const Question = ({
                     ? "none"
                     : "",
               }}
+              disabled={disableTotalIncomeFocusCommodityField}
             >
               <InputNumber
                 style={{
                   width: "100%",
                 }}
                 addonAfter={qtype === "percentage" ? "%" : ""}
+                disabled={disableTotalIncomeFocusCommodityField}
               />
             </Form.Item>
           ))}
