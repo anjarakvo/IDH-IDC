@@ -1,10 +1,9 @@
 import React, { useRef } from "react";
-import { Col, Card, Button, Row } from "antd";
+import { Col, Card, Row } from "antd";
 import ReactECharts from "echarts-for-react";
 import { Bar, BarStack, ColumnBar } from "./options";
 import { Easing } from "./options/common";
-import { DownloadOutlined } from "@ant-design/icons";
-import { toPng } from "html-to-image";
+import { SaveAsImageButton } from "../utils";
 
 export const generateOptions = (
   { type, data, chartTitle, percentage, extra, targetData },
@@ -45,19 +44,6 @@ export const generateOptions = (
         grid: grid,
       });
   }
-};
-
-const htmlToImageConvert = (elementRef, filename) => {
-  toPng(elementRef.current, { cacheBust: false })
-    .then((dataUrl) => {
-      const link = document.createElement("a");
-      link.download = `${filename}.png`;
-      link.href = dataUrl;
-      link.click();
-    })
-    .catch((err) => {
-      console.log("Error while downloading content", err);
-    });
 };
 
 const loadingStyle = {
@@ -163,11 +149,7 @@ const Chart = ({
                 <h3 className="segment-group chart-title">{title}</h3>
               </Col>
               <Col span={2} align="end" style={{ float: "right" }}>
-                <Button
-                  icon={<DownloadOutlined />}
-                  type="ghost"
-                  onClick={() => htmlToImageConvert(elementRef, title)}
-                />
+                <SaveAsImageButton elementRef={elementRef} filename={title} />
               </Col>
             </Row>
           }
