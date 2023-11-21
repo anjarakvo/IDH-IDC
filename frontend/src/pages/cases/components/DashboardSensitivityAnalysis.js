@@ -64,10 +64,27 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
     };
   }, [drivers, selected]);
 
+  const selectedDriverUnit = useMemo(() => {
+    const transformSelected = selected
+      .map((s) => {
+        const findDriver = drivers.find((d) => d.value === s.value);
+        return {
+          ...s,
+          ...findDriver,
+        };
+      })
+      .reduce((res, curr) => ({ ...res, [curr.name]: curr }), {});
+    return transformSelected;
+  }, [selected, drivers]);
+
   return (
     <Row gutter={[8, 8]} style={{ display: hidden ? "none" : "" }}>
       <Col span={12}>
-        <b>Binning driver:</b>
+        <b>
+          Binning driver{" "}
+          <small>({selectedDriverUnit["binning-driver-name"]?.unitName})</small>{" "}
+          :
+        </b>
       </Col>
       <Col span={12}>
         <Form.Item name={`${segment.id}_binning-driver-name`}>
@@ -97,7 +114,10 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       </Col>
       <Divider />
       <Col span={12}>
-        <b>X-Axis Driver:</b>
+        <b>
+          X-Axis Driver{" "}
+          <small>({selectedDriverUnit["x-axis-driver"]?.unitName})</small> :
+        </b>
       </Col>
       <Col span={12}>
         <Form.Item name={`${segment.id}_x-axis-driver`}>
@@ -123,7 +143,10 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       </Col>
       <Divider />
       <Col span={12}>
-        <b>Y-Axis Driver:</b>
+        <b>
+          Y-Axis Driver{" "}
+          <small>({selectedDriverUnit["y-axis-driver"]?.unitName})</small> :
+        </b>
       </Col>
       <Col span={12}>
         <Form.Item name={`${segment.id}_y-axis-driver`}>
@@ -155,6 +178,7 @@ const DashboardSensitivityAnalysis = ({
   dashboardData = [],
   binningData,
   setBinningData,
+  commodityList,
 }) => {
   const [currentSegment, setCurrentSegment] = useState(null);
   const [form] = Form.useForm();
@@ -173,6 +197,9 @@ const DashboardSensitivityAnalysis = ({
     if (!currentSegment) {
       return [];
     }
+    const focusCommodity = commodityList.find(
+      (cm) => cm.commodity_type === "focus"
+    );
     const segmentData = dashboardData.find(
       (segment) => segment.id === currentSegment
     );
@@ -181,13 +208,21 @@ const DashboardSensitivityAnalysis = ({
       (answer) => answer.question.parent_id === 1 && answer.commodityFocus
     );
     const data = map(groupBy(drivers, "question.id"), (d, i) => {
+      const currentQuestion = d[0].question;
+      const unitName = currentQuestion.unit
+        .split("/")
+        .map((u) => u.trim())
+        .map((u) => focusCommodity?.[u])
+        .join(" / ");
       return {
         key: parseInt(i) - 1,
-        name: d[0].question.text,
+        name: currentQuestion.text,
         current: d.find((a) => a.name === "current")?.value || 0,
         feasible: d.find((a) => a.name === "feasible")?.value || 0,
+        unitName: unitName,
       };
     });
+    const currencyUnit = focusCommodity["currency"];
     return [
       ...data,
       {
@@ -195,29 +230,33 @@ const DashboardSensitivityAnalysis = ({
         name: "Diversified Income",
         current: segmentData.total_current_diversified_income,
         feasible: segmentData.total_feasible_diversified_income,
+        unitName: currencyUnit,
       },
       {
         key: data.length + 11,
         name: "Total Focus Income",
         current: segmentData.total_current_focus_income?.toFixed(2) || 0,
         feasible: segmentData.total_feasible_focus_income?.toFixed(2) || 0,
+        unitName: currencyUnit,
       },
       {
         key: data.length + 12,
         name: "Total Income",
         current: segmentData.total_current_income?.toFixed(2) || 0,
         feasible: segmentData.total_feasible_income?.toFixed(2) || 0,
+        unitName: currencyUnit,
       },
       {
         key: data.length + 13,
         name: "Income Target",
         current: segmentData.target?.toFixed(2) || 0,
+        unitName: currencyUnit,
         render: (i) => {
           <div>test {i}</div>;
         },
       },
     ];
-  }, [currentSegment, dashboardData]);
+  }, [currentSegment, dashboardData, commodityList]);
 
   const drivers = useMemo(() => {
     if (!currentSegment) {
@@ -399,6 +438,7 @@ const DashboardSensitivityAnalysis = ({
                           return {
                             value: x.name,
                             label: x.name,
+                            unitName: x.unitName,
                           };
                         })}
                         selected={
