@@ -208,8 +208,11 @@ const DashboardSensitivityAnalysis = ({
     );
     const data = map(groupBy(drivers, "question.id"), (d, i) => {
       const currentQuestion = d[0].question;
-      const [questionUnit, ,] = currentQuestion.unit.split("/");
-      const unit = focusCommodity[questionUnit.trim()];
+      const unit = currentQuestion.unit
+        .split("/")
+        .map((u) => u.trim())
+        .map((u) => focusCommodity?.[u])
+        .join(" / ");
       return {
         key: parseInt(i) - 1,
         name: currentQuestion.text,
