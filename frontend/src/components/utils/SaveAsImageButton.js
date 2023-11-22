@@ -52,7 +52,7 @@ const SaveAsImageButton = ({
       style={{ fontSize: 12, ...style }}
       loading={loading}
     >
-      Save as Image
+      Download chart
     </Button>
   );
 };
