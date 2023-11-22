@@ -154,7 +154,7 @@ const getOptions = ({
                 ? binValue > binRange.current || binValue < binRange.feasible
                 : binValue < binRange.current || binValue > binRange.feasible;
             if (isOutRange) {
-              return `{out|${params.value[2]}}`;
+              return `{out|${thousandFormatter(params.value[2])}}`;
             }
             const value = params.value[2];
             const xAxisRange = origin.find((x) => x.name === xAxis.name);
@@ -171,10 +171,13 @@ const getOptions = ({
                   params.value[1] <= yAxisRange?.feasible
                 : params.value[1] <= yAxisRange?.current &&
                   params.value[1] >= yAxisRange?.feasible;
+            const formattedValue = thousandFormatter(value);
             if (!inX || !inY) {
-              return `{out|${value}}`;
+              return `{out|${formattedValue}}`;
             }
-            return value >= target ? `{up|${value}}` : `{down|${value}}`;
+            return value >= target
+              ? `{up|${formattedValue}}`
+              : `{down|${formattedValue}}`;
           },
           rich: {
             up: {
