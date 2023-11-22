@@ -1,8 +1,14 @@
 import { upperFirst, take } from "lodash";
 
+export const thousandFormatter = (value) => {
+  return value
+    ? String(value).replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,")
+    : "";
+};
+
 export const popupFormatter = (params) => {
   var value = (params.value + "").split(".");
-  value = value[0].replace(/(\d{1,3})(?=(?:\d{3})+(?!\d))/g, "$1,");
+  value = thousandFormatter(value[0]);
   if (Number.isNaN(params.value)) {
     return;
   }

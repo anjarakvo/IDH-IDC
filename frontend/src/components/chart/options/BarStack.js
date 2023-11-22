@@ -10,6 +10,7 @@ import {
   axisTitle,
   NoData,
   LabelStyle,
+  thousandFormatter,
 } from "./common";
 import { uniq, flatten, uniqBy, isEmpty, upperFirst, sumBy } from "lodash";
 
@@ -181,7 +182,7 @@ const BarStack = ({
       nameLocation: "middle",
       nameGap: 50,
       axisLabel: {
-        formatter: (e) => (percentage ? `${e}%` : e),
+        formatter: (e) => (percentage ? `${e}%` : thousandFormatter(e)),
         ...TextStyle,
         color: "#9292ab",
       },
