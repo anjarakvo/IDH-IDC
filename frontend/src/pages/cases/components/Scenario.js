@@ -18,10 +18,11 @@ import {
   CloseCircleTwoTone,
   DeleteTwoTone,
 } from "@ant-design/icons";
-import { getFunctionDefaultValue } from "./";
+import { InputNumberThousandFormatter, getFunctionDefaultValue } from "./";
 import { ChartScenarioModeling } from "../visualizations";
 import { isEmpty } from "lodash";
 import { SaveAsImageButton } from "../../../components/utils";
+import { thousandFormatter } from "../../../components/chart/options/common";
 
 const Question = ({
   id,
@@ -113,15 +114,18 @@ const Question = ({
                 }}
                 addonAfter={qtype === "percentage" ? "%" : ""}
                 disabled={disableTotalIncomeFocusCommodityField}
+                {...InputNumberThousandFormatter}
               />
             </Form.Item>
           ))}
         </Col>
         <Col span={5} align="right">
-          {answer?.value?.toFixed(2) || ""}
+          {thousandFormatter(answer?.value?.toFixed(2)) || ""}
         </Col>
         <Col span={5} align="right">
-          {percentage ? currentIncrease : `${currentIncrease} %`}
+          {percentage
+            ? thousandFormatter(currentIncrease)
+            : `${currentIncrease} %`}
         </Col>
       </Row>
       {!parent && commodity_type === "focus"
@@ -318,16 +322,16 @@ const ScenarioInput = ({
           <h4>
             {percentage
               ? `${scenarioIncrease.totalPercentage}%`
-              : scenarioIncrease?.totalAbsolute}
+              : thousandFormatter(scenarioIncrease?.totalAbsolute)}
           </h4>
         </Col>
         <Col span={5} align="right">
-          <h4>{segment.total_current_income?.toFixed(2)}</h4>
+          <h4>{thousandFormatter(segment.total_current_income?.toFixed(2))}</h4>
         </Col>
         <Col span={5} align="right">
           <h4>
             {percentage
-              ? scenarioIncrease?.totalAbsolute
+              ? thousandFormatter(scenarioIncrease?.totalAbsolute)
               : `${scenarioIncrease.totalPercentage}%`}
           </h4>
         </Col>
