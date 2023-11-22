@@ -4,6 +4,8 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { toPng } from "html-to-image";
 
 const htmlToImageConvert = (elementRef, filename, setLoading) => {
+  // console.log(elementRef);
+  // return
   if (!elementRef) {
     console.error("Please provide you element ref using react useRef");
     setTimeout(() => {
