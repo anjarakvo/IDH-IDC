@@ -1,8 +1,9 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useRef } from "react";
 import Chart from "../../../components/chart";
 import { range } from "lodash";
 import { getFunctionDefaultValue } from "../components";
-import { Space } from "antd";
+import { Row, Col, Space } from "antd";
+import { SaveAsImageButton } from "../../../components/utils";
 
 const getOptions = ({
   xAxis = { name: "", min: 0, max: 0 },
@@ -213,6 +214,7 @@ const legends = [
 
 const ChartBinningHeatmap = ({ segment, data, origin }) => {
   const [label, setLabel] = useState(null);
+  const elSensitivityAnalysis = useRef();
 
   const binningData = useMemo(() => {
     if (!segment?.id) {
@@ -275,22 +277,41 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
   }, [data, segment]);
 
   return (
-    <div>
+    <div ref={elSensitivityAnalysis}>
       {binningData.binCharts?.length ? (
         <Space direction="vertical">
-          <div>{label}</div>
-          <div style={{ float: "right" }}>
-            <Space direction="vertical">
-              {legends.map((l, li) => (
-                <Space key={li}>
-                  <div
-                    style={{ backgroundColor: l.color, width: 16, height: 16 }}
-                  />
-                  <div>{l.text}</div>
-                </Space>
-              ))}
-            </Space>
+          <div>
+            <b>{segment.name}</b>
           </div>
+          <div>{label}</div>
+          <Row gutter={[8, 16]} style={{ minHeight: 95 }}>
+            <Col span={6}>
+              <SaveAsImageButton
+                elementRef={elSensitivityAnalysis}
+                filename={label}
+              />
+            </Col>
+            <Col
+              span={18}
+              align="end"
+              style={{ position: "absolute", right: 24 }}
+            >
+              <Space direction="vertical">
+                {legends.map((l, li) => (
+                  <Space key={li}>
+                    <div
+                      style={{
+                        backgroundColor: l.color,
+                        width: 16,
+                        height: 16,
+                      }}
+                    />
+                    <div>{l.text}</div>
+                  </Space>
+                ))}
+              </Space>
+            </Col>
+          </Row>
         </Space>
       ) : (
         ""
