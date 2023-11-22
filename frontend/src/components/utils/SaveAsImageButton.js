@@ -4,6 +4,10 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { toPng } from "html-to-image";
 
 const htmlToImageConvert = (elementRef, filename) => {
+  if (!elementRef) {
+    console.error("Please provide you element ref using react useRef");
+    return;
+  }
   toPng(elementRef.current, {
     cacheBust: false,
     backgroundColor: "#fff",
