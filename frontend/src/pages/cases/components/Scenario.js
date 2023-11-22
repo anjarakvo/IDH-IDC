@@ -148,6 +148,7 @@ const ScenarioInput = ({
   scenarioValue,
   scenarioItem,
   setScenarioData,
+  currencyUnitName,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
@@ -309,7 +310,9 @@ const ScenarioInput = ({
       </Row>
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>
-          <h4>Total Income</h4>
+          <h4>
+            Total Income <small>{currencyUnitName}</small>
+          </h4>
         </Col>
         <Col span={5} align="center">
           <h4>
@@ -377,6 +380,11 @@ const Scenario = ({
     setNewName(scenarioItem.name);
     setEditing(false);
   };
+
+  const currencyUnitName = useMemo(() => {
+    const currency = commodityQuestions[0]?.currency;
+    return currency ? `(${currency})` : "";
+  }, [commodityQuestions]);
 
   useEffect(() => {
     if (dashboardData.length > 0) {
@@ -597,6 +605,7 @@ const Scenario = ({
                   )}
                   scenarioItem={scenarioItem}
                   setScenarioData={setScenarioData}
+                  currencyUnitName={currencyUnitName}
                 />
               </Col>
             ))}
@@ -604,6 +613,7 @@ const Scenario = ({
               <ChartScenarioModeling
                 data={chartData || []}
                 targetChartData={targetChartData}
+                currencyUnitName={currencyUnitName}
               />
             </Col>
           </Row>
