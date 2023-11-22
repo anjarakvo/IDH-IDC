@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Form, InputNumber, Select, Switch } from "antd";
-import { selectProps } from "./";
+import { InputNumberThousandFormatter, selectProps } from "./";
 import { api } from "../../../lib";
 import isEmpty from "lodash/isEmpty";
 
@@ -209,7 +209,11 @@ const IncomeDriverTarget = ({
           <Row align="middle" gutter={[16, 16]}>
             <Col span={21}>
               <Form.Item label="Target" name="target">
-                <InputNumber style={formStyle} disabled={disableTarget} />
+                <InputNumber
+                  style={formStyle}
+                  disabled={disableTarget}
+                  {...InputNumberThousandFormatter}
+                />
               </Form.Item>
             </Col>
             <Col span={3}>

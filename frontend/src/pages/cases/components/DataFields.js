@@ -21,7 +21,12 @@ import {
   StepBackwardOutlined,
 } from "@ant-design/icons";
 import { map, groupBy } from "lodash";
-import { IncomeDriverForm, IncomeDriverTarget, commodityOptions } from "./";
+import {
+  IncomeDriverForm,
+  IncomeDriverTarget,
+  InputNumberThousandFormatter,
+  commodityOptions,
+} from "./";
 import Chart from "../../../components/chart";
 import { incomeTargetChartOption } from "../../../components/chart/options/common";
 
@@ -323,6 +328,7 @@ const DataFields = ({
                   value={totalIncome.current}
                   disabled
                   style={{ width: "100%" }}
+                  {...InputNumberThousandFormatter}
                 />
               </Col>
               <Col span={4}>
@@ -330,6 +336,7 @@ const DataFields = ({
                   value={totalIncome.feasible}
                   disabled
                   style={{ width: "100%" }}
+                  {...InputNumberThousandFormatter}
                 />
               </Col>
               <Col span={3}>
