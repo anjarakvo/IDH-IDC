@@ -10,6 +10,7 @@ import {
   axisTitle,
   NoData,
   LabelStyle,
+  thousandFormatter,
 } from "./common";
 import { uniq, flatten, uniqBy, isEmpty, upperFirst, sumBy } from "lodash";
 
@@ -31,7 +32,7 @@ const tableFormatter = (e, percentage) => {
       table += eI.value + "%";
       table += eI.data?.original ? ` (${eI.data.original})` : "";
     } else {
-      table += eI.value;
+      table += thousandFormatter(eI.value);
     }
     table += "</td>";
     table += "</tr>";
@@ -181,7 +182,7 @@ const BarStack = ({
       nameLocation: "middle",
       nameGap: 50,
       axisLabel: {
-        formatter: (e) => (percentage ? `${e}%` : e),
+        formatter: (e) => (percentage ? `${e}%` : thousandFormatter(e)),
         ...TextStyle,
         color: "#9292ab",
       },

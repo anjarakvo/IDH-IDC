@@ -345,6 +345,7 @@ const Case = () => {
                 questionGroups={questionGroups}
                 commodityList={commodityList}
                 currentCaseId={currentCaseId}
+                currentCase={currentCase}
                 dashboardData={dashboardData}
                 setPage={setPage}
               />

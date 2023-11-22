@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Form, InputNumber, Select, Switch } from "antd";
-import { selectProps } from "./";
+import { InputNumberThousandFormatter, selectProps } from "./";
 import { api } from "../../../lib";
 import isEmpty from "lodash/isEmpty";
 
@@ -206,16 +206,20 @@ const IncomeDriverTarget = ({
             display: disableTarget ? "none" : "",
           }}
         >
-          <Form.Item label="Target" name="target">
-            <InputNumber style={formStyle} disabled={disableTarget} />
-            {/* <Row align="middle">
-              <Col span={21}>
-              </Col>
-              <Col span={3} align="start">
-                <h3>{currentCase.currency}</h3>
-              </Col>
-            </Row> */}
-          </Form.Item>
+          <Row align="middle" gutter={[16, 16]}>
+            <Col span={21}>
+              <Form.Item label="Target" name="target">
+                <InputNumber
+                  style={formStyle}
+                  disabled={disableTarget}
+                  {...InputNumberThousandFormatter}
+                />
+              </Form.Item>
+            </Col>
+            <Col span={3}>
+              <b>{currentCase.currency}</b>
+            </Col>
+          </Row>
         </Col>
       </Row>
       {/* region options notif */}

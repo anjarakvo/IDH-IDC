@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
 import { incomeTargetChartOption } from "../../../components/chart/options/common";
 
-const ChartCurrentFeasible = ({ dashboardData = [] }) => {
+const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
   const chartData = useMemo(() => {
     return dashboardData.reduce((c, d) => {
       return [
@@ -93,6 +93,7 @@ const ChartCurrentFeasible = ({ dashboardData = [] }) => {
       affix={true}
       loading={!chartData.length || !targetChartData.length}
       targetData={targetChartData}
+      extra={{ axisTitle: { y: `Income (${currentCase.currency})` } }}
     />
   );
 };

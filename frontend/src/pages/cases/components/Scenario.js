@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   Card,
   Col,
@@ -18,9 +18,11 @@ import {
   CloseCircleTwoTone,
   DeleteTwoTone,
 } from "@ant-design/icons";
-import { getFunctionDefaultValue } from "./";
+import { InputNumberThousandFormatter, getFunctionDefaultValue } from "./";
 import { ChartScenarioModeling } from "../visualizations";
 import { isEmpty } from "lodash";
+import { SaveAsImageButton } from "../../../components/utils";
+import { thousandFormatter } from "../../../components/chart/options/common";
 
 const Question = ({
   id,
@@ -112,15 +114,18 @@ const Question = ({
                 }}
                 addonAfter={qtype === "percentage" ? "%" : ""}
                 disabled={disableTotalIncomeFocusCommodityField}
+                {...InputNumberThousandFormatter}
               />
             </Form.Item>
           ))}
         </Col>
         <Col span={5} align="right">
-          {answer?.value?.toFixed(2) || ""}
+          {thousandFormatter(answer?.value?.toFixed(2)) || ""}
         </Col>
         <Col span={5} align="right">
-          {percentage ? currentIncrease : `${currentIncrease} %`}
+          {percentage
+            ? thousandFormatter(currentIncrease)
+            : `${currentIncrease} %`}
         </Col>
       </Row>
       {!parent && commodity_type === "focus"
@@ -147,6 +152,7 @@ const ScenarioInput = ({
   scenarioValue,
   scenarioItem,
   setScenarioData,
+  currencyUnitName,
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
@@ -308,22 +314,24 @@ const ScenarioInput = ({
       </Row>
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>
-          <h4>Total Income</h4>
+          <h4>
+            Total Income <small>{currencyUnitName}</small>
+          </h4>
         </Col>
         <Col span={5} align="center">
           <h4>
             {percentage
               ? `${scenarioIncrease.totalPercentage}%`
-              : scenarioIncrease?.totalAbsolute}
+              : thousandFormatter(scenarioIncrease?.totalAbsolute)}
           </h4>
         </Col>
         <Col span={5} align="right">
-          <h4>{segment.total_current_income?.toFixed(2)}</h4>
+          <h4>{thousandFormatter(segment.total_current_income?.toFixed(2))}</h4>
         </Col>
         <Col span={5} align="right">
           <h4>
             {percentage
-              ? scenarioIncrease?.totalAbsolute
+              ? thousandFormatter(scenarioIncrease?.totalAbsolute)
               : `${scenarioIncrease.totalPercentage}%`}
           </h4>
         </Col>
@@ -365,6 +373,7 @@ const Scenario = ({
   const [newName, setNewName] = useState(scenarioItem.name);
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
+  const elScenarioModeling = useRef();
 
   const finishEditing = () => {
     renameScenario(index, newName);
@@ -375,6 +384,11 @@ const Scenario = ({
     setNewName(scenarioItem.name);
     setEditing(false);
   };
+
+  const currencyUnitName = useMemo(() => {
+    const currency = commodityQuestions[0]?.currency;
+    return currency ? `(${currency})` : "";
+  }, [commodityQuestions]);
 
   useEffect(() => {
     if (dashboardData.length > 0) {
@@ -536,7 +550,7 @@ const Scenario = ({
   );
 
   return (
-    <Col span={24}>
+    <Col span={24} ref={elScenarioModeling}>
       <Card
         className="income-driver-dashboard"
         title={
@@ -551,7 +565,15 @@ const Scenario = ({
             )}
           </h3>
         }
-        extra={extra}
+        extra={
+          <Space>
+            {extra}
+            <SaveAsImageButton
+              elementRef={elScenarioModeling}
+              filename={scenarioItem.name}
+            />
+          </Space>
+        }
         tabList={segmentTabs}
         activeTabKey={activeTab}
         onTabChange={(key) => setActiveTab(key)}
@@ -587,6 +609,7 @@ const Scenario = ({
                   )}
                   scenarioItem={scenarioItem}
                   setScenarioData={setScenarioData}
+                  currencyUnitName={currencyUnitName}
                 />
               </Col>
             ))}
@@ -594,6 +617,7 @@ const Scenario = ({
               <ChartScenarioModeling
                 data={chartData || []}
                 targetChartData={targetChartData}
+                currencyUnitName={currencyUnitName}
               />
             </Col>
           </Row>

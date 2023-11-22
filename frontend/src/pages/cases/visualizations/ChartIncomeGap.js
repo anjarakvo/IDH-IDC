@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
 
-const ChartIncomeGap = ({ dashboardData }) => {
+const ChartIncomeGap = ({ dashboardData, currentCase }) => {
   const chartData = useMemo(() => {
     return dashboardData.reduce((c, d) => {
       const target = d?.target || 0;
@@ -25,7 +25,15 @@ const ChartIncomeGap = ({ dashboardData }) => {
     }, []);
   }, [dashboardData]);
 
-  return <Chart wrapper={false} type="BAR" data={chartData} affix={true} />;
+  return (
+    <Chart
+      wrapper={false}
+      type="BAR"
+      data={chartData}
+      affix={true}
+      extra={{ axisTitle: { y: `Income Gap (${currentCase.currency})` } }}
+    />
+  );
 };
 
 export default ChartIncomeGap;

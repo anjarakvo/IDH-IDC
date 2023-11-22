@@ -1,6 +1,11 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, Space, Form, InputNumber } from "antd";
-import { Questions, indentSize, getFunctionDefaultValue } from "./";
+import {
+  Questions,
+  indentSize,
+  getFunctionDefaultValue,
+  InputNumberThousandFormatter,
+} from "./";
 import { flatten } from "../../../lib";
 import isEmpty from "lodash/isEmpty";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
@@ -160,6 +165,7 @@ const IncomeDriverForm = ({
               style={{ width: "100%" }}
               value={totalDiversifiedIncome.current}
               disabled
+              {...InputNumberThousandFormatter}
             />
           </Col>
           <Col span={4}>
@@ -167,6 +173,7 @@ const IncomeDriverForm = ({
               value={totalDiversifiedIncome.feasible}
               style={{ width: "100%" }}
               disabled
+              {...InputNumberThousandFormatter}
             />
           </Col>
           <Col span={3}>

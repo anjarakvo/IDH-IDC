@@ -12,6 +12,7 @@ import { isEmpty } from "lodash";
 const IncomeDriverDashboard = ({
   commodityList,
   currentCaseId,
+  currentCase,
   dashboardData,
   questionGroups,
   setPage,
@@ -139,6 +140,7 @@ const IncomeDriverDashboard = ({
               children: (
                 <DashboardIncomeOverview
                   currentCaseId={currentCaseId}
+                  currentCase={currentCase}
                   commodityList={commodityList}
                   dashboardData={dashboardData}
                 />

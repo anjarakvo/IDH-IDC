@@ -8,6 +8,7 @@ import {
   Title,
   axisTitle,
   NoData,
+  thousandFormatter,
 } from "./common";
 import { sortBy, isEmpty, sumBy } from "lodash";
 
@@ -109,7 +110,10 @@ const Bar = ({
           ...TextStyle,
           color: "#fff",
           formatter: (s) => {
-            return `${s.value}${percentage ? " %" : ""}`;
+            if (percentage) {
+              return `${s.value}%`;
+            }
+            return thousandFormatter(s.value);
           },
         },
       },

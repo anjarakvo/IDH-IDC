@@ -12,22 +12,31 @@ import {
 } from "antd";
 import { groupBy, map, isEmpty, uniq } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
+import { InputNumberThousandFormatter } from ".";
+import { thousandFormatter } from "../../../components/chart/options/common";
 
 const columns = [
   {
     title: "Income Driver",
     dataIndex: "name",
     key: "name",
+    render: (name, record) => (
+      <>
+        {name} <small>({record.unitName})</small>
+      </>
+    ),
   },
   {
     title: "Current",
     dataIndex: "current",
     key: "current",
+    render: (value) => thousandFormatter(value),
   },
   {
     title: "Feasible",
     dataIndex: "feasible",
     key: "feasible",
+    render: (value) => thousandFormatter(value),
   },
 ];
 
@@ -99,17 +108,29 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       <Col span={12}>Bin Values:</Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_binning-value-1`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_binning-value-2`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_binning-value-3`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
       <Divider />
@@ -132,13 +153,21 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       <Col span={12}>Minimum Value:</Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_x-axis-min-value`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
       <Col span={12}>Maximum Value</Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_x-axis-max-value`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
       <Divider />
@@ -161,13 +190,21 @@ const BinningForm = ({ selected = [], segment, drivers = [], hidden }) => {
       <Col span={12}>Minimum Value:</Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_y-axis-min-value`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
       <Col span={12}>Maximum Value</Col>
       <Col span={4}>
         <Form.Item name={`${segment.id}_y-axis-max-value`}>
-          <InputNumber size="small" className="binning-input" />
+          <InputNumber
+            size="small"
+            className="binning-input"
+            {...InputNumberThousandFormatter}
+          />
         </Form.Item>
       </Col>
     </Row>
@@ -349,6 +386,11 @@ const DashboardSensitivityAnalysis = ({
     form.setFieldsValue(values);
   };
 
+  const tableSummaryValue = useMemo(
+    () => dataSource.find((d) => d.name === "Income Target"),
+    [dataSource]
+  );
+
   return (
     <Row id="sensitivity-analysis">
       <Col span={24}>
@@ -464,14 +506,13 @@ const DashboardSensitivityAnalysis = ({
                         <Table.Summary>
                           <Table.Summary.Row>
                             <Table.Summary.Cell index={0}>
-                              Income Target
+                              Income Target{" "}
+                              <small>({tableSummaryValue?.unitName})</small>
                             </Table.Summary.Cell>
                             <Table.Summary.Cell index={1}>
-                              {
-                                dataSource.find(
-                                  (d) => d.name === "Income Target"
-                                ).current
-                              }
+                              {tableSummaryValue?.current
+                                ? thousandFormatter(tableSummaryValue.current)
+                                : 0}
                             </Table.Summary.Cell>
                             <Table.Summary.Cell index={2}></Table.Summary.Cell>
                           </Table.Summary.Row>

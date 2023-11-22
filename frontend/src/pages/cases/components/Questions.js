@@ -16,7 +16,7 @@ import {
   CaretUpFilled,
   InfoCircleTwoTone,
 } from "@ant-design/icons";
-import { indentSize, regexQuestionId } from "./";
+import { InputNumberThousandFormatter, indentSize, regexQuestionId } from "./";
 
 const commoditiesBreakdown = ["secondary", "tertiary"];
 
@@ -170,7 +170,11 @@ const Questions = ({
             name={`current-${fieldKey}`}
             className="current-feasible-field"
           >
-            <InputNumber style={{ width: "100%" }} disabled={disableInput} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={disableInput}
+              {...InputNumberThousandFormatter}
+            />
           </Form.Item>
         </Col>
         <Col span={4}>
@@ -178,7 +182,11 @@ const Questions = ({
             name={`feasible-${fieldKey}`}
             className="current-feasible-field"
           >
-            <InputNumber style={{ width: "100%" }} disabled={disableInput} />
+            <InputNumber
+              style={{ width: "100%" }}
+              disabled={disableInput}
+              {...InputNumberThousandFormatter}
+            />
           </Form.Item>
         </Col>
         <Col span={3}>
