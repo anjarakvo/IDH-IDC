@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   Card,
   Col,
@@ -21,6 +21,7 @@ import {
 import { getFunctionDefaultValue } from "./";
 import { ChartScenarioModeling } from "../visualizations";
 import { isEmpty } from "lodash";
+import { SaveAsImageButton } from "../../../components/utils";
 
 const Question = ({
   id,
@@ -365,6 +366,7 @@ const Scenario = ({
   const [newName, setNewName] = useState(scenarioItem.name);
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
+  const elScenarioModeling = useRef();
 
   const finishEditing = () => {
     renameScenario(index, newName);
@@ -536,7 +538,7 @@ const Scenario = ({
   );
 
   return (
-    <Col span={24}>
+    <Col span={24} ref={elScenarioModeling}>
       <Card
         className="income-driver-dashboard"
         title={
@@ -551,7 +553,15 @@ const Scenario = ({
             )}
           </h3>
         }
-        extra={extra}
+        extra={
+          <Space>
+            {extra}
+            <SaveAsImageButton
+              elementRef={elScenarioModeling}
+              filename={scenarioItem.name}
+            />
+          </Space>
+        }
         tabList={segmentTabs}
         activeTabKey={activeTab}
         onTabChange={(key) => setActiveTab(key)}
