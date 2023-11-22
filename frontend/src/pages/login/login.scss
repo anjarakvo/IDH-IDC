@@ -55,7 +55,9 @@
             color: red;
           }
         }
-        .ant-input {
+        .ant-input,
+        .ant-input-password,
+        .ant-select-selector {
           border-radius: 20px;
         }
         input::placeholder {
