@@ -261,6 +261,7 @@ const CaseProfile = ({
     useState(true);
   const [disableAreaSizeTertiaryField, setDisableAreaSizeTertiaryField] =
     useState(true);
+  const [isNextButton, setIsNextButton] = useState(false);
   const navigate = useNavigate();
 
   const filteredCurrencyOptions = useMemo(() => {
@@ -419,11 +420,17 @@ const CaseProfile = ({
             case_commodity: findCm.id,
           };
         });
+        messageApi.open({
+          type: "success",
+          content: "Case profile saved successfully.",
+        });
         setTimeout(() => {
           setCommodityList(transformCommodities);
           setFinished([...completed, "Case Profile"]);
         }, 500);
-        setPage("Income Driver Data Entry");
+        if (isNextButton) {
+          setPage("Income Driver Data Entry");
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -541,6 +548,7 @@ const CaseProfile = ({
                   htmlType="submit"
                   className="button button-submit button-secondary"
                   loading={isSaving}
+                  onClick={() => setIsNextButton(false)}
                 >
                   Save
                 </Button>
@@ -548,6 +556,7 @@ const CaseProfile = ({
                   htmlType="submit"
                   className="button button-submit button-secondary"
                   loading={isSaving}
+                  onClick={() => setIsNextButton(true)}
                 >
                   Next
                   <StepForwardOutlined />
