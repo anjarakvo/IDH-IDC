@@ -422,6 +422,9 @@ const DataFields = ({
         targetData={targetChartData}
         loading={!chartData.length || !targetChartData.length}
         height={window.innerHeight * 0.45}
+        extra={{
+          axisTitle: { y: `Income (${currentCase.currency})` },
+        }}
       />
     </Row>
   );

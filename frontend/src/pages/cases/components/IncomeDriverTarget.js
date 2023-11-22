@@ -206,16 +206,16 @@ const IncomeDriverTarget = ({
             display: disableTarget ? "none" : "",
           }}
         >
-          <Form.Item label="Target" name="target">
-            <InputNumber style={formStyle} disabled={disableTarget} />
-            {/* <Row align="middle">
-              <Col span={21}>
-              </Col>
-              <Col span={3} align="start">
-                <h3>{currentCase.currency}</h3>
-              </Col>
-            </Row> */}
-          </Form.Item>
+          <Row align="middle" gutter={[16, 16]}>
+            <Col span={21}>
+              <Form.Item label="Target" name="target">
+                <InputNumber style={formStyle} disabled={disableTarget} />
+              </Form.Item>
+            </Col>
+            <Col span={3}>
+              <b>{currentCase.currency}</b>
+            </Col>
+          </Row>
         </Col>
       </Row>
       {/* region options notif */}
