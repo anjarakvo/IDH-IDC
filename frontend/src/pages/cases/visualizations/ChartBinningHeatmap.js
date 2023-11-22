@@ -4,6 +4,7 @@ import { range } from "lodash";
 import { getFunctionDefaultValue } from "../components";
 import { Row, Col, Space } from "antd";
 import { SaveAsImageButton } from "../../../components/utils";
+import { thousandFormatter } from "../../../components/chart/options/common";
 
 const getOptions = ({
   xAxis = { name: "", min: 0, max: 0 },
@@ -100,6 +101,9 @@ const getOptions = ({
       splitArea: {
         show: true,
       },
+      axisLabel: {
+        formatter: (e) => thousandFormatter(e),
+      },
     },
     yAxis: {
       name: `${yAxis.name} (${yAxis?.unitName})`,
@@ -107,6 +111,9 @@ const getOptions = ({
       data: yAxisData,
       splitArea: {
         show: true,
+      },
+      axisLabel: {
+        formatter: (e) => thousandFormatter(e),
       },
     },
     visualMap: {
