@@ -1,6 +1,9 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Chart from "../../../components/chart";
-import { LabelStyle } from "../../../components/chart/options/common";
+import {
+  LabelStyle,
+  thousandFormatter,
+} from "../../../components/chart/options/common";
 import { SegmentSelector } from "./";
 import { getFunctionDefaultValue } from "../components";
 import {
@@ -71,7 +74,13 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
         ...TextStyle,
         formatter: function (params) {
           var tar = params[1];
-          return tar.name + "<br/>" + tar.seriesName + " : " + tar.value;
+          return (
+            tar.name +
+            "<br/>" +
+            tar.seriesName +
+            " : " +
+            thousandFormatter(tar.value)
+          );
         },
       },
       grid: {

@@ -32,7 +32,7 @@ const tableFormatter = (e, percentage) => {
       table += eI.value + "%";
       table += eI.data?.original ? ` (${eI.data.original})` : "";
     } else {
-      table += eI.value;
+      table += thousandFormatter(eI.value);
     }
     table += "</td>";
     table += "</tr>";
