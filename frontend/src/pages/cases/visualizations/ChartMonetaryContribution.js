@@ -8,7 +8,7 @@ import {
   AxisLabelFormatter,
 } from "../../../components/chart/options/common";
 
-const ChartMonetaryContribution = ({ dashboardData }) => {
+const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
 
   useEffect(() => {
@@ -107,6 +107,10 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
       },
       yAxis: {
         type: "value",
+        name: `Income (${currentCase.currency})`,
+        nameTextStyle: { ...TextStyle },
+        nameLocation: "middle",
+        nameGap: 50,
         axisLabel: {
           ...TextStyle,
           color: "#9292ab",
@@ -150,7 +154,7 @@ const ChartMonetaryContribution = ({ dashboardData }) => {
         },
       ],
     };
-  }, [dashboardData, selectedSegment]);
+  }, [dashboardData, selectedSegment, currentCase.currency]);
 
   return (
     <div>

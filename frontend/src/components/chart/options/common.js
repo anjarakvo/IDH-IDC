@@ -129,7 +129,6 @@ export const Legend = {
     fontWeight: "normal",
     fontFamily: "RocGrotesk",
     fontSize: 12,
-    marginLeft: 20,
   },
   formatter: function (name) {
     return name;

@@ -10,7 +10,7 @@ import {
 } from "../visualizations";
 import { SaveAsImageButton } from "../../../components/utils";
 
-const DashboardIncomeOverview = ({ dashboardData }) => {
+const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
   const elCurrentFeasibleChart = useRef();
   const elIncomeGap = useRef();
   const elBigImpact = useRef();
@@ -43,7 +43,10 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   filename="What are the current and feasible income levels for the
                   different segments?"
                 />
-                <ChartCurrentFeasible dashboardData={dashboardData} />
+                <ChartCurrentFeasible
+                  dashboardData={dashboardData}
+                  currentCase={currentCase}
+                />
               </Col>
               <Col span={12} ref={elIncomeGap}>
                 <h2>How big is the income gap?</h2>
@@ -55,7 +58,10 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   elementRef={elIncomeGap}
                   filename="How big is the income gap?"
                 />
-                <ChartIncomeGap dashboardData={dashboardData} />
+                <ChartIncomeGap
+                  dashboardData={dashboardData}
+                  currentCase={currentCase}
+                />
               </Col>
             </Row>
           </Card.Grid>
@@ -92,7 +98,10 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   filename="Explore the breakdown of drivers"
                   style={{ marginBottom: 12 }}
                 />
-                <ChartExploreBreakdownDrivers dashboardData={dashboardData} />
+                <ChartExploreBreakdownDrivers
+                  dashboardData={dashboardData}
+                  currentCase={currentCase}
+                />
               </Col>
             </Row>
           </Card.Grid>
@@ -112,7 +121,10 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   filename="Monetary contribution of each driver to income"
                   style={{ marginBottom: 12 }}
                 />
-                <ChartMonetaryContribution dashboardData={dashboardData} />
+                <ChartMonetaryContribution
+                  dashboardData={dashboardData}
+                  currentCase={currentCase}
+                />
               </Col>
             </Row>
           </Card.Grid>
@@ -143,7 +155,10 @@ const DashboardIncomeOverview = ({ dashboardData }) => {
                   each segment?"
                   style={{ marginBottom: 12 }}
                 />
-                <ChartIncomeLevelPerCommodities dashboardData={dashboardData} />
+                <ChartIncomeLevelPerCommodities
+                  dashboardData={dashboardData}
+                  currentCase={currentCase}
+                />
               </Col>
             </Row>
           </Card.Grid>
