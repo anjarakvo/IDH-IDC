@@ -92,7 +92,9 @@ const getOptions = ({
       top: "10%",
     },
     xAxis: {
-      name: xAxis.name,
+      name: `${xAxis.name} (${xAxis.unitName})`,
+      nameLocation: "middle",
+      nameGap: 40,
       type: "category",
       data: xAxisData,
       splitArea: {
@@ -100,7 +102,7 @@ const getOptions = ({
       },
     },
     yAxis: {
-      name: yAxis.name,
+      name: `${yAxis.name} (${yAxis?.unitName})`,
       type: "category",
       data: yAxisData,
       splitArea: {
@@ -247,17 +249,20 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
         ? binCharts.map((b) => ({
             binName: binName,
             binValue: b.value,
+            unitName: origin.find((or) => or.name === binName)?.unitName,
           }))
         : [],
       xAxis: {
         name: xAxisName,
         min: bins.find((b) => b.name === "x-axis-min-value")?.value || 0,
         max: bins.find((b) => b.name === "x-axis-max-value")?.value || 0,
+        unitName: origin.find((or) => or.name === xAxisName)?.unitName,
       },
       yAxis: {
         name: yAxisName,
         min: bins.find((b) => b.name === "y-axis-min-value")?.value || 0,
         max: bins.find((b) => b.name === "y-axis-max-value")?.value || 0,
+        unitName: origin.find((or) => or.name === yAxisName)?.unitName,
       },
       answers: answers.map((s) => ({
         qid: s.question.id,
@@ -274,7 +279,7 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
       diversified_feasible: segment.total_feasible_diversified_income,
       target: segment.target,
     };
-  }, [data, segment]);
+  }, [data, segment, origin]);
 
   return (
     <div ref={elSensitivityAnalysis}>
@@ -319,7 +324,8 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
       {binningData.binCharts.map((b, key) => (
         <div key={key}>
           <h3>
-            Income Levels for {b.binName} : {b.binValue.toFixed(2)}
+            Income Levels for {b.binName} : {b.binValue.toFixed(2)}{" "}
+            <small>({b.unitName})</small>
           </h3>
           <Chart
             height={350}

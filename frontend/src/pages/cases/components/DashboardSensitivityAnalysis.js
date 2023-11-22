@@ -18,6 +18,11 @@ const columns = [
     title: "Income Driver",
     dataIndex: "name",
     key: "name",
+    render: (name, record) => (
+      <>
+        {name} <small>({record.unitName})</small>
+      </>
+    ),
   },
   {
     title: "Current",
@@ -349,6 +354,11 @@ const DashboardSensitivityAnalysis = ({
     form.setFieldsValue(values);
   };
 
+  const tableSummaryValue = useMemo(
+    () => dataSource.find((d) => d.name === "Income Target"),
+    [dataSource]
+  );
+
   return (
     <Row id="sensitivity-analysis">
       <Col span={24}>
@@ -464,14 +474,11 @@ const DashboardSensitivityAnalysis = ({
                         <Table.Summary>
                           <Table.Summary.Row>
                             <Table.Summary.Cell index={0}>
-                              Income Target
+                              Income Target{" "}
+                              <small>({tableSummaryValue?.unitName})</small>
                             </Table.Summary.Cell>
                             <Table.Summary.Cell index={1}>
-                              {
-                                dataSource.find(
-                                  (d) => d.name === "Income Target"
-                                ).current
-                              }
+                              {tableSummaryValue?.current}
                             </Table.Summary.Cell>
                             <Table.Summary.Cell index={2}></Table.Summary.Cell>
                           </Table.Summary.Row>
