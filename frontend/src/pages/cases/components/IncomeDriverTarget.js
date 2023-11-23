@@ -3,6 +3,7 @@ import { Row, Col, Form, InputNumber, Select, Switch } from "antd";
 import { InputNumberThousandFormatter, selectProps } from "./";
 import { api } from "../../../lib";
 import isEmpty from "lodash/isEmpty";
+import { thousandFormatter } from "../../../components/chart/options/common";
 
 const formStyle = { width: "100%" };
 
@@ -281,13 +282,14 @@ const IncomeDriverTarget = ({
         <Col span={8}>
           <p>Living Income Target</p>
           <h2>
-            {incomeTarget.toFixed(2)} {currentCase.currency}
+            {thousandFormatter(incomeTarget.toFixed(2))} {currentCase.currency}
           </h2>
         </Col>
         {/* <Col span={16}>
           <p>Current HH Living Income</p>
           <h2>
-            {totalIncome.current} {currentCase.currency}
+            {thousandFormatter(totalIncome.current.toFixed(2))}{" "}
+            {currentCase.currency}
           </h2>
         </Col> */}
       </Row>
