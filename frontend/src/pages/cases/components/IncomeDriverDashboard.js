@@ -28,7 +28,7 @@ const IncomeDriverDashboard = ({
   // scenario modeling data
   const [percentage, setPercentage] = useState(true);
   const [scenarioData, setScenarioData] = useState([
-    { key: 1, name: "Scenario 1", description: "", scenarioValues: [] },
+    { key: 1, name: "Scenario 1", description: null, scenarioValues: [] },
   ]);
 
   useEffect(() => {
