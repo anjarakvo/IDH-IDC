@@ -371,17 +371,21 @@ const Scenario = ({
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
   const [newName, setNewName] = useState(scenarioItem.name);
+  const [newDescription, setNewDescription] = useState(
+    scenarioItem.description
+  );
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
   const elScenarioModeling = useRef();
 
   const finishEditing = () => {
-    renameScenario(index, newName);
+    renameScenario(index, newName, newDescription);
     setEditing(false);
   };
 
   const cancelEditing = () => {
     setNewName(scenarioItem.name);
+    setNewDescription(scenarioItem.description);
     setEditing(false);
   };
 
@@ -549,24 +553,45 @@ const Scenario = ({
     </Space>
   );
 
+  const renderScenarioCardHeader = () => {
+    if (editing) {
+      return (
+        <Space direction="vertical" className="scenario-header-wrapper">
+          <Input
+            key={`scenario-name-${scenarioItem.key}`}
+            placeholder="Scenario Name"
+            defaultValue={scenarioItem.name}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <Input.TextArea
+            key={`scenario-description-${scenarioItem.key}`}
+            rows={4}
+            placeholder="Scenario Description"
+            defaultValue={scenarioItem.description}
+            onChange={(e) => setNewDescription(e.target.value)}
+          />
+        </Space>
+      );
+    }
+    return (
+      <div className="scenario-header-wrapper">
+        <h3>{scenarioItem.name}</h3>
+        {scenarioItem?.description ? (
+          <p>{scenarioItem.description}</p>
+        ) : (
+          <p>Scenario Description</p>
+        )}
+      </div>
+    );
+  };
+
   return (
     <Col span={24} ref={elScenarioModeling}>
       <Card
         className="income-driver-dashboard"
-        title={
-          <h3>
-            {editing ? (
-              <Input
-                defaultValue={scenarioItem.name}
-                onChange={(e) => setNewName(e.target.value)}
-              />
-            ) : (
-              scenarioItem.name
-            )}
-          </h3>
-        }
+        title={renderScenarioCardHeader()}
         extra={
-          <Space>
+          <Space className="card-extra-wrapper">
             {extra}
             <SaveAsImageButton
               elementRef={elScenarioModeling}

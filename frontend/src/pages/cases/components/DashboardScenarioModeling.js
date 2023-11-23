@@ -28,9 +28,10 @@ const DashboardScenarioModeling = ({
     }));
   }, [commodityList, questionGroups]);
 
-  const renameScenario = (index, newName) => {
+  const renameScenario = (index, newName, newDescription) => {
     const newScenarioData = [...scenarioData];
     newScenarioData[index].name = newName;
+    newScenarioData[index].description = newDescription;
     setScenarioData(newScenarioData);
   };
 
@@ -111,6 +112,7 @@ const DashboardScenarioModeling = ({
                 {
                   key: prev.length + 1,
                   name: `Scenario ${prev.length + 1}`,
+                  description: null,
                   scenarioValues: [],
                 },
               ];

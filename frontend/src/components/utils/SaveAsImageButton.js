@@ -4,8 +4,6 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { toPng } from "html-to-image";
 
 const htmlToImageConvert = (elementRef, filename, setLoading) => {
-  // console.log(elementRef);
-  // return
   if (!elementRef) {
     console.error("Please provide you element ref using react useRef");
     setTimeout(() => {
@@ -16,7 +14,13 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
   toPng(elementRef.current, {
     cacheBust: false,
     backgroundColor: "#fff",
-    style: { padding: "24px" },
+    style: { padding: "24px", width: "100%" },
+    filter: (node) => {
+      const exclusionClasses = ["save-as-image-btn"];
+      return !exclusionClasses.some((classname) =>
+        node.classList?.contains(classname)
+      );
+    },
   })
     .then((dataUrl) => {
       const link = document.createElement("a");
@@ -48,6 +52,8 @@ const SaveAsImageButton = ({
 
   return (
     <Button
+      id="save-as-image-btn"
+      className="save-as-image-btn"
       icon={<DownloadOutlined />}
       size="small"
       onClick={handleOnClickSaveAsImage}

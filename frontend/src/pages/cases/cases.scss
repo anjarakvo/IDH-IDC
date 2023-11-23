@@ -45,9 +45,27 @@
             cursor: pointer;
           }
         }
+        // handle scenario modeling page
+        .scenario-header-wrapper {
+          padding: 10px 24px;
+          h3 {
+            padding: 0;
+          }
+        }
+        p {
+          font-size: 14px;
+          font-weight: normal;
+        }
+        // handle scenario modeling page
         margin-bottom: 0px;
         .ant-card-extra {
           padding: 10px 24px;
+        }
+        .ant-card-head-wrapper {
+          align-items: start;
+        }
+        .card-extra-wrapper {
+          margin-top: 15px;
         }
       }
       .ant-card-body {
