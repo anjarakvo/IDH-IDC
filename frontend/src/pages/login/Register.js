@@ -195,7 +195,6 @@ const Register = () => {
                   placeholder="Business Units"
                   showSearch
                   allowClear
-                  mode="multiple"
                   optionFilterProp="children"
                   filterOption={filterOption}
                   options={businessUnitOptions}
