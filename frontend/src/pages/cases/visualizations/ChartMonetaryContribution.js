@@ -86,7 +86,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
       grid: {
         show: true,
         containLabel: true,
-        left: 30,
+        left: 55,
         right: 50,
         label: {
           color: "#222",
@@ -119,7 +119,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
         name: `Income (${currentCase.currency})`,
         nameTextStyle: { ...TextStyle },
         nameLocation: "middle",
-        nameGap: 50,
+        nameGap: 75,
         axisLabel: {
           ...TextStyle,
           color: "#9292ab",
