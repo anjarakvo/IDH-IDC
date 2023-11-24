@@ -127,7 +127,7 @@ const IncomeDriverDashboard = ({
   }
 
   return (
-    <Row gutter={[16, 16]}>
+    <Row gutter={[16, 16]} id="income-driver-dashboard">
       {contextHolder}
       <Col span={24}>
         <Tabs

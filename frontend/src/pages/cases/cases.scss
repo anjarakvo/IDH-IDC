@@ -9,6 +9,12 @@
     }
 
     .chart-container {
+      padding: 10px 20px 10px 20px;
+
+      .ant-card-head {
+        padding: 0;
+      }
+
       .ant-card-body {
         padding: 0px;
       }
@@ -228,12 +234,14 @@
     }
   }
 
-  .chart-container {
-    padding: 10px 20px 10px 20px;
-  }
-
   .chart-title {
     margin: 0px 0px -10px 0px;
     padding: 0px 24px 10px 0;
+  }
+
+  #income-overview-chart {
+    .income-overview-chart-wrapper {
+      padding: 0 20px;
+    }
   }
 }

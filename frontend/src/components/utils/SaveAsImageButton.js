@@ -20,7 +20,10 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
     },
     cacheBust: false,
     backgroundColor: "#fff",
-    style: { padding: "24px", width: "100%" },
+    style: {
+      padding: 32,
+      width: "100%",
+    },
   })
     .then((dataUrl) => {
       const link = document.createElement("a");
@@ -51,19 +54,17 @@ const SaveAsImageButton = ({
   };
 
   return (
-    <div style={{ width: "100%" }}>
-      <Button
-        id="save-as-image-btn"
-        className="save-as-image-btn"
-        icon={<DownloadOutlined />}
-        size="small"
-        onClick={handleOnClickSaveAsImage}
-        style={{ fontSize: 12, ...style }}
-        loading={loading}
-      >
-        Download chart
-      </Button>
-    </div>
+    <Button
+      id="save-as-image-btn"
+      className="save-as-image-btn"
+      icon={<DownloadOutlined />}
+      size="small"
+      onClick={handleOnClickSaveAsImage}
+      style={{ fontSize: 12, ...style }}
+      loading={loading}
+    >
+      Download chart
+    </Button>
   );
 };
 
