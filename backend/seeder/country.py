@@ -14,14 +14,11 @@ sys.path.append(BASE_DIR)
 
 
 def seeder_country(session: Session):
-    TESTING = os.environ.get("TESTING")
     ## Country and Currency
     truncatedb(session=session, table="country")
     truncatedb(session=session, table="currency")
 
     data = pd.read_csv(MASTER_DIR + "countries.csv")
-    if TESTING:
-        data = data.iloc[:10]
 
     countries = data[["id", "country"]].rename(columns={"country": "name"})
     countries["parent"] = None
