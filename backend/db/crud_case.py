@@ -89,6 +89,8 @@ def get_all_case(
     user_cases: Optional[List[int]] = None,
     country: Optional[int] = None,
 ) -> List[CaseListDict]:
+    # TODO:: Filter case by user business unit overiding (Regular/Internal user or External user)
+    # TODO:: Filter case by user case access overiding
     case = session.query(Case)
     if not show_private:
         case = case.filter(Case.private == 0)
