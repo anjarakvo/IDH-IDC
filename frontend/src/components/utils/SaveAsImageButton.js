@@ -12,14 +12,17 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
     return;
   }
   toPng(elementRef.current, {
-    cacheBust: false,
-    backgroundColor: "#fff",
-    style: { padding: "24px", width: "100%" },
     filter: (node) => {
       const exclusionClasses = ["save-as-image-btn"];
       return !exclusionClasses.some((classname) =>
         node.classList?.contains(classname)
       );
+    },
+    cacheBust: false,
+    backgroundColor: "#fff",
+    style: {
+      padding: 32,
+      width: "100%",
     },
   })
     .then((dataUrl) => {

@@ -156,7 +156,7 @@ const BarStack = ({
     grid: {
       top: 95,
       bottom: 28,
-      left: 30,
+      left: 55,
       right: 50,
       show: true,
       containLabel: true,
@@ -180,7 +180,7 @@ const BarStack = ({
       name: yAxisTitle || "",
       nameTextStyle: { ...TextStyle },
       nameLocation: "middle",
-      nameGap: 50,
+      nameGap: 75,
       axisLabel: {
         formatter: (e) => (percentage ? `${e}%` : thousandFormatter(e)),
         ...TextStyle,

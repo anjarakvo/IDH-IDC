@@ -85,7 +85,7 @@ const Chart = ({
   affix = false,
   targetData = [], // to show income target symbol
 }) => {
-  const elementRef = useRef();
+  const elementRef = useRef(null);
 
   const chartTitle = wrapper ? {} : { title: title, subTitle: subTitle };
   const option = generateOptions(

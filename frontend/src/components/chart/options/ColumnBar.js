@@ -121,7 +121,7 @@ const ColumnBar = ({
       name: yAxisTitle || "",
       nameTextStyle: { ...TextStyle },
       nameLocation: "middle",
-      nameGap: 50,
+      nameGap: 75,
       axisLabel: {
         ...TextStyle,
         color: "#9292ab",

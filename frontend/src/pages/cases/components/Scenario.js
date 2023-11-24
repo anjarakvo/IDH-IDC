@@ -376,7 +376,7 @@ const Scenario = ({
   );
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
-  const elScenarioModeling = useRef();
+  const elScenarioModeling = useRef(null);
 
   const finishEditing = () => {
     renameScenario(index, newName, newDescription);

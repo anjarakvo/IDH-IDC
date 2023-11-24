@@ -11,15 +11,15 @@ import {
 import { SaveAsImageButton } from "../../../components/utils";
 
 const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
-  const elCurrentFeasibleChart = useRef();
-  const elIncomeGap = useRef();
-  const elBigImpact = useRef();
-  const elExploreBreakdownDrivers = useRef();
-  const elMonetaryContribution = useRef();
-  const elIncomeLevelPerCommodities = useRef();
+  const elCurrentFeasibleChart = useRef(null);
+  const elIncomeGap = useRef(null);
+  const elBigImpact = useRef(null);
+  const elExploreBreakdownDrivers = useRef(null);
+  const elMonetaryContribution = useRef(null);
+  const elIncomeLevelPerCommodities = useRef(null);
 
   return (
-    <Row>
+    <Row id="income-overview-chart">
       <Col span={24}>
         <Card className="income-driver-dashboard">
           <Card.Grid
@@ -29,7 +29,11 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
             hoverable={false}
           >
             <Row className="income-driver-content" gutter={[16, 16]}>
-              <Col span={12} ref={elCurrentFeasibleChart}>
+              <Col
+                span={12}
+                ref={elCurrentFeasibleChart}
+                className="income-overview-chart-wrapper"
+              >
                 <h2>
                   What are the current and feasible income levels for the
                   different segments?
@@ -48,7 +52,11 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
                   currentCase={currentCase}
                 />
               </Col>
-              <Col span={12} ref={elIncomeGap}>
+              <Col
+                span={12}
+                ref={elIncomeGap}
+                className="income-overview-chart-wrapper"
+              >
                 <h2>How big is the income gap?</h2>
                 <p>
                   This graph shows you the actual household income components,
@@ -74,7 +82,11 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
             hoverable={false}
           >
             <Row className="income-driver-content" gutter={[16, 16]}>
-              <Col span={12} ref={elBigImpact}>
+              <Col
+                span={12}
+                ref={elBigImpact}
+                className="income-overview-chart-wrapper"
+              >
                 <h2>Which drivers have the biggest impact on income?</h2>
                 <p>
                   This ranking shows the elasticity of the driver and to which
@@ -87,7 +99,11 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
                 />
                 <ChartBigImpact dashboardData={dashboardData} />
               </Col>
-              <Col span={12} ref={elExploreBreakdownDrivers}>
+              <Col
+                span={12}
+                ref={elExploreBreakdownDrivers}
+                className="income-overview-chart-wrapper"
+              >
                 <h2>Explore the breakdown of drivers</h2>
                 <p>
                   Select the driver for which you want to breakdown to be
@@ -114,7 +130,11 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
             hoverable={false}
           >
             <Row className="income-driver-content">
-              <Col span={24} ref={elMonetaryContribution}>
+              <Col
+                span={24}
+                ref={elMonetaryContribution}
+                className="income-overview-chart-wrapper"
+              >
                 <h2>Monetary contribution of each driver to income.</h2>
                 <SaveAsImageButton
                   elementRef={elMonetaryContribution}
@@ -137,7 +157,11 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
             hoverable={false}
           >
             <Row className="income-driver-content">
-              <Col span={24} ref={elIncomeLevelPerCommodities}>
+              <Col
+                span={24}
+                ref={elIncomeLevelPerCommodities}
+                className="income-overview-chart-wrapper"
+              >
                 <h2>
                   <i>For landscape studies</i>
                 </h2>

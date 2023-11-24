@@ -226,7 +226,7 @@ const legends = [
 
 const ChartBinningHeatmap = ({ segment, data, origin }) => {
   const [label, setLabel] = useState(null);
-  const elSensitivityAnalysis = useRef();
+  const elSensitivityAnalysis = useRef(null);
 
   const binningData = useMemo(() => {
     if (!segment?.id) {
