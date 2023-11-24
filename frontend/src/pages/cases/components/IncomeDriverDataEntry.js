@@ -90,13 +90,16 @@ const IncomeDriverDataEntry = ({
 
         // update form values
         const transformFormValues = formValues.map((fv) => {
-          const findItem = transformItems.find((it) => it.key === fv.key);
+          const findItem = transformItems.find(
+            (it) => parseInt(it.key) === parseInt(fv.key)
+          );
           if (!findItem) {
             return fv;
           }
           return {
             ...findItem,
             ...fv,
+            currentSegmentId: findItem?.currentSegmentId || fv.currentSegmentId,
           };
         });
         setFormValues(transformFormValues);
