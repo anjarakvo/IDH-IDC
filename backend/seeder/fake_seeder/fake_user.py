@@ -51,7 +51,7 @@ def seed_fake_user(session: Session):
         session.flush()
         session.refresh(bu)
 
-    # Seed Internal User (Regular User with BU)
+    # Seed Regular/Internal User (User with BU)
     for i in range(2):
         for bu in business_units:
             reg_user = User(
@@ -76,8 +76,8 @@ def seed_fake_user(session: Session):
             session.flush()
             session.refresh(bu)
 
+    # Seed External User (User without BU)
     for i in range(5):
-        # Seed External User (Regular User without BU)
         reg_user = User(
             fullname=fake.name(),
             email=fake.email(),

@@ -17,11 +17,10 @@ class TestPermissionOveridingPreparation:
         users = session.query(User).all()
         for user in users:
             user_detail = user.to_user_detail
-            print(user_detail)
             # BU admin
             if user.role == UserRole.admin and user.all_cases:
                 assert len(user_detail["business_units"]) > 0
-            # Internal user (user with BU)
+            # Regular/Internal user (user with BU)
             if user.role == UserRole.user and user.all_cases:
                 assert len(user_detail["business_units"]) > 0
             # External user (user without BU)
