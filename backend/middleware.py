@@ -149,16 +149,35 @@ def verify_case_editor(session: Session, authenticated, case_id: int):
     # Check if user is the case owner
     if check_case_owner(session=session, case_id=case_id, user_id=user.id):
         return user
-    # overide case editor for UserRole.user and user not the case owner
-    user_permission = check_user_case_access_permission(
-        session=session, case_id=case_id, user_id=user.id
-    )
-    if not user_permission or user_permission.permission == PermissionType.view:
-        # if user doesn't have edit permission for particular case
-        raise HTTPException(
-            status_code=403, detail="You don't have access to edit this case"
+    if user.role == UserRole.user:
+        # overide case editor for UserRole.user and user not the case owner
+        user_permission = check_user_case_access_permission(
+            session=session, case_id=case_id, user_id=user.id
         )
+        if not user_permission or user_permission.permission != PermissionType.editor:
+            # if user doesn't have edit permission for particular case
+            raise HTTPException(
+                status_code=403, detail="You don't have access to edit this case"
+            )
     return user
 
 
-############### TODO:: Case Viewer??
+def verify_case_viewer(session: Session, authenticated, case_id: int):
+    roles = [UserRole.super_admin, UserRole.admin, UserRole.user]
+    user = verify_user(session=session, authenticated=authenticated)
+    if user.role not in roles:
+        raise HTTPException(status_code=403, detail="You don't have data access")
+    # Check if user is the case owner
+    if check_case_owner(session=session, case_id=case_id, user_id=user.id):
+        return user
+    if user.role == UserRole.user:
+        # overide case viewer for UserRole.user and user not the case owner
+        user_permission = check_user_case_access_permission(
+            session=session, case_id=case_id, user_id=user.id
+        )
+        if not user_permission:
+            # if user doesn't have edit permission for particular case
+            raise HTTPException(
+                status_code=403, detail="You don't have access to edit this case"
+            )
+    return user
