@@ -216,3 +216,8 @@ def get_case_options(
     if user_cases:
         case = case.filter(Case.id.in_(user_cases))
     return case.all()
+
+
+def check_case_owner(session: Session, case_id: int, user_id: int):
+    case = get_case_by_id(session=session, id=case_id)
+    return case.created_by == user_id

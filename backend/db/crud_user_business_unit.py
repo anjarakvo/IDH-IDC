@@ -15,6 +15,6 @@ def find_users_in_same_business_unit(
     return res
 
 
-def find_user_business_units(session: Session, user_id: int) -> UserBusinessUnit:
+def find_user_business_units(session: Session, user_id: int) -> List[UserBusinessUnit]:
     res = session.query(UserBusinessUnit).filter(UserBusinessUnit.user == user_id).all()
     return res

@@ -11,8 +11,12 @@ from typing import Optional
 from sqlalchemy.orm import Session
 
 from models.user import UserInfo, UserRole
+from models.enum_type import PermissionType
+
 from db import crud_user
 from db.crud_user_business_unit import find_user_business_units
+from db.crud_user_case_access import check_user_case_access_permission
+from db.crud_case import check_case_owner
 
 # to get a string like this run:
 # openssl rand -hex 32
@@ -135,3 +139,26 @@ def verify_case_creator(session: Session, authenticated):
             status_code=403, detail="You don't have access to create a case"
         )
     return user
+
+
+def verify_case_editor(session: Session, authenticated, case_id: int):
+    roles = [UserRole.super_admin, UserRole.admin, UserRole.user]
+    user = verify_user(session=session, authenticated=authenticated)
+    if user.role not in roles:
+        raise HTTPException(status_code=403, detail="You don't have data access")
+    # Check if user is the case owner
+    if check_case_owner(session=session, case_id=case_id, user_id=user.id):
+        return user
+    # overide case editor for UserRole.user and user not the case owner
+    user_permission = check_user_case_access_permission(
+        session=session, case_id=case_id, user_id=user.id
+    )
+    if not user_permission or user_permission.permission == PermissionType.view:
+        # if user doesn't have edit permission for particular case
+        raise HTTPException(
+            status_code=403, detail="You don't have access to edit this case"
+        )
+    return user
+
+
+############### TODO:: Case Viewer??
