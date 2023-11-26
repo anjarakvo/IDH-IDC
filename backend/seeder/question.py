@@ -1,7 +1,7 @@
 import os
 import sys
-import math
 import pandas as pd
+import numpy as np
 from db.connection import Base, engine, SessionLocal
 from utils.truncator import truncatedb
 from sqlalchemy.orm import Session
@@ -17,6 +17,7 @@ def seeder_question(session: Session):
     truncatedb(session=session, table="commodity_category_question")
     truncatedb(session=session, table="question")
     data = pd.read_csv(MASTER_DIR + "question.csv")
+    data.replace({np.nan: None}, inplace=True)
     question = data[
         [
             "id",
@@ -29,12 +30,9 @@ def seeder_question(session: Session):
         ]
     ]
     for index, row in question.iterrows():
-        parent = row["parent"]
-        if math.isnan(parent) or parent == "nan":
-            parent = None
         question = Question(
             id=row["id"],
-            parent=parent,
+            parent=row["parent"],
             text=row["text"],
             unit=row["unit"],
             description=row["description"],
