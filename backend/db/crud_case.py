@@ -223,6 +223,6 @@ def check_case_owner(session: Session, case_id: int, user_id: int):
     return case.created_by == user_id
 
 
-def get_case_by_created_by(session: Session, case_id: int, created_by: int):
+def get_case_by_created_by(session: Session, created_by: int):
     case = session.query(Case).filter(Case.created_by == created_by).all()
     return case

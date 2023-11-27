@@ -24,10 +24,13 @@ account = Acc(email="super_admin@akvo.org", token=None)
 
 
 def find_external_internal_user(session: Session):
+    user_case_access = session.query(UserCaseAccess).all()
     user_business_unit = session.query(UserBusinessUnit).all()
     exclude_user_ids = [ubu.user for ubu in user_business_unit]
     user = session.query(User).filter(User.role == UserRole.user)
-    ex_user = user.filter(~User.id.in_(exclude_user_ids)).first()
+    ex_user = user.filter(
+        ~User.id.in_(exclude_user_ids + [uca.user for uca in user_case_access])
+    ).first()
     in_user = user.filter(User.id.in_(exclude_user_ids)).first()
     return ex_user, in_user
 
@@ -47,10 +50,14 @@ def find_editor_viewer_user(session: Session):
     case = session.query(Case).filter(Case.id == editor.case).first()
     case_owner = user.filter(User.id == case.created_by).first()
     # user without permission
+    all_case_owner = session.query(Case).all()
     user_no_permission = user.filter(
         and_(
             User.role == UserRole.user,
-            ~User.id.in_([viewer_user.id, editor_user.id, case_owner.id]),
+            ~User.id.in_(
+                [viewer_user.id, editor_user.id, case_owner.id]
+                + [c.created_by for c in all_case_owner]
+            ),
         )
     ).first()
     return (
@@ -134,7 +141,7 @@ class TestPermissionOveriding:
             "living_income_study": LivingIncomeStudyEnum.better_income.value,
             "multiple_commodities": False,
             "other_commodities": [],
-            "private": False,
+            "private": True,
             "tags": [1],
         }
 
@@ -202,7 +209,7 @@ class TestPermissionOveriding:
         assert res.status_code == 200
         res = res.json()
         assert res == [
-            {"id": 3, "user": 2, "case": 10, "permission": "edit"},
+            {"id": 3, "user": 17, "case": 10, "permission": "edit"},
             {"id": 4, "user": 7, "case": 10, "permission": "view"},
         ]
 
@@ -236,7 +243,7 @@ class TestPermissionOveriding:
             "living_income_study": LivingIncomeStudyEnum.better_income.value,
             "multiple_commodities": False,
             "other_commodities": [],
-            "private": False,
+            "private": True,
             "tags": [1],
         }
 
@@ -323,6 +330,61 @@ class TestPermissionOveriding:
         case_owner_acc = Acc(email=case_owner.email, token=None)
         res = await client.get(
             app.url_path_for("case:get_by_id", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+        )
+        assert res.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_get_all_case(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        (
+            viewer_user,
+            editor_user,
+            case_owner,
+        ) = find_editor_viewer_user(session=session)
+        ex_user, in_user = find_external_internal_user(session=session)
+
+        # external user
+        external_user_acc = Acc(email=ex_user.email, token=None)
+        res = await client.get(
+            app.url_path_for(
+                "case:get_all",
+            ),
+            headers={"Authorization": f"Bearer {external_user_acc.token}"},
+        )
+        assert res.status_code == 404
+
+        # internal user
+        internal_user_acc = Acc(email=in_user.email, token=None)
+        res = await client.get(
+            app.url_path_for(
+                "case:get_all",
+            ),
+            headers={"Authorization": f"Bearer {internal_user_acc.token}"},
+        )
+        assert res.status_code == 200
+
+        # viewer user
+        viewer_user_acc = Acc(email=viewer_user.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_all"),
+            headers={"Authorization": f"Bearer {viewer_user_acc.token}"},
+        )
+        assert res.status_code == 200
+
+        # editor user
+        editor_user_acc = Acc(email=editor_user.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_all"),
+            headers={"Authorization": f"Bearer {editor_user_acc.token}"},
+        )
+        assert res.status_code == 200
+
+        # case owner
+        case_owner_acc = Acc(email=case_owner.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_all"),
             headers={"Authorization": f"Bearer {case_owner_acc.token}"},
         )
         assert res.status_code == 200
