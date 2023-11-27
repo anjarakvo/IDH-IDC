@@ -255,3 +255,40 @@ class TestPermissionOveriding:
         assert res.status_code == 200
         res = res.json()
         assert res["name"] == "Case by External user Updated by Owner"
+
+    @pytest.mark.asyncio
+    async def test_view_case_permission(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        (
+            viewer,
+            viewer_user,
+            editor,
+            editor_user,
+            case,
+            case_owner,
+        ) = find_editor_viewer_user(session=session)
+
+        # viewer user
+        viewer_user_acc = Acc(email=viewer_user.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_by_id", case_id=viewer.case),
+            headers={"Authorization": f"Bearer {viewer_user_acc.token}"},
+        )
+        assert res.status_code == 200
+
+        # editor user
+        editor_user_acc = Acc(email=editor_user.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_by_id", case_id=editor.case),
+            headers={"Authorization": f"Bearer {editor_user_acc.token}"},
+        )
+        assert res.status_code == 200
+
+        # edit by case creator
+        case_owner_acc = Acc(email=case_owner.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_by_id", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+        )
+        assert res.status_code == 200
