@@ -21,7 +21,7 @@ sys.path.append("..")
 account = Acc(email="super_admin@akvo.org", token=None)
 
 
-class TestPermissionOveridingPreparation:
+class TestPermissionOveriding:
     @pytest.mark.asyncio
     async def test_seeder_fake_user(self, session: Session) -> None:
         seed_fake_user(session=session)
