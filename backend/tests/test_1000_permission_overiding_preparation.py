@@ -7,8 +7,10 @@ from httpx import AsyncClient
 
 from tests.test_000_main import Acc
 from models.user import User, UserRole
+from models.case import Case
 
 from seeder.fake_seeder.fake_user import seed_fake_user
+from seeder.fake_seeder.fake_case import seed_fake_case
 
 pytestmark = pytest.mark.asyncio
 sys.path.append("..")
@@ -53,3 +55,12 @@ class TestPermissionOveridingPreparation:
         )
         res = res.json()
         assert res == [{"label": "John Doe <super_admin@akvo.org>", "value": 1}]
+
+    @pytest.mark.asyncio
+    async def test_seeder_fake_case(self, session: Session) -> None:
+        cases = session.query(Case).count()
+        assert cases == 3
+
+        seed_fake_case(session=session)
+        cases = session.query(Case).count()
+        assert cases == 9
