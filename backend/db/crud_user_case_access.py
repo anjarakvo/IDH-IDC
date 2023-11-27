@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
 from models.user_case_access import (
@@ -10,20 +10,21 @@ from models.enum_type import PermissionType
 
 
 def check_user_case_access_permission(
-    session: Session, user_id: int, case_id: int, permission: PermissionType
+    session: Session,
+    user_id: int,
+    case_id: int,
+    permission: Optional[PermissionType] = None,
 ) -> UserCaseAccess:
-    res = (
-        session.query(UserCaseAccess)
-        .filter(
-            and_(
-                UserCaseAccess.user == user_id,
-                UserCaseAccess.case == case_id,
-                UserCaseAccess.permission == permission,
-            )
+    res = session.query(UserCaseAccess).filter(
+        and_(
+            UserCaseAccess.user == user_id,
+            UserCaseAccess.case == case_id,
         )
-        .first()
     )
-    return res
+    if permission:
+        res = res.filter(UserCaseAccess.permission == permission)
+        return res.first()
+    return res.all()
 
 
 def find_user_case_access_viewer(

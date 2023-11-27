@@ -24,6 +24,7 @@ from middleware import (
     verify_case_owner,
     verify_case_creator,
     verify_case_editor,
+    verify_case_viewer,
 )
 
 security = HTTPBearer()
@@ -170,7 +171,9 @@ def get_case_by_id(
     credentials: credentials = Depends(security),
 ):
     # TODO :: verify by user, then check user role and access
-    verify_admin(session=session, authenticated=req.state.authenticated)
+    verify_case_viewer(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
     case = crud_case.get_case_by_id(session=session, id=case_id)
     case = case.to_case_detail
     for segment in case["segments"]:
