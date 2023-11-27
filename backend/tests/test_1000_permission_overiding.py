@@ -392,3 +392,39 @@ class TestPermissionOveriding:
             headers={"Authorization": f"Bearer {case_owner_acc.token}"},
         )
         assert res.status_code == 200
+
+    @pytest.mark.asyncio
+    async def test_update_case_owner(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        (
+            viewer,
+            viewer_user,
+            editor,
+            editor_user,
+            case,
+            case_owner,
+            user_no_permission,
+        ) = find_editor_viewer_user(session=session)
+        ex_user, in_user = find_external_internal_user(session=session)
+
+        # user_no_permission user
+        user_no_permission_acc = Acc(email=user_no_permission.email, token=None)
+        res = await client.put(
+            app.url_path_for("case:update_case_owner", case_id=case.id),
+            headers={"Authorization": f"Bearer {user_no_permission_acc.token}"},
+            params={"user_id": editor_user.id},
+        )
+        assert res.status_code == 403
+
+        # case owner
+        case_owner_acc = Acc(email=case_owner.email, token=None)
+        res = await client.put(
+            app.url_path_for("case:update_case_owner", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+            params={"user_id": editor_user.id},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res["created_by"] != case.created_by
+        assert res["created_by"] == editor_user.id

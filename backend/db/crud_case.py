@@ -226,3 +226,12 @@ def check_case_owner(session: Session, case_id: int, user_id: int):
 def get_case_by_created_by(session: Session, created_by: int):
     case = session.query(Case).filter(Case.created_by == created_by).all()
     return case
+
+
+def update_case_owner(session: Session, case_id: int, user_id: int) -> CaseDict:
+    case = get_case_by_id(session=session, id=case_id)
+    case.created_by = user_id
+    session.commit()
+    session.flush()
+    session.refresh(case)
+    return case

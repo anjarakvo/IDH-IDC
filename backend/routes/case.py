@@ -218,3 +218,24 @@ def add_user_case_access(
     )
     res = crud_uca.add_case_access(session=session, payloads=payload, case_id=case_id)
     return [r.serialize for r in res]
+
+
+@case_route.put(
+    "/update_case_owner/{case_id:path}",
+    response_model=CaseDict,
+    summary="update case owner",
+    name="case:update_case_owner",
+    tags=["Case"],
+)
+def update_case_owner(
+    req: Request,
+    case_id: int,
+    user_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    verify_case_owner(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
+    res = crud_case.update_case_owner(session=session, case_id=case_id, user_id=user_id)
+    return res.serialize
