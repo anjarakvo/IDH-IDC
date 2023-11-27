@@ -7,6 +7,13 @@ from pydantic import BaseModel
 from models.enum_type import PermissionType
 
 
+class UserCaseAccessDict(TypedDict):
+    id: int
+    user: int
+    case: int
+    permission: PermissionType
+
+
 class UserCasePermissionDict(TypedDict):
     case: int
     permission: PermissionType
@@ -51,6 +58,15 @@ class UserCaseAccess(Base):
         return f"<UserCaseAccess {self.id}>"
 
     @property
+    def serialize(self) -> UserCaseAccessDict:
+        return {
+            id: self.id,
+            "user": self.user,
+            "case": self.case,
+            "permission": self.permission,
+        }
+
+    @property
     def to_case_permission(self) -> UserCasePermissionDict:
         return {"case": self.case, "permission": self.permission}
 
@@ -60,3 +76,8 @@ class UserCaseAccessBase(BaseModel):
     permission: PermissionType
     id: Optional[int] = None
     user: Optional[int] = None
+
+
+class UserCaseAccessPayload(BaseModel):
+    user: int
+    permission: PermissionType

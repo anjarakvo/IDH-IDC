@@ -1,7 +1,11 @@
 from typing import List
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
-from models.user_case_access import UserCaseAccess
+from models.user_case_access import (
+    UserCaseAccess,
+    UserCaseAccessPayload,
+    UserCaseAccessDict,
+)
 from models.enum_type import PermissionType
 
 
@@ -34,4 +38,28 @@ def find_user_case_access_viewer(
         )
         .all()
     )
+    return res
+
+
+def add_case_access(
+    session: Session, payloads: List[UserCaseAccessPayload], case_id: int
+) -> List[UserCaseAccessDict]:
+    res = []
+    # delete prev case access before add
+    prev_access = (
+        session.query(UserCaseAccess).filter(UserCaseAccess.case == case_id).all()
+    )
+    for pa in prev_access:
+        session.delete(pa)
+        session.commit()
+    # add new case access
+    for payload in payloads:
+        uca = UserCaseAccess(
+            case=case_id, user=payload.user, permission=payload.permission
+        )
+        session.add(uca)
+        session.commit()
+        session.flush()
+        session.refresh(uca)
+        res.append(uca)
     return res

@@ -141,6 +141,19 @@ def verify_case_creator(session: Session, authenticated):
     return user
 
 
+def verify_case_owner(session: Session, authenticated, case_id: int):
+    roles = [UserRole.super_admin, UserRole.admin, UserRole.user]
+    user = verify_user(session=session, authenticated=authenticated)
+    if user.role not in roles:
+        raise HTTPException(status_code=403, detail="You don't have data access")
+    # Check if user is the case owner or not
+    if user.role == UserRole.user and not check_case_owner(
+        session=session, case_id=case_id, user_id=user.id
+    ):
+        raise HTTPException(status_code=403, detail="You are not the case owner")
+    return user
+
+
 def verify_case_editor(session: Session, authenticated, case_id: int):
     roles = [UserRole.super_admin, UserRole.admin, UserRole.user]
     user = verify_user(session=session, authenticated=authenticated)

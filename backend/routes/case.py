@@ -1,6 +1,7 @@
 import db.crud_case as crud_case
 import db.crud_user_business_unit as crud_bu
 import db.crud_living_income_benchmark as crud_lib
+import db.crud_user_case_access as crud_uca
 
 from math import ceil
 from fastapi import APIRouter, Request, Depends, HTTPException, Query
@@ -16,7 +17,8 @@ from models.case import (
     CaseDropdown,
 )
 from models.user import UserRole
-from middleware import verify_admin, verify_user
+from models.user_case_access import UserCaseAccessPayload, UserCaseAccessDict
+from middleware import verify_admin, verify_user, verify_case_owner
 
 security = HTTPBearer()
 case_route = APIRouter()
@@ -173,3 +175,24 @@ def get_case_by_id(
         )
         segment["benchmark"] = benchmark
     return case
+
+
+@case_route.post(
+    "/case_access/{case_id:path}",
+    response_model=List[UserCaseAccessDict],
+    summary="add user access too a case",
+    name="case:user_case_access",
+    tags=["Case"],
+)
+def add_user_case_access(
+    req: Request,
+    case_id: int,
+    payload: List[UserCaseAccessPayload],
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    verify_case_owner(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
+    res = crud_uca.add_case_access(session=session, payloads=payload, case_id=case_id)
+    return [r.serialize for r in res]
