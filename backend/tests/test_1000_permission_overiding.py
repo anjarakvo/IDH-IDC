@@ -10,6 +10,7 @@ from tests.test_000_main import Acc
 from models.user import User, UserRole
 from models.case import Case, LivingIncomeStudyEnum
 from models.user_business_unit import UserBusinessUnit
+from models.enum_type import PermissionType
 
 from seeder.fake_seeder.fake_user import seed_fake_user
 from seeder.fake_seeder.fake_case import seed_fake_case
@@ -19,6 +20,16 @@ sys.path.append("..")
 
 
 account = Acc(email="super_admin@akvo.org", token=None)
+
+
+def find_external_internal_user(session: Session):
+    # find external user
+    user_business_unit = session.query(UserBusinessUnit).all()
+    exclude_user_ids = [ubu.user for ubu in user_business_unit]
+    user = session.query(User).filter(User.role == UserRole.user)
+    ex_user = user.filter(~User.id.in_(exclude_user_ids)).first()
+    in_user = user.filter(User.id.in_(exclude_user_ids)).first()
+    return ex_user, in_user
 
 
 class TestPermissionOveriding:
@@ -71,15 +82,10 @@ class TestPermissionOveriding:
     async def test_create_case_by_external_user(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        # find external user
-        user_business_unit = session.query(UserBusinessUnit).all()
-        exclude_user_ids = [ubu.user for ubu in user_business_unit]
-        ex_user = (
-            session.query(User)
-            .filter(and_(~User.id.in_(exclude_user_ids)), User.role == UserRole.user)
-            .first()
-        )
+        # find external/internal user
+        ex_user, in_user = find_external_internal_user(session=session)
         external_user_acc = Acc(email=ex_user.email, token=None)
+
         payload = {
             "name": "Case by External user",
             "description": "This is a description",
@@ -100,6 +106,7 @@ class TestPermissionOveriding:
             "tags": [1],
         }
 
+        # external user
         res = await client.post(
             app.url_path_for("case:create"),
             headers={"Authorization": f"Bearer {external_user_acc.token}"},
@@ -109,12 +116,7 @@ class TestPermissionOveriding:
         res = res.json()
         assert res["detail"] == "You don't have access to create a case"
 
-        # find internal user
-        in_user = (
-            session.query(User)
-            .filter(and_(User.id.in_(exclude_user_ids)), User.role == UserRole.user)
-            .first()
-        )
+        # internal user
         internal_user_acc = Acc(email=in_user.email, token=None)
         res = await client.post(
             app.url_path_for("case:create"),
@@ -124,3 +126,35 @@ class TestPermissionOveriding:
         assert res.status_code == 200
         res = res.json()
         assert res["created_by"] == in_user.id
+
+    @pytest.mark.asyncio
+    async def test_assign_case_access(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # find external/internal user
+        ex_user, in_user = find_external_internal_user(session=session)
+        payloads = []
+        permissions = [PermissionType.edit, PermissionType.view]
+        for index, user in enumerate([ex_user, in_user]):
+            payloads.append({"user": user.id, "permission": permissions[index]})
+
+        # not case owner
+        case = session.query(Case).all()
+        exclude_user = [c.created_by for c in case]
+        not_case_owner = (
+            session.query(User)
+            .filter(and_(User.role == UserRole.user, ~User.id.in_(exclude_user)))
+            .first()
+        )
+        not_case_owner_acc = Acc(email=not_case_owner.email, token=None)
+        print(not_case_owner_acc)
+
+        # assign access by not case owner
+
+        # find case owner
+        case = session.query(Case).order_by(Case.id.desc()).first()
+        case_owner = case.created_by_user
+        case_owner_acc = Acc(email=case_owner.email, token=None)
+        print(case_owner_acc)
+
+    # test get case, check private case
