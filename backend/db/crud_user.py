@@ -27,7 +27,8 @@ def add_user(
     except AttributeError:
         password = payload.password
     role = payload.role if invitation_id or payload.role else UserRole.user
-    all_cases = 1 if payload.all_cases else 0
+    # all cases TRUE for Regular/Internal user (user with BU)
+    all_cases = 1 if payload.all_cases or payload.business_units else 0
     if role in [UserRole.super_admin, UserRole.admin]:
         all_cases = 1
     user = User(
