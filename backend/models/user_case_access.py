@@ -60,7 +60,7 @@ class UserCaseAccess(Base):
     @property
     def serialize(self) -> UserCaseAccessDict:
         return {
-            id: self.id,
+            "id": self.id,
             "user": self.user,
             "case": self.case,
             "permission": self.permission,

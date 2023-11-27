@@ -188,7 +188,7 @@ def get_case_by_id(
     "/case_access/{case_id:path}",
     response_model=List[UserCaseAccessDict],
     summary="add user access too a case",
-    name="case:user_case_access",
+    name="case:add_user_case_access",
     tags=["Case"],
 )
 def add_user_case_access(

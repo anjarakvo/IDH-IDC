@@ -134,7 +134,7 @@ class TestPermissionOveriding:
         # find external/internal user
         ex_user, in_user = find_external_internal_user(session=session)
         payloads = []
-        permissions = [PermissionType.edit, PermissionType.view]
+        permissions = [PermissionType.edit.value, PermissionType.view.value]
         for index, user in enumerate([ex_user, in_user]):
             payloads.append({"user": user.id, "permission": permissions[index]})
 
@@ -147,14 +147,31 @@ class TestPermissionOveriding:
             .first()
         )
         not_case_owner_acc = Acc(email=not_case_owner.email, token=None)
-        print(not_case_owner_acc)
 
         # assign access by not case owner
+        res = await client.post(
+            app.url_path_for("case:add_user_case_access", case_id=9),
+            headers={"Authorization": f"Bearer {not_case_owner_acc.token}"},
+            json=payloads,
+        )
+        assert res.status_code == 403
 
         # find case owner
         case = session.query(Case).order_by(Case.id.desc()).first()
         case_owner = case.created_by_user
         case_owner_acc = Acc(email=case_owner.email, token=None)
-        print(case_owner_acc)
+
+        # assign access by case owner
+        res = await client.post(
+            app.url_path_for("case:add_user_case_access", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+            json=payloads,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == [
+            {"id": 3, "user": 2, "case": 10, "permission": "edit"},
+            {"id": 4, "user": 7, "case": 10, "permission": "view"},
+        ]
 
     # test get case, check private case
