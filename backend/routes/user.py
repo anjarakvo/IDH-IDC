@@ -229,11 +229,20 @@ def register(
         url = f"{webdomain}/invitation/{res_invitation_id}"
         email = Email(recipients=recipients, email=MailTypeEnum.INVITATION, url=url)
         email.send
-    if not invitation_id:
-        # send registration email
+    # regular / internal user registration
+    if not invitation_id and payload.business_units:
+        # send email to business unit admin
         admins = crud_user.find_business_unit_admin(session=session, user_id=user["id"])
         email = Email(
             recipients=[a.recipient for a in admins], email=MailTypeEnum.REG_NEW
+        )
+        email.send
+    # external user registration
+    if not invitation_id and not payload.business_units:
+        # send email to super admin
+        super_admins = crud_user.find_super_admin(session=session)
+        email = Email(
+            recipients=[a.recipient for a in super_admins], email=MailTypeEnum.REG_NEW
         )
         email.send
     return user

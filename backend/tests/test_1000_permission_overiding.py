@@ -1,5 +1,6 @@
 import sys
 import pytest
+import json
 
 from sqlalchemy.orm import Session
 from sqlalchemy import and_
@@ -9,7 +10,7 @@ from httpx import AsyncClient
 from tests.test_000_main import Acc
 from models.user import User, UserRole
 from models.case import Case, LivingIncomeStudyEnum
-from models.user_business_unit import UserBusinessUnit
+from models.user_business_unit import UserBusinessUnit, UserBusinessUnitRole
 from models.enum_type import PermissionType
 from models.user_case_access import UserCaseAccess
 
@@ -428,3 +429,35 @@ class TestPermissionOveriding:
         res = res.json()
         assert res["created_by"] != case.created_by
         assert res["created_by"] == editor_user.id
+
+    @pytest.mark.asyncio
+    async def test_user_register_with_default_organisation(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        user_payload = {
+            "fullname": "Test User",
+            "email": "default_organisation_user@test.org",
+            "password": None,
+            "role": UserRole.user.value,
+            "business_units": json.dumps(
+                [{"business_unit": 1, "role": UserBusinessUnitRole.member.value}]
+            ),
+        }
+        # without credential
+        res = await client.post(
+            app.url_path_for("user:register"),
+            data=user_payload,
+            headers={
+                "content-type": "application/x-www-form-urlencoded",
+            },
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 22,
+            "organisation": 2,
+            "email": "default_organisation_user@test.org",
+            "fullname": "Test User",
+            "role": "user",
+            "active": False,
+        }

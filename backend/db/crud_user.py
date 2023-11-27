@@ -274,6 +274,11 @@ def find_business_unit_admin(session: Session, user_id: int):
     return admins
 
 
+def find_super_admin(session: Session):
+    super_admins = session.query(User).filter(User.role == UserRole.super_admin).all()
+    return super_admins
+
+
 def search_user(session: Session, search: str):
     user = filter_user(session=session, search=search, approved=True)
     return user.all()
