@@ -1,13 +1,20 @@
 import sys
 import pytest
-from sqlalchemy.orm import Session
 
+from sqlalchemy.orm import Session
+from fastapi import FastAPI
+from httpx import AsyncClient
+
+from tests.test_000_main import Acc
 from models.user import User, UserRole
 
 from seeder.fake_seeder.fake_user import seed_fake_user
 
 pytestmark = pytest.mark.asyncio
 sys.path.append("..")
+
+
+account = Acc(email="super_admin@akvo.org", token=None)
 
 
 class TestPermissionOveridingPreparation:
@@ -26,3 +33,23 @@ class TestPermissionOveridingPreparation:
             # External user (user without BU)
             if user.role == UserRole.admin and not user.all_cases:
                 assert len(user_detail["business_units"]) == 0
+
+    @pytest.mark.asyncio
+    async def test_search_user_dropdown(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        res = await client.get(
+            app.url_path_for("user:search_user_dropdown"),
+            params={"search": "Wayan"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        res = res.json()
+        assert res == []
+
+        res = await client.get(
+            app.url_path_for("user:search_user_dropdown"),
+            params={"search": "super_admin"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        res = res.json()
+        assert res == [{"label": "John Doe <super_admin@akvo.org>", "value": 1}]

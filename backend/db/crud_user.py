@@ -262,3 +262,8 @@ def find_business_unit_admin(session: Session, user_id: int):
         .all()
     )
     return admins
+
+
+def search_user(session: Session, search: str):
+    user = filter_user(session=session, search=search, approved=True)
+    return user.all()

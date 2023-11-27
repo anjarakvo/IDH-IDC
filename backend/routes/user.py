@@ -35,9 +35,10 @@ from models.user import (
     UserInvitation,
     UserDetailDict,
     UserRole,
+    UserSearchDict,
 )
 from models.user_business_unit import UserBusinessUnitRole
-from typing import Optional
+from typing import Optional, List
 from pydantic import SecretStr
 from http import HTTPStatus
 from utils.mailer import Email, MailTypeEnum
@@ -282,6 +283,29 @@ def change_password(
         "token_type": "bearer",
         "user": user.to_user_info,
     }
+
+
+@user_route.get(
+    "/user/search_dropdown",
+    response_model=List[UserSearchDict],
+    summary="get users by search value",
+    name="user:search_user_dropdown",
+    tags=["User"],
+)
+def search_user(
+    req: Request,
+    search: str,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    verify_user(session=session, authenticated=req.state.authenticated)
+    user = crud_user.search_user(
+        session=session,
+        search=search,
+    )
+    if not user:
+        return []
+    return [u.to_search_dropdown for u in user]
 
 
 @user_route.get(

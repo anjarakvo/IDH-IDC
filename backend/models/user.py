@@ -36,9 +36,7 @@ def json_load(value: Optional[str] = None):
     return value
 
 
-def validate_business_units(
-    info: ValidationInfo, value: Optional[str] = None
-):
+def validate_business_units(info: ValidationInfo, value: Optional[str] = None):
     business_units_required = [UserRole.admin]
     role = info.data.get("role", None)
     # business unit required for admin role
@@ -102,6 +100,11 @@ class UserInvitation(TypedDict):
     email: str
     role: UserRole
     invitation_id: str
+
+
+class UserSearchDict(TypedDict):
+    value: int
+    label: str
 
 
 class EmailRecipient(TypedDict):
@@ -254,6 +257,11 @@ class User(Base):
             "role": self.role,
             "invitation_id": self.invitation_id,
         }
+
+    @property
+    def to_search_dropdown(self) -> UserSearchDict:
+        label = f"{self.fullname} <{self.email}>"
+        return {"value": self.id, "label": label}
 
     @property
     def recipient(self) -> EmailRecipient:
