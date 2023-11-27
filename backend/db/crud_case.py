@@ -81,7 +81,7 @@ def get_all_case(
     session: Session,
     skip: int = 0,
     limit: int = 10,
-    show_private: Optional[bool] = 0,
+    show_private: Optional[bool] = False,
     search: Optional[str] = None,
     tags: Optional[int] = None,
     focus_commodities: Optional[int] = None,
@@ -89,8 +89,6 @@ def get_all_case(
     user_cases: Optional[List[int]] = None,
     country: Optional[int] = None,
 ) -> List[CaseListDict]:
-    # TODO:: Filter case by user business unit overiding (Regular/Internal user or External user)
-    # TODO:: Filter case by user case access overiding
     case = session.query(Case)
     if not show_private:
         case = case.filter(Case.private == 0)
@@ -223,3 +221,8 @@ def get_case_options(
 def check_case_owner(session: Session, case_id: int, user_id: int):
     case = get_case_by_id(session=session, id=case_id)
     return case.created_by == user_id
+
+
+def get_case_by_created_by(session: Session, case_id: int, created_by: int):
+    case = session.query(Case).filter(Case.created_by == created_by).all()
+    return case

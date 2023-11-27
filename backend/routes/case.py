@@ -67,20 +67,33 @@ def get_all_case(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
-    # verify by user then filter cases in same business unit
-    # if all_cases false and role not super_admin
     user = verify_user(session=session, authenticated=req.state.authenticated)
-    business_unit_users = []
-    if user.role != UserRole.super_admin and user.all_cases:
-        business_unit_users = crud_bu.find_users_in_same_business_unit(
-            session=session,
-            business_units=[bu.business_unit for bu in user.user_business_units],
-        )
-        if not business_unit_users:
-            raise HTTPException(status_code=404, detail="Not found")
-    # if role = user we should check for user tags or user cases
-    # (also if editor / viewer and all_cases false)
+
+    # prevent external user which doesn't have access to cases
+    user_permission = crud_uca.find_user_case_access_viewer(
+        session=session, user_id=user.id
+    )
+    if (
+        user.role == UserRole.user
+        and not len(user.user_business_units)
+        and not user_permission
+    ):
+        raise HTTPException(status_code=404, detail="Not found")
+
+    # handle show/hide private case
     user_cases = []
+    show_private = False
+    if user.role in [UserRole.super_admin, UserRole.admin]:
+        show_private = True
+    if user.role == UserRole.user and user_permission:
+        show_private = True
+        user_cases = [d.case for d in user_permission]
+
+    # handle case owner
+    if user.role == UserRole.user:
+        cases = crud_case.get_case_by_created_by(session=session, created_by=user.id)
+        user_cases = user_cases + [c.id for c in cases]
+
     if user.role == UserRole.user or not user.all_cases:
         user_cases = [uc.case for uc in user.user_case_access]
     cases = crud_case.get_all_case(
@@ -90,9 +103,9 @@ def get_all_case(
         focus_commodities=focus_commodity,
         skip=(limit * (page - 1)),
         limit=limit,
-        business_unit_users=business_unit_users,
         user_cases=user_cases,
         country=country,
+        show_private=show_private,
     )
     if not cases:
         raise HTTPException(status_code=404, detail="Not found")
@@ -170,7 +183,6 @@ def get_case_by_id(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
-    # TODO :: verify by user, then check user role and access
     verify_case_viewer(
         session=session, authenticated=req.state.authenticated, case_id=case_id
     )
