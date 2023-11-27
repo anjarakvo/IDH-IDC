@@ -46,7 +46,22 @@ def find_editor_viewer_user(session: Session):
     # case owner
     case = session.query(Case).filter(Case.id == editor.case).first()
     case_owner = user.filter(User.id == case.created_by).first()
-    return viewer, viewer_user, editor, editor_user, case, case_owner
+    # user without permission
+    user_no_permission = user.filter(
+        and_(
+            User.role == UserRole.user,
+            ~User.id.in_([viewer_user.id, editor_user.id, case_owner.id]),
+        )
+    ).first()
+    return (
+        viewer,
+        viewer_user,
+        editor,
+        editor_user,
+        case,
+        case_owner,
+        user_no_permission,
+    )
 
 
 class TestPermissionOveriding:
@@ -202,6 +217,7 @@ class TestPermissionOveriding:
             editor_user,
             case,
             case_owner,
+            user_no_permission,
         ) = find_editor_viewer_user(session=session)
 
         payload = {
@@ -223,6 +239,15 @@ class TestPermissionOveriding:
             "private": False,
             "tags": [1],
         }
+
+        # no permission user
+        user_no_permission_acc = Acc(email=user_no_permission.email, token=None)
+        res = await client.put(
+            app.url_path_for("case:update", case_id=case.id),
+            headers={"Authorization": f"Bearer {user_no_permission_acc.token}"},
+            json=payload,
+        )
+        assert res.status_code == 403
 
         # viewer user
         viewer_user_acc = Acc(email=viewer_user.email, token=None)
@@ -267,7 +292,16 @@ class TestPermissionOveriding:
             editor_user,
             case,
             case_owner,
+            user_no_permission,
         ) = find_editor_viewer_user(session=session)
+
+        # no permission user
+        user_no_permission_acc = Acc(email=user_no_permission.email, token=None)
+        res = await client.get(
+            app.url_path_for("case:get_by_id", case_id=case.id),
+            headers={"Authorization": f"Bearer {user_no_permission_acc.token}"},
+        )
+        assert res.status_code == 403
 
         # viewer user
         viewer_user_acc = Acc(email=viewer_user.email, token=None)
