@@ -43,7 +43,10 @@ def find_editor_viewer_user(session: Session):
     user = session.query(User)
     viewer_user = user.filter(User.id == viewer.user).first()
     editor_user = user.filter(User.id == editor.user).first()
-    return viewer, viewer_user, editor, editor_user
+    # case owner
+    case = session.query(Case).filter(Case.id == editor.case).first()
+    case_owner = user.filter(User.id == case.created_by).first()
+    return viewer, viewer_user, editor, editor_user, case, case_owner
 
 
 class TestPermissionOveriding:
@@ -192,9 +195,14 @@ class TestPermissionOveriding:
     async def test_edit_case_permission(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
-        viewer, viewer_user, editor, editor_user = find_editor_viewer_user(
-            session=session
-        )
+        (
+            viewer,
+            viewer_user,
+            editor,
+            editor_user,
+            case,
+            case_owner,
+        ) = find_editor_viewer_user(session=session)
 
         payload = {
             "name": "Case by External user Updated",
@@ -235,3 +243,15 @@ class TestPermissionOveriding:
         assert res.status_code == 200
         res = res.json()
         assert res["name"] == "Case by External user Updated"
+
+        # edit by case creator
+        payload["name"] = "Case by External user Updated by Owner"
+        case_owner_acc = Acc(email=case_owner.email, token=None)
+        res = await client.put(
+            app.url_path_for("case:update", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res["name"] == "Case by External user Updated by Owner"
