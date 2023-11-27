@@ -18,7 +18,13 @@ from models.case import (
 )
 from models.user import UserRole
 from models.user_case_access import UserCaseAccessPayload, UserCaseAccessDict
-from middleware import verify_admin, verify_user, verify_case_owner
+from middleware import (
+    verify_admin,
+    verify_user,
+    verify_case_owner,
+    verify_case_creator,
+    verify_case_editor,
+)
 
 security = HTTPBearer()
 case_route = APIRouter()
@@ -37,7 +43,7 @@ def create_case(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
-    user = verify_admin(session=session, authenticated=req.state.authenticated)
+    user = verify_case_creator(session=session, authenticated=req.state.authenticated)
     case = crud_case.add_case(session=session, payload=payload, user=user)
     return case.serialize
 
@@ -143,8 +149,9 @@ def update_Case(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
-    # TODO :: verify by user, then check user role and access
-    verify_admin(session=session, authenticated=req.state.authenticated)
+    verify_case_editor(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
     case = crud_case.update_case(session=session, id=case_id, payload=payload)
     return case.serialize
 

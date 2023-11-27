@@ -159,10 +159,10 @@ def verify_case_editor(session: Session, authenticated, case_id: int):
     user = verify_user(session=session, authenticated=authenticated)
     if user.role not in roles:
         raise HTTPException(status_code=403, detail="You don't have data access")
-    # Check if user is the case owner
-    if check_case_owner(session=session, case_id=case_id, user_id=user.id):
-        return user
     if user.role == UserRole.user:
+        # Check if user is the case owner
+        if check_case_owner(session=session, case_id=case_id, user_id=user.id):
+            return user
         # overide case editor for UserRole.user and user not the case owner
         user_permission = check_user_case_access_permission(
             session=session, case_id=case_id, user_id=user.id
