@@ -339,9 +339,13 @@ class TestPermissionOveriding:
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         (
+            viewer,
             viewer_user,
+            editor,
             editor_user,
+            case,
             case_owner,
+            user_no_permission,
         ) = find_editor_viewer_user(session=session)
         ex_user, in_user = find_external_internal_user(session=session)
 
