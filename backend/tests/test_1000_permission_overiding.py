@@ -11,6 +11,7 @@ from models.user import User, UserRole
 from models.case import Case, LivingIncomeStudyEnum
 from models.user_business_unit import UserBusinessUnit
 from models.enum_type import PermissionType
+from models.user_case_access import UserCaseAccess
 
 from seeder.fake_seeder.fake_user import seed_fake_user
 from seeder.fake_seeder.fake_case import seed_fake_case
@@ -23,13 +24,26 @@ account = Acc(email="super_admin@akvo.org", token=None)
 
 
 def find_external_internal_user(session: Session):
-    # find external user
     user_business_unit = session.query(UserBusinessUnit).all()
     exclude_user_ids = [ubu.user for ubu in user_business_unit]
     user = session.query(User).filter(User.role == UserRole.user)
     ex_user = user.filter(~User.id.in_(exclude_user_ids)).first()
     in_user = user.filter(User.id.in_(exclude_user_ids)).first()
     return ex_user, in_user
+
+
+def find_editor_viewer_user(session: Session):
+    user_case_access = session.query(UserCaseAccess)
+    viewer = user_case_access.filter(
+        UserCaseAccess.permission == PermissionType.view
+    ).first()
+    editor = user_case_access.filter(
+        UserCaseAccess.permission == PermissionType.edit
+    ).first()
+    user = session.query(User)
+    viewer_user = user.filter(User.id == viewer.user).first()
+    editor_user = user.filter(User.id == editor.user).first()
+    return viewer, viewer_user, editor, editor_user
 
 
 class TestPermissionOveriding:
@@ -174,4 +188,50 @@ class TestPermissionOveriding:
             {"id": 4, "user": 7, "case": 10, "permission": "view"},
         ]
 
-    # test get case, check private case
+    @pytest.mark.asyncio
+    async def test_edit_case_permission(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        viewer, viewer_user, editor, editor_user = find_editor_viewer_user(
+            session=session
+        )
+
+        payload = {
+            "name": "Case by External user Updated",
+            "description": "This is a description",
+            "date": "2023-10-03",
+            "year": 2023,
+            "country": 2,
+            "focus_commodity": 2,
+            "currency": "USD",
+            "area_size_unit": "hectare",
+            "volume_measurement_unit": "liters",
+            "cost_of_production_unit": "Per-area",
+            "reporting_period": "Per-season",
+            "segmentation": False,
+            "living_income_study": LivingIncomeStudyEnum.better_income.value,
+            "multiple_commodities": False,
+            "other_commodities": [],
+            "private": False,
+            "tags": [1],
+        }
+
+        # viewer user
+        viewer_user_acc = Acc(email=viewer_user.email, token=None)
+        res = await client.put(
+            app.url_path_for("case:update", case_id=viewer.case),
+            headers={"Authorization": f"Bearer {viewer_user_acc.token}"},
+            json=payload,
+        )
+        assert res.status_code == 403
+
+        # editor user
+        editor_user_acc = Acc(email=editor_user.email, token=None)
+        res = await client.put(
+            app.url_path_for("case:update", case_id=editor.case),
+            headers={"Authorization": f"Bearer {editor_user_acc.token}"},
+            json=payload,
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res["name"] == "Case by External user Updated"
