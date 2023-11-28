@@ -329,8 +329,9 @@ const CaseProfile = ({
   {
     /* Support add User Access */
   }
-  const userEmail = UserState.useState((s) => s.email);
-  const isCaseOwner = userEmail === currentCase?.created_by;
+  const { id: userId, email: userEmail } = UserState.useState((s) => s);
+  const isCaseOwner =
+    userEmail === currentCase?.created_by || userId === currentCase?.created_by;
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedPermission, setSelectedPermission] = useState(null);
