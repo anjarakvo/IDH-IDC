@@ -261,7 +261,7 @@ const SecondaryForm = ({
 {
   /* Support add User Access */
 }
-const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
+const DebounceSelect = ({ fetchOptions, debounceTimeout = 500, ...props }) => {
   const [fetching, setFetching] = useState(false);
   const [options, setOptions] = useState([]);
   const fetchRef = useRef(0);
@@ -335,8 +335,8 @@ const CaseProfile = ({
   const [showModal, setShowModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [selectedPermission, setSelectedPermission] = useState(null);
-  const [userCaseAccess, setUserCaseAccess] = useState([]);
   const [userCaseAccessDataSource, setUserCaseAccessDataSource] = useState([]);
+  const [loadingUserCase, setLoadingUserCase] = useState(false);
 
   const navigate = useNavigate();
 
@@ -557,55 +557,52 @@ const CaseProfile = ({
   {
     /* Support add User Access */
   }
-  const handleOnChangeSearchUser = (newValue) => {
-    setSelectedUser(newValue);
-    setUserCaseAccess([...userCaseAccess, newValue]);
-  };
-
-  {
-    /* Support add User Access */
-  }
-  const handleOnChangePermission = (value) => {
-    setSelectedPermission(value);
-    setUserCaseAccess((prev) => {
-      const checkPrev = prev.find((p) => p.value === selectedUser.value);
-      if (checkPrev) {
-        return [
-          ...prev.filter((p) => p.value !== selectedUser.value),
-          {
-            ...checkPrev,
-            permission: value,
-          },
-        ];
-      }
-      return prev;
-    });
-  };
-
-  {
-    /* Support add User Access */
-  }
   const handleOnClickAddUserCaseAccess = () => {
-    const transformed = userCaseAccess.map((d) => ({
-      user: d.label,
-      label: d.label,
-      value: d.value,
-      permission: d.permission,
-    }));
-    setUserCaseAccessDataSource(transformed);
-    setSelectedUser(null);
-    setSelectedPermission(null);
+    setLoadingUserCase(true);
+    const payload = {
+      user: selectedUser?.value,
+      permission: selectedPermission,
+    };
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    api
+      .post(`case_access/${paramCaseId}`, payload)
+      .then((res) => {
+        setUserCaseAccessDataSource((prev) => {
+          return [...prev, res.data];
+        });
+        setSelectedUser(null);
+        setSelectedPermission(null);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        setLoadingUserCase(false);
+      });
   };
 
   {
     /* Support add User Access */
   }
   const handleOnClickRemoveUserAccess = (row) => {
-    setUserCaseAccess((prev) => {
-      return prev.filter((p) => p.value !== row.value);
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    api.delete(`case_access/${paramCaseId}?access_id=${row.id}`).then(() => {
+      setUserCaseAccessDataSource((prev) => {
+        return prev.filter((p) => p.id !== row.id);
+      });
     });
-    setUserCaseAccessDataSource((prev) => {
-      return prev.filter((p) => p.value !== row.value);
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnClickShareAccess = () => {
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    api.get(`case_access/${paramCaseId}`).then((res) => {
+      setUserCaseAccessDataSource(res.data);
+      setTimeout(() => {
+        setShowModal(true);
+      }, 100);
     });
   };
 
@@ -633,7 +630,7 @@ const CaseProfile = ({
                     size="small"
                     type="primary"
                     style={{ borderRadius: "10px" }}
-                    onClick={() => setShowModal(true)}
+                    onClick={() => handleOnClickShareAccess()}
                   >
                     Share
                   </Button>
@@ -730,10 +727,9 @@ const CaseProfile = ({
       <Modal
         title="Share Case Access to Users"
         open={showModal}
-        // onOk={handleOk}
-        // confirmLoading={confirmLoading}
         onCancel={() => setShowModal(false)}
         width={650}
+        footer={false}
       >
         <Row gutter={[16, 16]} align="center">
           <Col span={12}>
@@ -741,7 +737,7 @@ const CaseProfile = ({
               placeholder="Search for a user"
               value={selectedUser}
               fetchOptions={fetchUsers}
-              onChange={handleOnChangeSearchUser}
+              onChange={(value) => setSelectedUser(value)}
               style={{
                 width: "100%",
               }}
@@ -755,11 +751,15 @@ const CaseProfile = ({
               options={casePermission.map((x) => ({ label: x, value: x }))}
               optionFilterProp="label"
               style={{ width: "100%" }}
-              onChange={handleOnChangePermission}
+              onChange={setSelectedPermission}
             />
           </Col>
           <Col span={4} align="end" style={{ float: "right" }}>
-            <Button onClick={() => handleOnClickAddUserCaseAccess()}>
+            <Button
+              onClick={() => handleOnClickAddUserCaseAccess()}
+              disabled={!selectedUser || !selectedPermission}
+              loading={loadingUserCase}
+            >
               Add
             </Button>
           </Col>
@@ -772,9 +772,7 @@ const CaseProfile = ({
               key: "user",
               title: "User",
               width: "65%",
-              render: (row) => {
-                return row?.label || row?.user;
-              },
+              dataIndex: "label",
             },
             {
               key: "permission",
@@ -799,6 +797,7 @@ const CaseProfile = ({
           bordered
           title={() => <b>User Case Access</b>}
           pagination={false}
+          loading={loadingUserCase}
         />
       </Modal>
     </>
