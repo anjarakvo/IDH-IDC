@@ -35,7 +35,7 @@ const Cases = () => {
   const [tags, setTags] = useState([]);
 
   const tagOptions = UIState.useState((s) => s.tagOptions);
-  const userID = UserState.useState((s) => s.id);
+  const { id: userID, email: userEmail } = UserState.useState((s) => s);
 
   const [showChangeOwnerForm, setShowChangeOwnerForm] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
@@ -138,6 +138,9 @@ const Cases = () => {
       key: "created_by",
       width: "20%",
       render: (row) => {
+        if (row.created_by !== userEmail) {
+          return row.created_by;
+        }
         if (row.id === showChangeOwnerForm) {
           return (
             <Row align="center" gutter={[8, 8]}>
