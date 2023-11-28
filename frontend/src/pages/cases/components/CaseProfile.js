@@ -471,9 +471,18 @@ const CaseProfile = ({
       })
       .catch((e) => {
         console.error(e);
+        const { status, data } = e.response;
+        let errorText = "Failed to save case profile.";
+        if (status === 403) {
+          errorText = data.detail;
+          if (isNextButton) {
+            setFinished([...completed, "Case Profile"]);
+            setPage("Income Driver Data Entry");
+          }
+        }
         messageApi.open({
           type: "error",
-          content: "Failed to save case profile.",
+          content: errorText,
         });
         setFinished(completed);
       })
