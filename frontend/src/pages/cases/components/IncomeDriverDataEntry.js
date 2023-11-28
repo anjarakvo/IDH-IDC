@@ -117,9 +117,18 @@ const IncomeDriverDataEntry = ({
       })
       .catch((e) => {
         console.error(e);
+        const { status, data } = e.response;
+        let errorText = "Failed to save case profile.";
+        if (status === 403) {
+          errorText = data.detail;
+          if (isNextButton) {
+            setFinished([...completed, "Income Driver Data Entry"]);
+            setPage("Income Driver Dashboard");
+          }
+        }
         messageApi.open({
           type: "error",
-          content: "Failed to save segments.",
+          content: errorText,
         });
         setFinished(completed);
       })

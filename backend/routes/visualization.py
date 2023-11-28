@@ -7,6 +7,7 @@ from typing import List
 
 from db.connection import get_session
 from models.visualization import VisualizationBase, VisualizationDict
+from middleware import verify_case_editor, verify_case_viewer
 
 security = HTTPBearer()
 visualization_route = APIRouter()
@@ -25,6 +26,10 @@ def create_visualization(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
+    case_id = payload[0].case
+    verify_case_editor(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
     data = crud_visualization.create_or_update_visualization(
         session=session, payloads=payload
     )
@@ -44,5 +49,8 @@ def get_visualization_by_case_id(
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
+    verify_case_viewer(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
     data = crud_visualization.get_by_case_id(session=session, case_id=case_id)
     return [d.serialize for d in data]

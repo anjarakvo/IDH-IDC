@@ -11,10 +11,10 @@ import {
   Typography,
   Image,
   Select,
+  Checkbox,
   message,
 } from "antd";
 import { api } from "../../lib";
-import { UIState } from "../../store";
 import ImageRight from "../../assets/images/login-right-img.png";
 import LogoWhite from "../../assets/images/logo-white.png";
 
@@ -22,8 +22,9 @@ const Register = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [showBusinessUnit, setShowBusinessUnit] = useState(false);
 
-  const organisationOptions = UIState.useState((s) => s.organisationOptions);
+  // const organisationOptions = UIState.useState((s) => s.organisationOptions);
   const businessUnitOptions = window.master.business_units?.map((x) => ({
     label: x.name,
     value: x.id,
@@ -34,18 +35,31 @@ const Register = () => {
 
   const onFinish = (values) => {
     setLoading(true);
-    const { fullname, email, password, organisation, business_units } = values;
-    const businessUnitValues = business_units.map((x) => ({
-      business_unit: x,
-      role: "member",
-    }));
+    const { fullname, email, password, business_units } = values;
 
     const payload = new FormData();
     payload.append("fullname", fullname);
     payload.append("email", email);
     payload.append("password", password);
-    payload.append("organisation", organisation);
-    payload.append("business_units", JSON.stringify(businessUnitValues));
+    // payload.append("organisation", organisation);
+
+    if (business_units) {
+      let businessUnitValues = [];
+      if (Array.isArray(business_units)) {
+        businessUnitValues = business_units.map((x) => ({
+          business_unit: x,
+          role: "member",
+        }));
+      } else {
+        businessUnitValues = [
+          {
+            business_unit: business_units,
+            role: "member",
+          },
+        ];
+      }
+      payload.append("business_units", JSON.stringify(businessUnitValues));
+    }
 
     api
       .post("user/register", payload)
@@ -162,7 +176,8 @@ const Register = () => {
                   placeholder="Confirm Password"
                 />
               </Form.Item>
-              <Form.Item
+              {/* Hide organisation for now */}
+              {/* <Form.Item
                 name="organisation"
                 rules={[
                   {
@@ -180,27 +195,39 @@ const Register = () => {
                   filterOption={filterOption}
                   options={organisationOptions}
                 />
+              </Form.Item> */}
+
+              <Form.Item>
+                <Checkbox
+                  style={{ width: "100%", color: "#fff" }}
+                  checked={showBusinessUnit}
+                  onChange={() => setShowBusinessUnit(!showBusinessUnit)}
+                >
+                  I&apos;m internal IDH user
+                </Checkbox>
               </Form.Item>
-              <Form.Item
-                name="business_units"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select your Business Unit!",
-                  },
-                ]}
-              >
-                <Select
-                  data-testid="input-business-unit"
-                  placeholder="Business Units"
-                  showSearch
-                  allowClear
-                  mode="multiple"
-                  optionFilterProp="children"
-                  filterOption={filterOption}
-                  options={businessUnitOptions}
-                />
-              </Form.Item>
+
+              {showBusinessUnit && (
+                <Form.Item
+                  name="business_units"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please select your Business Unit!",
+                    },
+                  ]}
+                >
+                  <Select
+                    data-testid="input-business-unit"
+                    placeholder="Business Units"
+                    showSearch
+                    allowClear
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    options={businessUnitOptions}
+                  />
+                </Form.Item>
+              )}
               <Form.Item>
                 <Button
                   data-testid="button-login"

@@ -186,17 +186,28 @@ class TestCaseWithFilterRoute:
             "current": 1,
             "data": [
                 {
+                    "id": 2,
+                    "name": "Bali Coffee Production (Private)",
+                    "country": "Bali",
+                    "focus_commodity": 1,
+                    "diversified_commodities_count": 1,
+                    "year": 2023,
+                    "created_at": res["data"][0]["created_at"],
+                    "created_by": "super_admin@akvo.org",
+                    "tags": [],
+                },
+                {
                     "id": 1,
                     "name": "Bali Rice and Corn Production",
                     "country": "Bali",
                     "focus_commodity": 2,
-                    "year": 2023,
                     "diversified_commodities_count": 2,
-                    "created_at": res["data"][0]["created_at"],
+                    "year": 2023,
+                    "created_at": res["data"][1]["created_at"],
                     "created_by": "super_admin@akvo.org",
                     "tags": [2, 1],
-                }
+                },
             ],
-            "total": 1,
+            "total": 2,
             "total_page": 1,
         }

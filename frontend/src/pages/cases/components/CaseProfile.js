@@ -12,8 +12,16 @@ import {
   Space,
   message,
   DatePicker,
+  Checkbox,
+  Modal,
+  Table,
+  Divider,
 } from "antd";
-import { StepForwardOutlined } from "@ant-design/icons";
+import {
+  StepForwardOutlined,
+  PlusOutlined,
+  MinusCircleOutlined,
+} from "@ant-design/icons";
 import {
   AreaUnitFields,
   commodityOptions,
@@ -22,13 +30,15 @@ import {
   reportingPeriod,
   selectProps,
   yesNoOptions,
+  DebounceSelect,
 } from "./";
 import { api } from "../../../lib";
-import { UIState } from "../../../store";
+import { UIState, UserState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
 import uniqBy from "lodash/uniqBy";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { casePermission } from "../../../store/static";
 
 const responsiveCol = {
   xs: { span: 24 },
@@ -44,6 +54,8 @@ const CaseForm = ({
   selectedCountry,
   setSelectedCountry,
   filteredCurrencyOptions,
+  privateCase,
+  setPrivateCase,
 }) => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
@@ -74,6 +86,15 @@ const CaseForm = ({
         ]}
       >
         <Input.TextArea />
+      </Form.Item>
+
+      <Form.Item>
+        <Checkbox
+          checked={privateCase}
+          onChange={() => setPrivateCase(!privateCase)}
+        >
+          Private Case
+        </Checkbox>
       </Form.Item>
 
       <Form.Item
@@ -249,6 +270,7 @@ const CaseProfile = ({
   setCurrentCaseId,
   initialOtherCommodityTypes,
   setCurrentCase,
+  currentCase,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(commodityList.length > 2);
@@ -262,6 +284,20 @@ const CaseProfile = ({
   const [disableAreaSizeTertiaryField, setDisableAreaSizeTertiaryField] =
     useState(true);
   const [isNextButton, setIsNextButton] = useState(false);
+  const [privateCase, setPrivateCase] = useState(false);
+
+  {
+    /* Support add User Access */
+  }
+  const { id: userId, email: userEmail } = UserState.useState((s) => s);
+  const isCaseOwner =
+    userEmail === currentCase?.created_by || userId === currentCase?.created_by;
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedPermission, setSelectedPermission] = useState(null);
+  const [userCaseAccessDataSource, setUserCaseAccessDataSource] = useState([]);
+  const [loadingUserCase, setLoadingUserCase] = useState(false);
+
   const navigate = useNavigate();
 
   const filteredCurrencyOptions = useMemo(() => {
@@ -305,6 +341,7 @@ const CaseProfile = ({
       if (formData?.country) {
         setSelectedCountry(formData.country);
       }
+      setPrivateCase(formData?.private || false);
       setFinished([...completed, "Case Profile"]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -396,7 +433,7 @@ const CaseProfile = ({
       segmentation: true,
       living_income_study: null,
       logo: null,
-      private: false,
+      private: privateCase,
       other_commodities: other_commodities,
       tags: values.tags || null,
     };
@@ -434,9 +471,18 @@ const CaseProfile = ({
       })
       .catch((e) => {
         console.error(e);
+        const { status, data } = e.response;
+        let errorText = "Failed to save case profile.";
+        if (status === 403) {
+          errorText = data.detail;
+          if (isNextButton) {
+            setFinished([...completed, "Case Profile"]);
+            setPage("Income Driver Data Entry");
+          }
+        }
         messageApi.open({
           type: "error",
-          content: "Failed to save case profile.",
+          content: errorText,
         });
         setFinished(completed);
       })
@@ -468,105 +514,262 @@ const CaseProfile = ({
     setDisableAreaSizeTertiaryField(allValues?.["2-breakdown"] ? false : true);
   };
 
+  {
+    /* Support add User Access */
+  }
+  const fetchUsers = (searchValue) => {
+    return api
+      .get(`user/search_dropdown?search=${searchValue}`)
+      .then((res) => res.data);
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnClickAddUserCaseAccess = () => {
+    setLoadingUserCase(true);
+    const payload = {
+      user: selectedUser?.value,
+      permission: selectedPermission,
+    };
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    api
+      .post(`case_access/${paramCaseId}`, payload)
+      .then((res) => {
+        setUserCaseAccessDataSource((prev) => {
+          return [...prev, res.data];
+        });
+        setSelectedUser(null);
+        setSelectedPermission(null);
+      })
+      .catch((e) => {
+        console.error(e);
+      })
+      .finally(() => {
+        setLoadingUserCase(false);
+      });
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnClickRemoveUserAccess = (row) => {
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    api.delete(`case_access/${paramCaseId}?access_id=${row.id}`).then(() => {
+      setUserCaseAccessDataSource((prev) => {
+        return prev.filter((p) => p.id !== row.id);
+      });
+    });
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnClickShareAccess = () => {
+    const paramCaseId = caseId ? caseId : currentCaseId;
+    api.get(`case_access/${paramCaseId}`).then((res) => {
+      setUserCaseAccessDataSource(res.data);
+      setTimeout(() => {
+        setShowModal(true);
+      }, 100);
+    });
+  };
+
   return (
-    <Form
-      form={form}
-      name="basic"
-      layout="vertical"
-      initialValues={formData}
-      onValuesChange={onValuesChange}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      {contextHolder}
-      <Row gutter={[16, 16]}>
-        <Col span={12}>
-          <Card title="Case Details">
-            <CaseForm
-              setCaseTitle={setCaseTitle}
-              selectedCountry={selectedCountry}
-              setSelectedCountry={setSelectedCountry}
-              filteredCurrencyOptions={filteredCurrencyOptions}
-            />
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card
-            title="Secondary Commodity"
-            extra={<Switch checked={secondary} onChange={setSecondary} />}
-            style={{
-              marginBottom: "16px",
-              backgroundColor: !secondary ? "#f5f5f5" : "white",
-            }}
-          >
-            <SecondaryForm
-              index={1}
-              indexLabel="Secondary"
-              disabled={!secondary}
-              disableAreaSizeUnitField={disableAreaSizeSecondaryField}
-            />
-          </Card>
-          <Card
-            title="Teritary Commodity"
-            extra={
-              <Switch
-                checked={tertiary}
-                onChange={setTertiary}
-                disabled={!secondary}
+    <>
+      <Form
+        form={form}
+        name="basic"
+        layout="vertical"
+        initialValues={formData}
+        onValuesChange={onValuesChange}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        {contextHolder}
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Card
+              title="Case Details"
+              extra={
+                isCaseOwner && (
+                  <Button
+                    icon={<PlusOutlined />}
+                    size="small"
+                    type="primary"
+                    style={{ borderRadius: "10px" }}
+                    onClick={() => handleOnClickShareAccess()}
+                  >
+                    Share
+                  </Button>
+                )
+              }
+            >
+              <CaseForm
+                setCaseTitle={setCaseTitle}
+                selectedCountry={selectedCountry}
+                setSelectedCountry={setSelectedCountry}
+                filteredCurrencyOptions={filteredCurrencyOptions}
+                privateCase={privateCase}
+                setPrivateCase={setPrivateCase}
               />
-            }
-            style={{
-              backgroundColor: !tertiary ? "#f5f5f5" : "white",
-            }}
-          >
-            <SecondaryForm
-              index={2}
-              indexLabel="Teritary"
-              disabled={!tertiary}
-              disableAreaSizeUnitField={disableAreaSizeTertiaryField}
-            />
-          </Card>
-          <Row>
-            <Col span={12}>
-              <Button
-                className="button button-submit button-secondary"
-                onClick={() => navigate("/cases")}
-              >
-                Cancel
-              </Button>
-            </Col>
-            <Col
-              span={12}
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card
+              title="Secondary Commodity"
+              extra={<Switch checked={secondary} onChange={setSecondary} />}
               style={{
-                justifyContent: "flex-end",
-                display: "grid",
+                marginBottom: "16px",
+                backgroundColor: !secondary ? "#f5f5f5" : "white",
               }}
             >
-              <Space size={[8, 16]} wrap>
+              <SecondaryForm
+                index={1}
+                indexLabel="Secondary"
+                disabled={!secondary}
+                disableAreaSizeUnitField={disableAreaSizeSecondaryField}
+              />
+            </Card>
+            <Card
+              title="Teritary Commodity"
+              extra={
+                <Switch
+                  checked={tertiary}
+                  onChange={setTertiary}
+                  disabled={!secondary}
+                />
+              }
+              style={{
+                backgroundColor: !tertiary ? "#f5f5f5" : "white",
+              }}
+            >
+              <SecondaryForm
+                index={2}
+                indexLabel="Teritary"
+                disabled={!tertiary}
+                disableAreaSizeUnitField={disableAreaSizeTertiaryField}
+              />
+            </Card>
+            <Row>
+              <Col span={12}>
                 <Button
-                  htmlType="submit"
                   className="button button-submit button-secondary"
-                  loading={isSaving}
-                  onClick={() => setIsNextButton(false)}
+                  onClick={() => navigate("/cases")}
                 >
-                  Save
+                  Cancel
                 </Button>
-                <Button
-                  htmlType="submit"
-                  className="button button-submit button-secondary"
-                  loading={isSaving}
-                  onClick={() => setIsNextButton(true)}
-                >
-                  Next
-                  <StepForwardOutlined />
-                </Button>
-              </Space>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Form>
+              </Col>
+              <Col
+                span={12}
+                style={{
+                  justifyContent: "flex-end",
+                  display: "grid",
+                }}
+              >
+                <Space size={[8, 16]} wrap>
+                  <Button
+                    htmlType="submit"
+                    className="button button-submit button-secondary"
+                    loading={isSaving}
+                    onClick={() => setIsNextButton(false)}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    className="button button-submit button-secondary"
+                    loading={isSaving}
+                    onClick={() => setIsNextButton(true)}
+                  >
+                    Next
+                    <StepForwardOutlined />
+                  </Button>
+                </Space>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Form>
+      {/* Support add User Access */}
+      <Modal
+        title="Share Case Access to Users"
+        open={showModal}
+        onCancel={() => setShowModal(false)}
+        width={650}
+        footer={false}
+      >
+        <Row gutter={[16, 16]} align="center">
+          <Col span={12}>
+            <DebounceSelect
+              placeholder="Search for a user"
+              value={selectedUser}
+              fetchOptions={fetchUsers}
+              onChange={(value) => setSelectedUser(value)}
+              style={{
+                width: "100%",
+              }}
+            />
+          </Col>
+          <Col span={8}>
+            <Select
+              showSearch
+              value={selectedPermission}
+              placeholder="Select permission"
+              options={casePermission.map((x) => ({ label: x, value: x }))}
+              optionFilterProp="label"
+              style={{ width: "100%" }}
+              onChange={setSelectedPermission}
+            />
+          </Col>
+          <Col span={4} align="end" style={{ float: "right" }}>
+            <Button
+              onClick={() => handleOnClickAddUserCaseAccess()}
+              disabled={!selectedUser || !selectedPermission}
+              loading={loadingUserCase}
+            >
+              Add
+            </Button>
+          </Col>
+        </Row>
+        <Divider />
+        <Table
+          size="small"
+          columns={[
+            {
+              key: "user",
+              title: "User",
+              width: "65%",
+              dataIndex: "label",
+            },
+            {
+              key: "permission",
+              title: "Permission",
+              dataIndex: "permission",
+            },
+            {
+              key: "action",
+              render: (row) => {
+                return (
+                  <Button
+                    size="small"
+                    type="ghost"
+                    icon={<MinusCircleOutlined />}
+                    onClick={() => handleOnClickRemoveUserAccess(row)}
+                  />
+                );
+              },
+            },
+          ]}
+          dataSource={userCaseAccessDataSource}
+          bordered
+          title={() => <b>User Case Access</b>}
+          pagination={false}
+          loading={loadingUserCase}
+        />
+      </Modal>
+    </>
   );
 };
 
