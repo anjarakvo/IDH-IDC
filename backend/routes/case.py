@@ -91,13 +91,19 @@ def get_all_case(
         show_private = True
         user_cases = [d.case for d in user_permission]
 
+    # handle regular/internal user
+    if user.role == UserRole.user and len(user.user_business_units):
+        # all public cases
+        show_private = True
+        all_public_cases = crud_case.get_case_by_private(session=session, private=False)
+        user_cases = user_cases + [c.id for c in all_public_cases]
+
     # handle case owner
     if user.role == UserRole.user:
+        show_private = True
         cases = crud_case.get_case_by_created_by(session=session, created_by=user.id)
         user_cases = user_cases + [c.id for c in cases]
 
-    if user.role == UserRole.user or not user.all_cases:
-        user_cases = [uc.case for uc in user.user_case_access]
     cases = crud_case.get_all_case(
         session=session,
         search=search,

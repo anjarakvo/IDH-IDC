@@ -235,3 +235,8 @@ def update_case_owner(session: Session, case_id: int, user_id: int) -> CaseDict:
     session.flush()
     session.refresh(case)
     return case
+
+
+def get_case_by_private(session: Session, private: Optional[bool] = False):
+    private_param = 1 if private else 0
+    return session.query(Case).filter(Case.private == private_param).all()
