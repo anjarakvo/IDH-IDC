@@ -4,11 +4,13 @@ import db.crud_living_income_benchmark as crud_lib
 import db.crud_user_case_access as crud_uca
 
 from math import ceil
-from fastapi import APIRouter, Request, Depends, HTTPException, Query
+from fastapi import APIRouter, Request, Depends, HTTPException, Query, Response
 from fastapi.security import HTTPBearer, HTTPBasicCredentials as credentials
 from sqlalchemy.orm import Session
 from typing import Optional, List
 from db.connection import get_session
+from http import HTTPStatus
+
 from models.case import (
     CaseBase,
     CaseDict,
@@ -201,23 +203,45 @@ def get_case_by_id(
 
 @case_route.post(
     "/case_access/{case_id:path}",
-    response_model=List[UserCaseAccessDict],
-    summary="add user access too a case",
+    response_model=UserCaseAccessDict,
+    summary="dive a user access to a case",
     name="case:add_user_case_access",
     tags=["Case"],
 )
 def add_user_case_access(
     req: Request,
     case_id: int,
-    payload: List[UserCaseAccessPayload],
+    payload: UserCaseAccessPayload,
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
     verify_case_owner(
         session=session, authenticated=req.state.authenticated, case_id=case_id
     )
-    res = crud_uca.add_case_access(session=session, payloads=payload, case_id=case_id)
-    return [r.serialize for r in res]
+    res = crud_uca.add_case_access(session=session, payload=payload, case_id=case_id)
+    return res.serialize
+
+
+@case_route.delete(
+    "/case_access/{case_id:path}",
+    responses={204: {"model": None}},
+    status_code=HTTPStatus.NO_CONTENT,
+    summary="delete user case access by access id",
+    name="case:delete_user_case_access",
+    tags=["Case"],
+)
+def delete_user_case_access(
+    req: Request,
+    case_id: int,
+    access_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    verify_case_owner(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
+    crud_uca.delete_case_access(session=session, access_id=access_id)
+    return Response(status_code=HTTPStatus.NO_CONTENT.value)
 
 
 @case_route.put(

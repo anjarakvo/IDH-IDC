@@ -192,7 +192,7 @@ class TestPermissionOveriding:
         res = await client.post(
             app.url_path_for("case:add_user_case_access", case_id=9),
             headers={"Authorization": f"Bearer {not_case_owner_acc.token}"},
-            json=payloads,
+            json=payloads[0],
         )
         assert res.status_code == 403
 
@@ -205,14 +205,33 @@ class TestPermissionOveriding:
         res = await client.post(
             app.url_path_for("case:add_user_case_access", case_id=case.id),
             headers={"Authorization": f"Bearer {case_owner_acc.token}"},
-            json=payloads,
+            json=payloads[0],
         )
         assert res.status_code == 200
         res = res.json()
-        assert res == [
-            {"id": 3, "user": 17, "case": 10, "permission": "edit"},
-            {"id": 4, "user": 7, "case": 10, "permission": "view"},
-        ]
+        assert res == {
+            "id": 3,
+            "case": 10,
+            "label": res["label"],
+            "value": 17,
+            "permission": "edit",
+        }
+
+        # assign access by case owner
+        res = await client.post(
+            app.url_path_for("case:add_user_case_access", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+            json=payloads[1],
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == {
+            "id": 4,
+            "case": 10,
+            "label": res["label"],
+            "value": 7,
+            "permission": "view",
+        }
 
     @pytest.mark.asyncio
     async def test_edit_case_permission(
@@ -461,3 +480,19 @@ class TestPermissionOveriding:
             "role": "user",
             "active": False,
         }
+
+    @pytest.mark.asyncio
+    async def test_delete_user_access_by_access_id(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # find case owner
+        case = session.query(Case).order_by(Case.id.desc()).first()
+        case_owner = case.created_by_user
+        case_owner_acc = Acc(email=case_owner.email, token=None)
+        # delete
+        res = await client.delete(
+            app.url_path_for("case:delete_user_case_access", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+            params={"access_id": 4},
+        )
+        assert res.status_code == 204

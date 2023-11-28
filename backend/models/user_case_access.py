@@ -9,8 +9,9 @@ from models.enum_type import PermissionType
 
 class UserCaseAccessDict(TypedDict):
     id: int
-    user: int
     case: int
+    label: str
+    value: int
     permission: PermissionType
 
 
@@ -59,10 +60,14 @@ class UserCaseAccess(Base):
 
     @property
     def serialize(self) -> UserCaseAccessDict:
+        name = self.user_case_access_detail.fullname
+        email = self.user_case_access_detail.email
+        label = f"{name} <{email}>"
         return {
             "id": self.id,
-            "user": self.user,
             "case": self.case,
+            "value": self.user,
+            "label": label,
             "permission": self.permission,
         }
 

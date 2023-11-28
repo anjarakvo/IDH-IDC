@@ -43,24 +43,19 @@ def find_user_case_access_viewer(
 
 
 def add_case_access(
-    session: Session, payloads: List[UserCaseAccessPayload], case_id: int
-) -> List[UserCaseAccessDict]:
-    res = []
-    # delete prev case access before add
-    prev_access = (
-        session.query(UserCaseAccess).filter(UserCaseAccess.case == case_id).all()
-    )
-    for pa in prev_access:
-        session.delete(pa)
-        session.commit()
+    session: Session, payload: List[UserCaseAccessPayload], case_id: int
+) -> UserCaseAccessDict:
     # add new case access
-    for payload in payloads:
-        uca = UserCaseAccess(
-            case=case_id, user=payload.user, permission=payload.permission
-        )
-        session.add(uca)
-        session.commit()
-        session.flush()
-        session.refresh(uca)
-        res.append(uca)
-    return res
+    uca = UserCaseAccess(case=case_id, user=payload.user, permission=payload.permission)
+    session.add(uca)
+    session.commit()
+    session.flush()
+    session.refresh(uca)
+    return uca
+
+
+def delete_case_access(session: Session, access_id: int):
+    uca = session.query(UserCaseAccess).filter(UserCaseAccess.id == access_id).first()
+    session.delete(uca)
+    session.commit()
+    session.flush()
