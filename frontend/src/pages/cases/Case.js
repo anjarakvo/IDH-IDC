@@ -216,6 +216,7 @@ const Case = () => {
           const focusCommodityValue = {
             name: data.name,
             description: data.description,
+            private: data?.private || false,
             tags: data?.tags || [],
             country: data.country,
             focus_commodity: data.focus_commodity,
@@ -323,6 +324,7 @@ const Case = () => {
                 setCurrentCaseId={setCurrentCaseId}
                 initialOtherCommodityTypes={initialOtherCommodityTypes}
                 setCurrentCase={setCurrentCase}
+                currentCase={currentCase}
               />
             )}
             {page === "Income Driver Data Entry" && (

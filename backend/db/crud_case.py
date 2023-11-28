@@ -81,7 +81,7 @@ def get_all_case(
     session: Session,
     skip: int = 0,
     limit: int = 10,
-    show_private: Optional[bool] = 0,
+    show_private: Optional[bool] = False,
     search: Optional[str] = None,
     tags: Optional[int] = None,
     focus_commodities: Optional[int] = None,
@@ -216,3 +216,27 @@ def get_case_options(
     if user_cases:
         case = case.filter(Case.id.in_(user_cases))
     return case.all()
+
+
+def check_case_owner(session: Session, case_id: int, user_id: int):
+    case = get_case_by_id(session=session, id=case_id)
+    return case.created_by == user_id
+
+
+def get_case_by_created_by(session: Session, created_by: int):
+    case = session.query(Case).filter(Case.created_by == created_by).all()
+    return case
+
+
+def update_case_owner(session: Session, case_id: int, user_id: int) -> CaseDict:
+    case = get_case_by_id(session=session, id=case_id)
+    case.created_by = user_id
+    session.commit()
+    session.flush()
+    session.refresh(case)
+    return case
+
+
+def get_case_by_private(session: Session, private: Optional[bool] = False):
+    private_param = 1 if private else 0
+    return session.query(Case).filter(Case.private == private_param).all()

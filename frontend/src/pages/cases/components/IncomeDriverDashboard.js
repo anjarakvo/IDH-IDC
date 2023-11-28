@@ -108,9 +108,14 @@ const IncomeDriverDashboard = ({
       })
       .catch((e) => {
         console.error(e);
+        const { status, data } = e.response;
+        let errorText = "Failed to save case profile.";
+        if (status === 403) {
+          errorText = data.detail;
+        }
         messageApi.open({
           type: "error",
-          content: "Failed! Something went wrong.",
+          content: errorText,
         });
       })
       .finally(() => {
