@@ -12,6 +12,7 @@ import {
   Space,
   message,
   DatePicker,
+  Checkbox,
 } from "antd";
 import { StepForwardOutlined } from "@ant-design/icons";
 import {
@@ -44,6 +45,8 @@ const CaseForm = ({
   selectedCountry,
   setSelectedCountry,
   filteredCurrencyOptions,
+  privateCase,
+  setPrivateCase,
 }) => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
@@ -74,6 +77,15 @@ const CaseForm = ({
         ]}
       >
         <Input.TextArea />
+      </Form.Item>
+
+      <Form.Item>
+        <Checkbox
+          checked={privateCase}
+          onChange={() => setPrivateCase(!privateCase)}
+        >
+          Private Case
+        </Checkbox>
       </Form.Item>
 
       <Form.Item
@@ -262,6 +274,7 @@ const CaseProfile = ({
   const [disableAreaSizeTertiaryField, setDisableAreaSizeTertiaryField] =
     useState(true);
   const [isNextButton, setIsNextButton] = useState(false);
+  const [privateCase, setPrivateCase] = useState(false);
   const navigate = useNavigate();
 
   const filteredCurrencyOptions = useMemo(() => {
@@ -305,6 +318,7 @@ const CaseProfile = ({
       if (formData?.country) {
         setSelectedCountry(formData.country);
       }
+      setPrivateCase(formData?.private || false);
       setFinished([...completed, "Case Profile"]);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -396,7 +410,7 @@ const CaseProfile = ({
       segmentation: true,
       living_income_study: null,
       logo: null,
-      private: false,
+      private: privateCase,
       other_commodities: other_commodities,
       tags: values.tags || null,
     };
@@ -488,6 +502,8 @@ const CaseProfile = ({
               selectedCountry={selectedCountry}
               setSelectedCountry={setSelectedCountry}
               filteredCurrencyOptions={filteredCurrencyOptions}
+              privateCase={privateCase}
+              setPrivateCase={setPrivateCase}
             />
           </Card>
         </Col>
