@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useRef } from "react";
 import {
   Form,
   Input,
@@ -13,8 +13,16 @@ import {
   message,
   DatePicker,
   Checkbox,
+  Modal,
+  Spin,
+  Table,
+  Divider,
 } from "antd";
-import { StepForwardOutlined } from "@ant-design/icons";
+import {
+  StepForwardOutlined,
+  PlusOutlined,
+  MinusCircleOutlined,
+} from "@ant-design/icons";
 import {
   AreaUnitFields,
   commodityOptions,
@@ -25,11 +33,13 @@ import {
   yesNoOptions,
 } from "./";
 import { api } from "../../../lib";
-import { UIState } from "../../../store";
+import { UIState, UserState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
 import uniqBy from "lodash/uniqBy";
+import debounce from "lodash/debounce";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
+import { casePermission } from "../../../store/static";
 
 const responsiveCol = {
   xs: { span: 24 },
@@ -248,6 +258,45 @@ const SecondaryForm = ({
   );
 };
 
+{
+  /* Support add User Access */
+}
+const DebounceSelect = ({ fetchOptions, debounceTimeout = 800, ...props }) => {
+  const [fetching, setFetching] = useState(false);
+  const [options, setOptions] = useState([]);
+  const fetchRef = useRef(0);
+
+  const debounceFetcher = useMemo(() => {
+    const loadOptions = (value) => {
+      fetchRef.current += 1;
+      const fetchId = fetchRef.current;
+      setOptions([]);
+      setFetching(true);
+      fetchOptions(value).then((newOptions) => {
+        if (fetchId !== fetchRef.current) {
+          // for fetch callback order
+          return;
+        }
+        setOptions(newOptions);
+        setFetching(false);
+      });
+    };
+    return debounce(loadOptions, debounceTimeout);
+  }, [fetchOptions, debounceTimeout]);
+
+  return (
+    <Select
+      labelInValue
+      showSearch
+      filterOption={false}
+      onSearch={debounceFetcher}
+      notFoundContent={fetching ? <Spin size="small" /> : null}
+      {...props}
+      options={options}
+    />
+  );
+};
+
 const CaseProfile = ({
   setCaseTitle,
   setPage,
@@ -261,6 +310,7 @@ const CaseProfile = ({
   setCurrentCaseId,
   initialOtherCommodityTypes,
   setCurrentCase,
+  currentCase,
 }) => {
   const [form] = Form.useForm();
   const [secondary, setSecondary] = useState(commodityList.length > 2);
@@ -275,6 +325,18 @@ const CaseProfile = ({
     useState(true);
   const [isNextButton, setIsNextButton] = useState(false);
   const [privateCase, setPrivateCase] = useState(false);
+
+  {
+    /* Support add User Access */
+  }
+  const userEmail = UserState.useState((s) => s.email);
+  const isCaseOwner = userEmail === currentCase?.created_by;
+  const [showModal, setShowModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedPermission, setSelectedPermission] = useState(null);
+  const [userCaseAccess, setUserCaseAccess] = useState([]);
+  const [userCaseAccessDataSource, setUserCaseAccessDataSource] = useState([]);
+
   const navigate = useNavigate();
 
   const filteredCurrencyOptions = useMemo(() => {
@@ -482,107 +544,263 @@ const CaseProfile = ({
     setDisableAreaSizeTertiaryField(allValues?.["2-breakdown"] ? false : true);
   };
 
+  {
+    /* Support add User Access */
+  }
+  const fetchUsers = (searchValue) => {
+    return api
+      .get(`user/search_dropdown?search=${searchValue}`)
+      .then((res) => res.data);
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnChangeSearchUser = (newValue) => {
+    setSelectedUser(newValue);
+    setUserCaseAccess([...userCaseAccess, newValue]);
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnChangePermission = (value) => {
+    setSelectedPermission(value);
+    setUserCaseAccess((prev) => {
+      const checkPrev = prev.find((p) => p.value === selectedUser.value);
+      if (checkPrev) {
+        return [
+          ...prev.filter((p) => p.value !== selectedUser.value),
+          {
+            ...checkPrev,
+            permission: value,
+          },
+        ];
+      }
+      return prev;
+    });
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnClickAddUserCaseAccess = () => {
+    const transformed = userCaseAccess.map((d) => ({
+      user: d.label,
+      label: d.label,
+      value: d.value,
+      permission: d.permission,
+    }));
+    setUserCaseAccessDataSource(transformed);
+    setSelectedUser(null);
+    setSelectedPermission(null);
+  };
+
+  {
+    /* Support add User Access */
+  }
+  const handleOnClickRemoveUserAccess = (row) => {
+    setUserCaseAccess((prev) => {
+      return prev.filter((p) => p.value !== row.value);
+    });
+    setUserCaseAccessDataSource((prev) => {
+      return prev.filter((p) => p.value !== row.value);
+    });
+  };
+
   return (
-    <Form
-      form={form}
-      name="basic"
-      layout="vertical"
-      initialValues={formData}
-      onValuesChange={onValuesChange}
-      onFinish={onFinish}
-      onFinishFailed={onFinishFailed}
-      autoComplete="off"
-    >
-      {contextHolder}
-      <Row gutter={[16, 16]}>
-        <Col span={12}>
-          <Card title="Case Details">
-            <CaseForm
-              setCaseTitle={setCaseTitle}
-              selectedCountry={selectedCountry}
-              setSelectedCountry={setSelectedCountry}
-              filteredCurrencyOptions={filteredCurrencyOptions}
-              privateCase={privateCase}
-              setPrivateCase={setPrivateCase}
-            />
-          </Card>
-        </Col>
-        <Col span={12}>
-          <Card
-            title="Secondary Commodity"
-            extra={<Switch checked={secondary} onChange={setSecondary} />}
-            style={{
-              marginBottom: "16px",
-              backgroundColor: !secondary ? "#f5f5f5" : "white",
-            }}
-          >
-            <SecondaryForm
-              index={1}
-              indexLabel="Secondary"
-              disabled={!secondary}
-              disableAreaSizeUnitField={disableAreaSizeSecondaryField}
-            />
-          </Card>
-          <Card
-            title="Teritary Commodity"
-            extra={
-              <Switch
-                checked={tertiary}
-                onChange={setTertiary}
-                disabled={!secondary}
+    <>
+      <Form
+        form={form}
+        name="basic"
+        layout="vertical"
+        initialValues={formData}
+        onValuesChange={onValuesChange}
+        onFinish={onFinish}
+        onFinishFailed={onFinishFailed}
+        autoComplete="off"
+      >
+        {contextHolder}
+        <Row gutter={[16, 16]}>
+          <Col span={12}>
+            <Card
+              title="Case Details"
+              extra={
+                isCaseOwner && (
+                  <Button
+                    icon={<PlusOutlined />}
+                    size="small"
+                    type="primary"
+                    style={{ borderRadius: "10px" }}
+                    onClick={() => setShowModal(true)}
+                  >
+                    Share
+                  </Button>
+                )
+              }
+            >
+              <CaseForm
+                setCaseTitle={setCaseTitle}
+                selectedCountry={selectedCountry}
+                setSelectedCountry={setSelectedCountry}
+                filteredCurrencyOptions={filteredCurrencyOptions}
+                privateCase={privateCase}
+                setPrivateCase={setPrivateCase}
               />
-            }
-            style={{
-              backgroundColor: !tertiary ? "#f5f5f5" : "white",
-            }}
-          >
-            <SecondaryForm
-              index={2}
-              indexLabel="Teritary"
-              disabled={!tertiary}
-              disableAreaSizeUnitField={disableAreaSizeTertiaryField}
-            />
-          </Card>
-          <Row>
-            <Col span={12}>
-              <Button
-                className="button button-submit button-secondary"
-                onClick={() => navigate("/cases")}
-              >
-                Cancel
-              </Button>
-            </Col>
-            <Col
-              span={12}
+            </Card>
+          </Col>
+          <Col span={12}>
+            <Card
+              title="Secondary Commodity"
+              extra={<Switch checked={secondary} onChange={setSecondary} />}
               style={{
-                justifyContent: "flex-end",
-                display: "grid",
+                marginBottom: "16px",
+                backgroundColor: !secondary ? "#f5f5f5" : "white",
               }}
             >
-              <Space size={[8, 16]} wrap>
+              <SecondaryForm
+                index={1}
+                indexLabel="Secondary"
+                disabled={!secondary}
+                disableAreaSizeUnitField={disableAreaSizeSecondaryField}
+              />
+            </Card>
+            <Card
+              title="Teritary Commodity"
+              extra={
+                <Switch
+                  checked={tertiary}
+                  onChange={setTertiary}
+                  disabled={!secondary}
+                />
+              }
+              style={{
+                backgroundColor: !tertiary ? "#f5f5f5" : "white",
+              }}
+            >
+              <SecondaryForm
+                index={2}
+                indexLabel="Teritary"
+                disabled={!tertiary}
+                disableAreaSizeUnitField={disableAreaSizeTertiaryField}
+              />
+            </Card>
+            <Row>
+              <Col span={12}>
                 <Button
-                  htmlType="submit"
                   className="button button-submit button-secondary"
-                  loading={isSaving}
-                  onClick={() => setIsNextButton(false)}
+                  onClick={() => navigate("/cases")}
                 >
-                  Save
+                  Cancel
                 </Button>
-                <Button
-                  htmlType="submit"
-                  className="button button-submit button-secondary"
-                  loading={isSaving}
-                  onClick={() => setIsNextButton(true)}
-                >
-                  Next
-                  <StepForwardOutlined />
-                </Button>
-              </Space>
-            </Col>
-          </Row>
-        </Col>
-      </Row>
-    </Form>
+              </Col>
+              <Col
+                span={12}
+                style={{
+                  justifyContent: "flex-end",
+                  display: "grid",
+                }}
+              >
+                <Space size={[8, 16]} wrap>
+                  <Button
+                    htmlType="submit"
+                    className="button button-submit button-secondary"
+                    loading={isSaving}
+                    onClick={() => setIsNextButton(false)}
+                  >
+                    Save
+                  </Button>
+                  <Button
+                    htmlType="submit"
+                    className="button button-submit button-secondary"
+                    loading={isSaving}
+                    onClick={() => setIsNextButton(true)}
+                  >
+                    Next
+                    <StepForwardOutlined />
+                  </Button>
+                </Space>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      </Form>
+      {/* Support add User Access */}
+      <Modal
+        title="Share Case Access to Users"
+        open={showModal}
+        // onOk={handleOk}
+        // confirmLoading={confirmLoading}
+        onCancel={() => setShowModal(false)}
+        width={650}
+      >
+        <Row gutter={[16, 16]} align="center">
+          <Col span={12}>
+            <DebounceSelect
+              placeholder="Search for a user"
+              value={selectedUser}
+              fetchOptions={fetchUsers}
+              onChange={handleOnChangeSearchUser}
+              style={{
+                width: "100%",
+              }}
+            />
+          </Col>
+          <Col span={8}>
+            <Select
+              showSearch
+              value={selectedPermission}
+              placeholder="Select permission"
+              options={casePermission.map((x) => ({ label: x, value: x }))}
+              optionFilterProp="label"
+              style={{ width: "100%" }}
+              onChange={handleOnChangePermission}
+            />
+          </Col>
+          <Col span={4} align="end" style={{ float: "right" }}>
+            <Button onClick={() => handleOnClickAddUserCaseAccess()}>
+              Add
+            </Button>
+          </Col>
+        </Row>
+        <Divider />
+        <Table
+          size="small"
+          columns={[
+            {
+              key: "user",
+              title: "User",
+              width: "65%",
+              render: (row) => {
+                return row?.label || row?.user;
+              },
+            },
+            {
+              key: "permission",
+              title: "Permission",
+              dataIndex: "permission",
+            },
+            {
+              key: "action",
+              render: (row) => {
+                return (
+                  <Button
+                    size="small"
+                    type="ghost"
+                    icon={<MinusCircleOutlined />}
+                    onClick={() => handleOnClickRemoveUserAccess(row)}
+                  />
+                );
+              },
+            },
+          ]}
+          dataSource={userCaseAccessDataSource}
+          bordered
+          title={() => <b>User Case Access</b>}
+          pagination={false}
+        />
+      </Modal>
+    </>
   );
 };
 

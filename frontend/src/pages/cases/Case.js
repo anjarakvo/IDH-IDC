@@ -324,6 +324,7 @@ const Case = () => {
                 setCurrentCaseId={setCurrentCaseId}
                 initialOtherCommodityTypes={initialOtherCommodityTypes}
                 setCurrentCase={setCurrentCase}
+                currentCase={currentCase}
               />
             )}
             {page === "Income Driver Data Entry" && (
