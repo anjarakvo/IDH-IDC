@@ -200,7 +200,7 @@ const Register = () => {
               <Form.Item>
                 <Checkbox
                   style={{ width: "100%", color: "#fff" }}
-                  value={showBusinessUnit}
+                  checked={showBusinessUnit}
                   onChange={() => setShowBusinessUnit(!showBusinessUnit)}
                 >
                   I&apos;m internal IDH user
