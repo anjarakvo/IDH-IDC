@@ -201,10 +201,30 @@ def get_case_by_id(
     return case
 
 
+@case_route.get(
+    "/case_access/{case_id:path}",
+    response_model=List[UserCaseAccessDict],
+    summary="get user access by case id",
+    name="case:get_user_case_access",
+    tags=["Case"],
+)
+def get_user_case_access(
+    req: Request,
+    case_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    verify_case_owner(
+        session=session, authenticated=req.state.authenticated, case_id=case_id
+    )
+    res = crud_uca.get_case_access(session=session, case_id=case_id)
+    return [r.serialize for r in res]
+
+
 @case_route.post(
     "/case_access/{case_id:path}",
     response_model=UserCaseAccessDict,
-    summary="dive a user access to a case",
+    summary="give a user access to a case",
     name="case:add_user_case_access",
     tags=["Case"],
 )

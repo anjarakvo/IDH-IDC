@@ -489,6 +489,20 @@ class TestPermissionOveriding:
         case = session.query(Case).order_by(Case.id.desc()).first()
         case_owner = case.created_by_user
         case_owner_acc = Acc(email=case_owner.email, token=None)
+        # get all access by case id
+        res = await client.get(
+            app.url_path_for("case:get_user_case_access", case_id=case.id),
+            headers={"Authorization": f"Bearer {case_owner_acc.token}"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        for r in res:
+            assert "id" in r
+            assert "label" in r
+            assert "value" in r
+            assert "case" in r
+            assert "permission" in r
+
         # delete
         res = await client.delete(
             app.url_path_for("case:delete_user_case_access", case_id=case.id),

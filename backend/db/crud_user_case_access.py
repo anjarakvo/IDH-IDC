@@ -59,3 +59,8 @@ def delete_case_access(session: Session, access_id: int):
     session.delete(uca)
     session.commit()
     session.flush()
+
+
+def get_case_access(session: Session, case_id: int) -> List[UserCaseAccessDict]:
+    data = session.query(UserCaseAccess).filter(UserCaseAccess.case == case_id).all()
+    return data
