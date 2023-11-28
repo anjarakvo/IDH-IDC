@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { ContentLayout, TableContent } from "../../components/layout";
 import { Link } from "react-router-dom";
-import { EditOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  UserSwitchOutlined,
+  SaveOutlined,
+  CloseOutlined,
+} from "@ant-design/icons";
 import { api } from "../../lib";
 import { UIState, UserState } from "../../store";
-import { Select } from "antd";
-import { selectProps } from "./components";
+import { Select, Space, Button, Row, Col } from "antd";
+import { selectProps, DebounceSelect } from "./components";
 import { isEmpty } from "lodash";
 
 const perPage = 10;
@@ -32,8 +37,12 @@ const Cases = () => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
   const userID = UserState.useState((s) => s.id);
 
+  const [showChangeOwnerForm, setShowChangeOwnerForm] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [refresh, setRefresh] = useState(false);
+
   useEffect(() => {
-    if (userID) {
+    if (userID || refresh) {
       setLoading(true);
       let url = `case?page=${currentPage}&limit=${perPage}`;
       if (search) {
@@ -65,7 +74,25 @@ const Cases = () => {
           setLoading(false);
         });
     }
-  }, [currentPage, search, userID, commodity, country, tags]);
+  }, [currentPage, search, userID, commodity, country, tags, refresh]);
+
+  const fetchUsers = (searchValue) => {
+    return api
+      .get(`user/search_dropdown?search=${searchValue}`)
+      .then((res) => res.data);
+  };
+
+  const handleOnUpdateCaseOwner = (caseRecord) => {
+    api
+      .put(`update_case_owner/${caseRecord.id}?user_id=${selectedUser.value}`)
+      .then(() => {
+        setRefresh(true);
+        setShowChangeOwnerForm(null);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+  };
 
   const columns = [
     {
@@ -105,6 +132,58 @@ const Cases = () => {
       key: "year",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.year - b.year,
+    },
+    {
+      title: "Case Owner",
+      key: "created_by",
+      width: "20%",
+      render: (row) => {
+        if (row.id === showChangeOwnerForm) {
+          return (
+            <Row align="center" gutter={[8, 8]}>
+              <Col span={20}>
+                <DebounceSelect
+                  placeholder="Search for a user"
+                  value={selectedUser}
+                  fetchOptions={fetchUsers}
+                  onChange={(value) => setSelectedUser(value)}
+                  style={{
+                    width: "100%",
+                  }}
+                  size="small"
+                />
+              </Col>
+              <Col span={4}>
+                <Space align="center">
+                  <Button
+                    size="small"
+                    icon={<SaveOutlined />}
+                    shape="circle"
+                    onClick={() => handleOnUpdateCaseOwner(row)}
+                  />
+                  <Button
+                    size="small"
+                    icon={<CloseOutlined />}
+                    shape="circle"
+                    onClick={() => setShowChangeOwnerForm(null)}
+                  />
+                </Space>
+              </Col>
+            </Row>
+          );
+        }
+        return (
+          <Space align="center">
+            <Button
+              icon={<UserSwitchOutlined />}
+              size="small"
+              shape="circle"
+              onClick={() => setShowChangeOwnerForm(row.id)}
+            />
+            <div>{row.created_by}</div>
+          </Space>
+        );
+      },
     },
     {
       key: "action",
