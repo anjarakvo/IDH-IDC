@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { ContentLayout, TableContent } from "../../components/layout";
 import { Link } from "react-router-dom";
 import {
@@ -12,6 +12,7 @@ import { UIState, UserState } from "../../store";
 import { Select, Space, Button, Row, Col } from "antd";
 import { selectProps, DebounceSelect } from "./components";
 import { isEmpty } from "lodash";
+import { adminRole } from "../../store/static";
 
 const perPage = 10;
 const defData = {
@@ -35,11 +36,26 @@ const Cases = () => {
   const [tags, setTags] = useState([]);
 
   const tagOptions = UIState.useState((s) => s.tagOptions);
-  const { id: userID, email: userEmail } = UserState.useState((s) => s);
+  const {
+    id: userID,
+    email: userEmail,
+    business_unit_detail: userBusinessUnits,
+    role: userRole,
+  } = UserState.useState((s) => s);
 
   const [showChangeOwnerForm, setShowChangeOwnerForm] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
   const [refresh, setRefresh] = useState(false);
+
+  const isCaseCreator = useMemo(() => {
+    if (adminRole.includes(userRole)) {
+      return true;
+    }
+    if (userRole === "user" && userBusinessUnits?.length) {
+      return true;
+    }
+    return false;
+  }, [userRole, userBusinessUnits]);
 
   useEffect(() => {
     if (userID || refresh) {
@@ -252,10 +268,14 @@ const Cases = () => {
           style: { width: 300 },
           onSearch: onSearch,
         }}
-        buttonProps={{
-          text: "New Case",
-          to: "/cases/new",
-        }}
+        buttonProps={
+          isCaseCreator
+            ? {
+                text: "New Case",
+                to: "/cases/new",
+              }
+            : {}
+        }
         loading={loading}
         paginationProps={{
           current: currentPage,
