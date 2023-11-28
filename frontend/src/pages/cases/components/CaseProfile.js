@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   Form,
   Input,
@@ -14,7 +14,6 @@ import {
   DatePicker,
   Checkbox,
   Modal,
-  Spin,
   Table,
   Divider,
 } from "antd";
@@ -31,12 +30,12 @@ import {
   reportingPeriod,
   selectProps,
   yesNoOptions,
+  DebounceSelect,
 } from "./";
 import { api } from "../../../lib";
 import { UIState, UserState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
 import uniqBy from "lodash/uniqBy";
-import debounce from "lodash/debounce";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { casePermission } from "../../../store/static";
@@ -255,45 +254,6 @@ const SecondaryForm = ({
         index={index}
       />
     </>
-  );
-};
-
-{
-  /* Support add User Access */
-}
-const DebounceSelect = ({ fetchOptions, debounceTimeout = 500, ...props }) => {
-  const [fetching, setFetching] = useState(false);
-  const [options, setOptions] = useState([]);
-  const fetchRef = useRef(0);
-
-  const debounceFetcher = useMemo(() => {
-    const loadOptions = (value) => {
-      fetchRef.current += 1;
-      const fetchId = fetchRef.current;
-      setOptions([]);
-      setFetching(true);
-      fetchOptions(value).then((newOptions) => {
-        if (fetchId !== fetchRef.current) {
-          // for fetch callback order
-          return;
-        }
-        setOptions(newOptions);
-        setFetching(false);
-      });
-    };
-    return debounce(loadOptions, debounceTimeout);
-  }, [fetchOptions, debounceTimeout]);
-
-  return (
-    <Select
-      labelInValue
-      showSearch
-      filterOption={false}
-      onSearch={debounceFetcher}
-      notFoundContent={fetching ? <Spin size="small" /> : null}
-      {...props}
-      options={options}
-    />
   );
 };
 
