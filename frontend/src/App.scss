@@ -42,10 +42,11 @@
 
   header {
     height: 5rem;
-    background: $primary-color;
+    background: $bg-color-white;
     padding: 0.5rem $default-padding-size;
     display: flex;
     align-items: center;
+    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.08);
 
     .title {
       margin-left: $default-padding-size;
@@ -59,13 +60,13 @@
       align-self: flex-end;
       float: right;
       a {
-        color: #ffffff;
+        color: $primary-color;
         font-weight: 700;
         font-size: 0.95rem;
       }
       .nav-sign-in {
-        background-color: $yellow-color;
-        color: $primary-color;
+        background-color: $primary-color;
+        color: #ffffff;
         padding: 12px 18px;
         border-radius: 20px;
       }
@@ -122,7 +123,8 @@
     background: $bg-color-grey;
 
     .content-card-container {
-      box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+      background-color: $bg-color-grey;
+
       .ant-card-body {
         padding: 1.5rem 0px 0px;
 
