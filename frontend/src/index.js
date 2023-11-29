@@ -15,7 +15,6 @@ root.render(
       theme={{
         token: {
           colorPrimary: "#26605F",
-          borderRadius: 0,
         },
         components: {
           Breadcrumb: {
