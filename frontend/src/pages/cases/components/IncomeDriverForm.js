@@ -146,8 +146,8 @@ const IncomeDriverForm = ({
     <div
       style={{
         backgroundColor: groupIndex ? "#ececec" : "transparent",
-        marginLeft: groupIndex ? -12 : 0,
-        marginRight: groupIndex ? -12 : 0,
+        // marginLeft: groupIndex ? -12 : 0,
+        // marginRight: groupIndex ? -12 : 0,
       }}
     >
       {groupIndex === 1 && (
@@ -155,7 +155,7 @@ const IncomeDriverForm = ({
           gutter={[8, 8]}
           align="middle"
           className="total-diversified-income"
-          style={{ marginLeft: "-4px", marginRight: "-4px" }}
+          // style={{ marginLeft: "-4px", marginRight: "-4px" }}
         >
           <Col span={13}>
             <h3 className="diversified-income-title">Diversified Income</h3>
