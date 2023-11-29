@@ -301,3 +301,12 @@
     }
   }
 }
+
+.ant-picker-dropdown {
+  .ant-picker-cell {
+    color: #000;
+  }
+  .ant-picker-cell-disabled {
+    color: rgba(0, 0, 0, 0.25);
+  }
+}
