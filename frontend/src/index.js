@@ -17,6 +17,12 @@ root.render(
           colorPrimary: "#26605F",
           borderRadius: 0,
         },
+        components: {
+          Breadcrumb: {
+            linkColor: "#26605F",
+            separatorColor: "#26605F",
+          },
+        },
       }}
     >
       <App />
