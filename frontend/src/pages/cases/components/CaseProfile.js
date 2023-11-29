@@ -61,155 +61,167 @@ const CaseForm = ({
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
   return (
-    <>
-      <h3>General Information</h3>
-      <Form.Item
-        label="Name of Case"
-        name="name"
-        rules={[
-          {
-            required: true,
-            message: "Name of Case is required",
-          },
-        ]}
-        onChange={(e) => setCaseTitle(e.target.value)}
-      >
-        <Input />
-      </Form.Item>
-      <Form.Item
-        label="Case Description"
-        name="description"
-        rules={[
-          {
-            required: true,
-            message: "Case Description is required",
-          },
-        ]}
-      >
-        <Input.TextArea onChange={(e) => setCaseDescription(e.target.value)} />
-      </Form.Item>
-
-      <Form.Item>
-        <Checkbox
-          checked={privateCase}
-          onChange={() => setPrivateCase(!privateCase)}
-        >
-          Private Case
-        </Checkbox>
-      </Form.Item>
-
-      <Form.Item
-        name="tags"
-        label="Tags"
-        rules={[
-          {
-            required: true,
-            message: "Select at least one tag",
-          },
-        ]}
-      >
-        <Select
-          mode="multiple"
-          placeholder="Add Tags"
-          options={tagOptions}
-          {...selectProps}
-        />
-      </Form.Item>
-
-      <Form.Item
-        name="year"
-        label="Year"
-        rules={[
-          {
-            required: true,
-            message: "Select year",
-          },
-        ]}
-      >
-        <DatePicker
-          picker="year"
-          disabledDate={(current) => {
-            return current && dayjs(current).year() > dayjs().year();
-          }}
-        />
-      </Form.Item>
-
-      <h3>Driver Details</h3>
-
-      <Form.Item
-        name="country"
-        label="Country"
-        rules={[
-          {
-            required: true,
-            message: "Country is required",
-          },
-        ]}
-      >
-        <Select
-          placeholder="Select Country"
-          options={countryOptions}
-          {...selectProps}
-          onChange={setSelectedCountry}
-        />
-      </Form.Item>
-      <Row gutter={[12, 12]}>
-        <Col {...responsiveCol}>
+    <Row gutter={[16, 16]}>
+      <Col span={24}>
+        <Card title="General Information">
           <Form.Item
-            label="Commodity"
-            name="focus_commodity"
+            label="Name of Case"
+            name="name"
             rules={[
               {
                 required: true,
-                message: "Commodity is required",
+                message: "Name of Case is required",
+              },
+            ]}
+            onChange={(e) => setCaseTitle(e.target.value)}
+          >
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Case Description"
+            name="description"
+            rules={[
+              {
+                required: true,
+                message: "Case Description is required",
+              },
+            ]}
+          >
+            <Input.TextArea
+              onChange={(e) => setCaseDescription(e.target.value)}
+            />
+          </Form.Item>
+
+          <Form.Item>
+            <Checkbox
+              checked={privateCase}
+              onChange={() => setPrivateCase(!privateCase)}
+            >
+              Private Case
+            </Checkbox>
+          </Form.Item>
+
+          <Form.Item
+            name="year"
+            label="Year"
+            rules={[
+              {
+                required: true,
+                message: "Select year",
+              },
+            ]}
+          >
+            <DatePicker
+              picker="year"
+              disabledDate={(current) => {
+                return current && dayjs(current).year() > dayjs().year();
+              }}
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="tags"
+            label="Tags"
+            rules={[
+              {
+                required: true,
+                message: "Select at least one tag",
               },
             ]}
           >
             <Select
-              placeholder="Select Focus Commodity"
-              options={commodityOptions}
+              mode="multiple"
+              placeholder="Add Tags"
+              options={tagOptions}
               {...selectProps}
             />
           </Form.Item>
-        </Col>
-        <Col {...responsiveCol}>
+        </Card>
+      </Col>
+      <Col span={24}>
+        <Card title="Details about the data">
+          <Row gutter={[12, 12]}>
+            <Col {...responsiveCol}>
+              <Form.Item
+                name="country"
+                label="Country"
+                rules={[
+                  {
+                    required: true,
+                    message: "Country is required",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Country"
+                  options={countryOptions}
+                  {...selectProps}
+                  onChange={setSelectedCountry}
+                />
+              </Form.Item>
+            </Col>
+            <Col {...responsiveCol}>
+              <Form.Item
+                label="Currency"
+                name="currency"
+                rules={[
+                  {
+                    required: true,
+                    message: "Currency is required",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Currency"
+                  options={filteredCurrencyOptions}
+                  {...selectProps}
+                  disabled={!selectedCountry}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={[12, 12]}>
+            <Col {...responsiveCol}>
+              <Form.Item
+                label="Commodity"
+                name="focus_commodity"
+                rules={[
+                  {
+                    required: true,
+                    message: "Commodity is required",
+                  },
+                ]}
+              >
+                <Select
+                  placeholder="Select Focus Commodity"
+                  options={commodityOptions}
+                  {...selectProps}
+                />
+              </Form.Item>
+            </Col>
+            <Col {...responsiveCol}>
+              <AreaUnitFields form={form} disabled={false} />
+            </Col>
+          </Row>
           <Form.Item
-            label="Currency"
-            name="currency"
+            label="Reporting Period"
+            name="reporting_period"
             rules={[
               {
                 required: true,
-                message: "Currency is required",
+                message: "Reporting Period is required",
               },
             ]}
           >
-            <Select
-              placeholder="Select Currency"
-              options={filteredCurrencyOptions}
-              {...selectProps}
-              disabled={!selectedCountry}
+            <Radio.Group
+              options={reportingPeriod}
+              optionType="button"
+              buttonStyle="solid"
             />
           </Form.Item>
-        </Col>
-      </Row>
-      <AreaUnitFields form={form} disabled={false} />
-      <Form.Item
-        label="Reporting Period"
-        name="reporting_period"
-        rules={[
-          {
-            required: true,
-            message: "Reporting Period is required",
-          },
-        ]}
-      >
-        <Radio.Group
-          options={reportingPeriod}
-          optionType="button"
-          buttonStyle="solid"
-        />
-      </Form.Item>
-    </>
+        </Card>
+      </Col>
+    </Row>
   );
 };
 
@@ -590,24 +602,25 @@ const CaseProfile = ({
         autoComplete="off"
       >
         {contextHolder}
-        <Row gutter={[16, 16]}>
-          <Col span={12}>
-            <Card
-              title="Case Details"
-              extra={
-                isCaseOwner && (
-                  <Button
-                    icon={<PlusOutlined />}
-                    size="small"
-                    type="primary"
-                    style={{ borderRadius: "10px" }}
-                    onClick={() => handleOnClickShareAccess()}
-                  >
-                    Share
-                  </Button>
-                )
-              }
-            >
+        <Card
+          title="Case Details"
+          extra={
+            isCaseOwner && (
+              <Button
+                icon={<PlusOutlined />}
+                size="small"
+                type="primary"
+                style={{ borderRadius: "10px" }}
+                onClick={() => handleOnClickShareAccess()}
+              >
+                Share
+              </Button>
+            )
+          }
+          className="case-detail-card-wrapper"
+        >
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
               <CaseForm
                 setCaseTitle={setCaseTitle}
                 setCaseDescription={setCaseDescription}
@@ -617,83 +630,87 @@ const CaseProfile = ({
                 privateCase={privateCase}
                 setPrivateCase={setPrivateCase}
               />
-            </Card>
-          </Col>
-          <Col span={12}>
-            <Card
-              title="Secondary Commodity"
-              extra={<Switch checked={secondary} onChange={setSecondary} />}
-              style={{
-                marginBottom: "16px",
-                backgroundColor: !secondary ? "#f5f5f5" : "white",
-              }}
-            >
-              <SecondaryForm
-                index={1}
-                indexLabel="Secondary"
-                disabled={!secondary}
-                disableAreaSizeUnitField={disableAreaSizeSecondaryField}
-              />
-            </Card>
-            <Card
-              title="Teritary Commodity"
-              extra={
-                <Switch
-                  checked={tertiary}
-                  onChange={setTertiary}
-                  disabled={!secondary}
-                />
-              }
-              style={{
-                backgroundColor: !tertiary ? "#f5f5f5" : "white",
-              }}
-            >
-              <SecondaryForm
-                index={2}
-                indexLabel="Teritary"
-                disabled={!tertiary}
-                disableAreaSizeUnitField={disableAreaSizeTertiaryField}
-              />
-            </Card>
-            <Row>
-              <Col span={12}>
-                <Button
-                  className="button button-submit button-secondary"
-                  onClick={() => navigate("/cases")}
-                >
-                  Cancel
-                </Button>
-              </Col>
-              <Col
-                span={12}
+            </Col>
+            <Col span={24}>
+              <Card
+                title="Secondary Commodity"
+                extra={<Switch checked={secondary} onChange={setSecondary} />}
                 style={{
-                  justifyContent: "flex-end",
-                  display: "grid",
+                  marginBottom: "16px",
+                  backgroundColor: !secondary ? "#f5f5f5" : "white",
                 }}
               >
-                <Space size={[8, 16]} wrap>
+                <SecondaryForm
+                  index={1}
+                  indexLabel="Secondary"
+                  disabled={!secondary}
+                  disableAreaSizeUnitField={disableAreaSizeSecondaryField}
+                />
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Card
+                title="Teritary Commodity"
+                extra={
+                  <Switch
+                    checked={tertiary}
+                    onChange={setTertiary}
+                    disabled={!secondary}
+                  />
+                }
+                style={{
+                  backgroundColor: !tertiary ? "#f5f5f5" : "white",
+                }}
+              >
+                <SecondaryForm
+                  index={2}
+                  indexLabel="Teritary"
+                  disabled={!tertiary}
+                  disableAreaSizeUnitField={disableAreaSizeTertiaryField}
+                />
+              </Card>
+            </Col>
+            <Col span={24}>
+              <Row>
+                <Col span={12}>
                   <Button
-                    htmlType="submit"
                     className="button button-submit button-secondary"
-                    loading={isSaving}
-                    onClick={() => setIsNextButton(false)}
+                    onClick={() => navigate("/cases")}
                   >
-                    Save
+                    Cancel
                   </Button>
-                  <Button
-                    htmlType="submit"
-                    className="button button-submit button-secondary"
-                    loading={isSaving}
-                    onClick={() => setIsNextButton(true)}
-                  >
-                    Next
-                    <StepForwardOutlined />
-                  </Button>
-                </Space>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+                </Col>
+                <Col
+                  span={12}
+                  style={{
+                    justifyContent: "flex-end",
+                    display: "grid",
+                  }}
+                >
+                  <Space size={[8, 16]} wrap>
+                    <Button
+                      htmlType="submit"
+                      className="button button-submit button-secondary"
+                      loading={isSaving}
+                      onClick={() => setIsNextButton(false)}
+                    >
+                      Save
+                    </Button>
+                    <Button
+                      htmlType="submit"
+                      className="button button-submit button-secondary"
+                      loading={isSaving}
+                      onClick={() => setIsNextButton(true)}
+                    >
+                      Next
+                      <StepForwardOutlined />
+                    </Button>
+                  </Space>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
       </Form>
       {/* Support add User Access */}
       <Modal
