@@ -63,7 +63,10 @@ const CaseForm = ({
   return (
     <Row gutter={[16, 16]}>
       <Col span={24}>
-        <Card title="General Information">
+        <Card
+          title="General Information"
+          className="case-detail-child-card-wrapper"
+        >
           <Form.Item
             label="Name of Case"
             name="name"
@@ -89,6 +92,7 @@ const CaseForm = ({
           >
             <Input.TextArea
               onChange={(e) => setCaseDescription(e.target.value)}
+              rows={4}
             />
           </Form.Item>
 
@@ -139,7 +143,10 @@ const CaseForm = ({
         </Card>
       </Col>
       <Col span={24}>
-        <Card title="Details about the data">
+        <Card
+          title="Details about the data"
+          className="case-detail-child-card-wrapper"
+        >
           <Row gutter={[12, 12]}>
             <Col {...responsiveCol}>
               <Form.Item
@@ -636,9 +643,9 @@ const CaseProfile = ({
                 title="Secondary Commodity"
                 extra={<Switch checked={secondary} onChange={setSecondary} />}
                 style={{
-                  marginBottom: "16px",
                   backgroundColor: !secondary ? "#f5f5f5" : "white",
                 }}
+                className="case-detail-child-card-wrapper"
               >
                 <SecondaryForm
                   index={1}
@@ -661,6 +668,7 @@ const CaseProfile = ({
                 style={{
                   backgroundColor: !tertiary ? "#f5f5f5" : "white",
                 }}
+                className="case-detail-child-card-wrapper"
               >
                 <SecondaryForm
                   index={2}
