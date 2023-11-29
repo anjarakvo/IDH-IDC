@@ -10,6 +10,7 @@ import {
 import { Row, Col, Spin, Card } from "antd";
 import "./cases.scss";
 import { api, flatten } from "../../lib";
+import { CaseTitleIcon } from "../../lib/icon";
 import dayjs from "dayjs";
 import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
@@ -311,9 +312,12 @@ const Case = () => {
         <Row gutter={[16, 16]} className="case-content">
           <SideMenu active={page} setActive={setActive} finished={finished} />
           <Col span={24}>
-            <Card className="case-title-wrapper">
+            <Card className="case-title-wrapper" id="case-title">
               <h2>{caseTitle}</h2>
               {caseDescription ? <p>{caseDescription}</p> : null}
+              <div className="case-title-icon">
+                <CaseTitleIcon height={110} />
+              </div>
             </Card>
           </Col>
           <Col span={24}>
