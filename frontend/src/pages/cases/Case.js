@@ -7,7 +7,7 @@ import {
   IncomeDriverDataEntry,
   IncomeDriverDashboard,
 } from "./components";
-import { Row, Col, Spin } from "antd";
+import { Row, Col, Spin, Card } from "antd";
 import "./cases.scss";
 import { api, flatten } from "../../lib";
 import dayjs from "dayjs";
@@ -32,6 +32,7 @@ const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
 const Case = () => {
   const { caseId } = useParams();
   const [caseTitle, setCaseTitle] = useState("New Case");
+  const [caseDescription, setCaseDescription] = useState(null);
   const [page, setPage] = useState("Case Profile");
   const [formData, setFormData] = useState({});
   const [finished, setFinished] = useState([]);
@@ -190,6 +191,7 @@ const Case = () => {
           const { data } = res;
           setCurrentCase(data);
           setCaseTitle(data.name);
+          setCaseDescription(data.description);
           // set other commodities type
           setInitialCommodityTypes(
             data.case_commodities.map((x) => x.commodity_type)
@@ -299,7 +301,6 @@ const Case = () => {
         { title: "Cases", href: "/cases" },
         { title: caseTitle },
       ]}
-      title={caseTitle}
       wrapperId="case"
     >
       {loading ? (
@@ -310,9 +311,16 @@ const Case = () => {
         <Row gutter={[16, 16]} className="case-content">
           <SideMenu active={page} setActive={setActive} finished={finished} />
           <Col span={24}>
+            <Card className="case-title-wrapper">
+              <h2>{caseTitle}</h2>
+              {caseDescription ? <p>{caseDescription}</p> : null}
+            </Card>
+          </Col>
+          <Col span={24}>
             {page === "Case Profile" && (
               <CaseProfile
                 setCaseTitle={setCaseTitle}
+                setCaseDescription={setCaseDescription}
                 formData={formData}
                 setFormData={setFormData}
                 finished={finished}

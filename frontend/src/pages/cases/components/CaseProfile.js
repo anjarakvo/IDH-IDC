@@ -51,6 +51,7 @@ const responsiveCol = {
 const CaseForm = ({
   form,
   setCaseTitle,
+  setCaseDescription,
   selectedCountry,
   setSelectedCountry,
   filteredCurrencyOptions,
@@ -85,7 +86,7 @@ const CaseForm = ({
           },
         ]}
       >
-        <Input.TextArea />
+        <Input.TextArea onChange={(e) => setCaseDescription(e.target.value)} />
       </Form.Item>
 
       <Form.Item>
@@ -259,6 +260,7 @@ const SecondaryForm = ({
 
 const CaseProfile = ({
   setCaseTitle,
+  setCaseDescription,
   setPage,
   formData,
   setFormData,
@@ -608,6 +610,7 @@ const CaseProfile = ({
             >
               <CaseForm
                 setCaseTitle={setCaseTitle}
+                setCaseDescription={setCaseDescription}
                 selectedCountry={selectedCountry}
                 setSelectedCountry={setSelectedCountry}
                 filteredCurrencyOptions={filteredCurrencyOptions}
