@@ -100,25 +100,25 @@ const DataFields = ({
 
   const benchmarkInfo = useMemo(() => {
     const findSegmentBenchmark =
-      dashboardData.find((d) => d.key === segment)?.benchmark || {};
+      dashboardData.find((d) => d.key === segment)?.benchmark || null;
     return {
       label: "Source",
       value: findSegmentBenchmark ? "Living Income Benchmark" : "NA",
-      link: null,
+      link: findSegmentBenchmark?.source || null,
       childs: [
         {
           label: "Year of Study",
-          value: findSegmentBenchmark?.year || "-",
+          value: findSegmentBenchmark?.year || "NA",
           icon: <CalendarOutlined />,
         },
         {
           label: "Household Size",
-          value: findSegmentBenchmark?.household_size || "-",
+          value: findSegmentBenchmark?.household_size || "NA",
           icon: <HomeOutlined />,
         },
         {
           label: "Adults",
-          value: findSegmentBenchmark?.adults || "-",
+          value: findSegmentBenchmark?.adults || "NA",
           icon: <UserOutlined />,
         },
       ],
