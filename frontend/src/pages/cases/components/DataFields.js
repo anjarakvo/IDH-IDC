@@ -528,6 +528,7 @@ const DataFields = ({
                 <SaveAsImageButton
                   elementRef={elDriverChart}
                   filename="Calculated Household Income"
+                  type="ghost-white"
                 />
               }
             >

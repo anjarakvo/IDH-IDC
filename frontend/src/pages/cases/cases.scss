@@ -45,6 +45,14 @@
           .ant-card-head-title {
             font-size: 0.95rem;
           }
+
+          .ant-switch {
+            background: $muted-color;
+          }
+
+          .ant-switch-checked {
+            background: $yellow-color;
+          }
         }
       }
     }
