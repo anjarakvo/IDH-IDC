@@ -373,6 +373,7 @@ const Case = () => {
                 initialOtherCommodityTypes={initialOtherCommodityTypes}
                 setCurrentCase={setCurrentCase}
                 currentCase={currentCase}
+                enableEditCase={enableEditCase}
               />
             )}
             {page === "Income Driver Data Entry" && (
@@ -388,6 +389,7 @@ const Case = () => {
                 finished={finished}
                 setFinished={setFinished}
                 setPage={setPage}
+                enableEditCase={enableEditCase}
               />
             )}
             {page === "Income Driver Dashboard" && (
@@ -398,6 +400,7 @@ const Case = () => {
                 currentCase={currentCase}
                 dashboardData={dashboardData}
                 setPage={setPage}
+                enableEditCase={enableEditCase}
               />
             )}
           </Col>
