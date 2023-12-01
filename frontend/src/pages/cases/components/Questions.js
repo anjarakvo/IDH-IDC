@@ -231,6 +231,7 @@ const Questions = ({
               allQuestions={allQuestions}
               {...child}
               indent={indent + indentSize}
+              enableEditCase={enableEditCase}
             />
           ))
         : null}
