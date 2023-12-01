@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import {
   SideMenu,
@@ -34,6 +34,7 @@ const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
 
 const Case = () => {
   const { caseId } = useParams();
+  const navigate = useNavigate();
   const [caseTitle, setCaseTitle] = useState("New Case");
   const [caseDescription, setCaseDescription] = useState(null);
   const [page, setPage] = useState("Case Profile");
@@ -60,12 +61,12 @@ const Case = () => {
     }
     // check user access
     const userPermission = userCaseAccess.find(
-      (a) => a.case === caseIdParam
+      (a) => a.case === parseInt(caseIdParam)
     )?.permission;
     if ((userInternal && !userPermission) || userPermission === "view") {
       return false;
     }
-    if (userPermission === "true") {
+    if (userPermission === "edit") {
       return true;
     }
     return false;
@@ -298,6 +299,7 @@ const Case = () => {
         })
         .catch((e) => {
           console.error("Error fetching case profile data", e);
+          navigate("/not-found");
         })
         .finally(() => {
           setTimeout(() => {
@@ -306,7 +308,7 @@ const Case = () => {
           }, 100);
         });
     }
-  }, [caseId, formData, loading]);
+  }, [caseId, formData, loading, navigate]);
 
   const setActive = (selected) => {
     if (finished.includes(selected)) {
