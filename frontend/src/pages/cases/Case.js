@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import {
   SideMenu,
@@ -7,13 +7,15 @@ import {
   IncomeDriverDataEntry,
   IncomeDriverDashboard,
 } from "./components";
-import { Row, Col, Spin, Card } from "antd";
+import { Row, Col, Spin, Card, Alert } from "antd";
 import "./cases.scss";
 import { api, flatten } from "../../lib";
 import { CaseTitleIcon } from "../../lib/icon";
 import dayjs from "dayjs";
 import isEmpty from "lodash/isEmpty";
 import orderBy from "lodash/orderBy";
+import { UserState } from "../../store";
+import { adminRole } from "../../store/static";
 
 const pageDependencies = {
   "Income Driver Data Entry": ["Case Profile"],
@@ -32,6 +34,7 @@ const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
 
 const Case = () => {
   const { caseId } = useParams();
+  const navigate = useNavigate();
   const [caseTitle, setCaseTitle] = useState("New Case");
   const [caseDescription, setCaseDescription] = useState(null);
   const [page, setPage] = useState("Case Profile");
@@ -44,6 +47,30 @@ const Case = () => {
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
   const [currentCase, setCurrentCase] = useState({});
+
+  const {
+    role: userRole,
+    internal_user: userInternal,
+    case_access: userCaseAccess,
+  } = UserState.useState((s) => s);
+
+  const enableEditCase = useMemo(() => {
+    const caseIdParam = caseId ? caseId : currentCaseId;
+    if (adminRole.includes(userRole)) {
+      return true;
+    }
+    // check user access
+    const userPermission = userCaseAccess.find(
+      (a) => a.case === parseInt(caseIdParam)
+    )?.permission;
+    if ((userInternal && !userPermission) || userPermission === "view") {
+      return false;
+    }
+    if (userPermission === "edit") {
+      return true;
+    }
+    return false;
+  }, [caseId, currentCaseId, userRole, userCaseAccess, userInternal]);
 
   useEffect(() => {
     if (caseId && caseData.length) {
@@ -272,6 +299,7 @@ const Case = () => {
         })
         .catch((e) => {
           console.error("Error fetching case profile data", e);
+          navigate("/not-found");
         })
         .finally(() => {
           setTimeout(() => {
@@ -280,7 +308,7 @@ const Case = () => {
           }, 100);
         });
     }
-  }, [caseId, formData, loading]);
+  }, [caseId, formData, loading, navigate]);
 
   const setActive = (selected) => {
     if (finished.includes(selected)) {
@@ -311,6 +339,16 @@ const Case = () => {
       ) : (
         <Row gutter={[16, 16]} className="case-content">
           <SideMenu active={page} setActive={setActive} finished={finished} />
+          {/* Banner for Viewer */}
+          {!enableEditCase && (
+            <Col span={24} style={{ paddingTop: 5 }}>
+              <Alert
+                type="warning"
+                message="You are a viewer for this cases. You are able to view the data to encourage cross-learning and consultation . Please contact the case owner before downloading any data from the case."
+              />
+            </Col>
+          )}
+          {/* EOL Banner for Viewer */}
           <Col span={24}>
             <Card className="case-title-wrapper" id="case-title">
               <h2>{caseTitle}</h2>
@@ -337,6 +375,7 @@ const Case = () => {
                 initialOtherCommodityTypes={initialOtherCommodityTypes}
                 setCurrentCase={setCurrentCase}
                 currentCase={currentCase}
+                enableEditCase={enableEditCase}
               />
             )}
             {page === "Income Driver Data Entry" && (
@@ -352,6 +391,7 @@ const Case = () => {
                 finished={finished}
                 setFinished={setFinished}
                 setPage={setPage}
+                enableEditCase={enableEditCase}
               />
             )}
             {page === "Income Driver Dashboard" && (
@@ -362,6 +402,7 @@ const Case = () => {
                 currentCase={currentCase}
                 dashboardData={dashboardData}
                 setPage={setPage}
+                enableEditCase={enableEditCase}
               />
             )}
           </Col>

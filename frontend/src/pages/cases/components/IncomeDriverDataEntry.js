@@ -17,6 +17,7 @@ const IncomeDriverDataEntry = ({
   finished,
   setFinished,
   setPage,
+  enableEditCase,
 }) => {
   const [activeKey, setActiveKey] = useState("1");
   const [items, setItems] = useState([]);
@@ -142,17 +143,19 @@ const IncomeDriverDataEntry = ({
       return;
     }
     api.get(`/questions/${currentCaseId}`).then((res) => {
-      const defaultItems = [
-        {
-          key: "add",
-          label: (
-            <span>
-              <PlusCircleFilled /> Add Segment
-            </span>
-          ),
-          currentSegmentId: null,
-        },
-      ];
+      const defaultItems = enableEditCase
+        ? [
+            {
+              key: "add",
+              label: (
+                <span>
+                  <PlusCircleFilled /> Add Segment
+                </span>
+              ),
+              currentSegmentId: null,
+            },
+          ]
+        : [];
       // reorder question to match commodity list order (CORRECT ORDER)
       const dataTmp = commodityList.map((cl) =>
         res.data.find((d) => d.commodity_id === cl.commodity)
@@ -202,7 +205,7 @@ const IncomeDriverDataEntry = ({
           ]);
         });
     });
-  }, [commodityList, setQuestionGroups, currentCaseId]);
+  }, [commodityList, setQuestionGroups, currentCaseId, enableEditCase]);
 
   const handleRemoveSegmentFromItems = (segmentKey) => {
     // handle form values
@@ -259,6 +262,7 @@ const IncomeDriverDataEntry = ({
             currentCaseId={currentCaseId}
             currentCase={currentCase}
             setPage={setPage}
+            enableEditCase={enableEditCase}
           />
         );
         // handle form values
@@ -340,6 +344,7 @@ const IncomeDriverDataEntry = ({
                   currentCaseId={currentCaseId}
                   currentCase={currentCase}
                   setPage={setPage}
+                  enableEditCase={enableEditCase}
                 />
               ),
           }))}
