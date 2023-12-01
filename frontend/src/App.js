@@ -84,11 +84,11 @@ const App = () => {
             s.email = data.email;
             s.role = data.role;
             s.active = data.active;
-            s.organisation_detail = data.organisation_detail;
-            s.business_unit_detail = data.business_unit_detail;
+            s.organisation_detail = data.organisation_detail || [];
+            s.business_unit_detail = data.business_unit_detail || [];
             s.tags_count = data.tags_count;
             s.cases_count = data.cases_count;
-            s.case_access = data.case_access;
+            s.case_access = data.case_access || [];
             s.internal_user = data.internal_user;
           });
         })

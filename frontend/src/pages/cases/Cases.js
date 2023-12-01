@@ -238,6 +238,7 @@ const Cases = () => {
         if (userPermission === "edit") {
           return EditButton;
         }
+        return ViewButton;
       },
     },
   ];
