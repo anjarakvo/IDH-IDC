@@ -6,6 +6,7 @@ import {
   UserSwitchOutlined,
   SaveOutlined,
   CloseOutlined,
+  EyeOutlined,
 } from "@ant-design/icons";
 import { api } from "../../lib";
 import { UIState, UserState } from "../../store";
@@ -39,8 +40,8 @@ const Cases = () => {
   const {
     id: userID,
     email: userEmail,
-    business_unit_detail: userBusinessUnits,
     role: userRole,
+    internal_user: userInternal,
     case_access: userCaseAccess,
   } = UserState.useState((s) => s);
 
@@ -52,11 +53,11 @@ const Cases = () => {
     if (adminRole.includes(userRole)) {
       return true;
     }
-    if (userRole === "user" && userBusinessUnits?.length) {
+    if (userInternal) {
       return true;
     }
     return false;
-  }, [userRole, userBusinessUnits]);
+  }, [userRole, userInternal]);
 
   useEffect(() => {
     if (userID || refresh) {
@@ -209,11 +210,35 @@ const Cases = () => {
       key: "action",
       width: "5%",
       align: "center",
-      render: (text, record) => (
-        <Link to={`/cases/${record.id}`}>
-          <EditOutlined />
-        </Link>
-      ),
+      render: (text, record) => {
+        const caseDetailURL = `/cases/${record.id}`;
+        const EditButton = (
+          <Link to={caseDetailURL}>
+            <EditOutlined />
+          </Link>
+        );
+        const ViewButton = (
+          <Link to={caseDetailURL}>
+            <EyeOutlined />
+          </Link>
+        );
+
+        if (adminRole.includes(userRole)) {
+          return EditButton;
+        }
+
+        // check case access
+        const userPermission = userCaseAccess.find(
+          (a) => a.case === record.id
+        )?.permission;
+
+        if ((userInternal && !userPermission) || userPermission === "view") {
+          return ViewButton;
+        }
+        if (userPermission === "edit") {
+          return EditButton;
+        }
+      },
     },
   ];
 
