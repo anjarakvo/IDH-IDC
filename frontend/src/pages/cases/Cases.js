@@ -41,6 +41,7 @@ const Cases = () => {
     email: userEmail,
     business_unit_detail: userBusinessUnits,
     role: userRole,
+    case_access: userCaseAccess,
   } = UserState.useState((s) => s);
 
   const [showChangeOwnerForm, setShowChangeOwnerForm] = useState(null);
