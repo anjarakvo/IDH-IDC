@@ -63,10 +63,12 @@ describe("Landing page", () => {
       </Router>
     );
 
-    expect(wrapper.getByTestId("second-section-wrapper")).toBeInTheDocument();
-    expect(wrapper.getByTestId("second-section-title")).toBeInTheDocument();
     expect(
-      wrapper.getByTestId("second-section-description")
+      wrapper.getByTestId("framework-drivers-wrapper")
+    ).toBeInTheDocument();
+    expect(wrapper.getByTestId("framework-drivers-title")).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("framework-drivers-description")
     ).toBeInTheDocument();
     expect(wrapper.getByText("Qualitative data")).toBeInTheDocument();
     expect(
@@ -75,7 +77,7 @@ describe("Landing page", () => {
     expect(
       wrapper.getByTestId("button-use-the-calculator")
     ).toBeInTheDocument();
-    expect(wrapper.getByTestId("second-section-image")).toBeInTheDocument();
+    expect(wrapper.getByTestId("framework-drivers-image")).toBeInTheDocument();
   });
 
   it("should render third section", () => {
