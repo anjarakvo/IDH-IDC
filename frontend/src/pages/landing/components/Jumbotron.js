@@ -3,8 +3,10 @@ import "./landingcomp.scss";
 import { Row, Col, Button } from "antd";
 import { Link } from "react-router-dom";
 import { UserState } from "../../../store";
+import { useNavigate } from "react-router-dom";
 
 const Jumbotron = ({ signOut = null }) => {
+  const navigate = useNavigate();
   const loggedIn = UserState.useState((s) => s.id);
 
   return (
@@ -19,7 +21,10 @@ const Jumbotron = ({ signOut = null }) => {
         </h3>
         {loggedIn ? (
           <Button
-            onClick={() => signOut()}
+            onClick={() => {
+              signOut();
+              navigate("/");
+            }}
             className="button button-yellow"
             type="secondary"
             size="small"
