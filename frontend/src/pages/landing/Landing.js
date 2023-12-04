@@ -1,35 +1,86 @@
 import React from "react";
 import "./landing.scss";
-import { Row, Col, Space } from "antd";
+import { Row, Col, Space, Card } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import {
+  LandingInfoHelpIcon,
+  LandingInfoEstimateIcon,
+  LandingInfoDriversIcon,
+} from "../../lib/icon";
+
+const Jumbotron = () => (
+  <Row
+    data-testid="jumbotron-wrapper"
+    justify="center"
+    className="jumbotron-wrapper"
+  >
+    <Col span={24}>
+      <h1 data-testid="jumbotron-title">
+        Welcome to the income driver calculator
+      </h1>
+      <h3 data-testid="jumbotron-subtitle">
+        IDH is working to secure better income for smallholder farmers in
+        several sectors and landscapes.
+      </h3>
+      <Link data-testid="button-learn-more" className="button button-yellow">
+        Sign in to calculator
+      </Link>
+    </Col>
+  </Row>
+);
+
+const InformationCard = () => (
+  <Row
+    data-testid="info-card-wrapper"
+    justify="space-evenly"
+    align="center"
+    className="info-card-row"
+  >
+    <Col sm={24} md={7} align="top">
+      <Card className="info-card-wrapper info-first">
+        <div className="info-card-icon">
+          <LandingInfoHelpIcon />
+        </div>
+        <h3>Helps you to calculate farmer income</h3>
+        <p>
+          Helps you to calculate actual and feasible household income by taking
+          into account various income drivers
+        </p>
+      </Card>
+    </Col>
+    <Col sm={24} md={7} align="top">
+      <Card className="info-card-wrapper info-second">
+        <div className="info-card-icon">
+          <LandingInfoEstimateIcon />
+        </div>
+        <h3>Estimate the income gap</h3>
+        <p>
+          It helps you to estimate the income gap, compare household income with
+          a living income benchmark or better income target
+        </p>
+      </Card>
+    </Col>
+    <Col sm={24} md={7} align="top">
+      <Card className="info-card-wrapper info-third">
+        <div className="info-card-icon">
+          <LandingInfoDriversIcon />
+        </div>
+        <h3>Understand drivers of income</h3>
+        <p>
+          Helps you to understand the drivers and constraints of income and how
+          they can be leveraged to close the income gap
+        </p>
+      </Card>
+    </Col>
+  </Row>
+);
 
 const Landing = () => {
   return (
     <div className="landing-container" id="landing">
-      <Row
-        data-testid="jumbotron-wrapper"
-        justify="center"
-        className="jumbotron-wrapper"
-      >
-        <Col span={24}>
-          <h1 data-testid="jumbotron-title">
-            Catalysing positive change <br />
-            by bringing together committed <br />
-            stakeholders from across global markets.
-          </h1>
-          <h3 data-testid="jumbotron-subtitle">
-            Our mission is to put people, planet, and progress at the heart of
-            markets.
-          </h3>
-          <Link
-            data-testid="button-learn-more"
-            className="button button-yellow"
-          >
-            Learn More
-          </Link>
-        </Col>
-      </Row>
+      <Jumbotron />
+      <InformationCard />
       <Row
         data-testid="first-section-wrapper"
         justify="center"
