@@ -93,10 +93,10 @@ const IncomeDriverFramework = () => (
   </Row>
 );
 
-const Landing = () => {
+const Landing = ({ signOut }) => {
   return (
     <div className="landing-container" id="landing">
-      <Jumbotron />
+      <Jumbotron signOut={signOut} />
       <InformationCard />
       <IncomeDriverFramework />
       <FrameworkDrivers />

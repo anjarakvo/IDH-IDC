@@ -3,8 +3,11 @@ import { Row, Col, Space, Image } from "antd";
 import "./landingcomp.scss";
 import { Link } from "react-router-dom";
 import LoginRightImage from "../../../assets/images/login-right-img.png";
+import { UserState } from "../../../store";
 
-const GetStarted = ({ loggedIn = false }) => {
+const GetStarted = () => {
+  const loggedIn = UserState.useState((s) => s.id);
+
   const items = [
     {
       title: "Set up your case",

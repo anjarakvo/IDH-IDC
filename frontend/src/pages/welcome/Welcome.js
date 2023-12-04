@@ -1,6 +1,6 @@
 import React from "react";
 import "./welcome.scss";
-import { UserState } from "../../store";
+import { Row, Col } from "antd";
 import {
   Jumbotron,
   GetStarted,
@@ -10,17 +10,51 @@ import {
   FooterDisclaimer,
 } from "../landing/components";
 
-const Welcome = ({ signOut }) => {
-  const userId = UserState.useState((s) => s.id);
-  const loggedIn = userId ? true : false;
+const FAQ = () => {
+  const items = [
+    {
+      title: "What is Driver Calculator?",
+      description:
+        "Please provide comprehensive answers to those questions. You will save lots of time and money by eliminating the necessity to give constant support. You also will keep your clients' time cause they will quickly find the answers to all their questions.",
+    },
+    {
+      title: "How should I find out my cases?",
+      description:
+        "Please provide comprehensive answers to those questions. You will save lots of time and money.",
+    },
+    {
+      title: "How to get started?",
+      description:
+        "Please provide comprehensive answers to those questions. You will save lots of time and money by eliminating the necessity to give constant support. You also will keep your clients' time cause they will quickly find the answers to all their questions.",
+    },
+  ];
 
+  return (
+    <div id="faq">
+      <h2>Frequently asked questions</h2>
+      {items.map((it, i) => (
+        <Row key={i} className="item-wrapper">
+          <Col span={12} className="title">
+            {it.title}
+          </Col>
+          <Col span={12} className="description">
+            {it.description}
+          </Col>
+        </Row>
+      ))}
+    </div>
+  );
+};
+
+const Welcome = ({ signOut }) => {
   return (
     <div>
       <Jumbotron signOut={signOut} />
-      <GetStarted loggedIn={loggedIn} />
+      <GetStarted />
       <FrameworkDrivers />
       <CompareIncomeTarget />
       <ExploreStudies />
+      <FAQ />
       <FooterDisclaimer />
     </div>
   );
