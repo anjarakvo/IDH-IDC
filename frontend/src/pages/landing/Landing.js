@@ -16,7 +16,7 @@ import {
 } from "../../lib/icon";
 import IncomeDriverFrameworkImg from "../../assets/images/income-driver-framework.jpeg";
 import LoginRightImage from "../../assets/images/login-right-img.png";
-import { GetStarted, ExploreStudies } from "./components";
+import { GetStarted, ExploreStudies, FooterDisclaimer } from "./components";
 
 const Jumbotron = () => (
   <Row
@@ -292,34 +292,7 @@ const Landing = () => {
       <CompareIncomeTarget />
       <GetStarted />
       <ExploreStudies />
-
-      <Row
-        data-testid="disclaimer-section-wrapper"
-        justify="center"
-        className="disclaimer-section-wrapper"
-      >
-        <Col span={24}>
-          <h2 data-testid="disclaimer-section-title">Disclaimer</h2>
-          <p data-testid="disclaimer-section-description">
-            The data published on this website is provided by IDH as a public
-            service to promote transparency, accountability, and informed
-            decision-making. However, all data is provided &quot;as is&quot;
-            without any warranty, representation, or guarantee of any kind,
-            including but not limited to its content, accuracy, timeliness,
-            completeness, or fitness for a particular purpose.
-            <br />
-            <br />
-            IDH does not make any implied warranties and shall not be liable for
-            any errors, omissions, or inaccuracies in the data provided,
-            regardless of the cause, nor for any decision made or action taken
-            or not taken by anyone using or relying on such data.
-            <br />
-            <br />
-            For our own analyses, insights and recommendations based on this
-            data, please refer to our Insights Explorer.
-          </p>
-        </Col>
-      </Row>
+      <FooterDisclaimer />
     </div>
   );
 };

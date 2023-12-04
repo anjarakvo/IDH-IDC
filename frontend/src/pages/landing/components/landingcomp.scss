@@ -103,3 +103,29 @@
     margin-top: 50px;
   }
 }
+
+#footer-disclaimer {
+  background-color: #00625f;
+  color: #ffffff;
+  width: 100%;
+  padding: 1.5rem $default-padding-size;
+
+  h2 {
+    font-size: 30px;
+    font-weight: 700;
+  }
+
+  p {
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1.9rem;
+  }
+
+  .footer-wrapper {
+    padding: 1rem 0;
+
+    .copyright-text {
+      font-size: 16px;
+    }
+  }
+}
