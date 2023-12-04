@@ -112,7 +112,11 @@ const App = () => {
           <Route path="*" element={<NotFound />} />
           {userRole !== null ? (
             <Route element={<PrivateRoutes />}>
-              <Route exact path="/welcome" element={<Welcome />} />
+              <Route
+                exact
+                path="/welcome"
+                element={<Welcome signOut={signOut} />}
+              />
               <Route exact path="/home" element={<Home />} />
               <Route exact path="/cases" element={<Cases />} />
               <Route exact path="/cases/new" element={<Case />} />

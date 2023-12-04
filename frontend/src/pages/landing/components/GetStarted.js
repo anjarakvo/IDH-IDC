@@ -4,7 +4,7 @@ import "./landingcomp.scss";
 import { Link } from "react-router-dom";
 import LoginRightImage from "../../../assets/images/login-right-img.png";
 
-const GetStarted = () => {
+const GetStarted = ({ loggedIn = false }) => {
   const items = [
     {
       title: "Set up your case",
@@ -45,9 +45,15 @@ const GetStarted = () => {
           ))}
         </Space>
         <div className="button-wrapper">
-          <Link to="/login" className="button button-green-fill">
-            Sign in to calculator
-          </Link>
+          {loggedIn ? (
+            <Link to="/cases" className="button button-green-fill">
+              Go to my cases
+            </Link>
+          ) : (
+            <Link to="/login" className="button button-green-fill">
+              Sign in to calculator
+            </Link>
+          )}
         </div>
       </Col>
       <Col span={12} className="image-wrapper">
