@@ -31,9 +31,10 @@
 
   .info-card-row {
     background: #ffffff;
-    padding: 4rem 0;
+    padding: 4rem 3rem;
 
     .info-card-wrapper {
+      min-height: 330px;
       border-radius: 22px;
 
       .ant-card-body {
