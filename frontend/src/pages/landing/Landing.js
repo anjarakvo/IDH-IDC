@@ -1,6 +1,6 @@
 import React from "react";
 import "./landing.scss";
-import { Row, Col, Space, Card } from "antd";
+import { Row, Col, Space, Card, Image } from "antd";
 import { CheckCircleOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
   LandingInfoEstimateIcon,
   LandingInfoDriversIcon,
 } from "../../lib/icon";
+import IncomeDriverFrameworkImg from "../../assets/images/income-driver-framework.jpeg";
 
 const Jumbotron = () => (
   <Row
@@ -76,37 +77,41 @@ const InformationCard = () => (
   </Row>
 );
 
+const IncomeDriverFramework = () => (
+  <Row
+    data-testid="income-driver-framework-wrapper"
+    justify="center"
+    className="income-driver-framework-wrapper"
+  >
+    <Col span={12}>
+      <Image src={IncomeDriverFrameworkImg} preview={false} width="100%" />
+    </Col>
+    <Col span={12} className="income-driver-framework-text-wrapper">
+      <h2 data-testid="income-driver-framework-left-text">
+        Income driver framework
+      </h2>
+      <p data-testid="income-driver-framework-right-text">
+        Understanding income isn&apos;t just about looking at the end number.
+        This tool follows a sector-agnostic approach to assess and support the
+        design of effective interventions to improve household incomes towards
+        the broader goal of closing living income gaps.
+      </p>
+      <Link
+        data-testid="button-learn-more-2"
+        className="button button-secondary"
+      >
+        Learn More
+      </Link>
+    </Col>
+  </Row>
+);
+
 const Landing = () => {
   return (
     <div className="landing-container" id="landing">
       <Jumbotron />
       <InformationCard />
-      <Row
-        data-testid="first-section-wrapper"
-        justify="center"
-        className="first-section-wrapper"
-      >
-        <Col span={12}>
-          <h2 data-testid="first-section-left-text">
-            Explore farmer Living incomes as well as Better income targets.
-          </h2>
-        </Col>
-        <Col span={12}>
-          <p data-testid="first-section-right-text">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus
-            erat tellus, luctus id leo id, laoreet rhoncus dui. Curabitur
-            mattis, leo quis lobortis eleifend, ligula lectus pellentesque nisl,
-            sit amet elementum purus felis vel tortor. Vestibulum lacinia
-            sollicitudin euismod. Morbi rhoncus vel nisl tristique sodales.
-          </p>
-          <Link
-            data-testid="button-learn-more-2"
-            className="button button-secondary"
-          >
-            Learn More
-          </Link>
-        </Col>
-      </Row>
+      <IncomeDriverFramework />
       <Row
         data-testid="second-section-wrapper"
         justify="center"

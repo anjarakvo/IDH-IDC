@@ -42,9 +42,15 @@ describe("Landing page", () => {
       </Router>
     );
 
-    expect(wrapper.getByTestId("first-section-wrapper")).toBeInTheDocument();
-    expect(wrapper.getByTestId("first-section-left-text")).toBeInTheDocument();
-    expect(wrapper.getByTestId("first-section-right-text")).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("income-driver-framework-wrapper")
+    ).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("income-driver-framework-left-text")
+    ).toBeInTheDocument();
+    expect(
+      wrapper.getByTestId("income-driver-framework-right-text")
+    ).toBeInTheDocument();
     expect(wrapper.getByTestId("button-learn-more-2")).toBeInTheDocument();
   });
 
