@@ -180,42 +180,42 @@ const TheFrameworkDrivers = () => {
       </Col>
       <div className="framework-drivers-calculation-wrapper">
         <Space align="center" size={[20, 20]}>
-          <Space direction="vertical">
+          <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper land-area-icon">
               <LandAreaIcon />
             </div>
             <div className="driver-label">Land area</div>
           </Space>
           <div className="math-symbol">x</div>
-          <Space direction="vertical">
+          <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper volume-icon">
               <VolumeIcon />
             </div>
             <div className="driver-label">Volume</div>
           </Space>
           <div className="math-symbol">x</div>
-          <Space direction="vertical">
+          <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper price-icon">
               <PriceIcon />
             </div>
             <div className="driver-label">Price</div>
           </Space>
           <div className="math-symbol">-</div>
-          <Space direction="vertical">
+          <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper cost-production-icon">
               <CostProductionIcon />
             </div>
             <div className="driver-label">Cost of production</div>
           </Space>
           <div className="math-symbol">+</div>
-          <Space direction="vertical">
+          <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper diversified-income-icon">
               <DiversifiedIncomeIcon />
             </div>
             <div className="driver-label">Diversified income</div>
           </Space>
           <div className="math-symbol">=</div>
-          <Space direction="vertical">
+          <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper household-income-icon">
               <HouseholdIncomeIcon />
             </div>
