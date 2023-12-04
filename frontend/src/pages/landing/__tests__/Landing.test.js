@@ -79,9 +79,9 @@ describe("Landing page", () => {
       </Router>
     );
 
-    expect(wrapper.getByTestId("third-section-wrapper")).toBeInTheDocument();
-    expect(wrapper.getByTestId("third-section-title")).toBeInTheDocument();
-    expect(wrapper.getByTestId("third-section-subtitle")).toBeInTheDocument();
+    expect(wrapper.getByTestId("explore-studies-wrapper")).toBeInTheDocument();
+    expect(wrapper.getByTestId("explore-studies-title")).toBeInTheDocument();
+    expect(wrapper.getByTestId("explore-studies-subtitle")).toBeInTheDocument();
     expect(wrapper.getByTestId("map")).toBeInTheDocument();
   });
 

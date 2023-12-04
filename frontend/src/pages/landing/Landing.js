@@ -16,7 +16,7 @@ import {
 } from "../../lib/icon";
 import IncomeDriverFrameworkImg from "../../assets/images/income-driver-framework.jpeg";
 import LoginRightImage from "../../assets/images/login-right-img.png";
-import { GetStarted } from "./components";
+import { GetStarted, ExploreStudies } from "./components";
 
 const Jumbotron = () => (
   <Row
@@ -291,21 +291,8 @@ const Landing = () => {
       <TheFrameworkDrivers />
       <CompareIncomeTarget />
       <GetStarted />
+      <ExploreStudies />
 
-      <Row
-        data-testid="third-section-wrapper"
-        justify="center"
-        className="third-section-wrapper"
-      >
-        <Col span={24} align="center">
-          <h2 data-testid="third-section-title">Where we work</h2>
-          <p data-testid="third-section-subtitle">
-            IDH Operates in differnt landscapes and sectors in over 40 countries
-            worldwide.
-          </p>
-          <div data-testid="map" className="map-container"></div>
-        </Col>
-      </Row>
       <Row
         data-testid="disclaimer-section-wrapper"
         justify="center"

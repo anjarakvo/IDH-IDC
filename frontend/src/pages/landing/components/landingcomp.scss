@@ -68,3 +68,38 @@
     }
   }
 }
+
+#explore-studies {
+  background-color: #ffffff;
+  width: 100%;
+  padding: 3rem $default-padding-size;
+
+  h2 {
+    color: #00403e;
+    text-align: center;
+    font-family: "RocGrotesk";
+    font-size: 30px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 52px;
+  }
+
+  p {
+    color: #005855;
+    text-align: center;
+    font-family: "TabletGothic";
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 32px;
+  }
+
+  .map-container {
+    background-image: url("/assets/images/explore-studies.svg") !important;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    height: 35rem;
+    margin-top: 50px;
+  }
+}
