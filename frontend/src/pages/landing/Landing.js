@@ -103,6 +103,7 @@ const IncomeDriverFramework = () => (
         design of effective interventions to improve household incomes towards
         the broader goal of closing living income gaps.
       </p>
+      <br />
       <Link
         data-testid="button-learn-more-2"
         className="button button-secondary"

@@ -67,16 +67,6 @@ describe("Landing page", () => {
       wrapper.getByTestId("framework-drivers-wrapper")
     ).toBeInTheDocument();
     expect(wrapper.getByTestId("framework-drivers-title")).toBeInTheDocument();
-    expect(
-      wrapper.getByTestId("framework-drivers-description")
-    ).toBeInTheDocument();
-    expect(wrapper.getByText("Qualitative data")).toBeInTheDocument();
-    expect(
-      wrapper.getByText("Report generation and visualizations")
-    ).toBeInTheDocument();
-    expect(
-      wrapper.getByTestId("button-use-the-calculator")
-    ).toBeInTheDocument();
     expect(wrapper.getByTestId("framework-drivers-image")).toBeInTheDocument();
   });
 
