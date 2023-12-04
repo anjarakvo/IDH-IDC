@@ -16,6 +16,7 @@ import {
 } from "../../lib/icon";
 import IncomeDriverFrameworkImg from "../../assets/images/income-driver-framework.jpeg";
 import LoginRightImage from "../../assets/images/login-right-img.png";
+import { GetStarted } from "./components";
 
 const Jumbotron = () => (
   <Row
@@ -31,7 +32,11 @@ const Jumbotron = () => (
         IDH is working to secure better income for smallholder farmers in
         several sectors and landscapes.
       </h3>
-      <Link data-testid="button-learn-more" className="button button-yellow">
+      <Link
+        to="/login"
+        data-testid="button-learn-more"
+        className="button button-yellow"
+      >
         Sign in to calculator
       </Link>
     </Col>
@@ -285,6 +290,7 @@ const Landing = () => {
       <IncomeDriverFramework />
       <TheFrameworkDrivers />
       <CompareIncomeTarget />
+      <GetStarted />
 
       <Row
         data-testid="third-section-wrapper"
