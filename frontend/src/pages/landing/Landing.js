@@ -16,32 +16,7 @@ import {
 } from "../../lib/icon";
 import IncomeDriverFrameworkImg from "../../assets/images/income-driver-framework.jpeg";
 import LoginRightImage from "../../assets/images/login-right-img.png";
-import { GetStarted, ExploreStudies, FooterDisclaimer } from "./components";
-
-const Jumbotron = () => (
-  <Row
-    data-testid="jumbotron-wrapper"
-    justify="center"
-    className="jumbotron-wrapper"
-  >
-    <Col span={24}>
-      <h1 data-testid="jumbotron-title">
-        Welcome to the income driver calculator
-      </h1>
-      <h3 data-testid="jumbotron-subtitle">
-        IDH is working to secure better income for smallholder farmers in
-        several sectors and landscapes.
-      </h3>
-      <Link
-        to="/login"
-        data-testid="button-learn-more"
-        className="button button-yellow"
-      >
-        Sign in to calculator
-      </Link>
-    </Col>
-  </Row>
-);
+import { Jumbotron, GetStarted, ExploreStudies, FooterDisclaimer } from "./components";
 
 const InformationCard = () => (
   <Row
