@@ -1,6 +1,6 @@
 import React from "react";
 import "./landingcomp.scss";
-import { Row, Col, Space, Image } from "antd";
+import { Row, Col, Space, Image, Divider } from "antd";
 import LogoWhite from "../../../assets/images/logo-white.png";
 
 const FooterDisclaimer = () => {
@@ -32,8 +32,9 @@ const FooterDisclaimer = () => {
         </p>
       </Col>
       <Col span={24} className="footer-wrapper">
-        <Space>
-          <Image src={LogoWhite} preview={false} width={127} />
+        <Divider style={{ borderColor: "#fff", opacity: 0.25 }} />
+        <Space align="center">
+          <Image src={LogoWhite} preview={false} width={100} />
           <div className="copyright-text">
             Copyright 2023 © IDH. All rights reserved - Created by Akvo.
           </div>
