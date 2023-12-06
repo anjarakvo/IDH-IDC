@@ -142,31 +142,6 @@
   .binning-input {
     width: 100% !important;
   }
-  .income-driver-table {
-    table {
-      border-radius: 5px;
-      th,
-      td {
-        font-family: "TabletGothic";
-        // background: $secondary-color;
-        border: none;
-      }
-      th {
-        border-bottom: solid $primary-color 1px;
-        &::before {
-          display: none;
-        }
-      }
-      tfoot.ant-table-summary {
-        // background: $secondary-color;
-        td {
-          // background: $secondary-color;
-          border-top: solid $primary-color 1px;
-          font-family: "TabletGothic";
-        }
-      }
-    }
-  }
 
   #income-driver-dashboard {
     .ant-tabs {
@@ -367,6 +342,33 @@
           font-weight: 400;
           line-height: 24px;
           padding-left: 36px;
+        }
+      }
+    }
+
+    .income-driver-table {
+      table {
+        border-radius: 5px;
+        th,
+        td {
+          font-family: "TabletGothic";
+          // background: $secondary-color;
+          border: none;
+          padding: 8px 20px;
+        }
+        th {
+          border-bottom: solid $primary-color 1px;
+          &::before {
+            display: none;
+          }
+        }
+        tfoot.ant-table-summary {
+          // background: $secondary-color;
+          td {
+            // background: $secondary-color;
+            border-top: solid $primary-color 1px;
+            font-family: "TabletGothic";
+          }
         }
       }
     }
