@@ -148,7 +148,7 @@
       th,
       td {
         font-family: "TabletGothic";
-        background: $secondary-color;
+        // background: $secondary-color;
         border: none;
       }
       th {
@@ -158,9 +158,9 @@
         }
       }
       tfoot.ant-table-summary {
-        background: $secondary-color;
+        // background: $secondary-color;
         td {
-          background: $secondary-color;
+          // background: $secondary-color;
           border-top: solid $primary-color 1px;
           font-family: "TabletGothic";
         }
@@ -312,6 +312,64 @@
     .ant-form-item {
       margin-bottom: 0px;
     }
+
+    .settings-wrapper {
+      h2 {
+        color: #00403e;
+        font-family: "RocGrotesk";
+        font-size: 28px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 48px;
+        letter-spacing: -0.8px;
+      }
+
+      p {
+        color: #000;
+        font-family: "TabletGothic";
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 28px; /* 175% */
+      }
+
+      .settings-info-wrapper {
+        .number {
+          color: #00625f;
+          text-align: center;
+          font-family: "RocGrotesk";
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 28px;
+          letter-spacing: -0.28px;
+
+          padding: 4px 8px;
+          background: $yellow-color;
+          border-radius: 100px 70px 100px 70px;
+        }
+
+        .title {
+          color: #00625f;
+          font-family: "RocGrotesk";
+          font-size: 16px;
+          font-style: normal;
+          font-weight: 700;
+          line-height: 28px;
+          letter-spacing: -0.336px;
+        }
+
+        .description {
+          color: #000;
+          font-family: "TabletGothic";
+          font-size: 14px;
+          font-style: normal;
+          font-weight: 400;
+          line-height: 24px;
+          padding-left: 36px;
+        }
+      }
+    }
   }
 
   .ant-steps-item-title {
@@ -375,6 +433,22 @@
 
     .ant-card-body {
       padding: 20px !important;
+    }
+
+    &.no-padding {
+      .ant-card-body {
+        padding: 10px 0 !important;
+      }
+    }
+
+    &.head-only {
+      .ant-card-body {
+        padding: 0 !important;
+      }
+
+      .ant-card-head {
+        border-radius: 20px;
+      }
     }
   }
 }

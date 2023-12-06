@@ -4,11 +4,11 @@ import {
   Col,
   Card,
   Divider,
-  Alert,
   Select,
   InputNumber,
   Table,
   Form,
+  Space,
 } from "antd";
 import { groupBy, map, isEmpty, uniq } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
@@ -37,6 +37,23 @@ const columns = [
     dataIndex: "feasible",
     key: "feasible",
     render: (value) => thousandFormatter(value),
+  },
+];
+
+const settingsForAnalysisContent = [
+  {
+    title: "Select segment",
+    description:
+      "Select segment for which you want to perform the sensitivity analysis.",
+  },
+  {
+    title: "The drivers",
+    description:
+      "Select three drivers you want to model. The other two drivers remain at their current level.",
+  },
+  {
+    title: "Overview",
+    description: "Use the driver overview on the right as reference.",
   },
 ];
 
@@ -409,111 +426,63 @@ const DashboardSensitivityAnalysis = ({
   );
 
   return (
-    <Row id="sensitivity-analysis">
-      <Col span={24}>
-        <Card className="income-driver-dashboard">
-          <Card.Grid
-            style={{
-              width: "100%",
-            }}
-            hoverable={false}
-          >
-            <Row
-              className="income-driver-content"
-              align="middle"
-              justify="space-evenly"
-              gutter={[8, 8]}
-            >
+    <Row id="sensitivity-analysis" gutter={[24, 24]}>
+      <Col span={24} className="income-driver-dashboard">
+        <Row gutter={[24, 24]} align="middle">
+          <Col span={10} className="settings-wrapper">
+            <h2>Settings for analysis</h2>
+            <p>
+              This graph shows you how the current and feasible income levels
+              relate to the income target. Each element represents the monetary
+              contribution resulting from these changes. The final bar showcases
+              the achievable income when all drivers are set to feasible values.
+            </p>
+            <Space direction="vertical" className="settings-info-wrapper">
+              {settingsForAnalysisContent.map((it, i) => (
+                <div key={i}>
+                  <Space direction="vertical">
+                    <Space align="center">
+                      <div className="number">{i + 1}</div>
+                      <div className="title">{it.title}</div>
+                    </Space>
+                    <div className="description">{it.description}</div>
+                  </Space>
+                </div>
+              ))}
+            </Space>
+          </Col>
+          <Col span={14}>
+            <Row gutter={[18, 18]}>
               <Col span={24}>
-                <h2>Settings for Analysis</h2>
+                <Card title="Select segment" className="info-card-wrapper">
+                  <Select
+                    style={{ width: "100%" }}
+                    onChange={handleOnChangeSegmentDropdown}
+                    options={dashboardData.map((segment) => ({
+                      value: segment.id,
+                      label: segment.name,
+                    }))}
+                    value={currentSegment}
+                  />
+                </Card>
               </Col>
-              <Col span={20}>
-                <b>Step 1</b>: Select segment for which you want to perform the
-                sensitivity analysis
-              </Col>
-              <Col span={4}>
-                <Select
-                  size="small"
-                  style={{ width: "100%", marginLeft: "10px" }}
-                  onChange={handleOnChangeSegmentDropdown}
-                  options={dashboardData.map((segment) => ({
-                    value: segment.id,
-                    label: segment.name,
-                  }))}
-                  value={currentSegment}
-                />
-              </Col>
-              <Divider />
               <Col span={24}>
-                <b>Step 2</b>: Select three drivers you want to model. The other
-                two drivers remain at their current level. Use the driver
-                overview on the right as reference.
-                <ul>
-                  <li>
-                    Binning driver: this driver will be evaluated on a maximum
-                    of three different values, named bins. For each bin, a
-                    seperate heatmap will be created to compare. They also
-                    reflect the different lines in the line chart.
-                  </li>
-                  <li>
-                    X-axis driver: this driver will be reflected on the x-axis
-                    of the line chart, and in the columns of the heatmaps. You
-                    need to set a minimum and maximum value.{" "}
-                  </li>
-                  <li>
-                    Y-axis driver: this driver will be reflected on the y-axis
-                    of the line chart, and in the rows of the heatmaps. You need
-                    to set a minimum and maximum value.
-                  </li>
-                </ul>
-              </Col>
-              <Divider />
-              <Row
-                className="income-driver-content"
-                align="middle"
-                justify="space-evenly"
-                gutter={[8, 8]}
-              >
-                <Col span={10}>
-                  <Form
-                    name="sensitivity-analysis"
-                    layout="horizontal"
-                    form={form}
-                    onValuesChange={onValuesChange}
-                    initialValues={binningData}
-                  >
-                    {dashboardData.map((segment, key) => (
-                      <BinningForm
-                        key={key}
-                        segment={segment}
-                        drivers={drivers.map((x) => {
-                          return {
-                            value: x.name,
-                            label: x.name,
-                            unitName: x.unitName,
-                          };
-                        })}
-                        selected={
-                          binningValues.find((b) => b.id === segment.id)
-                            ?.selected
-                        }
-                        hidden={currentSegment !== segment.id}
-                        enableEditCase={enableEditCase}
-                      />
-                    ))}
-                  </Form>
-                </Col>
-                <Col span={10}>
-                  {currentSegment ? (
-                    <Table
-                      size="small"
-                      className="income-driver-table"
-                      dataSource={dataSource.filter(
-                        (d) => d.name !== "Income Target"
-                      )}
-                      columns={columns}
-                      pagination={false}
-                      summary={() => (
+                <Card
+                  title="The breakdown of drivers"
+                  className="info-card-wrapper no-padding"
+                >
+                  <Table
+                    size="small"
+                    className="income-driver-table"
+                    dataSource={
+                      currentSegment
+                        ? dataSource.filter((d) => d.name !== "Income Target")
+                        : []
+                    }
+                    columns={columns}
+                    pagination={false}
+                    summary={() =>
+                      currentSegment ? (
                         <Table.Summary>
                           <Table.Summary.Row>
                             <Table.Summary.Cell index={0}>
@@ -528,27 +497,65 @@ const DashboardSensitivityAnalysis = ({
                             <Table.Summary.Cell index={2}></Table.Summary.Cell>
                           </Table.Summary.Row>
                         </Table.Summary>
-                      )}
-                    />
-                  ) : null}
-                </Col>
-                <Divider />
-                <Col span={24}>
-                  {dashboardData.map((segment) =>
-                    currentSegment === segment.id ? (
-                      <ChartBinningHeatmap
-                        key={segment.id}
-                        data={binningData}
-                        segment={segment}
-                        origin={dataSource}
-                      />
-                    ) : null
-                  )}
-                </Col>
-              </Row>
+                      ) : null
+                    }
+                  />
+                </Card>
+              </Col>
             </Row>
-          </Card.Grid>
-        </Card>
+          </Col>
+        </Row>
+      </Col>
+
+      <Col span={24} className="income-driver-dashboard">
+        <Row
+          className="income-driver-content"
+          align="middle"
+          justify="space-evenly"
+          gutter={[8, 8]}
+        >
+          <Col span={24}>
+            <Form
+              name="sensitivity-analysis"
+              layout="horizontal"
+              form={form}
+              onValuesChange={onValuesChange}
+              initialValues={binningData}
+            >
+              {dashboardData.map((segment, key) => (
+                <BinningForm
+                  key={key}
+                  segment={segment}
+                  drivers={drivers.map((x) => {
+                    return {
+                      value: x.name,
+                      label: x.name,
+                      unitName: x.unitName,
+                    };
+                  })}
+                  selected={
+                    binningValues.find((b) => b.id === segment.id)?.selected
+                  }
+                  hidden={currentSegment !== segment.id}
+                  enableEditCase={enableEditCase}
+                />
+              ))}
+            </Form>
+          </Col>
+        </Row>
+      </Col>
+
+      <Col span={24} className="income-driver-dashboard">
+        {dashboardData.map((segment) =>
+          currentSegment === segment.id ? (
+            <ChartBinningHeatmap
+              key={segment.id}
+              data={binningData}
+              segment={segment}
+              origin={dataSource}
+            />
+          ) : null
+        )}
       </Col>
     </Row>
   );
