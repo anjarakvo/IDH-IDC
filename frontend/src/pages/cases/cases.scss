@@ -39,11 +39,12 @@
         border: 1px solid #e9e9e9;
 
         .ant-card-head {
+          padding: 10px 20px;
           background: $primary-color;
           color: #fff;
 
           .ant-card-head-title {
-            font-size: 0.95rem;
+            font-size: 0.85rem;
           }
 
           .ant-switch {
@@ -153,7 +154,7 @@
           h2 {
             &.section-title {
               // background: #e6f7ff;
-              font-size: 0.95rem;
+              font-size: 0.85rem;
               margin: -10px -24px 0 -24px;
               padding: 10px 24px;
               position: relative;
@@ -424,12 +425,13 @@
     border: 1px solid #e9e9e9;
 
     .ant-card-head {
+      padding: 10px 20px;
       background: $primary-color;
       color: #fff;
     }
 
     .ant-card-head-title {
-      font-size: 0.95rem;
+      font-size: 0.85rem !important;
     }
 
     .ant-card-body {
@@ -454,12 +456,13 @@
     border: 1px solid #e9e9e9;
 
     .ant-card-head {
+      padding: 10px 20px;
       background: $primary-color;
       color: #fff;
     }
 
     .ant-card-head-title {
-      font-size: 0.95rem;
+      font-size: 0.85rem !important;
     }
 
     .ant-card-body {
