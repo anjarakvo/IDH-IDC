@@ -34,7 +34,7 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
     cacheBust: false,
     backgroundColor: "#fff",
     style: {
-      padding: 32,
+      padding: 50,
       width: "100%",
     },
   })

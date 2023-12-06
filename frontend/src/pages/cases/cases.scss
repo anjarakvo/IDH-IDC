@@ -352,6 +352,12 @@
     .ant-card-body {
       padding: 0 20px !important;
     }
+
+    &.has-segments-button {
+      .ant-card-body {
+        padding: 20px !important;
+      }
+    }
   }
 
   .info-card-wrapper {
