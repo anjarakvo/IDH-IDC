@@ -348,7 +348,8 @@
 
     .income-driver-table {
       table {
-        border-radius: 5px;
+        border-radius: 20px;
+
         th,
         td {
           font-family: "TabletGothic";
@@ -368,8 +369,30 @@
             // background: $secondary-color;
             border-top: solid $primary-color 1px;
             font-family: "TabletGothic";
+
+            &:first-child {
+              border-bottom-left-radius: 20px;
+            }
+            &:last-child {
+              border-bottom-right-radius: 20px;
+            }
           }
         }
+      }
+    }
+
+    .binning-chart-info-wrapper {
+      color: #000;
+      padding-top: 20px;
+
+      .segment {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .label {
+        font-size: 18px;
+        font-weight: 700;
       }
     }
   }
@@ -411,6 +434,12 @@
 
     .ant-card-body {
       padding: 0 20px !important;
+    }
+
+    &.with-padding {
+      .ant-card-body {
+        padding: 20px !important;
+      }
     }
 
     &.has-segments-button {

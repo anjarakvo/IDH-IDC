@@ -2,7 +2,7 @@ import React, { useMemo, useState, useRef } from "react";
 import Chart from "../../../components/chart";
 import { range } from "lodash";
 import { getFunctionDefaultValue } from "../components";
-import { Row, Col, Space } from "antd";
+import { Row, Col, Space, Card } from "antd";
 import { SaveAsImageButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
@@ -89,7 +89,7 @@ const getOptions = ({
       },
     },
     grid: {
-      height: "50%",
+      // height: "50%",
       top: "10%",
     },
     xAxis: {
@@ -291,61 +291,76 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
     };
   }, [data, segment, origin]);
 
-  return (
-    <div ref={elSensitivityAnalysis}>
-      {binningData.binCharts?.length ? (
-        <Space direction="vertical">
-          <div>
-            <b>{segment.name}</b>
-          </div>
-          <div>{label}</div>
-          <Row gutter={[8, 16]} style={{ minHeight: 95 }}>
-            <Col span={6}>
-              <SaveAsImageButton
-                elementRef={elSensitivityAnalysis}
-                filename={label}
-              />
-            </Col>
-            <Col
-              span={18}
-              align="end"
-              style={{ position: "absolute", right: 24 }}
-            >
-              <Space direction="vertical">
-                {legends.map((l, li) => (
-                  <Space key={li}>
-                    <div
-                      style={{
-                        backgroundColor: l.color,
-                        width: 16,
-                        height: 16,
-                      }}
-                    />
-                    <div>{l.text}</div>
-                  </Space>
-                ))}
+  const rowTitle = binningData.binCharts?.length ? (
+    <Space direction="vertical" className="binning-chart-info-wrapper">
+      <div className="segment">
+        <b>{segment.name}</b>
+      </div>
+      <div className="label">{label}</div>
+      <Row gutter={[8, 16]} style={{ minHeight: 95 }}>
+        <Col span={24}>
+          <SaveAsImageButton
+            elementRef={elSensitivityAnalysis}
+            filename={label}
+          />
+        </Col>
+        <Col span={24}>
+          <Space direction="vertical">
+            {legends.map((l, li) => (
+              <Space key={li}>
+                <div
+                  style={{
+                    backgroundColor: l.color,
+                    width: 16,
+                    height: 16,
+                  }}
+                />
+                <div>{l.text}</div>
               </Space>
-            </Col>
-          </Row>
-        </Space>
-      ) : (
-        ""
-      )}
-      {binningData.binCharts.map((b, key) => (
-        <div key={key}>
-          <h3>
-            Income Levels for {b.binName} : {b.binValue.toFixed(2)}{" "}
-            <small>({b.unitName})</small>
-          </h3>
+            ))}
+          </Space>
+        </Col>
+      </Row>
+    </Space>
+  ) : (
+    ""
+  );
+
+  const renderHeatChart = () => {
+    const charts = binningData.binCharts.map((b, key) => {
+      const oddKey = (key + 1) % 2 > 0;
+      const spanChart = oddKey ? 16 : 8;
+      const chartTitle = (
+        <>
+          Income Levels for {b.binName} : {b.binValue.toFixed(2)}{" "}
+          <small>({b.unitName})</small>
+        </>
+      );
+      const chart = (
+        <Card title={chartTitle} className="chart-card-wrapper with-padding">
           <Chart
             height={350}
             wrapper={false}
             type="BAR"
             override={getOptions({ ...binningData, ...b, origin: origin })}
           />
-        </div>
-      ))}
-    </div>
-  );
+        </Card>
+      );
+      const leftContent = oddKey ? rowTitle : chart;
+      const rightContent = oddKey ? chart : rowTitle;
+      return (
+        <Col span={24} key={key}>
+          <Row gutter={[24, 24]}>
+            <Col span={24 - spanChart}>{leftContent}</Col>
+            <Col span={spanChart}>{rightContent}</Col>
+          </Row>
+        </Col>
+      );
+    });
+    return <Row gutter={[24, 48]}>{charts}</Row>;
+  };
+
+  return <div ref={elSensitivityAnalysis}>{renderHeatChart()}</div>;
 };
+
 export default ChartBinningHeatmap;
