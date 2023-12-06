@@ -1,15 +1,5 @@
 import React, { useState, useMemo, useEffect } from "react";
-import {
-  Row,
-  Col,
-  Card,
-  Divider,
-  Select,
-  InputNumber,
-  Table,
-  Form,
-  Space,
-} from "antd";
+import { Row, Col, Card, Select, InputNumber, Table, Form, Space } from "antd";
 import { groupBy, map, isEmpty, uniq } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
 import { InputNumberThousandFormatter } from ".";
@@ -110,135 +100,174 @@ const BinningForm = ({
   }, [selected, drivers]);
 
   return (
-    <Row gutter={[8, 8]} style={{ display: hidden ? "none" : "" }}>
-      <Col span={12}>
-        <b>
-          Binning driver{" "}
-          <small>({selectedDriverUnit["binning-driver-name"]?.unitName})</small>{" "}
-          :
-        </b>
+    <Row gutter={[16, 16]} style={{ display: hidden ? "none" : "" }}>
+      <Col span={8}>
+        <Card
+          title={
+            <b>
+              Binning Driver{" "}
+              <small>
+                ({selectedDriverUnit["binning-driver-name"]?.unitName})
+              </small>
+            </b>
+          }
+          className="info-card-wrapper"
+        >
+          <Form.Item name={`${segment.id}_binning-driver-name`}>
+            <Select
+              className="binning-input"
+              options={options["binning-driver-name"]}
+              allowClear
+              disabled={!enableEditCase}
+              placeholder="Select driver"
+            />
+          </Form.Item>
+          <br />
+          <Row gutter={[8, 8]}>
+            <Col span={24}>
+              <div>Bin values</div>
+            </Col>
+            <Col span={24}>
+              <Row gutter={[8, 8]} align="middle">
+                <Col span={8}>
+                  <Form.Item name={`${segment.id}_binning-value-1`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item name={`${segment.id}_binning-value-2`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+                <Col span={8}>
+                  <Form.Item name={`${segment.id}_binning-value-3`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
       </Col>
-      <Col span={12}>
-        <Form.Item name={`${segment.id}_binning-driver-name`}>
-          <Select
-            size="small"
-            className="binning-input"
-            options={options["binning-driver-name"]}
-            allowClear
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
+      <Col span={8}>
+        <Card
+          title={
+            <b>
+              X-Axis Driver{" "}
+              <small>({selectedDriverUnit["x-axis-driver"]?.unitName})</small>
+            </b>
+          }
+          className="info-card-wrapper"
+        >
+          <Form.Item name={`${segment.id}_x-axis-driver`}>
+            <Select
+              className="binning-input"
+              options={options["x-axis-driver"]}
+              allowClear
+              disabled={!enableEditCase}
+              placeholder="Select driver"
+            />
+          </Form.Item>
+          <br />
+          <Row gutter={[8, 8]} align="middle">
+            <Col span={12}>
+              <Row gutter={[8, 8]}>
+                <Col span={24}>
+                  <div>Minimum Value</div>
+                </Col>
+                <Col span={24}>
+                  <Form.Item name={`${segment.id}_x-axis-min-value`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
+            <Col span={12}>
+              <Row gutter={[8, 8]}>
+                <Col span={24}>
+                  <div>Maximum Value</div>
+                </Col>
+                <Col span={24}>
+                  <Form.Item name={`${segment.id}_x-axis-max-value`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
       </Col>
-      <Col span={12}>Bin Values:</Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_binning-value-1`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_binning-value-2`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_binning-value-3`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Divider />
-      <Col span={12}>
-        <b>
-          X-Axis Driver{" "}
-          <small>({selectedDriverUnit["x-axis-driver"]?.unitName})</small> :
-        </b>
-      </Col>
-      <Col span={12}>
-        <Form.Item name={`${segment.id}_x-axis-driver`}>
-          <Select
-            size="small"
-            className="binning-input"
-            options={options["x-axis-driver"]}
-            allowClear
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={12}>Minimum Value:</Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_x-axis-min-value`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={12}>Maximum Value</Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_x-axis-max-value`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Divider />
-      <Col span={12}>
-        <b>
-          Y-Axis Driver{" "}
-          <small>({selectedDriverUnit["y-axis-driver"]?.unitName})</small> :
-        </b>
-      </Col>
-      <Col span={12}>
-        <Form.Item name={`${segment.id}_y-axis-driver`}>
-          <Select
-            size="small"
-            className="binning-input"
-            options={options["y-axis-driver"]}
-            allowClear
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={12}>Minimum Value:</Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_y-axis-min-value`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
-      </Col>
-      <Col span={12}>Maximum Value</Col>
-      <Col span={4}>
-        <Form.Item name={`${segment.id}_y-axis-max-value`}>
-          <InputNumber
-            size="small"
-            className="binning-input"
-            {...InputNumberThousandFormatter}
-            disabled={!enableEditCase}
-          />
-        </Form.Item>
+      <Col span={8}>
+        <Card
+          title={
+            <b>
+              Y-Axis Driver{" "}
+              <small>({selectedDriverUnit["y-axis-driver"]?.unitName})</small>
+            </b>
+          }
+          className="info-card-wrapper"
+        >
+          <Form.Item name={`${segment.id}_y-axis-driver`}>
+            <Select
+              className="binning-input"
+              options={options["y-axis-driver"]}
+              allowClear
+              disabled={!enableEditCase}
+              placeholder="Select driver"
+            />
+          </Form.Item>
+          <br />
+          <Row gutter={[8, 8]} align="middle">
+            <Col span={12}>
+              <Row gutter={[8, 8]}>
+                <Col span={24}>Minimum Value</Col>
+                <Col span={24}>
+                  <Form.Item name={`${segment.id}_y-axis-min-value`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
+            <Col span={12}>
+              <Row gutter={[8, 8]}>
+                <Col span={24}>Maximum Value</Col>
+                <Col span={24}>
+                  <Form.Item name={`${segment.id}_y-axis-max-value`}>
+                    <InputNumber
+                      className="binning-input"
+                      {...InputNumberThousandFormatter}
+                      disabled={!enableEditCase}
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Card>
       </Col>
     </Row>
   );
