@@ -74,88 +74,6 @@
       }
     }
 
-    .card-subtitle {
-      padding: 10px 0;
-    }
-    .ant-card-body {
-      padding-bottom: 0px;
-    }
-    .timeline-container {
-      padding: 2rem 5.5rem;
-      margin-left: -$default-padding-size;
-      position: fixed;
-      // top: 171px;
-      top: 129px;
-      width: 100%;
-      z-index: 100;
-      background-color: $bg-color-grey;
-    }
-  }
-  h3 {
-    margin: 0px -24px 10px;
-    padding: 0px 24px 10px;
-    font-weight: normal;
-  }
-  h4 {
-    margin: 10px 0px;
-  }
-  .ant-timeline-item {
-    cursor: pointer;
-  }
-
-  .ant-tabs {
-    border-radius: 20px;
-    background: #fff;
-    padding: 10px 0 20px 0;
-  }
-
-  .ant-tabs-nav-wrap {
-    border-radius: 20px;
-    background: #fff;
-    padding: 10px 1.5rem 0px;
-    .ant-tabs-tab-btn {
-      font-family: "TabletGothicBold";
-      font-size: 1rem;
-      background: #fff;
-      text-shadow: none;
-    }
-  }
-
-  .anticon {
-    &.finished-dot {
-      // position: absolute;
-      font-size: 20px;
-      width: 20px;
-      height: 20px;
-      left: 1px;
-      bottom: -4px;
-      color: #26605f;
-    }
-  }
-  .current-feasible-field {
-    margin-bottom: 0;
-    padding-bottom: 0;
-  }
-  .data-fields-title {
-    background: $primary-color;
-  }
-  .binning-input {
-    width: 100% !important;
-  }
-
-  #income-driver-dashboard {
-    .ant-tabs {
-      background: none;
-    }
-    .ant-tabs-nav-wrap {
-      background: none !important;
-      padding: 0 !important;
-      border-radius: 0 !important;
-    }
-    .ant-tabs-tab-btn {
-      background: none !important;
-    }
-
     .income-driver-dashboard {
       margin-bottom: 1rem;
       .information-box {
@@ -280,6 +198,88 @@
           color: #666;
         }
       }
+    }
+
+    .card-subtitle {
+      padding: 10px 0;
+    }
+    .ant-card-body {
+      padding-bottom: 0px;
+    }
+    .timeline-container {
+      padding: 2rem 5.5rem;
+      margin-left: -$default-padding-size;
+      position: fixed;
+      // top: 171px;
+      top: 129px;
+      width: 100%;
+      z-index: 100;
+      background-color: $bg-color-grey;
+    }
+  }
+  h3 {
+    margin: 0px -24px 10px;
+    padding: 0px 24px 10px;
+    font-weight: normal;
+  }
+  h4 {
+    margin: 10px 0px;
+  }
+  .ant-timeline-item {
+    cursor: pointer;
+  }
+
+  .ant-tabs {
+    border-radius: 20px;
+    background: #fff;
+    padding: 10px 0 20px 0;
+  }
+
+  .ant-tabs-nav-wrap {
+    border-radius: 20px;
+    background: #fff;
+    padding: 10px 1.5rem 0px;
+    .ant-tabs-tab-btn {
+      font-family: "TabletGothicBold";
+      font-size: 1rem;
+      background: #fff;
+      text-shadow: none;
+    }
+  }
+
+  .anticon {
+    &.finished-dot {
+      // position: absolute;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      left: 1px;
+      bottom: -4px;
+      color: #26605f;
+    }
+  }
+  .current-feasible-field {
+    margin-bottom: 0;
+    padding-bottom: 0;
+  }
+  .data-fields-title {
+    background: $primary-color;
+  }
+  .binning-input {
+    width: 100% !important;
+  }
+
+  #income-driver-dashboard {
+    .ant-tabs {
+      background: none;
+    }
+    .ant-tabs-nav-wrap {
+      background: none !important;
+      padding: 0 !important;
+      border-radius: 0 !important;
+    }
+    .ant-tabs-tab-btn {
+      background: none !important;
     }
   }
 
