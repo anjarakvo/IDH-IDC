@@ -42,6 +42,7 @@
           padding: 10px 20px;
           background: $primary-color;
           color: #fff;
+          min-height: 42px;
 
           .ant-card-head-title {
             font-size: 0.9rem;
@@ -101,6 +102,7 @@
           background: $primary-color;
           color: #fff;
           padding: 10px 20px 0 20px;
+          min-height: 42px;
         }
       }
       .ant-card-head {
@@ -428,6 +430,7 @@
       padding: 10px 20px;
       background: $primary-color;
       color: #fff;
+      min-height: 42px;
     }
 
     .ant-card-head-title {
@@ -459,6 +462,7 @@
       padding: 10px 20px;
       background: $primary-color;
       color: #fff;
+      min-height: 42px;
     }
 
     .ant-card-head-title {
