@@ -411,13 +411,6 @@ const DashboardSensitivityAnalysis = ({
   return (
     <Row id="sensitivity-analysis">
       <Col span={24}>
-        <Alert
-          message="On this page you can explore how different combinations of drivers lead to different income levels. Whether it's optimizing land use, pricing strategies, or diversifying income sources, this page empowers you to explore various scenarios and find the best path towards improving farmer household income."
-          type="success"
-          className="alert-box"
-        />
-      </Col>
-      <Col span={24}>
         <Card className="income-driver-dashboard">
           <Card.Grid
             style={{
