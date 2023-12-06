@@ -226,7 +226,10 @@ const legends = [
 
 const ChartBinningHeatmap = ({ segment, data, origin }) => {
   const [label, setLabel] = useState(null);
-  const elSensitivityAnalysis = useRef(null);
+  const elBinningChart1 = useRef(null);
+  const elBinningChart2 = useRef(null);
+  const elBinningChart3 = useRef(null);
+  const refs = [elBinningChart1, elBinningChart2, elBinningChart3];
 
   const binningData = useMemo(() => {
     if (!segment?.id) {
@@ -299,12 +302,6 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
       <div className="label">{label}</div>
       <Row gutter={[8, 16]} style={{ minHeight: 95 }}>
         <Col span={24}>
-          <SaveAsImageButton
-            elementRef={elSensitivityAnalysis}
-            filename={label}
-          />
-        </Col>
-        <Col span={24}>
           <Space direction="vertical">
             {legends.map((l, li) => (
               <Space key={li}>
@@ -330,6 +327,9 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
     const charts = binningData.binCharts.map((b, key) => {
       const oddKey = (key + 1) % 2 > 0;
       const spanChart = oddKey ? 16 : 8;
+      const filename = `Income Levels for ${b.binName} : ${b.binValue.toFixed(
+        2
+      )}`;
       const chartTitle = (
         <>
           Income Levels for {b.binName} : {b.binValue.toFixed(2)}{" "}
@@ -337,7 +337,17 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
         </>
       );
       const chart = (
-        <Card title={chartTitle} className="chart-card-wrapper with-padding">
+        <Card
+          title={chartTitle}
+          className="chart-card-wrapper with-padding"
+          extra={
+            <SaveAsImageButton
+              elementRef={refs[key]}
+              filename={filename}
+              type="ghost-white"
+            />
+          }
+        >
           <Chart
             height={350}
             wrapper={false}
@@ -350,7 +360,7 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
       const rightContent = oddKey ? chart : rowTitle;
       return (
         <Col span={24} key={key}>
-          <Row gutter={[24, 24]}>
+          <Row gutter={[24, 24]} ref={refs[key]}>
             <Col span={24 - spanChart}>{leftContent}</Col>
             <Col span={spanChart}>{rightContent}</Col>
           </Row>
@@ -360,7 +370,7 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
     return <Row gutter={[24, 48]}>{charts}</Row>;
   };
 
-  return <div ref={elSensitivityAnalysis}>{renderHeatChart()}</div>;
+  return <div>{renderHeatChart()}</div>;
 };
 
 export default ChartBinningHeatmap;

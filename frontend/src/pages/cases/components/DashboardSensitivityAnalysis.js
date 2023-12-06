@@ -1,9 +1,10 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Row, Col, Card, Select, InputNumber, Table, Form, Space } from "antd";
 import { groupBy, map, isEmpty, uniq } from "lodash";
 import { ChartBinningHeatmap } from "../visualizations";
 import { InputNumberThousandFormatter } from ".";
 import { thousandFormatter } from "../../../components/chart/options/common";
+import { SaveAsImageButton } from "../../../components/utils";
 
 const columns = [
   {
@@ -282,6 +283,7 @@ const DashboardSensitivityAnalysis = ({
 }) => {
   const [currentSegment, setCurrentSegment] = useState(null);
   const [form] = Form.useForm();
+  const elDriversTable = useRef(null);
 
   useEffect(() => {
     if (!isEmpty(binningData)) {
@@ -495,10 +497,17 @@ const DashboardSensitivityAnalysis = ({
                   />
                 </Card>
               </Col>
-              <Col span={24}>
+              <Col span={24} ref={elDriversTable}>
                 <Card
                   title="The breakdown of drivers"
                   className="info-card-wrapper no-padding"
+                  extra={
+                    <SaveAsImageButton
+                      elementRef={elDriversTable}
+                      filename={"The breakdown of drivers"}
+                      type="ghost-white"
+                    />
+                  }
                 >
                   <Table
                     size="small"
