@@ -24,6 +24,9 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
     }, 100);
     return;
   }
+  // add custom padding
+  elementRef.current.style.padding = "32px";
+  //
   toPng(elementRef.current, {
     filter: (node) => {
       const exclusionClasses = ["save-as-image-btn"];
@@ -34,7 +37,7 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
     cacheBust: false,
     backgroundColor: "#fff",
     style: {
-      padding: 50,
+      padding: 32,
       width: "100%",
     },
   })
