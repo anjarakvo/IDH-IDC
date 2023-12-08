@@ -161,6 +161,13 @@ const IncomeDriverTarget = ({
           // data represent LI Benchmark value
           const { data } = res;
           setBenchmark(data);
+          // set hh adult and children default value
+          form.setFieldValue("household_adult", data.nr_adults);
+          form.setFieldValue(
+            "household_children",
+            data.household_size - data.nr_adults
+          );
+          //
           const targetHH = data.household_size;
           const targetValue =
             data.value?.[currentCase.currency.toLowerCase()] || data.value.lcu;
