@@ -1,7 +1,10 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useRef } from "react";
 import { thousandFormatter } from "../../../components/chart/options/common";
 import { getFunctionDefaultValue } from "../components";
 import { range } from "lodash";
+import { Row, Col, Card, Space } from "antd";
+import Chart from "../../../components/chart";
+import { SaveAsImageButton } from "../../../components/utils";
 
 /**
  * NOTE
@@ -21,10 +24,10 @@ const getOptions = ({
   yAxis = { name: "", min: 0, max: 0 },
   answers = [],
   binCharts = [],
-  min = 0,
-  max = 0,
   diversified = 0,
   target = 0,
+  // min = 0,
+  // max = 0,
   // origin = [],
 }) => {
   const xAxisData = [
@@ -33,24 +36,16 @@ const getOptions = ({
     ),
     xAxis.max.toFixed(2),
   ];
-  const yAxisData = [
-    ...range(yAxis.min, yAxis.max, (yAxis.max - yAxis.min) / 4).map((x) =>
-      x.toFixed(2)
-    ),
-    yAxis.max.toFixed(2),
-  ];
 
-  const yAxisId =
-    yAxis.name === "Diversified"
-      ? 9002
-      : answers.find((a) => a.name === yAxis.name)?.qid;
+  const yAxisId = yAxis.name.includes("Diversified")
+    ? 9002
+    : answers.find((a) => a.name === yAxis.name)?.qid;
   const yAxisDefaultValue = { default_value: yAxisCalculation[`#${yAxisId}`] };
 
   const series = binCharts.map((b) => {
-    const bId =
-      b.binName === "Diversified"
-        ? 9002
-        : answers.find((a) => a.name === b.binName)?.qid;
+    const bId = b.binName.includes("Diversified")
+      ? 9002
+      : answers.find((a) => a.name === b.binName)?.qid;
     const dt = xAxisData
       .map((h) => {
         let newValues = answers
@@ -80,7 +75,6 @@ const getOptions = ({
             value: b.binValue,
           },
         ];
-        console.log(newValues);
         const newYAxisValue = getFunctionDefaultValue(
           yAxisDefaultValue,
           "c",
@@ -93,6 +87,7 @@ const getOptions = ({
       type: "line",
       smooth: true,
       stack: yAxis.name,
+      name: `${b.binName}: ${b.binValue}`,
       data: dt,
       label: {
         show: true,
@@ -107,23 +102,20 @@ const getOptions = ({
       },
     };
   });
+  const legends = binCharts.map((b) => `${b.binName}: ${b.binValue}`);
 
   const options = {
+    legend: {
+      data: legends,
+      bottom: 0,
+      left: 0,
+    },
     tooltip: {
       position: "top",
-      formatter: (params) => {
-        const value = params.value[2];
-        const x = params.value[0];
-        const y = params.value[1];
-        let text = `<span style="color: #000;">${value}</span><br>`;
-        text += `<span>${xAxis.name}: ${x}</span><br>`;
-        text += `<span>${yAxis.name}: ${y}</span><br>`;
-        return text;
-      },
     },
     grid: {
-      // height: "50%",
       top: "10%",
+      bottom: "30%",
     },
     xAxis: {
       name: `${xAxis.name} (${xAxis.unitName})`,
@@ -131,33 +123,16 @@ const getOptions = ({
       nameGap: 40,
       type: "category",
       data: xAxisData,
-      splitArea: {
-        show: true,
-      },
       axisLabel: {
         formatter: (e) => thousandFormatter(e),
       },
     },
     yAxis: {
       name: `${yAxis.name} (${yAxis?.unitName})`,
-      type: "category",
-      data: yAxisData,
-      splitArea: {
-        show: true,
-      },
+      type: "value",
       axisLabel: {
         formatter: (e) => thousandFormatter(e),
       },
-    },
-    visualMap: {
-      min: min,
-      max: max,
-      calculable: true,
-      orient: "horizontal",
-      left: "center",
-      show: false,
-      bottom: "15%",
-      color: ["#007800", "#ffffff"],
     },
     series: series,
   };
@@ -165,6 +140,8 @@ const getOptions = ({
 };
 
 const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
+  const elLineChart = useRef(null);
+
   const binningData = useMemo(() => {
     if (!segment?.id) {
       return {};
@@ -222,10 +199,41 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
       target: segment.target,
     };
   }, [data, segment, origin]);
-  console.log(binningData);
-  console.log("OPTIONS", getOptions({ ...binningData, origin: origin }));
 
-  return <div>ChartSensitivityAnalysisLine</div>;
+  return (
+    <Col span={24}>
+      <Row gutter={[24, 24]} ref={elLineChart}>
+        <Col span={8}>
+          <Space direction="vertical" className="binning-chart-info-wrapper">
+            <div className="segment">
+              <b>{segment.name}</b>
+            </div>
+            <div className="label">Lorem ipsum sit dolor amet</div>
+          </Space>
+        </Col>
+        <Col span={16}>
+          <Card
+            title="Title"
+            className="chart-card-wrapper with-padding"
+            extra={
+              <SaveAsImageButton
+                elementRef={elLineChart}
+                filename="Title"
+                type="ghost-white"
+              />
+            }
+          >
+            <Chart
+              height={350}
+              wrapper={false}
+              type="BAR"
+              override={getOptions({ ...binningData, origin: origin })}
+            />
+          </Card>
+        </Col>
+      </Row>
+    </Col>
+  );
 };
 
 export default ChartSensitivityAnalysisLine;
