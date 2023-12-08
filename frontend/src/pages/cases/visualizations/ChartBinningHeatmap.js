@@ -91,6 +91,7 @@ const getOptions = ({
     grid: {
       // height: "50%",
       top: "10%",
+      left: "12%",
     },
     xAxis: {
       name: `${xAxis.name} (${xAxis.unitName})`,
