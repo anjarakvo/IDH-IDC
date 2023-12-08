@@ -162,13 +162,12 @@ const IncomeDriverTarget = ({
           const { data } = res;
           setBenchmark(data);
           // set hh adult and children default value
-          form.setFieldValue("household_adult", data.nr_adults);
-          form.setFieldValue(
-            "household_children",
-            data.household_size - data.nr_adults
-          );
+          form.setFieldsValue({
+            household_adult: data.nr_adults,
+            household_children: data.household_size - data.nr_adults,
+          });
           //
-          const targetHH = data.household_size;
+          const targetHH = data.household_equiv;
           const targetValue =
             data.value?.[currentCase.currency.toLowerCase()] || data.value.lcu;
           // with CPI calculation
@@ -181,6 +180,8 @@ const IncomeDriverTarget = ({
               ...regionData,
               target: LITarget,
               benchmark: data,
+              adult: data.nr_adults,
+              child: data.household_size - data.nr_adults,
             });
           } else {
             const LITarget = (HHSize / targetHH) * targetValue;
@@ -189,6 +190,8 @@ const IncomeDriverTarget = ({
               ...regionData,
               target: LITarget,
               benchmark: data,
+              adult: data.nr_adults,
+              child: data.household_size - data.nr_adults,
             });
           }
         });
