@@ -89,11 +89,11 @@ const IncomeDriverTarget = ({
       if (benchmark?.cpi_factor) {
         const caseYearLIB = targetValue * (1 - benchmark.cpi_factor);
         const LITarget =
-          (householdSize / benchmark.household_size) * caseYearLIB;
+          (householdSize / benchmark.household_equiv) * caseYearLIB;
         setIncomeTarget(LITarget);
       } else {
         const LITarget =
-          (householdSize / benchmark.household_size) * targetValue;
+          (householdSize / benchmark.household_equiv) * targetValue;
         setIncomeTarget(LITarget);
       }
     }
