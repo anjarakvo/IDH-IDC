@@ -100,6 +100,7 @@ export const getFunctionDefaultValue = (question, prefix, values = []) => {
     return acc;
   }, []);
   const finalFunction = getFunction.join("");
+  console.log(finalFunction);
   return eval(finalFunction);
 };
 
