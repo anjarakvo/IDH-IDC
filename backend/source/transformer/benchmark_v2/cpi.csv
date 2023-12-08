@@ -37,8 +37,6 @@ id,country,country_id,year,value
 37,Chad,38.0,2012,98.1273475322637
 38,Chile,39.0,2012,82.5158333333333
 39,"China, P.R.: Hong Kong",40.0,2012,81.0666666666667
-40,"China, P.R.: Macao",40.0,2012,79.325
-41,"China, P.R.: Mainland",40.0,2012,84.4979741666667
 42,Colombia,41.0,2012,77.6308141666667
 43,"Comoros, Union of the",42.0,2012,159.790098721433
 44,"Congo, Dem. Rep. of the",43.0,2012,122.237083333333
@@ -228,8 +226,6 @@ id,country,country_id,year,value
 235,Chad,38.0,2013,98.3458492323384
 236,Chile,39.0,2013,83.9925
 237,"China, P.R.: Hong Kong",40.0,2013,84.5833333333333
-238,"China, P.R.: Macao",40.0,2013,83.6883333333333
-239,"China, P.R.: Mainland",40.0,2013,86.7127083333333
 240,Colombia,41.0,2013,79.1966216666667
 241,"Comoros, Union of the",42.0,2013,152.927316410847
 242,"Congo, Dem. Rep. of the",43.0,2013,123.225031679417
@@ -419,8 +415,6 @@ id,country,country_id,year,value
 433,Chad,38.0,2014,100.0
 434,Chile,39.0,2014,87.9558333333333
 435,"China, P.R.: Hong Kong",40.0,2014,88.325
-436,"China, P.R.: Macao",40.0,2014,88.75
-437,"China, P.R.: Mainland",40.0,2014,88.3790158333333
 438,Colombia,41.0,2014,81.4924033333333
 439,"Comoros, Union of the",42.0,2014,0.0
 440,"Congo, Dem. Rep. of the",43.0,2014,124.756766754782
@@ -610,8 +604,6 @@ id,country,country_id,year,value
 631,Chad,38.0,2015,104.377126650657
 632,Chile,39.0,2015,91.7808333333333
 633,"China, P.R.: Hong Kong",40.0,2015,90.9666666666667
-634,"China, P.R.: Macao",40.0,2015,92.7975
-635,"China, P.R.: Mainland",40.0,2015,89.6490433333333
 636,Colombia,41.0,2015,85.5587366666667
 637,"Comoros, Union of the",42.0,2015,0.0
 638,"Congo, Dem. Rep. of the",43.0,2015,125.685205358893
@@ -801,8 +793,6 @@ id,country,country_id,year,value
 829,Chad,38.0,2016,103.55
 830,Chile,39.0,2016,95.2558333333333
 831,"China, P.R.: Hong Kong",40.0,2016,93.1583333333333
-832,"China, P.R.: Macao",40.0,2016,94.9958333333334
-833,"China, P.R.: Mainland",40.0,2016,91.4420258333333
 834,Colombia,41.0,2016,91.9871583333333
 835,"Comoros, Union of the",42.0,2016,0.0
 836,"Congo, Dem. Rep. of the",43.0,2016,129.312293206219
@@ -992,8 +982,6 @@ id,country,country_id,year,value
 1027,Chad,38.0,2017,101.958333333333
 1028,Chile,39.0,2017,97.335
 1029,"China, P.R.: Hong Kong",40.0,2017,94.55
-1030,"China, P.R.: Macao",40.0,2017,96.1625
-1031,"China, P.R.: Mainland",40.0,2017,92.8988216666667
 1032,Colombia,41.0,2017,95.9557725
 1033,"Comoros, Union of the",42.0,2017,0.0
 1034,"Congo, Dem. Rep. of the",43.0,2017,0.0
@@ -1183,8 +1171,6 @@ id,country,country_id,year,value
 1225,Chad,38.0,2018,106.316666666667
 1226,Chile,39.0,2018,99.705
 1227,"China, P.R.: Hong Kong",40.0,2018,96.825
-1228,"China, P.R.: Macao",40.0,2018,99.0516666666667
-1229,"China, P.R.: Mainland",40.0,2018,94.8262775
 1230,Colombia,41.0,2018,99.0652858333333
 1231,"Comoros, Union of the",42.0,2018,0.0
 1232,"Congo, Dem. Rep. of the",43.0,2018,0.0
@@ -1374,8 +1360,6 @@ id,country,country_id,year,value
 1423,Chad,38.0,2019,105.283333333333
 1424,Chile,39.0,2019,102.255
 1425,"China, P.R.: Hong Kong",40.0,2019,99.6166666666667
-1426,"China, P.R.: Macao",40.0,2019,101.7775
-1427,"China, P.R.: Mainland",40.0,2019,97.5755133333333
 1428,Colombia,41.0,2019,102.555375
 1429,"Comoros, Union of the",42.0,2019,0.0
 1430,"Congo, Dem. Rep. of the",43.0,2019,0.0
@@ -1565,8 +1549,6 @@ id,country,country_id,year,value
 1621,Chad,38.0,2020,109.983333333333
 1622,Chile,39.0,2020,105.369166666667
 1623,"China, P.R.: Hong Kong",40.0,2020,99.8666666666667
-1624,"China, P.R.: Macao",40.0,2020,102.603333333333
-1625,"China, P.R.: Mainland",40.0,2020,99.9362766666667
 1626,Colombia,41.0,2020,105.146575
 1627,"Comoros, Union of the",42.0,2020,0.0
 1628,"Congo, Dem. Rep. of the",43.0,2020,0.0
@@ -1756,8 +1738,6 @@ id,country,country_id,year,value
 1819,Chad,38.0,2021,109.133333333333
 1820,Chile,39.0,2021,110.136666666667
 1821,"China, P.R.: Hong Kong",40.0,2021,101.433333333333
-1822,"China, P.R.: Macao",40.0,2021,102.630476393333
-1823,"China, P.R.: Mainland",40.0,2021,100.916666666667
 1824,Colombia,41.0,2021,108.821508333333
 1825,"Comoros, Union of the",42.0,2021,0.0
 1826,"Congo, Dem. Rep. of the",43.0,2021,0.0
@@ -1947,8 +1927,6 @@ id,country,country_id,year,value
 2017,Chad,38.0,2022,115.45
 2018,Chile,39.0,2022,122.960833333333
 2019,"China, P.R.: Hong Kong",40.0,2022,103.341666666667
-2020,"China, P.R.: Macao",40.0,2022,103.7029936325
-2021,"China, P.R.: Mainland",40.0,2022,102.908333333333
 2022,Colombia,41.0,2022,119.896525
 2023,"Comoros, Union of the",42.0,2022,0.0
 2024,"Congo, Dem. Rep. of the",43.0,2022,0.0
