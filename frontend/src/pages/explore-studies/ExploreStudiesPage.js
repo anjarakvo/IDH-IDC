@@ -5,6 +5,7 @@ import { Row, Col, Alert, Button, Card, Select, Input, Table } from "antd";
 import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
 import { SearchOutlined } from "@ant-design/icons";
+import { range } from "lodash";
 
 const selectProps = {
   showSearch: true,
@@ -42,6 +43,15 @@ const columns = [
     dataIndex: "action",
   },
 ];
+
+const dataSource = range(1, 10, 1).map((i) => ({
+  id: i,
+  title: `Crop ${i}`,
+  company: `Company ${i}`,
+  total: i * 5,
+  survey: i * 6,
+  action: i + 3,
+}));
 
 const ExploreStudiesPage = () => {
   const userRole = UserState.useState((s) => s.role);
@@ -136,7 +146,7 @@ const ExploreStudiesPage = () => {
           <Table
             rowKey="id"
             className="table-wrapper"
-            dataSource={[]}
+            dataSource={dataSource}
             columns={columns}
             loading={false}
             pagination={{
