@@ -41,61 +41,64 @@ const getOptions = ({
     : answers.find((a) => a.name === yAxis.name)?.qid;
   const yAxisDefaultValue = { default_value: yAxisCalculation[`#${yAxisId}`] };
 
-  const series = binCharts.map((b) => {
-    const bId = b.binName.includes("Diversified")
-      ? 9002
-      : answers.find((a) => a.name === b.binName)?.qid;
-    const dt = xAxisData
-      .map((h) => {
-        let newValues = answers
-          .filter((m) => m.name !== b.binName)
-          .map((m) => {
-            if (m.name === xAxis.name) {
-              return { ...m, value: h };
-            }
-            return m;
+  const series = yAxisDefaultValue.default_value
+    ? binCharts.map((b) => {
+        const bId = b.binName.includes("Diversified")
+          ? 9002
+          : answers.find((a) => a.name === b.binName)?.qid;
+        const dt = xAxisData
+          .map((h) => {
+            let newValues = answers
+              .filter((m) => m.name !== b.binName)
+              .map((m) => {
+                if (m.name === xAxis.name) {
+                  return { ...m, value: h };
+                }
+                return m;
+              })
+              .map((x) => ({
+                id: `c-${x.qid}`,
+                value: x.value,
+              }));
+            newValues = [
+              ...newValues,
+              {
+                id: "c-9001",
+                value: total_current_income,
+              },
+              {
+                id: "c-9002",
+                value: diversified,
+              },
+              {
+                id: `c-${bId}`,
+                value: b.binValue,
+              },
+            ];
+            const newYAxisValue = getFunctionDefaultValue(
+              yAxisDefaultValue,
+              "c",
+              newValues
+            );
+            return newYAxisValue.toFixed(2);
           })
-          .map((x) => ({
-            id: `c-${x.qid}`,
-            value: x.value,
-          }));
-        newValues = [
-          ...newValues,
-          {
-            id: "c-9001",
-            value: total_current_income,
+          .flatMap((x) => x);
+        return {
+          type: "line",
+          smooth: true,
+          stack: yAxis.name,
+          name: `${b.binName}: ${b.binValue}`,
+          data: dt,
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
           },
-          {
-            id: "c-9002",
-            value: diversified,
-          },
-          {
-            id: `c-${bId}`,
-            value: b.binValue,
-          },
-        ];
-        const newYAxisValue = getFunctionDefaultValue(
-          yAxisDefaultValue,
-          "c",
-          newValues
-        );
-        return newYAxisValue.toFixed(2);
+        };
       })
-      .flatMap((x) => x);
-    return {
-      type: "line",
-      smooth: true,
-      stack: yAxis.name,
-      name: `${b.binName}: ${b.binValue}`,
-      data: dt,
-      emphasis: {
-        itemStyle: {
-          shadowBlur: 10,
-          shadowColor: "rgba(0, 0, 0, 0.5)",
-        },
-      },
-    };
-  });
+    : [];
+
   const legends = binCharts.map((b) => `${b.binName}: ${b.binValue}`);
 
   const options = {
@@ -222,7 +225,7 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
     };
   }, [data, segment, origin]);
 
-  return (
+  return binningData.binCharts?.length ? (
     <Col span={24}>
       <Row gutter={[24, 24]} ref={elLineChart}>
         <Col span={8}>
@@ -255,6 +258,8 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
         </Col>
       </Row>
     </Col>
+  ) : (
+    ""
   );
 };
 
