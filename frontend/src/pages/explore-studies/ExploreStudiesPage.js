@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import "./explore-studies-page.scss";
 import { ContentLayout } from "../../components/layout";
-import { Row, Col, Alert, Button, Card, Select, Input } from "antd";
+import { Row, Col, Alert, Button, Card, Select, Input, Table } from "antd";
 import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
 import { SearchOutlined } from "@ant-design/icons";
@@ -14,6 +14,34 @@ const selectProps = {
     width: "100%",
   },
 };
+
+const columns = [
+  {
+    key: "crop",
+    title: "Crop",
+    dataIndex: "crop",
+  },
+  {
+    key: "company",
+    title: "Company",
+    dataIndex: "company",
+  },
+  {
+    key: "total",
+    title: "Total Submission",
+    dataIndex: "total",
+  },
+  {
+    key: "survey",
+    title: "Survey Conducted",
+    dataIndex: "survey",
+  },
+  {
+    key: "action",
+    title: "Action",
+    dataIndex: "action",
+  },
+];
 
 const ExploreStudiesPage = () => {
   const userRole = UserState.useState((s) => s.role);
@@ -54,6 +82,7 @@ const ExploreStudiesPage = () => {
             }
           />
         </Col>
+
         <Col span={24}>
           <Card title="Cases" className="info-card-wrapper">
             <Row gutter={[16, 16]} className="explore-filter-wrapper">
@@ -101,6 +130,22 @@ const ExploreStudiesPage = () => {
               </Col>
             </Row>
           </Card>
+        </Col>
+
+        <Col span={24}>
+          <Table
+            rowKey="id"
+            className="table-wrapper"
+            dataSource={[]}
+            columns={columns}
+            loading={false}
+            pagination={{
+              current: 1,
+              pageSize: 1,
+              total: 1,
+              onChange: (page) => console.info(page),
+            }}
+          />
         </Col>
       </Row>
     </ContentLayout>
