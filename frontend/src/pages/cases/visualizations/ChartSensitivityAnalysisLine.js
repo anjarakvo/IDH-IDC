@@ -174,6 +174,9 @@ const getOptions = ({
     tooltip: {
       position: "top",
       formatter: (p) => {
+        if (!p?.seriesName) {
+          return null;
+        }
         const [seriesName, seriesValue] = p.seriesName?.split(": ") || [];
         const newSeriesName = `${seriesName}: ${thousandFormatter(
           parseFloat(seriesValue)
