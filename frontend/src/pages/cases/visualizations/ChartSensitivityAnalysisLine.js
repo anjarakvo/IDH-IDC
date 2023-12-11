@@ -25,13 +25,12 @@ const getOptions = ({
   answers = [],
   binCharts = [],
   diversified = 0,
-  target = 0,
-  // min = 0,
-  // max = 0,
+  total_current_income,
+  // target = 0,
   // origin = [],
 }) => {
   const xAxisData = [
-    ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 4).map((x) =>
+    ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 5).map((x) =>
       x.toFixed(2)
     ),
     xAxis.max.toFixed(2),
@@ -64,7 +63,7 @@ const getOptions = ({
           ...newValues,
           {
             id: "c-9001",
-            value: target,
+            value: total_current_income,
           },
           {
             id: "c-9002",
@@ -202,8 +201,8 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
         (s) =>
           s.question.parent === null && s.name === "current" && s.commodityFocus
       ),
-      min: segment.total_current_income,
-      max: segment.total_feasible_income,
+      total_current_income: segment.total_current_income,
+      total_feasible_income: segment.total_feasible_income,
       diversified: segment.total_current_diversified_income,
       diversified_feasible: segment.total_feasible_diversified_income,
       target: segment.target,
