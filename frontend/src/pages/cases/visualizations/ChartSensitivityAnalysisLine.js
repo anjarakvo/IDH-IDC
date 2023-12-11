@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { thousandFormatter } from "../../../components/chart/options/common";
 import { getFunctionDefaultValue } from "../components";
-import { range, orderBy, uniq } from "lodash";
+import { range, orderBy, uniq, max } from "lodash";
 import { Row, Col, Card, Space } from "antd";
 import Chart from "../../../components/chart";
 import { SaveAsImageButton } from "../../../components/utils";
@@ -32,19 +32,19 @@ const getOptions = ({
 }) => {
   // Find x Axis curret feasible value
   const xAxisCurrentValue = xAxis.name.includes("Diversified")
-    ? diversified?.toFixed(2)
-    : answers.find((a) => a.name === xAxis.name)?.value?.toFixed(2);
+    ? diversified
+    : answers.find((a) => a.name === xAxis.name)?.value || 0;
   const xAxisFeasibleValue = xAxis.name.includes("Diversified")
-    ? diversified_feasible?.toFixed(2)
-    : feasibleAnswers.find((fa) => fa.name === xAxis.name)?.value?.toFixed(2);
+    ? diversified_feasible
+    : feasibleAnswers.find((fa) => fa.name === xAxis.name)?.value || 0;
 
   // Find y Axis curret feasible value
   const yAxisCurrentValue = yAxis.name.includes("Diversified")
-    ? diversified?.toFixed(2)
-    : answers.find((a) => a.name === yAxis.name)?.value?.toFixed(2);
+    ? diversified
+    : answers.find((a) => a.name === yAxis.name)?.value || 0;
   const yAxisFeasibleValue = yAxis.name.includes("Diversified")
-    ? diversified_feasible?.toFixed(2)
-    : feasibleAnswers.find((fa) => fa.name === yAxis.name)?.value?.toFixed(2);
+    ? diversified_feasible
+    : feasibleAnswers.find((fa) => fa.name === yAxis.name)?.value || 0;
 
   let xAxisData = [
     ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 5).map((x) =>
@@ -137,24 +137,28 @@ const getOptions = ({
         [
           {
             name: null,
-            xAxis: xAxisCurrentValue,
+            xAxis: xAxisCurrentValue.toFixed(2),
           },
           {
-            xAxis: xAxisFeasibleValue,
+            xAxis: xAxisFeasibleValue.toFixed(2),
           },
         ],
         [
           {
             name: null,
-            yAxis: yAxisCurrentValue,
+            yAxis: yAxisCurrentValue.toFixed(2),
           },
           {
-            yAxis: yAxisFeasibleValue,
+            yAxis: yAxisFeasibleValue.toFixed(2),
           },
         ],
       ],
     },
   };
+
+  const maxDataValue = max(
+    series.flatMap((s) => s.data).map((x) => parseFloat(x))
+  );
 
   const options = {
     legend: {
@@ -204,7 +208,12 @@ const getOptions = ({
       axisLabel: {
         formatter: (e) => thousandFormatter(e),
       },
-      max: yAxis.max <= yAxisFeasibleValue ? yAxisFeasibleValue : yAxis.max,
+      max:
+        maxDataValue > yAxisFeasibleValue
+          ? Math.round(maxDataValue)
+          : yAxis.max < yAxisFeasibleValue
+          ? yAxisFeasibleValue
+          : yAxis.max,
     },
     series: [...series, seriesMarkArea],
   };
@@ -314,7 +323,7 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
             }
           >
             <Chart
-              height={350}
+              height={400}
               wrapper={false}
               type="BAR"
               override={getOptions({ ...binningData, origin: origin })}
