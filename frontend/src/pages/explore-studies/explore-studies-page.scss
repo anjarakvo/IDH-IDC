@@ -40,5 +40,55 @@
         }
       }
     }
+
+    .info-card-wrapper {
+      border-radius: 20px;
+      border: 1px solid #e9e9e9;
+
+      .ant-card-head {
+        padding: 10px 20px;
+        background: $primary-color;
+        color: #fff;
+        min-height: $card-head-min-height;
+      }
+
+      .ant-card-head-title {
+        font-size: 0.9rem !important;
+      }
+
+      .ant-card-body {
+        padding: 20px !important;
+      }
+    }
+
+    .explore-filter-wrapper {
+      .ant-select,
+      .ant-input {
+        width: 100%;
+      }
+
+      .filter-label {
+        font-family: "TabletGothic";
+        margin-bottom: 4px;
+      }
+
+      .search-button {
+        font-family: "TabletGothic";
+        border-radius: 40px;
+        border: 1px solid #01625f;
+        background: #01625f;
+        font-weight: 400;
+        color: #fff;
+      }
+    }
+
+    .map-container {
+      background-image: url("/assets/images/explore-studies.svg") !important;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      height: 35rem;
+      margin-top: 50px;
+    }
   }
 }
