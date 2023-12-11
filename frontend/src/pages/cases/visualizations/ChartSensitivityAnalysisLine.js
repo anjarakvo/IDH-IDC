@@ -204,7 +204,7 @@ const getOptions = ({
       axisLabel: {
         formatter: (e) => thousandFormatter(e),
       },
-      max: yAxis.max,
+      max: yAxis.max <= yAxisFeasibleValue ? yAxisFeasibleValue : yAxis.max,
     },
     series: [...series, seriesMarkArea],
   };
