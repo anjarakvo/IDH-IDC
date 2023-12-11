@@ -54,8 +54,12 @@ const getOptions = ({
   ];
   // add x axis current feasible value into xAxisData
   xAxisData = orderBy(
-    uniq([...xAxisData, xAxisCurrentValue, xAxisFeasibleValue])
-  );
+    uniq(
+      [...xAxisData, xAxisCurrentValue, xAxisFeasibleValue].map((x) =>
+        parseFloat(x)
+      )
+    )
+  ).map((x) => x.toFixed(2));
 
   const yAxisId = yAxis.name.includes("Diversified")
     ? 9002
