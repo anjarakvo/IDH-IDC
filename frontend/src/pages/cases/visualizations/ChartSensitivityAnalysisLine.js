@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from "react";
 import { thousandFormatter } from "../../../components/chart/options/common";
 import { getFunctionDefaultValue } from "../components";
-import { range } from "lodash";
+import { range, orderBy, uniq, max } from "lodash";
 import { Row, Col, Card, Space } from "antd";
 import Chart from "../../../components/chart";
 import { SaveAsImageButton } from "../../../components/utils";
@@ -12,29 +12,54 @@ import { SaveAsImageButton } from "../../../components/utils";
  * Diversified = 9002
  */
 const yAxisCalculation = {
-  "#2": "#9001 - #9002 + #5  / (#4 * #3)", // area
-  "#3": "#9001 - #9002 + #5  / (#4 * #2)", // volume
-  "#4": "#9001 - #9002 + #5  / (#3 * #2)", // price
-  "#5": "#9001 - #9002 - (#2 * #4 * #3)", // CoP
-  "#9002": "#9001 + #5 - (#2 * #4 * #3)", // diversified
+  "#2": "( #9001 - #9002 + #5 )  / ( #4 * #3 )", // area
+  "#3": "( #9001 - #9002 + #5 )  / ( #4 * #2 )", // volume
+  "#4": "( #9001 - #9002 + #5 )  / ( #3 * #2 )", // price
+  "#5": "( #9001 - #9002 ) - ( #2 * #4 * #3 )", // CoP
+  "#9002": "( #9001 + #5 ) - ( #2 * #4 * #3 )", // diversified
 };
 
 const getOptions = ({
   xAxis = { name: "", min: 0, max: 0 },
   yAxis = { name: "", min: 0, max: 0 },
   answers = [],
+  feasibleAnswers = [],
   binCharts = [],
   diversified = 0,
-  total_current_income,
-  // target = 0,
+  diversified_feasible = 0,
+  target = 0,
   // origin = [],
 }) => {
-  const xAxisData = [
+  // Find x Axis curret feasible value
+  const xAxisCurrentValue = xAxis.name.includes("Diversified")
+    ? diversified
+    : answers.find((a) => a.name === xAxis.name)?.value || 0;
+  const xAxisFeasibleValue = xAxis.name.includes("Diversified")
+    ? diversified_feasible
+    : feasibleAnswers.find((fa) => fa.name === xAxis.name)?.value || 0;
+
+  // Find y Axis curret feasible value
+  const yAxisCurrentValue = yAxis.name.includes("Diversified")
+    ? diversified
+    : answers.find((a) => a.name === yAxis.name)?.value || 0;
+  const yAxisFeasibleValue = yAxis.name.includes("Diversified")
+    ? diversified_feasible
+    : feasibleAnswers.find((fa) => fa.name === yAxis.name)?.value || 0;
+
+  let xAxisData = [
     ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 5).map((x) =>
       x.toFixed(2)
     ),
     xAxis.max.toFixed(2),
   ];
+  // add x axis current feasible value into xAxisData
+  xAxisData = orderBy(
+    uniq(
+      [...xAxisData, xAxisCurrentValue, xAxisFeasibleValue].map((x) =>
+        parseFloat(x)
+      )
+    )
+  ).map((x) => x.toFixed(2));
 
   const yAxisId = yAxis.name.includes("Diversified")
     ? 9002
@@ -57,27 +82,27 @@ const getOptions = ({
                 return m;
               })
               .map((x) => ({
-                id: `c-${x.qid}`,
+                id: `line-${x.qid}`,
                 value: x.value,
               }));
             newValues = [
               ...newValues,
               {
-                id: "c-9001",
-                value: total_current_income,
+                id: "line-9001",
+                value: target, // total income using target value
               },
               {
-                id: "c-9002",
+                id: "line-9002",
                 value: diversified,
               },
               {
-                id: `c-${bId}`,
+                id: `line-${bId}`,
                 value: b.binValue,
               },
             ];
             const newYAxisValue = getFunctionDefaultValue(
               yAxisDefaultValue,
-              "c",
+              "line",
               newValues
             );
             return newYAxisValue.toFixed(2);
@@ -86,7 +111,6 @@ const getOptions = ({
         return {
           type: "line",
           smooth: true,
-          stack: yAxis.name,
           name: `${b.binName}: ${b.binValue}`,
           data: dt,
           emphasis: {
@@ -101,13 +125,48 @@ const getOptions = ({
 
   const legends = binCharts.map((b) => `${b.binName}: ${b.binValue}`);
 
+  const seriesMarkArea = {
+    name: null,
+    type: "line",
+    data: [],
+    markArea: {
+      itemStyle: {
+        color: "rgba(255, 143, 78, 0.175)",
+      },
+      data: [
+        [
+          {
+            name: null,
+            xAxis: xAxisCurrentValue.toFixed(2),
+          },
+          {
+            xAxis: xAxisFeasibleValue.toFixed(2),
+          },
+        ],
+        [
+          {
+            name: null,
+            yAxis: yAxisCurrentValue.toFixed(2),
+          },
+          {
+            yAxis: yAxisFeasibleValue.toFixed(2),
+          },
+        ],
+      ],
+    },
+  };
+
+  const maxDataValue = max(
+    series.flatMap((s) => s.data).map((x) => parseFloat(x))
+  );
+
   const options = {
     legend: {
       data: legends,
       bottom: 0,
       left: 0,
       formatter: (name) => {
-        const [text, value] = name.split(": ");
+        const [text, value] = name?.split(": ") || [];
         const formatValue = thousandFormatter(parseFloat(value));
         return `${text}: ${formatValue}`;
       },
@@ -115,7 +174,10 @@ const getOptions = ({
     tooltip: {
       position: "top",
       formatter: (p) => {
-        const [seriesName, seriesValue] = p.seriesName.split(": ");
+        if (!p?.seriesName) {
+          return null;
+        }
+        const [seriesName, seriesValue] = p.seriesName?.split(": ") || [];
         const newSeriesName = `${seriesName}: ${thousandFormatter(
           parseFloat(seriesValue)
         )}`;
@@ -149,8 +211,14 @@ const getOptions = ({
       axisLabel: {
         formatter: (e) => thousandFormatter(e),
       },
+      max:
+        maxDataValue > yAxisFeasibleValue
+          ? Math.round(maxDataValue)
+          : yAxis.max < yAxisFeasibleValue
+          ? yAxisFeasibleValue
+          : yAxis.max,
     },
-    series: series,
+    series: [...series, seriesMarkArea],
   };
   return options;
 };
@@ -166,12 +234,16 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
     }
     const bins = Object.keys(data)
       .map((x) => {
-        const [segmentId, name] = x.split("_");
+        const [segmentId, name] = x?.split("_") || [];
         return { id: parseInt(segmentId), name, value: data[x] };
       })
       .filter((x) => x.id === segment.id && x.value);
     const answers = segment.answers.filter(
       (s) => s.question.parent === 1 && s.name === "current" && s.commodityFocus
+    );
+    const feasibleAnswers = segment.answers.filter(
+      (s) =>
+        s.question.parent === 1 && s.name === "feasible" && s.commodityFocus
     );
     const binCharts = bins.filter(
       (b) => b.name.startsWith("binning-value") && b.value
@@ -213,6 +285,11 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
         name: s.question.text,
         value: s.value,
       })),
+      feasibleAnswers: feasibleAnswers.map((s) => ({
+        qid: s.question.id,
+        name: s.question.text,
+        value: s.value,
+      })),
       incomeQuestion: segment.answers.find(
         (s) =>
           s.question.parent === null && s.name === "current" && s.commodityFocus
@@ -249,7 +326,7 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
             }
           >
             <Chart
-              height={350}
+              height={400}
               wrapper={false}
               type="BAR"
               override={getOptions({ ...binningData, origin: origin })}
