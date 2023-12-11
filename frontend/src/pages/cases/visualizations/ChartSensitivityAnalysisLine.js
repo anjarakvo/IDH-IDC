@@ -12,11 +12,11 @@ import { SaveAsImageButton } from "../../../components/utils";
  * Diversified = 9002
  */
 const yAxisCalculation = {
-  "#2": "#9001 - #9002 + #5  / (#4 * #3)", // area
-  "#3": "#9001 - #9002 + #5  / (#4 * #2)", // volume
-  "#4": "#9001 - #9002 + #5  / (#3 * #2)", // price
-  "#5": "#9001 - #9002 - (#2 * #4 * #3)", // CoP
-  "#9002": "#9001 + #5 - (#2 * #4 * #3)", // diversified
+  "#2": "( #9001 - #9002 + #5 )  / ( #4 * #3 )", // area
+  "#3": "( #9001 - #9002 + #5 )  / ( #4 * #2 )", // volume
+  "#4": "( #9001 - #9002 + #5 )  / ( #3 * #2 )", // price
+  "#5": "( #9001 - #9002 ) - ( #2 * #4 * #3 )", // CoP
+  "#9002": "( #9001 + #5 ) - ( #2 * #4 * #3 )", // diversified
 };
 
 const getOptions = ({
@@ -25,8 +25,8 @@ const getOptions = ({
   answers = [],
   binCharts = [],
   diversified = 0,
-  total_current_income,
-  // target = 0,
+  target = 0,
+  // total_current_income,
   // origin = [],
 }) => {
   const xAxisData = [
@@ -57,27 +57,27 @@ const getOptions = ({
                 return m;
               })
               .map((x) => ({
-                id: `c-${x.qid}`,
+                id: `line-${x.qid}`,
                 value: x.value,
               }));
             newValues = [
               ...newValues,
               {
-                id: "c-9001",
-                value: total_current_income,
+                id: "line-9001",
+                value: target, // total income using target value
               },
               {
-                id: "c-9002",
+                id: "line-9002",
                 value: diversified,
               },
               {
-                id: `c-${bId}`,
+                id: `line-${bId}`,
                 value: b.binValue,
               },
             ];
             const newYAxisValue = getFunctionDefaultValue(
               yAxisDefaultValue,
-              "c",
+              "line",
               newValues
             );
             return newYAxisValue.toFixed(2);
@@ -86,7 +86,6 @@ const getOptions = ({
         return {
           type: "line",
           smooth: true,
-          stack: yAxis.name,
           name: `${b.binName}: ${b.binValue}`,
           data: dt,
           emphasis: {
