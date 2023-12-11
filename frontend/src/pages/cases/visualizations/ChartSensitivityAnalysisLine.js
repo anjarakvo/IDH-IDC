@@ -88,11 +88,6 @@ const getOptions = ({
       stack: yAxis.name,
       name: `${b.binName}: ${b.binValue}`,
       data: dt,
-      label: {
-        show: true,
-        color: "#fff",
-        padding: 5,
-      },
       emphasis: {
         itemStyle: {
           shadowBlur: 10,
@@ -108,9 +103,26 @@ const getOptions = ({
       data: legends,
       bottom: 0,
       left: 0,
+      formatter: (name) => {
+        const [text, value] = name.split(": ");
+        const formatValue = thousandFormatter(parseFloat(value));
+        return `${text}: ${formatValue}`;
+      },
     },
     tooltip: {
       position: "top",
+      formatter: (p) => {
+        const [seriesName, seriesValue] = p.seriesName.split(": ");
+        const newSeriesName = `${seriesName}: ${thousandFormatter(
+          parseFloat(seriesValue)
+        )}`;
+        const xValue = thousandFormatter(parseFloat(p.name));
+        const yValue = thousandFormatter(parseFloat(p.value));
+        let text = `<span style="color: #000;">${newSeriesName}</span><br>`;
+        text += `<span>${xAxis.name}: ${xValue}</span><br>`;
+        text += `<span>${yAxis.name}: ${yValue}</span><br>`;
+        return text;
+      },
     },
     grid: {
       top: "10%",
@@ -120,6 +132,7 @@ const getOptions = ({
     xAxis: {
       name: `${xAxis.name} (${xAxis.unitName})`,
       nameLocation: "middle",
+      boundaryGap: true,
       nameGap: 40,
       type: "category",
       data: xAxisData,
