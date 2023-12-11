@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import { thousandFormatter } from "../../../components/chart/options/common";
 import { getFunctionDefaultValue } from "../components";
 import { range } from "lodash";
@@ -141,6 +141,8 @@ const getOptions = ({
 };
 
 const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
+  const [label, setLabel] = useState(null);
+  const [chartTitle, setChartTitle] = useState(null);
   const elLineChart = useRef(null);
 
   const binningData = useMemo(() => {
@@ -163,6 +165,13 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
       bins.find((b) => b.name === "binning-driver-name")?.value || false;
     const xAxisName = bins.find((b) => b.name === "x-axis-driver")?.value || "";
     const yAxisName = bins.find((b) => b.name === "y-axis-driver")?.value || "";
+    // label
+    const label = `The following tables represent combination ${yAxisName} and ${xAxisName} to reach the income target for a each ${
+      binName ? binName : ""
+    } bin.`;
+    setLabel(label);
+    // chart title
+    setChartTitle(`Combination ${yAxisName} and ${xAxisName} value`);
 
     return {
       binCharts: binName
@@ -209,12 +218,12 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
             <div className="segment">
               <b>{segment.name}</b>
             </div>
-            <div className="label">Lorem ipsum sit dolor amet</div>
+            <div className="label">{label}</div>
           </Space>
         </Col>
         <Col span={16}>
           <Card
-            title="Title"
+            title={chartTitle}
             className="chart-card-wrapper with-padding"
             extra={
               <SaveAsImageButton
