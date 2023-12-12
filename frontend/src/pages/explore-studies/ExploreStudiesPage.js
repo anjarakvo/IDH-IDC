@@ -6,6 +6,7 @@ import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
 import { SearchOutlined } from "@ant-design/icons";
 import { range } from "lodash";
+import { Link } from "react-router-dom";
 
 const selectProps = {
   showSearch: true,
@@ -84,9 +85,11 @@ const ExploreStudiesPage = () => {
                   income drivers for your selected country and sector.
                 </p>
                 {isAdmin ? (
-                  <Button className="button button-green-fill">
-                    Create a new Cases
-                  </Button>
+                  <Link to="/cases/new">
+                    <Button className="button button-green-fill">
+                      Create a new Cases
+                    </Button>
+                  </Link>
                 ) : null}
               </div>
             }
