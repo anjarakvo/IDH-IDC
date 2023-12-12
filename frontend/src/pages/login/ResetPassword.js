@@ -69,6 +69,7 @@ const ResetPassword = () => {
       .post(apiUrl, payload)
       .then(() => {
         form.resetFields();
+        setPasswordCheckList([]);
         messageApi.open({
           type: "success",
           content:

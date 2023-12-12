@@ -70,6 +70,7 @@ const Register = () => {
       .post("user/register", payload)
       .then(() => {
         form.resetFields();
+        setPasswordCheckList([]);
         messageApi.open({
           type: "success",
           content:
