@@ -1,4 +1,12 @@
 @import "../../variables.scss";
 
 #reference-data {
+  .reference-form-container {
+    margin-top: 2rem;
+
+    .ant-input,
+    .ant-input-number {
+      width: 100%;
+    }
+  }
 }
