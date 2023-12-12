@@ -46,7 +46,7 @@ const columns = [
 
 const dataSource = range(1, 10, 1).map((i) => ({
   id: i,
-  title: `Crop ${i}`,
+  crop: `Crop ${i}`,
   company: `Company ${i}`,
   total: i * 5,
   survey: i * 6,
@@ -151,8 +151,8 @@ const ExploreStudiesPage = () => {
             loading={false}
             pagination={{
               current: 1,
-              pageSize: 1,
-              total: 1,
+              pageSize: 10,
+              total: 10,
               onChange: (page) => console.info(page),
             }}
           />

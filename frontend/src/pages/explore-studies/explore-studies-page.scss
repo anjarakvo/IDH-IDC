@@ -90,9 +90,15 @@
       height: 35rem;
       margin-top: 50px;
     }
+
     .table-wrapper {
-      .ant-table-wrapper .ant-table-thead > tr > th {
-        background: var(--green-100, #01625f);
+      .ant-table-thead > tr > th.ant-table-cell {
+        background: #01625f;
+        color: #fff;
+      }
+
+      .ant-table-thead > tr > th::before {
+        background: none;
       }
     }
   }
