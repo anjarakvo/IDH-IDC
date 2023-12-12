@@ -301,10 +301,18 @@
 
   .password-criteria-wrapper {
     margin: 0 0 20px 0;
+    p,
     .ant-checkbox-group-item {
-      color: #fff;
       font-family: "TabletGothic" !important;
       font-size: 14px;
+    }
+
+    &.white,
+    .white {
+      p,
+      .ant-checkbox-group-item {
+        color: #fff !important;
+      }
     }
   }
 }
