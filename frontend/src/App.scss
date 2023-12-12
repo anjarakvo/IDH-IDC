@@ -298,6 +298,15 @@
       color: #ffffff;
     }
   }
+
+  .password-criteria-wrapper {
+    margin: 0 0 20px 0;
+    .ant-checkbox-group-item {
+      color: #fff;
+      font-family: "TabletGothic" !important;
+      font-size: 14px;
+    }
+  }
 }
 
 .ant-popover {
