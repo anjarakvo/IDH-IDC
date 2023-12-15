@@ -85,9 +85,9 @@ const ExploreStudiesPage = () => {
                   income drivers for your selected country and sector.
                 </p>
                 {isAdmin ? (
-                  <Link to="/cases/new">
+                  <Link to="/reference-data/new">
                     <Button className="button button-green-fill">
-                      Create a new Cases
+                      Add New Rerefence Data
                     </Button>
                   </Link>
                 ) : null}
