@@ -159,12 +159,12 @@ const ReferenceDataForm = () => {
                     </Col>
                     <Col span={12}>
                       <Form.Item
-                        label="Crop"
-                        name="crop"
+                        label="Commodity"
+                        name="commodity"
                         rules={[
                           {
                             required: true,
-                            message: "Crop is required",
+                            message: "Commodity is required",
                           },
                         ]}
                       >
