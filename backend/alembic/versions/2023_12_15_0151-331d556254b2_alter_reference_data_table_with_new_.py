@@ -8,6 +8,7 @@ Create Date: 2023-12-15 01:51:36.758711
 from typing import Sequence, Union
 
 from alembic import op
+from sqlalchemy import func
 import sqlalchemy as sa
 
 
@@ -109,6 +110,31 @@ def upgrade() -> None:
         "reference_data",
         sa.Column("diversified_income_unit", sa.String(), nullable=True),
     )
+    op.add_column(
+        "reference_data",
+        sa.Column(
+            "created_by", sa.Integer(), sa.ForeignKey("user.id"), nullable=True
+        ),
+    )
+    op.add_column(
+        "reference_data",
+        sa.Column(
+            "created_at",
+            sa.DateTime(),
+            nullable=False,
+            server_default=func.now(),
+        ),
+    )
+    op.add_column(
+        "reference_data",
+        sa.Column(
+            "updated_at",
+            sa.DateTime(),
+            nullable=False,
+            server_default=func.now(),
+            onupdate=func.now(),
+        ),
+    )
 
 
 def downgrade() -> None:
@@ -129,6 +155,9 @@ def downgrade() -> None:
     op.drop_column("reference_data", "volume_measurement_unit")
     op.drop_column("reference_data", "cost_of_production_unit")
     op.drop_column("reference_data", "diversified_income_unit")
+    op.drop_column("reference_data", "created_by")
+    op.drop_column("reference_data", "created_at")
+    op.drop_column("reference_data", "updated_at")
 
     # Add previous columns
     op.execute(

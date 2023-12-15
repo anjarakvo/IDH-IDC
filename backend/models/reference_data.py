@@ -1,7 +1,15 @@
 from db.connection import Base
-from sqlalchemy import Column, Integer, Float, String, ForeignKey
+from sqlalchemy import (
+    Column,
+    Integer,
+    Float,
+    String,
+    ForeignKey,
+    DateTime,
+)
 from sqlalchemy.orm import relationship
-from typing import Optional
+from sqlalchemy.sql import func
+from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 
@@ -28,6 +36,15 @@ class ReferenceDataDict(TypedDict):
     volume_measurement_unit: Optional[str]
     cost_of_production_unit: Optional[str]
     diversified_income_unit: Optional[str]
+
+
+class ReferenceDataList(TypedDict):
+    id: int
+    country: str
+    crop: str
+    source: str
+    link: str
+    confidence_level: Optional[str]
 
 
 class ReferenceData(Base):
@@ -57,6 +74,14 @@ class ReferenceData(Base):
     volume_measurement_unit = Column(String, nullable=True)
     cost_of_production_unit = Column(String, nullable=True)
     diversified_income_unit = Column(String, nullable=True)
+    created_by = Column(Integer, ForeignKey("user.id"))
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
+    updated_at = Column(
+        DateTime,
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
 
     country_detail = relationship(
         "Country",
@@ -94,6 +119,7 @@ class ReferenceData(Base):
         volume_measurement_unit: Optional[str],
         cost_of_production_unit: Optional[str],
         diversified_income_unit: Optional[str],
+        created_by: Optional[str],
     ):
         self.id = id
         self.country = country
@@ -116,6 +142,7 @@ class ReferenceData(Base):
         self.volume_measurement_unit = volume_measurement_unit
         self.cost_of_production_unit = cost_of_production_unit
         self.diversified_income_unit = diversified_income_unit
+        self.created_by = created_by
 
     def __repr__(self) -> int:
         return f"<ReferenceData {self.id}>"
@@ -169,3 +196,10 @@ class ReferenceDataBase(BaseModel):
     volume_measurement_unit: Optional[str]
     cost_of_production_unit: Optional[str]
     diversified_income_unit: Optional[str]
+
+
+class PaginatedReferenceDataResponse(BaseModel):
+    current: int
+    data: List[ReferenceDataList]
+    total: int
+    total_page: int
