@@ -50,7 +50,7 @@ class ReferenceDataDict(TypedDict):
 class ReferenceDataList(TypedDict):
     id: int
     country: str
-    crop: str
+    commodity: str
     source: str
     link: str
     confidence_level: Optional[str]
@@ -114,7 +114,6 @@ class ReferenceData(Base):
         year: int,
         source: str,
         link: str,
-        id: Optional[int],
         notes: Optional[str],
         confidence_level: Optional[str],
         range: Optional[str],
@@ -129,6 +128,7 @@ class ReferenceData(Base):
         cost_of_production_unit: Optional[str],
         diversified_income_unit: Optional[str],
         created_by: Optional[str],
+        id: Optional[int] = None,
     ):
         self.id = id
         self.country = country
@@ -157,7 +157,7 @@ class ReferenceData(Base):
         return f"<ReferenceData {self.id}>"
 
     @property
-    def serializer(self) -> ReferenceDataDict:
+    def serialize(self) -> ReferenceDataDict:
         return {
             "id": self.id,
             "country": self.country,
@@ -187,7 +187,7 @@ class ReferenceData(Base):
         return {
             "id": self.id,
             "country": self.country_detail.name,
-            "crop": self.crop_detail.name,
+            "commodity": self.commodity_detail.name,
             "source": self.source,
             "link": self.link,
             "confidence_level": self.confidence_level,
@@ -195,7 +195,6 @@ class ReferenceData(Base):
 
 
 class ReferenceDataBase(BaseModel):
-    id: Optional[int]
     country: int
     commodity: int
     region: str
@@ -203,19 +202,20 @@ class ReferenceDataBase(BaseModel):
     year: int
     source: str
     link: str
-    notes: Optional[str]
-    confidence_level: Optional[str]
-    range: Optional[str]
-    type: Optional[str]
-    area: Optional[float]
-    volume: Optional[float]
-    price: Optional[float]
-    cost_of_production: Optional[float]
-    diversified_income: Optional[float]
-    area_size_unit: Optional[str]
-    volume_measurement_unit: Optional[str]
-    cost_of_production_unit: Optional[str]
-    diversified_income_unit: Optional[str]
+    id: Optional[int] = None
+    notes: Optional[str] = None
+    confidence_level: Optional[str] = None
+    range: Optional[str] = None
+    type: Optional[str] = None
+    area: Optional[float] = None
+    volume: Optional[float] = None
+    price: Optional[float] = None
+    cost_of_production: Optional[float] = None
+    diversified_income: Optional[float] = None
+    area_size_unit: Optional[str] = None
+    volume_measurement_unit: Optional[str] = None
+    cost_of_production_unit: Optional[str] = None
+    diversified_income_unit: Optional[str] = None
 
 
 class PaginatedReferenceDataResponse(BaseModel):
