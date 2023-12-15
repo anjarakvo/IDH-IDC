@@ -1,3 +1,4 @@
+import enum
 from db.connection import Base
 from sqlalchemy import (
     Column,
@@ -12,6 +13,14 @@ from sqlalchemy.sql import func
 from typing import Optional, List
 from typing_extensions import TypedDict
 from pydantic import BaseModel
+
+
+class Driver(enum.Enum):
+    area = "area"
+    volume = "volume"
+    price = "price"
+    cost_of_production = "cost_of_production"
+    diversified_income = "diversified_income"
 
 
 class ReferenceDataDict(TypedDict):
@@ -171,6 +180,17 @@ class ReferenceData(Base):
             "volume_measurement_unit": self.volume_measurement_unit,
             "cost_of_production_unit": self.cost_of_production_unit,
             "diversified_income_unit": self.diversified_income_unit,
+        }
+
+    @property
+    def to_data_list(self) -> ReferenceDataList:
+        return {
+            "id": self.id,
+            "country": self.country_detail.name,
+            "crop": self.crop_detail.name,
+            "source": self.source,
+            "link": self.link,
+            "confidence_level": self.confidence_level,
         }
 
 

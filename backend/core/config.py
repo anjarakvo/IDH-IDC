@@ -16,6 +16,7 @@ from routes.region import region_route
 from routes.living_income_benchmark import lib_route
 from routes.cpi import cpi_route
 from routes.visualization import visualization_route
+from routes.reference_data import reference_data_routes
 
 from models.business_unit import BusinessUnit
 from models.commodity_category import CommodityCategory
@@ -57,13 +58,16 @@ def generate_config_file() -> None:
         commodity_categories = [
             cc.serialize_with_commodities for cc in commodity_categories
         ]
-    currencies = session.query(Currency.abbreviation, Currency.country).distinct() or []
+    currencies = (
+        session.query(Currency.abbreviation, Currency.country).distinct() or []
+    )
     if currencies:
         currencies = [
             {"value": c[0], "label": c[0], "country": c[1]} for c in currencies
         ]
     countries = (
-        session.query(Country).filter(Country.parent == None).all() or []  # noqa
+        session.query(Country).filter(Country.parent.is_(None)).all()
+        or []  # noqa
     )
     if countries:
         countries = [c.to_dropdown for c in countries]
@@ -93,6 +97,10 @@ app.include_router(region_route)
 app.include_router(lib_route)
 app.include_router(cpi_route)
 app.include_router(visualization_route)
+app.include_router(reference_data_routes)
+
+
+generate_config_file()
 
 
 @app.get("/", tags=["Dev"])
