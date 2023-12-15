@@ -1,27 +1,33 @@
-import enum
 from db.connection import Base
-from sqlalchemy import Column, Integer, Float, Enum, ForeignKey
+from sqlalchemy import Column, Integer, Float, String, ForeignKey
 from sqlalchemy.orm import relationship
 from typing import Optional
 from typing_extensions import TypedDict
 from pydantic import BaseModel
 
 
-class ReferenceDataType(enum.Enum):
-    baseline_average = "baseline_average"
-    segment_average = "segment_average"
-
-
 class ReferenceDataDict(TypedDict):
     id: int
     country: int
     commodity: int
-    type: ReferenceDataType
+    region: str
+    currency: str
     year: int
-    farmer_production: Optional[float]
-    farmgate_price: Optional[float]
-    farmer_expenses: Optional[float]
+    source: str
+    link: str
+    notes: Optional[str]
+    confidence_level: Optional[str]
+    range: Optional[str]
+    type: Optional[str]
+    area: Optional[float]
+    volume: Optional[float]
+    price: Optional[float]
+    cost_of_production: Optional[float]
     diversified_income: Optional[float]
+    area_size_unit: Optional[str]
+    volume_measurement_unit: Optional[str]
+    cost_of_production_unit: Optional[str]
+    diversified_income_unit: Optional[str]
 
 
 class ReferenceData(Base):
@@ -30,54 +36,86 @@ class ReferenceData(Base):
     id = Column(Integer, primary_key=True, index=True)
     country = Column(Integer, ForeignKey("country.id"))
     commodity = Column(Integer, ForeignKey("commodity.id"))
-    type = Column(Enum(ReferenceDataType), nullable=False)
+    region = Column(String, nullable=True)
+    currency = Column(String, nullable=True)
     year = Column(Integer, nullable=True)
-    farm_size = Column(
-        Float, nullable=True, comment="The Farm Land Size in Hectare")
-    farmer_production = Column(
-        Float, nullable=True, comment="Farmer Production in KG")
-    farmgate_price = Column(
-        Float, nullable=True, comment="Farm Gate Price USD / KG")
-    farmer_expenses = Column(
-        Float, nullable=True, comment="Cost of Production in USD")
-    diversified_income = Column(
-        Float, nullable=True, comment="Secondary or Tertiary Income"
+    source = Column(String, nullable=True)
+    link = Column(String, nullable=True)
+    notes = Column(String, nullable=True)
+    confidence_level = Column(String, nullable=True)
+    range = Column(String, nullable=True)
+    type = Column(String, nullable=True)
+    area = Column(Float, nullable=True)
+    volume = Column(Float, nullable=True)
+    price = Column(Float, nullable=True)
+    cost_of_production = Column(
+        Float,
+        nullable=True,
     )
+    diversified_income = Column(Float, nullable=True)
+    area_size_unit = Column(String, nullable=True)
+    volume_measurement_unit = Column(String, nullable=True)
+    cost_of_production_unit = Column(String, nullable=True)
+    diversified_income_unit = Column(String, nullable=True)
 
     country_detail = relationship(
-        'Country',
+        "Country",
         cascade="all, delete",
         passive_deletes=True,
-        backref='country_reference_data'
+        backref="country_reference_data",
     )
     commodity_detail = relationship(
-        'Commodity',
+        "Commodity",
         cascade="all, delete",
         passive_deletes=True,
-        backref='commodity_reference_data'
+        backref="commodity_reference_data",
     )
 
     def __init__(
         self,
-        id: Optional[int],
         country: int,
         commodity: int,
-        type: ReferenceDataType,
+        region: str,
+        currency: str,
         year: int,
-        farmer_production: Optional[float],
-        farmgate_price: Optional[float],
-        farmer_expenses: Optional[float],
+        source: str,
+        link: str,
+        id: Optional[int],
+        notes: Optional[str],
+        confidence_level: Optional[str],
+        range: Optional[str],
+        type: Optional[str],
+        area: Optional[float],
+        volume: Optional[float],
+        price: Optional[float],
+        cost_of_production: Optional[float],
         diversified_income: Optional[float],
+        area_size_unit: Optional[str],
+        volume_measurement_unit: Optional[str],
+        cost_of_production_unit: Optional[str],
+        diversified_income_unit: Optional[str],
     ):
         self.id = id
         self.country = country
         self.commodity = commodity
-        self.type = type
+        self.region = region
+        self.currency = currency
         self.year = year
-        self.farmer_production = farmer_production
-        self.farmgate_price = farmgate_price
-        self.farmer_expenses = farmer_expenses
+        self.source = source
+        self.link = link
+        self.notes = notes
+        self.confidence_level = confidence_level
+        self.range = range
+        self.type = type
+        self.area = area
+        self.volume = volume
+        self.price = price
+        self.cost_of_production = cost_of_production
         self.diversified_income = diversified_income
+        self.area_size_unit = area_size_unit
+        self.volume_measurement_unit = volume_measurement_unit
+        self.cost_of_production_unit = cost_of_production_unit
+        self.diversified_income_unit = diversified_income_unit
 
     def __repr__(self) -> int:
         return f"<ReferenceData {self.id}>"
@@ -88,22 +126,46 @@ class ReferenceData(Base):
             "id": self.id,
             "country": self.country,
             "commodity": self.commodity,
-            "type": self.type,
+            "region": self.region,
+            "currency": self.currency,
             "year": self.year,
-            "farmer_production": self.farmer_production,
-            "farmgate_price": self.farmgate_price,
-            "farmer_expenses": self.farmer_expenses,
+            "source": self.source,
+            "link": self.link,
+            "notes": self.notes,
+            "confidence_level": self.confidence_level,
+            "range": self.range,
+            "type": self.type,
+            "area": self.area,
+            "volume": self.volume,
+            "price": self.price,
+            "cost_of_production": self.cost_of_production,
             "diversified_income": self.diversified_income,
+            "area_size_unit": self.area_size_unit,
+            "volume_measurement_unit": self.volume_measurement_unit,
+            "cost_of_production_unit": self.cost_of_production_unit,
+            "diversified_income_unit": self.diversified_income_unit,
         }
 
 
 class ReferenceDataBase(BaseModel):
-    id: int
+    id: Optional[int]
     country: int
     commodity: int
-    type: ReferenceDataType
+    region: str
+    currency: str
     year: int
-    farmer_production: Optional[float] = None
-    farmgate_price: Optional[float] = None
-    farmer_expenses: Optional[float] = None
-    diversified_income: Optional[float] = None
+    source: str
+    link: str
+    notes: Optional[str]
+    confidence_level: Optional[str]
+    range: Optional[str]
+    type: Optional[str]
+    area: Optional[float]
+    volume: Optional[float]
+    price: Optional[float]
+    cost_of_production: Optional[float]
+    diversified_income: Optional[float]
+    area_size_unit: Optional[str]
+    volume_measurement_unit: Optional[str]
+    cost_of_production_unit: Optional[str]
+    diversified_income_unit: Optional[str]

@@ -64,6 +64,14 @@ def upgrade() -> None:
     op.add_column(
         "reference_data",
         sa.Column(
+            "area",
+            sa.Float(),
+            nullable=True,
+        ),
+    )
+    op.add_column(
+        "reference_data",
+        sa.Column(
             "volume",
             sa.Float(),
             nullable=True,
@@ -100,14 +108,6 @@ def upgrade() -> None:
     op.add_column(
         "reference_data",
         sa.Column("diversified_income_unit", sa.String(), nullable=True),
-    )
-    op.add_column(
-        "reference_data",
-        sa.Column(
-            "area",
-            sa.Float(),
-            nullable=True,
-        ),
     )
 
 
