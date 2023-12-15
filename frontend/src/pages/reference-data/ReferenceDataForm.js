@@ -58,23 +58,61 @@ const ReferenceDataForm = () => {
   const [initValues, setInitValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-  const [copUnitOptions, setCopUnitOptions] = useState([]);
+  const [areaUnitName, setAreaUnitName] = useState(null);
+  const [volumeUnitName, setVolumeUnitName] = useState(null);
+  const [currencyUnitName, setCurrencyUnitName] = useState(null);
+  const [copUnitName, setCopUnitName] = useState(null);
+
+  const commodityOptions = window?.master?.commodity_categories?.flatMap((ct) =>
+    ct.commodities.map((c) => ({
+      label: c.name,
+      value: c.id,
+      category: ct.name,
+    }))
+  );
+
+  const currencyOptions = window?.master?.currencies;
 
   const onChange = (_, allValues) => {
-    const currency = allValues?.currency || "currency";
-    const areaUnit = allValues?.area_size_unit || "area_size_unit";
-    const volumeUnit =
-      allValues?.volume_measurement_unit || "volume_measurement_unit";
-    setCopUnitOptions([
-      {
-        label: `${currency} / ${areaUnit}`,
-        value: `${currency} / ${areaUnit}`,
-      },
-      {
-        label: `${currency} / ${volumeUnit}`,
-        value: `${currency} / ${volumeUnit}`,
-      },
-    ]);
+    const { commodity, currency, area_size_unit, volume_measurement_unit } =
+      allValues;
+
+    setCurrencyUnitName(currency);
+    setAreaUnitName(area_size_unit);
+
+    // handle CoP unit
+    const findCommodityCategory = commodityOptions.find(
+      (co) => co.value === commodity
+    )?.category;
+
+    if (findCommodityCategory?.toLowerCase() === "crop") {
+      if (currency && area_size_unit) {
+        setCopUnitName(`${currency} / ${area_size_unit}`);
+      } else {
+        setCopUnitName(null);
+      }
+    }
+
+    if (
+      ["aquaculture", "livestock"].includes(
+        findCommodityCategory?.toLowerCase()
+      )
+    ) {
+      if (currency && volume_measurement_unit) {
+        setCopUnitName(`${currency} / ${volume_measurement_unit}`);
+      } else {
+        setCopUnitName(null);
+      }
+    }
+    // EOL handle CoP unit
+
+    // handle Volume unit
+    if (area_size_unit && volume_measurement_unit) {
+      setVolumeUnitName(`${volume_measurement_unit} / ${area_size_unit}`);
+    } else {
+      setVolumeUnitName(null);
+    }
+    // EOL handle Volume unit
   };
 
   return (
@@ -154,7 +192,7 @@ const ReferenceDataForm = () => {
                           },
                         ]}
                       >
-                        <Select {...selectProps} options={[]} />
+                        <Select {...selectProps} options={currencyOptions} />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
@@ -168,7 +206,7 @@ const ReferenceDataForm = () => {
                           },
                         ]}
                       >
-                        <Select {...selectProps} options={[]} />
+                        <Select {...selectProps} options={commodityOptions} />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -252,25 +290,17 @@ const ReferenceDataForm = () => {
                   </Row>
 
                   <Row gutter={[16, 16]}>
-                    <Col span={8}>
+                    <Col span={12}>
                       <Form.Item label="Area Unit" name="area_size_unit">
                         <Select {...selectProps} options={areaUnitOptions} />
                       </Form.Item>
                     </Col>
-                    <Col span={8}>
+                    <Col span={12}>
                       <Form.Item
                         label="Weight Measurement Unit"
                         name="volume_measurement_unit"
                       >
                         <Select {...selectProps} options={volumeUnitOptions} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item
-                        label="Cost of Production Unit"
-                        name="cost_of_production_unit"
-                      >
-                        <Select {...selectProps} options={copUnitOptions} />
                       </Form.Item>
                     </Col>
                   </Row>
@@ -281,17 +311,34 @@ const ReferenceDataForm = () => {
                 <Card title="Drivers Value">
                   <Row gutter={[16, 16]}>
                     <Col span={8}>
-                      <Form.Item label="Area" name="area">
+                      <Form.Item
+                        label={areaUnitName ? `Area (${areaUnitName})` : "Area"}
+                        name="area"
+                      >
                         <InputNumber />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item label="Volume" name="volume">
+                      <Form.Item
+                        label={
+                          volumeUnitName
+                            ? `Volume (${volumeUnitName})`
+                            : "Volume"
+                        }
+                        name="volume"
+                      >
                         <InputNumber />
                       </Form.Item>
                     </Col>
                     <Col span={8}>
-                      <Form.Item label="Price" name="price">
+                      <Form.Item
+                        label={
+                          currencyUnitName
+                            ? `Price (${currencyUnitName})`
+                            : "Price"
+                        }
+                        name="price"
+                      >
                         <InputNumber />
                       </Form.Item>
                     </Col>
@@ -300,14 +347,25 @@ const ReferenceDataForm = () => {
                   <Row gutter={[16, 16]}>
                     <Col span={12}>
                       <Form.Item
-                        label="Cost of Production"
+                        label={
+                          copUnitName
+                            ? `Cost of Production (${copUnitName})`
+                            : "Cost of Production"
+                        }
                         name="cost_of_production"
                       >
                         <InputNumber />
                       </Form.Item>
                     </Col>
                     <Col span={12}>
-                      <Form.Item label="Diversified" name="diversified">
+                      <Form.Item
+                        label={
+                          currencyUnitName
+                            ? `Diversified Income (${currencyUnitName})`
+                            : "Diversified Income"
+                        }
+                        name="diversified_income"
+                      >
                         <InputNumber />
                       </Form.Item>
                     </Col>
