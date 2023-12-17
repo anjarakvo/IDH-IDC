@@ -1,4 +1,4 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import "./explore-studies-page.scss";
 import { ContentLayout } from "../../components/layout";
 import { Row, Col, Alert, Button, Card, Select, Input, Table } from "antd";
@@ -6,7 +6,7 @@ import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
 import { SearchOutlined } from "@ant-design/icons";
 import { range } from "lodash";
-import { Link } from "react-router-dom";
+import ReferenceDataForm from "./ReferenceDataForm";
 
 const selectProps = {
   showSearch: true,
@@ -58,6 +58,8 @@ const ExploreStudiesPage = () => {
   const userRole = UserState.useState((s) => s.role);
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
+  const [open, setOpen] = useState(false);
+
   const countryOptions = window.master.countries;
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
@@ -85,11 +87,13 @@ const ExploreStudiesPage = () => {
                   income drivers for your selected country and sector.
                 </p>
                 {isAdmin ? (
-                  <Link to="/reference-data/new">
-                    <Button className="button button-green-fill">
-                      Add New Rerefence Data
-                    </Button>
-                  </Link>
+                  <Button
+                    className="button button-green-fill"
+                    onClick={() => setOpen(true)}
+                  >
+                    {/* Open Form Modal */}
+                    Add New Rerefence Data
+                  </Button>
                 ) : null}
               </div>
             }
@@ -161,6 +165,9 @@ const ExploreStudiesPage = () => {
           />
         </Col>
       </Row>
+
+      {/* Form Modal */}
+      <ReferenceDataForm open={open} setOpen={setOpen} />
     </ContentLayout>
   );
 };

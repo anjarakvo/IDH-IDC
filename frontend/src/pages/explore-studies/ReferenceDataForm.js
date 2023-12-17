@@ -1,18 +1,16 @@
 import React, { useState } from "react";
 import "./explore-studies-page.scss";
-import { useNavigate, useParams } from "react-router-dom";
-import { ContentLayout } from "../../components/layout";
 import {
   Form,
   Input,
   Card,
   Row,
   Col,
-  Button,
   Select,
   Spin,
   message,
   InputNumber,
+  Modal,
 } from "antd";
 import { areaUnitOptions, volumeUnitOptions } from "../../store/static";
 
@@ -50,14 +48,18 @@ const typeOptions = [
   { label: "Minimum", value: "minimum" },
 ];
 
-const ReferenceDataForm = () => {
-  const navigate = useNavigate();
-  const { referenceDataId } = useParams();
+const ReferenceDataForm = ({
+  open = false,
+  setOpen,
+  referenceDataId = null,
+}) => {
   const [form] = Form.useForm();
-  const [submitting, setSubmitting] = useState(false);
   const [initValues, setInitValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+
+  const [confirmLoading, setConfirmLoading] = useState(false);
+
   const [areaUnitName, setAreaUnitName] = useState(null);
   const [volumeUnitName, setVolumeUnitName] = useState(null);
   const [currencyUnitName, setCurrencyUnitName] = useState(null);
@@ -115,18 +117,30 @@ const ReferenceDataForm = () => {
     // EOL handle Volume unit
   };
 
+  const handleOk = () => {
+    form.submit();
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
+  const handleCancel = () => {
+    setOpen(false);
+  };
+
   return (
-    <ContentLayout
-      breadcrumbItems={[
-        { title: "Home", href: "/welcome" },
-        { title: "Reference Data", href: "/reference-data" },
-        {
-          title: `${referenceDataId ? "Edit" : "Add"} Reference Data`,
-          href: `/reference-data/${referenceDataId ? referenceDataId : "new"}`,
-        },
-      ]}
-      title="Reference Data"
-      wrapperId="reference-data"
+    <Modal
+      title="Reference Data Details"
+      open={open}
+      onOk={handleOk}
+      confirmLoading={confirmLoading}
+      onCancel={handleCancel}
+      width="90%"
+      okText="Save"
+      keyboard={false}
+      destroyOnClose={true}
     >
       {contextHolder}
       {loading ? (
@@ -134,260 +148,240 @@ const ReferenceDataForm = () => {
           <Spin />
         </div>
       ) : (
-        <Card
-          title="Reference Data Details"
+        <Form
+          form={form}
+          name="reference-form"
+          layout="vertical"
+          initialValues={initValues}
+          // onFinish={onFinish}
+          onValuesChange={onChange}
           className="reference-form-container"
         >
-          <Form
-            form={form}
-            name="reference-form"
-            layout="vertical"
-            initialValues={initValues}
-            // onFinish={onFinish}
-            onValuesChange={onChange}
-          >
-            <Row gutter={[16, 16]}>
-              <Col span={24}>
-                <Card title="General">
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Country"
-                        name="country"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Country is required",
-                          },
-                        ]}
-                      >
-                        <Select {...selectProps} options={[]} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Region"
-                        name="region"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Region is required",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+          <Row gutter={[16, 16]}>
+            <Col span={24}>
+              <Card title="General">
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Country"
+                      name="country"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Country is required",
+                        },
+                      ]}
+                    >
+                      <Select {...selectProps} options={[]} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Region"
+                      name="region"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Region is required",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Currency"
-                        name="currency"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Currency is required",
-                          },
-                        ]}
-                      >
-                        <Select {...selectProps} options={currencyOptions} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Commodity"
-                        name="commodity"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Commodity is required",
-                          },
-                        ]}
-                      >
-                        <Select {...selectProps} options={commodityOptions} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Currency"
+                      name="currency"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Currency is required",
+                        },
+                      ]}
+                    >
+                      <Select {...selectProps} options={currencyOptions} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Commodity"
+                      name="commodity"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Commodity is required",
+                        },
+                      ]}
+                    >
+                      <Select {...selectProps} options={commodityOptions} />
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Year"
-                        name="year"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Year is required",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Source"
-                        name="source"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Source is required",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                      <Form.Item
-                        label="Link"
-                        name="link"
-                        rules={[
-                          {
-                            required: true,
-                            message: "Link for source is required",
-                          },
-                        ]}
-                      >
-                        <Input />
-                      </Form.Item>
-                    </Col>
-                    <Col span={24}>
-                      <Form.Item label="Notes" name="notes">
-                        <Input.TextArea rows={4} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Year"
+                      name="year"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Year is required",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Source"
+                      name="source"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Source is required",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item
+                      label="Link"
+                      name="link"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Link for source is required",
+                        },
+                      ]}
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={24}>
+                    <Form.Item label="Notes" name="notes">
+                      <Input.TextArea rows={4} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
 
-              <Col span={24}>
-                <Card title="Details about the data">
-                  <Row gutter={[16, 16]}>
-                    <Col span={8}>
-                      <Form.Item
-                        label="Confidence Level"
-                        name="confidence_level"
-                      >
-                        <Select
-                          {...selectProps}
-                          options={confidenceLevelOptions}
-                        />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item label="Range" name="range">
-                        <Select {...selectProps} options={rangeOptions} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item label="Type" name="type">
-                        <Select {...selectProps} options={typeOptions} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+            <Col span={24}>
+              <Card title="Details about the data">
+                <Row gutter={[16, 16]}>
+                  <Col span={8}>
+                    <Form.Item label="Confidence Level" name="confidence_level">
+                      <Select
+                        {...selectProps}
+                        options={confidenceLevelOptions}
+                      />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Range" name="range">
+                      <Select {...selectProps} options={rangeOptions} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item label="Type" name="type">
+                      <Select {...selectProps} options={typeOptions} />
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Form.Item label="Area Unit" name="area_size_unit">
-                        <Select {...selectProps} options={areaUnitOptions} />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label="Weight Measurement Unit"
-                        name="volume_measurement_unit"
-                      >
-                        <Select {...selectProps} options={volumeUnitOptions} />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Card>
-              </Col>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Form.Item label="Area Unit" name="area_size_unit">
+                      <Select {...selectProps} options={areaUnitOptions} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Weight Measurement Unit"
+                      name="volume_measurement_unit"
+                    >
+                      <Select {...selectProps} options={volumeUnitOptions} />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
 
-              <Col span={24}>
-                <Card title="Drivers Value">
-                  <Row gutter={[16, 16]}>
-                    <Col span={8}>
-                      <Form.Item
-                        label={areaUnitName ? `Area (${areaUnitName})` : "Area"}
-                        name="area"
-                      >
-                        <InputNumber />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item
-                        label={
-                          volumeUnitName
-                            ? `Volume (${volumeUnitName})`
-                            : "Volume"
-                        }
-                        name="volume"
-                      >
-                        <InputNumber />
-                      </Form.Item>
-                    </Col>
-                    <Col span={8}>
-                      <Form.Item
-                        label={
-                          currencyUnitName
-                            ? `Price (${currencyUnitName})`
-                            : "Price"
-                        }
-                        name="price"
-                      >
-                        <InputNumber />
-                      </Form.Item>
-                    </Col>
-                  </Row>
+            <Col span={24}>
+              <Card title="Drivers Value">
+                <Row gutter={[16, 16]}>
+                  <Col span={8}>
+                    <Form.Item
+                      label={areaUnitName ? `Area (${areaUnitName})` : "Area"}
+                      name="area"
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label={
+                        volumeUnitName ? `Volume (${volumeUnitName})` : "Volume"
+                      }
+                      name="volume"
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label={
+                        currencyUnitName
+                          ? `Price (${currencyUnitName})`
+                          : "Price"
+                      }
+                      name="price"
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
 
-                  <Row gutter={[16, 16]}>
-                    <Col span={12}>
-                      <Form.Item
-                        label={
-                          copUnitName
-                            ? `Cost of Production (${copUnitName})`
-                            : "Cost of Production"
-                        }
-                        name="cost_of_production"
-                      >
-                        <InputNumber />
-                      </Form.Item>
-                    </Col>
-                    <Col span={12}>
-                      <Form.Item
-                        label={
-                          currencyUnitName
-                            ? `Diversified Income (${currencyUnitName})`
-                            : "Diversified Income"
-                        }
-                        name="diversified_income"
-                      >
-                        <InputNumber />
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                </Card>
-
-                <Form.Item>
-                  <Button
-                    className="button button-submit button-secondary"
-                    htmlType="submit"
-                    style={{ width: "200px", float: "left" }}
-                    loading={submitting}
-                  >
-                    Save
-                  </Button>
-                </Form.Item>
-              </Col>
-            </Row>
-          </Form>
-        </Card>
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Form.Item
+                      label={
+                        copUnitName
+                          ? `Cost of Production (${copUnitName})`
+                          : "Cost of Production"
+                      }
+                      name="cost_of_production"
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label={
+                        currencyUnitName
+                          ? `Diversified Income (${currencyUnitName})`
+                          : "Diversified Income"
+                      }
+                      name="diversified_income"
+                    >
+                      <InputNumber />
+                    </Form.Item>
+                  </Col>
+                </Row>
+              </Card>
+            </Col>
+          </Row>
+        </Form>
       )}
-    </ContentLayout>
+    </Modal>
   );
 };
 
