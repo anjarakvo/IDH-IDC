@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./reference-data.scss";
+import "./explore-studies-page.scss";
 import { useNavigate, useParams } from "react-router-dom";
 import { ContentLayout } from "../../components/layout";
 import {

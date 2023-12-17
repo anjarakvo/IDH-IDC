@@ -16,7 +16,6 @@ import { UserState, UIState } from "./store";
 import { api } from "./lib";
 import { adminRole } from "./store/static";
 import { ExploreStudiesPage } from "./pages/explore-studies";
-import { ReferenceData, ReferenceDataForm } from "./pages/reference-data";
 
 const optionRoutes = ["organisation/options", "tag/options"];
 
@@ -127,17 +126,6 @@ const App = () => {
                 exact
                 path="/explore-studies"
                 element={<ExploreStudiesPage />}
-              />
-              <Route exact path="/reference-data" element={<ReferenceData />} />
-              <Route
-                exact
-                path="/reference-data/new"
-                element={<ReferenceDataForm />}
-              />
-              <Route
-                exact
-                path="/reference-data/:referenceDataId"
-                element={<ReferenceDataForm />}
               />
             </Route>
           ) : (
