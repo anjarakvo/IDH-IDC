@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import "./explore-studies-page.scss";
 import {
   Form,
@@ -13,6 +13,7 @@ import {
   Modal,
 } from "antd";
 import { areaUnitOptions, volumeUnitOptions } from "../../store/static";
+import { uniqBy, isEmpty } from "lodash";
 
 const selectProps = {
   showSearch: true,
@@ -52,14 +53,15 @@ const ReferenceDataForm = ({
   open = false,
   setOpen,
   referenceDataId = null,
+  onSave,
 }) => {
   const [form] = Form.useForm();
   const [initValues, setInitValues] = useState({});
   const [loading, setLoading] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
-
   const [confirmLoading, setConfirmLoading] = useState(false);
 
+  const [selectedCountry, setSelectedCountry] = useState(null);
   const [areaUnitName, setAreaUnitName] = useState(null);
   const [volumeUnitName, setVolumeUnitName] = useState(null);
   const [currencyUnitName, setCurrencyUnitName] = useState(null);
@@ -72,13 +74,38 @@ const ReferenceDataForm = ({
       category: ct.name,
     }))
   );
+  const countryOptions = window?.master?.countries || [];
 
-  const currencyOptions = window?.master?.currencies;
+  const filteredCurrencyOptions = useMemo(() => {
+    const currencyOptions = window?.master?.currencies || [];
+    if (!selectedCountry) {
+      return uniqBy(currencyOptions, "value");
+    }
+    const countryCurrency = currencyOptions.find(
+      (co) => co.country === selectedCountry
+    );
+    // set default currency value
+    if (isEmpty(initValues)) {
+      form.setFieldsValue({ currency: countryCurrency?.value });
+    }
+    // TODO: Wrong format when store to db
+    let additonalCurrencies = currencyOptions.filter((co) =>
+      ["eur", "usd"].includes(co.value.toLowerCase())
+    );
+    additonalCurrencies = uniqBy(additonalCurrencies, "value");
+    return [countryCurrency, ...additonalCurrencies];
+  }, [selectedCountry, form, initValues]);
 
   const onChange = (_, allValues) => {
-    const { commodity, currency, area_size_unit, volume_measurement_unit } =
-      allValues;
+    const {
+      commodity,
+      currency,
+      area_size_unit,
+      volume_measurement_unit,
+      country,
+    } = allValues;
 
+    setSelectedCountry(country);
     setCurrencyUnitName(currency);
     setAreaUnitName(area_size_unit);
 
@@ -117,26 +144,17 @@ const ReferenceDataForm = ({
     // EOL handle Volume unit
   };
 
-  const handleOk = () => {
-    form.submit();
-    setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
-  };
-
-  const handleCancel = () => {
-    setOpen(false);
+  const onFinish = (values) => {
+    onSave({ values: values, setConfirmLoading: setConfirmLoading });
   };
 
   return (
     <Modal
       title="Reference Data Details"
       open={open}
-      onOk={handleOk}
+      onOk={() => form.submit()}
       confirmLoading={confirmLoading}
-      onCancel={handleCancel}
+      onCancel={() => setOpen(false)}
       width="90%"
       okText="Save"
       keyboard={false}
@@ -153,7 +171,7 @@ const ReferenceDataForm = ({
           name="reference-form"
           layout="vertical"
           initialValues={initValues}
-          // onFinish={onFinish}
+          onFinish={onFinish}
           onValuesChange={onChange}
           className="reference-form-container"
         >
@@ -172,7 +190,7 @@ const ReferenceDataForm = ({
                         },
                       ]}
                     >
-                      <Select {...selectProps} options={[]} />
+                      <Select {...selectProps} options={countryOptions} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -203,7 +221,11 @@ const ReferenceDataForm = ({
                         },
                       ]}
                     >
-                      <Select {...selectProps} options={currencyOptions} />
+                      <Select
+                        {...selectProps}
+                        options={filteredCurrencyOptions}
+                        disabled={!selectedCountry}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>

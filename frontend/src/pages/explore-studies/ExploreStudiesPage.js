@@ -64,6 +64,15 @@ const ExploreStudiesPage = () => {
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
 
+  const onSave = ({ values, setConfirmLoading }) => {
+    console.log(values);
+    setConfirmLoading(true);
+    setTimeout(() => {
+      setOpen(false);
+      setConfirmLoading(false);
+    }, 2000);
+  };
+
   return (
     <ContentLayout
       breadcrumbItems={[
@@ -167,7 +176,7 @@ const ExploreStudiesPage = () => {
       </Row>
 
       {/* Form Modal */}
-      <ReferenceDataForm open={open} setOpen={setOpen} />
+      <ReferenceDataForm open={open} setOpen={setOpen} onSave={onSave} />
     </ContentLayout>
   );
 };
