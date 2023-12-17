@@ -36,12 +36,6 @@ const PageHeader = ({ isLoggedIn, signOut }) => {
       role: allUserRole,
     },
     {
-      testid: "nav-menu-reference",
-      name: "Reference Data",
-      path: "/reference-data",
-      role: allUserRole,
-    },
-    {
       testid: "nav-menu-admin",
       name: "Admin",
       path: "/admin/users",
