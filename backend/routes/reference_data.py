@@ -5,13 +5,14 @@ from http import HTTPStatus
 from fastapi import APIRouter, Request, Depends, HTTPException, Response
 from fastapi.security import HTTPBearer, HTTPBasicCredentials as credentials
 from sqlalchemy.orm import Session
-from typing import Optional
+from typing import Optional, List
 
 from db.connection import get_session
 from models.reference_data import (
     PaginatedReferenceDataResponse,
     ReferenceDataBase,
     ReferenceDataDict,
+    ReferenceValueList,
     Driver,
 )
 from middleware import verify_admin
@@ -62,6 +63,61 @@ def get_all(
     }
 
 
+@reference_data_routes.get(
+    "/reference_data/reference_value",
+    response_model=List[ReferenceValueList],
+    summary="get reference value",
+    name="reference_data:get_reference_value",
+    tags=["Reference Data"],
+)
+def get_reference_value(
+    req: Request,
+    country: int,
+    commodity: int,
+    driver: Driver,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    data = crud_ref.get_reference_value(
+        session=session,
+        commodity=commodity,
+        country=country,
+        driver=driver,
+    )
+    if not data:
+        return []
+    # transform value
+    res = []
+    for d in data:
+        value = None
+        unit = None
+        if driver == Driver.area:
+            value = d.area
+            unit = d.area_size_unit
+        if driver == Driver.price:
+            value = d.price
+            unit = d.currency
+        if driver == Driver.volume:
+            value = d.volume
+            unit = d.volume_measurement_unit
+        if driver == Driver.cost_of_production:
+            value = d.cost_of_production
+            unit = d.cost_of_production_unit
+        if driver == Driver.diversified_income:
+            value = d.diversified_income
+            unit = d.diversified_income_unit
+        res.append(
+            {
+                "id": d.id,
+                "source": d.source,
+                "link": d.link,
+                "value": value,
+                "unit": unit,
+            }
+        )
+    return res
+
+
 @reference_data_routes.post(
     "/reference_data",
     response_model=ReferenceDataDict,
@@ -91,7 +147,6 @@ def get_reference_data_by_id(
     req: Request,
     reference_data_id: int,
     session: Session = Depends(get_session),
-    credentials: credentials = Depends(security),
 ):
     data = crud_ref.get_reference_by_id(session=session, id=reference_data_id)
     return data.serialize

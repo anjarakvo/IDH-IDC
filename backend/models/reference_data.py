@@ -56,6 +56,14 @@ class ReferenceDataList(TypedDict):
     confidence_level: Optional[str]
 
 
+class ReferenceValueList(TypedDict):
+    id: int
+    source: str
+    link: str
+    value: Optional[float]
+    unit: Optional[str]
+
+
 class ReferenceData(Base):
     __tablename__ = "reference_data"
 

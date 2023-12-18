@@ -32,7 +32,7 @@ def get_all_reference(
     if country:
         data = data.filter(ReferenceData.country == country)
     if commodity:
-        data = data.filter(ReferenceData.commodity)
+        data = data.filter(ReferenceData.commodity == commodity)
     if source:
         data = data.filter(
             ReferenceData.name.ilike("%{}%".format(source.lower().strip()))
@@ -52,6 +52,29 @@ def get_all_reference(
         data.order_by(ReferenceData.id.desc()).offset(skip).limit(limit).all()
     )
     return PaginatedReferenceData(count=count, data=data)
+
+
+def get_reference_value(
+    session: Session,
+    country: int,
+    commodity: int,
+    driver: Driver,
+) -> List[ReferenceDataList]:
+    data = session.query(ReferenceData)
+    data = data.filter(ReferenceData.country == country)
+    data = data.filter(ReferenceData.commodity == commodity)
+    if driver == Driver.area:
+        data = data.filter(ReferenceData.area.is_not(None))
+    if driver == Driver.price:
+        data = data.filter(ReferenceData.price.is_not(None))
+    if driver == Driver.volume:
+        data = data.filter(ReferenceData.volume.is_not(None))
+    if driver == Driver.cost_of_production:
+        data = data.filter(ReferenceData.cost_of_production.is_not(None))
+    if driver == Driver.diversified_income:
+        data = data.filter(ReferenceData.diversified_income.is_not(None))
+    data = data.order_by(ReferenceData.id.desc()).all()
+    return data
 
 
 def add_reference(
