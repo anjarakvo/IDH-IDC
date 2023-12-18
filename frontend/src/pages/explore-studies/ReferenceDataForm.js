@@ -14,6 +14,7 @@ import {
 import { areaUnitOptions, volumeUnitOptions } from "../../store/static";
 import { uniqBy, isEmpty } from "lodash";
 import { api } from "../../lib";
+import { InputNumberThousandFormatter } from "../cases/components";
 
 const selectProps = {
   showSearch: true,
@@ -65,6 +66,7 @@ const ReferenceDataForm = ({
   const [volumeUnitName, setVolumeUnitName] = useState(null);
   const [currencyUnitName, setCurrencyUnitName] = useState(null);
   const [copUnitName, setCopUnitName] = useState(null);
+  const [priceUnitName, setPriceUnitName] = useState(null);
 
   const commodityOptions = window?.master?.commodity_categories?.flatMap((ct) =>
     ct.commodities.map((c) => ({
@@ -109,12 +111,14 @@ const ReferenceDataForm = ({
             currency,
             volume_measurement_unit,
             cost_of_production_unit,
+            price_unit,
           } = res.data;
           setSelectedCountry(country || null);
           setAreaUnitName(area_size_unit || null);
           setVolumeUnitName(volume_measurement_unit || null);
           setCopUnitName(cost_of_production_unit || null);
           setCurrencyUnitName(currency || null);
+          setPriceUnitName(price_unit || null);
           setInitValues(res.data);
         })
         .finally(() => {
@@ -169,14 +173,25 @@ const ReferenceDataForm = ({
       setVolumeUnitName(null);
     }
     // EOL handle Volume unit
+
+    // handle Price unit
+    if (currency && volume_measurement_unit) {
+      setPriceUnitName(`${currency} / ${volume_measurement_unit}`);
+    } else {
+      setPriceUnitName(null);
+    }
+    // EOL handle Volume unit
   };
 
   const onFinish = (values) => {
     // transform values
     const payload = {
       ...values,
+      area_size_unit: areaUnitName,
+      volume_measurement_unit: volumeUnitName,
       cost_of_production_unit: copUnitName,
       diversified_income_unit: values?.currency,
+      price_unit: priceUnitName,
     };
     onSave({
       payload: payload,
@@ -384,7 +399,7 @@ const ReferenceDataForm = ({
                       label={areaUnitName ? `Area (${areaUnitName})` : "Area"}
                       name="area"
                     >
-                      <InputNumber />
+                      <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -394,19 +409,17 @@ const ReferenceDataForm = ({
                       }
                       name="volume"
                     >
-                      <InputNumber />
+                      <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
                     <Form.Item
                       label={
-                        currencyUnitName
-                          ? `Price (${currencyUnitName})`
-                          : "Price"
+                        currencyUnitName ? `Price (${priceUnitName})` : "Price"
                       }
                       name="price"
                     >
-                      <InputNumber />
+                      <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -421,7 +434,7 @@ const ReferenceDataForm = ({
                       }
                       name="cost_of_production"
                     >
-                      <InputNumber />
+                      <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -433,7 +446,7 @@ const ReferenceDataForm = ({
                       }
                       name="diversified_income"
                     >
-                      <InputNumber />
+                      <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
                 </Row>
