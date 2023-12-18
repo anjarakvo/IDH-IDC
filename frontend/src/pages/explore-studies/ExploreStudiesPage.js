@@ -13,10 +13,16 @@ import {
   Table,
   message,
   Form,
+  Space,
+  Popconfirm,
 } from "antd";
 import { UserState } from "../../store";
 import { adminRole } from "../../store/static";
-import { SearchOutlined, EditOutlined } from "@ant-design/icons";
+import {
+  SearchOutlined,
+  EditOutlined,
+  DeleteOutlined,
+} from "@ant-design/icons";
 import { upperFirst, isEmpty } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
@@ -200,9 +206,22 @@ const ExploreStudiesPage = () => {
           title: "Action",
           dataIndex: "action",
           render: (_, record) => (
-            <Link onClick={() => setSelectedDataId(record.id)}>
-              <EditOutlined />
-            </Link>
+            <Space size="large">
+              <Link onClick={() => setSelectedDataId(record.id)}>
+                <EditOutlined />
+              </Link>
+              <Popconfirm
+                title="Delete Reference Data"
+                description="Are you sure to delete this data?"
+                onConfirm={() => onConfirmDelete(record)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Link>
+                  <DeleteOutlined style={{ color: "red" }} />
+                </Link>
+              </Popconfirm>
+            </Space>
           ),
         },
       ];
@@ -291,6 +310,7 @@ const ExploreStudiesPage = () => {
           content: "Reference Data saved successfully.",
         });
         resetFields();
+        fetchReferenceData();
       })
       .catch(() => {
         messageApi.open({
@@ -303,6 +323,24 @@ const ExploreStudiesPage = () => {
           setOpen(false);
           setConfirmLoading(false);
         }, 500);
+      });
+  };
+
+  const onConfirmDelete = (record) => {
+    api
+      .delete(`reference_data/${record.id}`)
+      .then(() => {
+        messageApi.open({
+          type: "success",
+          content: "Reference Data deleted successfully.",
+        });
+        fetchReferenceData();
+      })
+      .catch(() => {
+        messageApi.open({
+          type: "error",
+          content: "Failed! Something went wrong.",
+        });
       });
   };
 
