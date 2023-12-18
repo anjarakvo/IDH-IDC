@@ -26,6 +26,7 @@ import {
 import { upperFirst, isEmpty } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
+import { driverOptions } from ".";
 
 const selectProps = {
   showSearch: true,
@@ -105,29 +106,6 @@ const referenceDataExpand = [
     key: "diversified_income",
     label: "Diversified Income",
     unit: "diversified_income_unit",
-  },
-];
-
-const driverOptions = [
-  {
-    label: "Area",
-    value: "area",
-  },
-  {
-    label: "Volume",
-    value: "volume",
-  },
-  {
-    label: "Price",
-    value: "price",
-  },
-  {
-    label: "Cost of Production",
-    value: "cost_of_production",
-  },
-  {
-    label: "Diversified Income",
-    value: "diversified_income",
   },
 ];
 

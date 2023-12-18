@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import {
   Row,
   Col,
@@ -9,6 +9,8 @@ import {
   Input,
   InputNumber,
   Divider,
+  Table,
+  Select,
 } from "antd";
 import {
   DeleteTwoTone,
@@ -24,7 +26,7 @@ import {
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { map, groupBy } from "lodash";
+import { map, groupBy, isEmpty } from "lodash";
 import {
   IncomeDriverForm,
   IncomeDriverTarget,
@@ -34,6 +36,8 @@ import {
 import Chart from "../../../components/chart";
 import { incomeTargetChartOption } from "../../../components/chart/options/common";
 import { SaveAsImageButton } from "../../../components/utils";
+import { api } from "../../../lib";
+import { driverOptions } from "../../explore-studies";
 
 const DataFields = ({
   segment,
@@ -59,6 +63,11 @@ const DataFields = ({
   const [newName, setNewName] = useState(segmentLabel);
   const elDriverChart = useRef(null);
 
+  const [loadingRefData, setLoadingRefData] = useState(false);
+  const [referenceData, setReferenceData] = useState([]);
+  const [selectedDriver, setSelectedDriver] = useState("area");
+  const [exploreButtonLink, setExploreButtonLink] = useState(null);
+
   const finishEditing = () => {
     renameItem(segment, newName);
     setEditing(false);
@@ -67,6 +76,32 @@ const DataFields = ({
     setNewName(segmentLabel);
     setEditing(false);
   };
+
+  useEffect(() => {
+    const country = currentCase?.country;
+    const commodity = currentCase?.case_commodities?.find(
+      (x) => x.commodity_type === "focus"
+    )?.commodity;
+    if (!isEmpty(currentCase) && selectedDriver) {
+      setLoadingRefData(true);
+      setExploreButtonLink(
+        `/explore-studies/${country}/${commodity}/${selectedDriver}`
+      );
+      api
+        .get(
+          `reference_data/reference_value?country=${country}&commodity=${commodity}&driver=${selectedDriver}`
+        )
+        .then((res) => {
+          setReferenceData(res.data);
+        })
+        .catch(() => {
+          setReferenceData([]);
+        })
+        .finally(() => {
+          setLoadingRefData(false);
+        });
+    }
+  }, [currentCase, selectedDriver]);
 
   const totalIncome = useMemo(() => {
     const currentFormValue = formValues.find((x) => x.key === segmentItem.key);
@@ -553,6 +588,87 @@ const DataFields = ({
                   axisTitle: { y: `Income (${currentCase.currency})` },
                 }}
               />
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card
+              title="Explore Studies"
+              className="info-card-wrapper"
+              extra={
+                <a
+                  href={exploreButtonLink}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Button
+                    className="save-as-image-btn"
+                    style={{
+                      fontSize: 12,
+                      borderRadius: "20px",
+                      padding: "0 10px",
+                      backgroundColor: "transparent",
+                      color: "#fff",
+                      fontWeight: 600,
+                    }}
+                    disabled={!exploreButtonLink}
+                  >
+                    Explore Studies
+                  </Button>
+                </a>
+              }
+            >
+              <Space direction="vertical" size="large">
+                <Select
+                  options={driverOptions}
+                  onChange={setSelectedDriver}
+                  value={selectedDriver}
+                  size="small"
+                />
+                <Table
+                  bordered
+                  size="small"
+                  rowKey="id"
+                  loading={loadingRefData}
+                  columns={[
+                    {
+                      key: "value",
+                      title: "Value",
+                      dataIndex: "value",
+                    },
+                    {
+                      key: "unit",
+                      title: "Unit",
+                      dataIndex: "unit",
+                    },
+                    {
+                      key: "source",
+                      title: "Source",
+                      width: "35%",
+                      render: (value, row) => {
+                        if (!row?.link) {
+                          return value;
+                        }
+                        const url = row.link?.includes("https://")
+                          ? row.link
+                          : `https://${row.link}`;
+                        return (
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                          >
+                            {row.source}
+                          </a>
+                        );
+                      },
+                    },
+                  ]}
+                  dataSource={referenceData}
+                  scroll={{
+                    y: 240,
+                  }}
+                />
+              </Space>
             </Card>
           </Col>
         </Row>
