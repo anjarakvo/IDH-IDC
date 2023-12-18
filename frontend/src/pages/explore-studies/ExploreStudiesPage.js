@@ -1,12 +1,23 @@
 import React, { useMemo, useState } from "react";
 import "./explore-studies-page.scss";
 import { ContentLayout } from "../../components/layout";
-import { Row, Col, Alert, Button, Card, Select, Input, Table } from "antd";
+import {
+  Row,
+  Col,
+  Alert,
+  Button,
+  Card,
+  Select,
+  Input,
+  Table,
+  message,
+} from "antd";
 import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
 import { SearchOutlined } from "@ant-design/icons";
 import { range } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
+import { api } from "../../lib";
 
 const selectProps = {
   showSearch: true,
@@ -59,18 +70,35 @@ const ExploreStudiesPage = () => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
 
   const [open, setOpen] = useState(false);
+  const [messageApi, contextHolder] = message.useMessage();
 
   const countryOptions = window.master.countries;
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
 
-  const onSave = ({ values, setConfirmLoading }) => {
-    console.log(values);
+  const onSave = ({ payload, setConfirmLoading, resetFields }) => {
     setConfirmLoading(true);
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+    api
+      .post("reference_data", payload)
+      .then(() => {
+        messageApi.open({
+          type: "success",
+          content: "Reference Data saved successfully.",
+        });
+        resetFields();
+      })
+      .catch(() => {
+        messageApi.open({
+          type: "error",
+          content: "Failed! Something went wrong.",
+        });
+      })
+      .finally(() => {
+        setTimeout(() => {
+          setOpen(false);
+          setConfirmLoading(false);
+        }, 500);
+      });
   };
 
   return (
@@ -81,6 +109,7 @@ const ExploreStudiesPage = () => {
       ]}
       wrapperId="explore-studies-page"
     >
+      {contextHolder}
       <Row gutter={[24, 24]} className="explore-content-wrapper">
         <Col span={24}>
           <Alert

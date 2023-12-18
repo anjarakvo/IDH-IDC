@@ -8,7 +8,6 @@ import {
   Col,
   Select,
   Spin,
-  message,
   InputNumber,
   Modal,
 } from "antd";
@@ -58,7 +57,6 @@ const ReferenceDataForm = ({
   const [form] = Form.useForm();
   const [initValues, setInitValues] = useState({});
   const [loading, setLoading] = useState(false);
-  const [messageApi, contextHolder] = message.useMessage();
   const [confirmLoading, setConfirmLoading] = useState(false);
 
   const [selectedCountry, setSelectedCountry] = useState(null);
@@ -145,7 +143,17 @@ const ReferenceDataForm = ({
   };
 
   const onFinish = (values) => {
-    onSave({ values: values, setConfirmLoading: setConfirmLoading });
+    // transform values
+    const payload = {
+      ...values,
+      cost_of_production_unit: copUnitName,
+      diversified_income_unit: values?.currency,
+    };
+    onSave({
+      payload: payload,
+      setConfirmLoading: setConfirmLoading,
+      resetFields: form.resetFields(),
+    });
   };
 
   return (
@@ -157,10 +165,7 @@ const ReferenceDataForm = ({
       onCancel={() => setOpen(false)}
       width="90%"
       okText="Save"
-      keyboard={false}
-      destroyOnClose={true}
     >
-      {contextHolder}
       {loading ? (
         <div className="loading-container">
           <Spin />
