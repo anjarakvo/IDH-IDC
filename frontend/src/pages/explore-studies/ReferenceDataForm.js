@@ -50,6 +50,15 @@ const typeOptions = [
   { label: "Minimum", value: "minimum" },
 ];
 
+const isValidUrl = (url) => {
+  try {
+    new URL(url);
+    return true;
+  } catch (error) {
+    return false;
+  }
+};
+
 const ReferenceDataForm = ({
   open = false,
   setOpen,
@@ -336,6 +345,18 @@ const ReferenceDataForm = ({
                           required: true,
                           message: "Link for source is required",
                         },
+                        () => ({
+                          validator(_, value) {
+                            if (isValidUrl(value)) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error(
+                                "Please provide a valid URL, e.g. https://example.com."
+                              )
+                            );
+                          },
+                        }),
                       ]}
                     >
                       <Input />
