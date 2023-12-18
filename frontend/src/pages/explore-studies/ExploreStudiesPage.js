@@ -322,6 +322,7 @@ const ExploreStudiesPage = () => {
       });
       fetchReferenceData(country, commodity, driver, source);
     } else {
+      setFilterInitialValues({});
       fetchReferenceData();
     }
   }, [fetchReferenceData, currentPage, location]);
