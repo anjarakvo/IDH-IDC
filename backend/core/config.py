@@ -100,9 +100,6 @@ app.include_router(visualization_route)
 app.include_router(reference_data_routes)
 
 
-generate_config_file()
-
-
 @app.get("/", tags=["Dev"])
 def read_main():
     return "OK"
@@ -121,6 +118,7 @@ def health_check():
     description="static javascript config",
 )
 async def main(res: Response):
+    generate_config_file()
     res.headers["Content-Type"] = "application/x-javascript; charset=utf-8"
     return JS_FILE
 
