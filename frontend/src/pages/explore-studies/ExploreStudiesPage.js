@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback, useEffect } from "react";
 import "./explore-studies-page.scss";
 import { ContentLayout } from "../../components/layout";
+import { Link } from "react-router-dom";
 import {
   Row,
   Col,
@@ -14,8 +15,8 @@ import {
 } from "antd";
 import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
-import { SearchOutlined } from "@ant-design/icons";
-import { range } from "lodash";
+import { SearchOutlined, EditOutlined } from "@ant-design/icons";
+import { upperFirst } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
 
@@ -28,42 +29,13 @@ const selectProps = {
   },
 };
 
-const columns = [
-  {
-    key: "crop",
-    title: "Crop",
-    dataIndex: "crop",
-  },
-  {
-    key: "company",
-    title: "Company",
-    dataIndex: "company",
-  },
-  {
-    key: "total",
-    title: "Total Submission",
-    dataIndex: "total",
-  },
-  {
-    key: "survey",
-    title: "Survey Conducted",
-    dataIndex: "survey",
-  },
-  {
-    key: "action",
-    title: "Action",
-    dataIndex: "action",
-  },
-];
-
-const dataSource = range(1, 10, 1).map((i) => ({
-  id: i,
-  crop: `Crop ${i}`,
-  company: `Company ${i}`,
-  total: i * 5,
-  survey: i * 6,
-  action: i + 3,
-}));
+const perPage = 10;
+const defData = {
+  current: 1,
+  data: [],
+  total: 0,
+  total_page: 1,
+};
 
 const ExploreStudiesPage = () => {
   const userRole = UserState.useState((s) => s.role);
@@ -71,10 +43,84 @@ const ExploreStudiesPage = () => {
 
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
+  const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [data, setData] = useState(defData);
 
   const countryOptions = window.master.countries;
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
+
+  const columns = [
+    {
+      key: "country",
+      title: "Country",
+      dataIndex: "country",
+    },
+    {
+      key: "commodity",
+      title: "Commodity",
+      dataIndex: "commodity",
+    },
+    {
+      key: "confidence_level",
+      title: "Confidence Level",
+      dataIndex: "confidence_level",
+      render: (value) => upperFirst(value),
+    },
+    {
+      key: "source",
+      title: "Source",
+      dataIndex: "source",
+      render: (value, row) => {
+        if (!row?.link) {
+          return value;
+        }
+        const url = row.link?.includes("https://")
+          ? row.link
+          : `https://${row.link}`;
+        return (
+          <a href={url} target="_blank" rel="noreferrer noopener">
+            {row.source}
+          </a>
+        );
+      },
+    },
+    {
+      key: "action",
+      title: "Action",
+      dataIndex: "action",
+      render: (_, record) => (
+        <Link>
+          <EditOutlined />
+        </Link>
+      ),
+    },
+  ];
+
+  const fetchReferenceData = useCallback(() => {
+    setLoading(true);
+    let url = `reference_data?page=${currentPage}&limit=${perPage}`;
+    api
+      .get(url)
+      .then((res) => {
+        setData(res.data);
+      })
+      .catch((e) => {
+        console.error(e.response);
+        const { status } = e.response;
+        if (status === 404) {
+          setData(defData);
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }, [currentPage]);
+
+  useEffect(() => {
+    fetchReferenceData();
+  }, [fetchReferenceData, currentPage]);
 
   const onSave = ({ payload, setConfirmLoading, resetFields }) => {
     setConfirmLoading(true);
@@ -191,14 +237,14 @@ const ExploreStudiesPage = () => {
           <Table
             rowKey="id"
             className="table-wrapper"
-            dataSource={dataSource}
+            dataSource={data.data}
             columns={columns}
-            loading={false}
+            loading={loading}
             pagination={{
-              current: 1,
-              pageSize: 10,
-              total: 10,
-              onChange: (page) => console.info(page),
+              current: currentPage,
+              pageSize: perPage,
+              total: data.total,
+              onChange: (page) => setCurrentPage(page),
             }}
           />
         </Col>
