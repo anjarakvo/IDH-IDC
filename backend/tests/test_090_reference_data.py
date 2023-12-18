@@ -178,7 +178,7 @@ class TestReferenceRoute:
         res = await client.get(
             app.url_path_for("reference_data:get_by_id", reference_data_id=1)
         )
-        assert res.status_code == 403
+        assert res.status_code == 200
         # return 404
         res = await client.get(
             app.url_path_for(
@@ -255,6 +255,37 @@ class TestReferenceRoute:
         assert res["source"] == "Google"
         assert res["link"] == "http://google.com"
         assert res["area"] is None
+
+    @pytest.mark.asyncio
+    async def test_get_reference_value(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # with normal user cred
+        res = await client.get(
+            app.url_path_for("reference_data:get_reference_value"),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+            params={"country": 100, "commodity": 100, "driver": "area"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == []
+        # with admin user cred
+        res = await client.get(
+            app.url_path_for("reference_data:get_reference_value"),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+            params={"country": 1, "commodity": 1, "driver": "area"},
+        )
+        assert res.status_code == 200
+        res = res.json()
+        assert res == [
+            {
+                "id": 1,
+                "source": "Sample Source",
+                "link": "http://example.com",
+                "value": 100.5,
+                "unit": "acres",
+            }
+        ]
 
     @pytest.mark.asyncio
     async def test_delete_reference_data(
