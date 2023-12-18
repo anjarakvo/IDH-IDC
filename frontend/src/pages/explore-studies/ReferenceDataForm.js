@@ -107,10 +107,10 @@ const ReferenceDataForm = ({
   }, [selectedCountry, form, initValues]);
 
   useEffect(() => {
+    setInitValues({});
+    form.resetFields();
     if (referenceDataId) {
       setLoading(true);
-      setInitValues({});
-      form.resetFields();
       api
         .get(`reference_data/${referenceDataId}`)
         .then((res) => {
@@ -122,9 +122,15 @@ const ReferenceDataForm = ({
             cost_of_production_unit,
             price_unit,
           } = res.data;
+          // handle Volume unit
+          if (area_size_unit && volume_measurement_unit) {
+            setVolumeUnitName(`${volume_measurement_unit} / ${area_size_unit}`);
+          } else {
+            setVolumeUnitName(null);
+          }
+          // EOL handle Volume unit
           setSelectedCountry(country || null);
           setAreaUnitName(area_size_unit || null);
-          setVolumeUnitName(volume_measurement_unit || null);
           setCopUnitName(cost_of_production_unit || null);
           setCurrencyUnitName(currency || null);
           setPriceUnitName(price_unit || null);
@@ -192,12 +198,22 @@ const ReferenceDataForm = ({
     // EOL handle Volume unit
   };
 
+  const clearForm = () => {
+    form.resetFields();
+    setInitValues({});
+    setSelectedCountry(null);
+    setAreaUnitName(null);
+    setVolumeUnitName(null);
+    setCurrencyUnitName(null);
+    setCopUnitName(null);
+    setPriceUnitName(null);
+  };
+
   const onFinish = (values) => {
     // transform values
     const payload = {
       ...values,
       area_size_unit: areaUnitName,
-      volume_measurement_unit: volumeUnitName,
       cost_of_production_unit: copUnitName,
       diversified_income_unit: values?.currency,
       price_unit: priceUnitName,
@@ -206,8 +222,10 @@ const ReferenceDataForm = ({
       payload: payload,
       setConfirmLoading: setConfirmLoading,
       resetFields: () => {
-        setInitValues({});
-        form.resetFields();
+        clearForm();
+        setTimeout(() => {
+          setOpen(false);
+        }, 250);
       },
     });
   };
@@ -218,7 +236,10 @@ const ReferenceDataForm = ({
       open={open}
       onOk={() => form.submit()}
       confirmLoading={confirmLoading}
-      onCancel={() => setOpen(false)}
+      onCancel={() => {
+        clearForm();
+        setOpen(false);
+      }}
       width="90%"
       okText="Save"
       keyboard={false}
