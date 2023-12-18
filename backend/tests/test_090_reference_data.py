@@ -255,3 +255,31 @@ class TestReferenceRoute:
         assert res["source"] == "Google"
         assert res["link"] == "http://google.com"
         assert res["area"] is None
+
+    @pytest.mark.asyncio
+    async def test_delete_reference_data(
+        self, app: FastAPI, session: Session, client: AsyncClient
+    ) -> None:
+        # without cred
+        res = await client.delete(
+            app.url_path_for("reference_data:delete", reference_data_id=1)
+        )
+        assert res.status_code == 403
+        # return 404
+        res = await client.delete(
+            app.url_path_for("reference_data:delete", reference_data_id=100),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 404
+        # with normal user cred
+        res = await client.delete(
+            app.url_path_for("reference_data:delete", reference_data_id=1),
+            headers={"Authorization": f"Bearer {non_admin_account.token}"},
+        )
+        assert res.status_code == 403
+        # with admin user cred
+        res = await client.delete(
+            app.url_path_for("reference_data:delete", reference_data_id=1),
+            headers={"Authorization": f"Bearer {admin_account.token}"},
+        )
+        assert res.status_code == 204

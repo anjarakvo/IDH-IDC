@@ -1,7 +1,8 @@
 import db.crud_reference_data as crud_ref
 
 from math import ceil
-from fastapi import APIRouter, Request, Depends, HTTPException
+from http import HTTPStatus
+from fastapi import APIRouter, Request, Depends, HTTPException, Response
 from fastapi.security import HTTPBearer, HTTPBasicCredentials as credentials
 from sqlalchemy.orm import Session
 from typing import Optional
@@ -115,3 +116,22 @@ def update_tag(
         session=session, id=reference_data_id, payload=payload
     )
     return data.serialize
+
+
+@reference_data_routes.delete(
+    "/reference_data/{reference_data_id:path}",
+    responses={204: {"model": None}},
+    status_code=HTTPStatus.NO_CONTENT,
+    summary="delete reference data by id",
+    name="reference_data:delete",
+    tags=["Reference Data"],
+)
+def delete_reference_data(
+    req: Request,
+    reference_data_id: int,
+    session: Session = Depends(get_session),
+    credentials: credentials = Depends(security),
+):
+    verify_admin(session=session, authenticated=req.state.authenticated)
+    crud_ref.delete_reference(session=session, id=reference_data_id)
+    return Response(status_code=HTTPStatus.NO_CONTENT.value)

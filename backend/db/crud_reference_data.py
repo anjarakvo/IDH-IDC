@@ -131,3 +131,10 @@ def update_reference(
     session.flush()
     session.refresh(data)
     return data
+
+
+def delete_reference(session: Session, id: int):
+    data = get_reference_by_id(session=session, id=id)
+    session.delete(data)
+    session.commit()
+    session.flush()
