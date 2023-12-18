@@ -27,7 +27,7 @@ import { upperFirst, isEmpty } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
 import { driverOptions } from ".";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 const selectProps = {
   showSearch: true,
@@ -123,6 +123,7 @@ const ExploreStudiesPage = () => {
   const userRole = UserState.useState((s) => s.role);
 
   const { countryId, commodityId, driverId } = useParams();
+  const location = useLocation();
   const navigate = useNavigate();
 
   const [open, setOpen] = useState(false);
@@ -143,16 +144,6 @@ const ExploreStudiesPage = () => {
   );
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
-
-  useMemo(() => {
-    if (countryId && commodityId && driverId) {
-      setFilterInitialValues({
-        country: parseInt(countryId),
-        commodity: parseInt(commodityId),
-        driver: driverId,
-      });
-    }
-  }, [countryId, commodityId, driverId]);
 
   const fetchReferenceData = useCallback(
     (country, commodity, driver, source) => {
@@ -188,6 +179,16 @@ const ExploreStudiesPage = () => {
     },
     [currentPage, countryId, commodityId, driverId]
   );
+
+  useMemo(() => {
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({
+        country: parseInt(countryId),
+        commodity: parseInt(commodityId),
+        driver: driverId,
+      });
+    }
+  }, [countryId, commodityId, driverId]);
 
   const onConfirmDelete = useCallback(
     (record) => {
@@ -311,16 +312,35 @@ const ExploreStudiesPage = () => {
   };
 
   useEffect(() => {
-    fetchReferenceData();
-  }, [fetchReferenceData, currentPage]);
+    if (!isEmpty(location?.state)) {
+      const { country, commodity, driver, source } = location.state;
+      setFilterInitialValues({
+        country: parseInt(country),
+        commodity: parseInt(commodity),
+        driver: driver,
+        source: source,
+      });
+      fetchReferenceData(country, commodity, driver, source);
+    } else {
+      fetchReferenceData();
+    }
+  }, [fetchReferenceData, currentPage, location]);
 
   const onFilter = (values) => {
+    const { country, commodity, driver, source } = values;
     if (countryId && commodityId && driverId) {
       setFilterInitialValues({});
-      navigate("/explore-studies");
+      navigate("/explore-studies", {
+        state: {
+          country,
+          commodity,
+          driver,
+          source,
+        },
+      });
+    } else {
+      fetchReferenceData(country, commodity, driver, source);
     }
-    const { country, commodity, driver, source } = values;
-    fetchReferenceData(country, commodity, driver, source);
   };
 
   const handleClearFilter = () => {
@@ -328,8 +348,9 @@ const ExploreStudiesPage = () => {
     if (countryId && commodityId && driverId) {
       setFilterInitialValues({});
       navigate("/explore-studies");
+    } else {
+      fetchReferenceData();
     }
-    fetchReferenceData();
   };
 
   const onSave = ({ payload, setConfirmLoading, resetFields }) => {
@@ -455,7 +476,7 @@ const ExploreStudiesPage = () => {
                       </Form.Item>
                     </Col>
                     <Col span={4} align="right">
-                      <Space style={{ float: "right" }}>
+                      <Space wrap={true}>
                         <Form.Item noStyle>
                           <Button className="search-button" htmlType="submit">
                             Search
