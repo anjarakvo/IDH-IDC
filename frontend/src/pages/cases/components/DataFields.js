@@ -26,15 +26,13 @@ import {
   HomeOutlined,
   UserOutlined,
 } from "@ant-design/icons";
-import { map, groupBy, isEmpty } from "lodash";
+import { isEmpty } from "lodash";
 import {
   IncomeDriverForm,
   IncomeDriverTarget,
   InputNumberThousandFormatter,
-  commodityOptions,
 } from "./";
 import Chart from "../../../components/chart";
-import { incomeTargetChartOption } from "../../../components/chart/options/common";
 import { SaveAsImageButton } from "../../../components/utils";
 import { api } from "../../../lib";
 import { driverOptions } from "../../explore-studies";
@@ -165,101 +163,33 @@ const DataFields = ({
     if (!formValues.length || !segmentValues) {
       return [];
     }
-    const chartQuestion = totalIncomeQuestion.map((qid) => {
-      const [caseCommodity, questionId] = qid.split("-");
-      const feasibleId = `feasible-${qid}`;
-      const currentId = `current-${qid}`;
-      const feasibleValue = segmentValues.answers?.[feasibleId] || 0;
-      const currentValue = segmentValues.answers?.[currentId];
-      const question = questionGroups
-        .flatMap((g) => g.questions)
-        .find((q) => q.id === parseInt(questionId));
-      const commodityId = commodityList.find(
-        (c) => c.case_commodity === parseInt(caseCommodity)
-      ).commodity;
+    const res = formValues.map((currentFormValue) => {
+      const current = totalIncomeQuestion
+        .map((qs) => currentFormValue?.answers[`current-${qs}`])
+        .filter((a) => a)
+        .reduce((acc, a) => acc + a, 0);
+      const feasible = totalIncomeQuestion
+        .map((qs) => currentFormValue?.answers[`feasible-${qs}`])
+        .filter((a) => a)
+        .reduce((acc, a) => acc + a, 0);
       return {
-        case_id: caseCommodity,
-        commodity_id: commodityId,
-        question: question,
-        feasibleValue: feasibleValue - (currentValue || 0),
-        currentValue: currentValue || 0,
-      };
-    });
-    const commodityGroup = map(groupBy(chartQuestion, "case_id"), (g) => {
-      const commodityName =
-        commodityOptions.find((c) => c.value === g[0].commodity_id)?.label ||
-        "diversified";
-      const additionalIncome = g.reduce((a, b) => a + b.feasibleValue, 0);
-      return {
-        name: commodityName,
-        title: commodityName,
-        stack: [
+        name: `Total Income\n${currentFormValue.name}`,
+        data: [
           {
-            name: "Current",
-            title: "Current Income",
-            value: g.reduce((a, b) => a + b.currentValue, 0),
-            total: g.reduce((a, b) => a + b.currentValue, 0),
-            order: 2,
-            color: "#3b78d8",
+            name: "Current Income",
+            value: current,
+            color: "#03625f",
           },
           {
-            name: "Feasible",
-            title: "Feasible additional income ",
-            value: additionalIncome < 0 ? 0 : additionalIncome,
-            total: additionalIncome < 0 ? 0 : additionalIncome,
-            order: 1,
-            color: "#c9daf8",
+            name: "Feasible Income",
+            value: feasible,
+            color: "#82b2b2",
           },
         ],
       };
     });
-    const totalIncomeCommodityGroup = {
-      name: "Total\nIncome",
-      title: "Total\nIncome",
-      stack: [
-        {
-          name: "Current",
-          title: "Current Income",
-          value: totalIncome.current,
-          total: totalIncome.current,
-          order: 2,
-          color: "#6aa84f",
-        },
-        {
-          name: "Feasible",
-          title: "Feasible additional income",
-          value: totalIncome.feasible - totalIncome.current,
-          total: totalIncome.feasible,
-          order: 1,
-          color: "#d9ead3",
-        },
-      ],
-    };
-    return [...commodityGroup, totalIncomeCommodityGroup];
-  }, [
-    totalIncomeQuestion,
-    formValues,
-    questionGroups,
-    commodityList,
-    totalIncome,
-    segmentValues,
-  ]);
-
-  const targetChartData = useMemo(() => {
-    if (!chartData.length || !segmentValues) {
-      return [];
-    }
-    return [
-      {
-        ...incomeTargetChartOption,
-        data: chartData.map((x) => ({
-          name: "Income Target",
-          symbol: x.name === "Total\nIncome" ? "diamond" : "none",
-          value: segmentValues?.target ? segmentValues.target.toFixed(2) : 0,
-        })),
-      },
-    ];
-  }, [chartData, segmentValues]);
+    return res;
+  }, [totalIncomeQuestion, formValues, segmentValues]);
 
   const ButtonEdit = () => (
     <Button
@@ -579,10 +509,9 @@ const DataFields = ({
                 // span={10}
                 // affix={true}
                 wrapper={false}
-                type="BARSTACK"
+                type="COLUMN-BAR"
                 data={chartData}
-                targetData={targetChartData}
-                loading={!chartData.length || !targetChartData.length}
+                loading={!chartData.length}
                 height={window.innerHeight * 0.45}
                 extra={{
                   axisTitle: { y: `Income (${currentCase.currency})` },
