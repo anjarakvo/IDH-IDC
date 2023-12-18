@@ -97,9 +97,14 @@
     }
 
     .table-wrapper {
-      .ant-table-thead > tr > th.ant-table-cell {
-        background: #01625f;
-        color: #fff;
+      .ant-table-thead {
+        tr {
+          th.ant-table-cell,
+          td.ant-table-row-expand-icon-cell {
+            background: #01625f;
+            color: #fff;
+          }
+        }
       }
 
       .ant-table-thead > tr > th::before {

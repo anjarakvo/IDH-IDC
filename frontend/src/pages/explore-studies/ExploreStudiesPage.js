@@ -16,7 +16,7 @@ import {
 import { UserState, UIState } from "../../store";
 import { adminRole } from "../../store/static";
 import { SearchOutlined, EditOutlined } from "@ant-design/icons";
-import { upperFirst } from "lodash";
+import { upperFirst, isEmpty } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
 
@@ -28,6 +28,78 @@ const selectProps = {
     width: "100%",
   },
 };
+
+const referenceDataExpand = [
+  {
+    key: "country",
+    label: "Country",
+  },
+  {
+    key: "commodity",
+    label: "Commodity",
+  },
+  {
+    key: "region",
+    label: "Region",
+  },
+  {
+    key: "currency",
+    label: "Currency",
+  },
+  {
+    key: "year",
+    label: "Year",
+  },
+  {
+    key: "source",
+    label: "Source",
+  },
+  {
+    key: "link",
+    label: "Link",
+  },
+  {
+    key: "notes",
+    label: "Notes",
+  },
+  {
+    key: "confidence_level",
+    label: "Confidence Level",
+  },
+  {
+    key: "range",
+    label: "Range",
+  },
+  {
+    key: "type",
+    label: "Type",
+  },
+  {
+    key: "area",
+    label: "Area",
+    unit: "area_size_unit",
+  },
+  {
+    key: "volume",
+    label: "Volume",
+    unit: "volume_measurement_unit",
+  },
+  {
+    key: "price",
+    label: "Price",
+    unit: "currency",
+  },
+  {
+    key: "cost_of_production",
+    label: "Cost of Production",
+    unit: "cost_of_production_unit",
+  },
+  {
+    key: "diversified_income",
+    label: "Diversified Income",
+    unit: "diversified_income_unit",
+  },
+];
 
 const perPage = 10;
 const defData = {
@@ -46,6 +118,8 @@ const ExploreStudiesPage = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [data, setData] = useState(defData);
+  const [selectedDataId, setSelectedDataId] = useState(null);
+  const [expandedData, setExpandedData] = useState([]);
 
   const countryOptions = window.master.countries;
 
@@ -91,7 +165,7 @@ const ExploreStudiesPage = () => {
       title: "Action",
       dataIndex: "action",
       render: (_, record) => (
-        <Link>
+        <Link onClick={() => setSelectedDataId(record.id)}>
           <EditOutlined />
         </Link>
       ),
@@ -117,6 +191,33 @@ const ExploreStudiesPage = () => {
         setLoading(false);
       });
   }, [currentPage]);
+
+  const fetchReferenceDataDetail = (record) => {
+    if (isEmpty(expandedData)) {
+      api.get(`reference_data/${record.id}`).then((res) => {
+        // transform
+        const values = {
+          ...res.data,
+          countryId: res.data.country,
+          country: record.country,
+          commodityId: res.data.commodity,
+          commodity: record.commodity,
+        };
+        const transformData = referenceDataExpand.map((d, di) => {
+          let value = values[d.key];
+          if (d?.unit) {
+            value = `${value} (${values[d.unit]})`;
+          }
+          return {
+            id: di,
+            label: d.label,
+            value: value,
+          };
+        });
+        setExpandedData(transformData);
+      });
+    }
+  };
 
   useEffect(() => {
     fetchReferenceData();
@@ -245,6 +346,36 @@ const ExploreStudiesPage = () => {
               pageSize: perPage,
               total: data.total,
               onChange: (page) => setCurrentPage(page),
+            }}
+            expandable={{
+              onExpand: (event, record) => {
+                event ? fetchReferenceDataDetail(record) : setExpandedData([]);
+              },
+              expandedRowRender: (record) => (
+                <div style={{ padding: 0 }}>
+                  <Table
+                    size="small"
+                    rowKey="id"
+                    columns={[
+                      {
+                        key: "label",
+                        title: "Label",
+                        dataIndex: "label",
+                      },
+                      {
+                        key: "value",
+                        title: "Value",
+                        dataIndex: "value",
+                      },
+                    ]}
+                    dataSource={expandedData}
+                    pagination={false}
+                    scroll={{
+                      y: 240,
+                    }}
+                  />
+                </div>
+              ),
             }}
           />
         </Col>
