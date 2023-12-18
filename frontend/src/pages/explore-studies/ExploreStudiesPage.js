@@ -155,52 +155,60 @@ const ExploreStudiesPage = () => {
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
 
-  const columns = [
-    {
-      key: "country",
-      title: "Country",
-      dataIndex: "country",
-    },
-    {
-      key: "commodity",
-      title: "Commodity",
-      dataIndex: "commodity",
-    },
-    {
-      key: "confidence_level",
-      title: "Confidence Level",
-      dataIndex: "confidence_level",
-      render: (value) => upperFirst(value),
-    },
-    {
-      key: "source",
-      title: "Source",
-      dataIndex: "source",
-      render: (value, row) => {
-        if (!row?.link) {
-          return value;
-        }
-        const url = row.link?.includes("https://")
-          ? row.link
-          : `https://${row.link}`;
-        return (
-          <a href={url} target="_blank" rel="noreferrer noopener">
-            {row.source}
-          </a>
-        );
+  const columns = useMemo(() => {
+    let res = [
+      {
+        key: "country",
+        title: "Country",
+        dataIndex: "country",
       },
-    },
-    {
-      key: "action",
-      title: "Action",
-      dataIndex: "action",
-      render: (_, record) => (
-        <Link onClick={() => setSelectedDataId(record.id)}>
-          <EditOutlined />
-        </Link>
-      ),
-    },
-  ];
+      {
+        key: "commodity",
+        title: "Commodity",
+        dataIndex: "commodity",
+      },
+      {
+        key: "confidence_level",
+        title: "Confidence Level",
+        dataIndex: "confidence_level",
+        render: (value) => upperFirst(value),
+      },
+      {
+        key: "source",
+        title: "Source",
+        dataIndex: "source",
+        render: (value, row) => {
+          if (!row?.link) {
+            return value;
+          }
+          const url = row.link?.includes("https://")
+            ? row.link
+            : `https://${row.link}`;
+          return (
+            <a href={url} target="_blank" rel="noreferrer noopener">
+              {row.source}
+            </a>
+          );
+        },
+      },
+    ];
+    if (adminRole.includes(userRole)) {
+      res = [
+        ...res,
+        {
+          key: "action",
+          title: "Action",
+          dataIndex: "action",
+          render: (_, record) => (
+            <Link onClick={() => setSelectedDataId(record.id)}>
+              <EditOutlined />
+            </Link>
+          ),
+        },
+      ];
+    }
+    return res;
+  }, [userRole]);
 
   const fetchReferenceData = useCallback(
     (country, commodity, driver, source) => {
