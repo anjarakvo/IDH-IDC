@@ -26,6 +26,8 @@ import {
 import { upperFirst, isEmpty } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
+import { driverOptions } from ".";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 
 const selectProps = {
   showSearch: true,
@@ -108,29 +110,6 @@ const referenceDataExpand = [
   },
 ];
 
-const driverOptions = [
-  {
-    label: "Area",
-    value: "area",
-  },
-  {
-    label: "Volume",
-    value: "volume",
-  },
-  {
-    label: "Price",
-    value: "price",
-  },
-  {
-    label: "Cost of Production",
-    value: "cost_of_production",
-  },
-  {
-    label: "Diversified Income",
-    value: "diversified_income",
-  },
-];
-
 const perPage = 10;
 const defData = {
   current: 1,
@@ -143,6 +122,10 @@ const ExploreStudiesPage = () => {
   const [form] = Form.useForm();
   const userRole = UserState.useState((s) => s.role);
 
+  const { countryId, commodityId, driverId } = useParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
@@ -150,6 +133,7 @@ const ExploreStudiesPage = () => {
   const [data, setData] = useState(defData);
   const [selectedDataId, setSelectedDataId] = useState(null);
   const [expandedData, setExpandedData] = useState([]);
+  const [filterInitialValues, setFilterInitialValues] = useState({});
 
   const countryOptions = window.master.countries;
   const commodityOptions = window?.master?.commodity_categories?.flatMap((ct) =>
@@ -165,14 +149,14 @@ const ExploreStudiesPage = () => {
     (country, commodity, driver, source) => {
       setLoading(true);
       let url = `reference_data?page=${currentPage}&limit=${perPage}`;
-      if (country) {
-        url = `${url}&country=${country}`;
+      if (country || countryId) {
+        url = `${url}&country=${country ? country : countryId}`;
       }
-      if (commodity) {
-        url = `${url}&commodity=${commodity}`;
+      if (commodity || commodityId) {
+        url = `${url}&commodity=${commodity ? commodity : commodityId}`;
       }
-      if (driver) {
-        url = `${url}&driver=${driver}`;
+      if (driver || driverId) {
+        url = `${url}&driver=${driver ? driver : driverId}`;
       }
       if (source) {
         url = `${url}&source=${source}`;
@@ -193,8 +177,18 @@ const ExploreStudiesPage = () => {
           setLoading(false);
         });
     },
-    [currentPage]
+    [currentPage, countryId, commodityId, driverId]
   );
+
+  useMemo(() => {
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({
+        country: parseInt(countryId),
+        commodity: parseInt(commodityId),
+        driver: driverId,
+      });
+    }
+  }, [countryId, commodityId, driverId]);
 
   const onConfirmDelete = useCallback(
     (record) => {
@@ -318,12 +312,46 @@ const ExploreStudiesPage = () => {
   };
 
   useEffect(() => {
-    fetchReferenceData();
-  }, [fetchReferenceData, currentPage]);
+    if (!isEmpty(location?.state)) {
+      const { country, commodity, driver, source } = location.state;
+      setFilterInitialValues({
+        country: parseInt(country),
+        commodity: parseInt(commodity),
+        driver: driver,
+        source: source,
+      });
+      fetchReferenceData(country, commodity, driver, source);
+    } else {
+      setFilterInitialValues({});
+      fetchReferenceData();
+    }
+  }, [fetchReferenceData, currentPage, location]);
 
   const onFilter = (values) => {
     const { country, commodity, driver, source } = values;
-    fetchReferenceData(country, commodity, driver, source);
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({});
+      navigate("/explore-studies", {
+        state: {
+          country,
+          commodity,
+          driver,
+          source,
+        },
+      });
+    } else {
+      fetchReferenceData(country, commodity, driver, source);
+    }
+  };
+
+  const handleClearFilter = () => {
+    form.resetFields();
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({});
+      navigate("/explore-studies");
+    } else {
+      fetchReferenceData();
+    }
   };
 
   const onSave = ({ payload, setConfirmLoading, resetFields }) => {
@@ -399,7 +427,7 @@ const ExploreStudiesPage = () => {
               name="filter-form"
               className="filter-form-container"
               layout="vertical"
-              // initialValues={initValues}
+              initialValues={filterInitialValues}
               onFinish={onFilter}
             >
               <Row gutter={[16, 16]} className="explore-filter-wrapper">
@@ -448,23 +476,20 @@ const ExploreStudiesPage = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col span={2}>
-                      <Form.Item noStyle>
-                        <Button className="search-button" htmlType="submit">
-                          Search
+                    <Col span={4} align="right">
+                      <Space wrap={true}>
+                        <Form.Item noStyle>
+                          <Button className="search-button" htmlType="submit">
+                            Search
+                          </Button>
+                        </Form.Item>
+                        <Button
+                          className="clear-button"
+                          onClick={handleClearFilter}
+                        >
+                          Clear
                         </Button>
-                      </Form.Item>
-                    </Col>
-                    <Col span={2}>
-                      <Button
-                        className="clear-button"
-                        onClick={() => {
-                          form.resetFields();
-                          fetchReferenceData();
-                        }}
-                      >
-                        Clear
-                      </Button>
+                      </Space>
                     </Col>
                   </Row>
                 </Col>
