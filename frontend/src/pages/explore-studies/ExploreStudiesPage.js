@@ -27,6 +27,7 @@ import { upperFirst, isEmpty } from "lodash";
 import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
 import { driverOptions } from ".";
+import { useParams, useNavigate } from "react-router-dom";
 
 const selectProps = {
   showSearch: true,
@@ -121,6 +122,9 @@ const ExploreStudiesPage = () => {
   const [form] = Form.useForm();
   const userRole = UserState.useState((s) => s.role);
 
+  const { countryId, commodityId, driverId } = useParams();
+  const navigate = useNavigate();
+
   const [open, setOpen] = useState(false);
   const [messageApi, contextHolder] = message.useMessage();
   const [loading, setLoading] = useState(false);
@@ -128,6 +132,7 @@ const ExploreStudiesPage = () => {
   const [data, setData] = useState(defData);
   const [selectedDataId, setSelectedDataId] = useState(null);
   const [expandedData, setExpandedData] = useState([]);
+  const [filterInitialValues, setFilterInitialValues] = useState({});
 
   const countryOptions = window.master.countries;
   const commodityOptions = window?.master?.commodity_categories?.flatMap((ct) =>
@@ -139,18 +144,28 @@ const ExploreStudiesPage = () => {
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
 
+  useMemo(() => {
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({
+        country: parseInt(countryId),
+        commodity: parseInt(commodityId),
+        driver: driverId,
+      });
+    }
+  }, [countryId, commodityId, driverId]);
+
   const fetchReferenceData = useCallback(
     (country, commodity, driver, source) => {
       setLoading(true);
       let url = `reference_data?page=${currentPage}&limit=${perPage}`;
-      if (country) {
-        url = `${url}&country=${country}`;
+      if (country || countryId) {
+        url = `${url}&country=${country ? country : countryId}`;
       }
-      if (commodity) {
-        url = `${url}&commodity=${commodity}`;
+      if (commodity || commodityId) {
+        url = `${url}&commodity=${commodity ? commodity : commodityId}`;
       }
-      if (driver) {
-        url = `${url}&driver=${driver}`;
+      if (driver || driverId) {
+        url = `${url}&driver=${driver ? driver : driverId}`;
       }
       if (source) {
         url = `${url}&source=${source}`;
@@ -171,7 +186,7 @@ const ExploreStudiesPage = () => {
           setLoading(false);
         });
     },
-    [currentPage]
+    [currentPage, countryId, commodityId, driverId]
   );
 
   const onConfirmDelete = useCallback(
@@ -300,8 +315,21 @@ const ExploreStudiesPage = () => {
   }, [fetchReferenceData, currentPage]);
 
   const onFilter = (values) => {
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({});
+      navigate("/explore-studies");
+    }
     const { country, commodity, driver, source } = values;
     fetchReferenceData(country, commodity, driver, source);
+  };
+
+  const handleClearFilter = () => {
+    form.resetFields();
+    if (countryId && commodityId && driverId) {
+      setFilterInitialValues({});
+      navigate("/explore-studies");
+    }
+    fetchReferenceData();
   };
 
   const onSave = ({ payload, setConfirmLoading, resetFields }) => {
@@ -377,7 +405,7 @@ const ExploreStudiesPage = () => {
               name="filter-form"
               className="filter-form-container"
               layout="vertical"
-              // initialValues={initValues}
+              initialValues={filterInitialValues}
               onFinish={onFilter}
             >
               <Row gutter={[16, 16]} className="explore-filter-wrapper">
@@ -426,23 +454,20 @@ const ExploreStudiesPage = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col span={2}>
-                      <Form.Item noStyle>
-                        <Button className="search-button" htmlType="submit">
-                          Search
+                    <Col span={4} align="right">
+                      <Space style={{ float: "right" }}>
+                        <Form.Item noStyle>
+                          <Button className="search-button" htmlType="submit">
+                            Search
+                          </Button>
+                        </Form.Item>
+                        <Button
+                          className="clear-button"
+                          onClick={handleClearFilter}
+                        >
+                          Clear
                         </Button>
-                      </Form.Item>
-                    </Col>
-                    <Col span={2}>
-                      <Button
-                        className="clear-button"
-                        onClick={() => {
-                          form.resetFields();
-                          fetchReferenceData();
-                        }}
-                      >
-                        Clear
-                      </Button>
+                      </Space>
                     </Col>
                   </Row>
                 </Col>
