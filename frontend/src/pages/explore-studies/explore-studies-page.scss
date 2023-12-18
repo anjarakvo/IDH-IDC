@@ -77,13 +77,22 @@
         margin-bottom: 4px;
       }
 
-      .search-button {
+      .search-button,
+      .clear-button {
         font-family: "TabletGothic";
         border-radius: 40px;
         border: 1px solid #01625f;
-        background: #01625f;
         font-weight: 400;
+      }
+
+      .search-button {
+        background: #01625f;
         color: #fff;
+      }
+
+      .clear-button {
+        color: #01625f;
+        background: #fff;
       }
     }
 
