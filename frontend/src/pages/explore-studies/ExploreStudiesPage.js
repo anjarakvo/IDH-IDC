@@ -161,74 +161,6 @@ const ExploreStudiesPage = () => {
 
   const isAdmin = useMemo(() => adminRole.includes(userRole), [userRole]);
 
-  const columns = useMemo(() => {
-    let res = [
-      {
-        key: "country",
-        title: "Country",
-        dataIndex: "country",
-      },
-      {
-        key: "commodity",
-        title: "Commodity",
-        dataIndex: "commodity",
-      },
-      {
-        key: "confidence_level",
-        title: "Confidence Level",
-        dataIndex: "confidence_level",
-        render: (value) => upperFirst(value),
-      },
-      {
-        key: "source",
-        title: "Source",
-        dataIndex: "source",
-        render: (value, row) => {
-          if (!row?.link) {
-            return value;
-          }
-          const url = row.link?.includes("https://")
-            ? row.link
-            : `https://${row.link}`;
-          return (
-            <a href={url} target="_blank" rel="noreferrer noopener">
-              {row.source}
-            </a>
-          );
-        },
-      },
-    ];
-    if (adminRole.includes(userRole)) {
-      res = [
-        ...res,
-        {
-          key: "action",
-          title: "Action",
-          dataIndex: "action",
-          render: (_, record) => (
-            <Space size="large">
-              <Link onClick={() => setSelectedDataId(record.id)}>
-                <EditOutlined />
-              </Link>
-              <Popconfirm
-                title="Delete Reference Data"
-                description="Are you sure to delete this data?"
-                onConfirm={() => onConfirmDelete(record)}
-                okText="Yes"
-                cancelText="No"
-              >
-                <Link>
-                  <DeleteOutlined style={{ color: "red" }} />
-                </Link>
-              </Popconfirm>
-            </Space>
-          ),
-        },
-      ];
-    }
-    return res;
-  }, [userRole]);
-
   const fetchReferenceData = useCallback(
     (country, commodity, driver, source) => {
       setLoading(true);
@@ -264,6 +196,100 @@ const ExploreStudiesPage = () => {
     [currentPage]
   );
 
+  const onConfirmDelete = useCallback(
+    (record) => {
+      api
+        .delete(`reference_data/${record.id}`)
+        .then(() => {
+          messageApi.open({
+            type: "success",
+            content: "Reference Data deleted successfully.",
+          });
+          fetchReferenceData();
+        })
+        .catch(() => {
+          messageApi.open({
+            type: "error",
+            content: "Failed! Something went wrong.",
+          });
+        });
+    },
+    [fetchReferenceData, messageApi]
+  );
+
+  const columns = useMemo(() => {
+    let res = [
+      {
+        key: "country",
+        title: "Country",
+        dataIndex: "country",
+      },
+      {
+        key: "commodity",
+        title: "Commodity",
+        dataIndex: "commodity",
+      },
+      {
+        key: "confidence_level",
+        title: "Confidence Level",
+        dataIndex: "confidence_level",
+        render: (value) => (value ? upperFirst(value) : "-"),
+      },
+      {
+        key: "source",
+        title: "Source",
+        dataIndex: "source",
+        render: (value, row) => {
+          if (!row?.link) {
+            return value;
+          }
+          const url = row.link?.includes("https://")
+            ? row.link
+            : `https://${row.link}`;
+          return (
+            <a href={url} target="_blank" rel="noreferrer noopener">
+              {row.source}
+            </a>
+          );
+        },
+      },
+    ];
+    if (adminRole.includes(userRole)) {
+      res = [
+        ...res,
+        {
+          key: "action",
+          title: "Action",
+          dataIndex: "action",
+          render: (_, record) => (
+            <Space size="large">
+              <Link
+                onClick={() => {
+                  setSelectedDataId(record.id);
+                  setOpen(true);
+                }}
+              >
+                <EditOutlined />
+              </Link>
+              <Popconfirm
+                title="Delete Reference Data"
+                description="Are you sure to delete this data?"
+                onConfirm={() => onConfirmDelete(record)}
+                okText="Yes"
+                cancelText="No"
+              >
+                <Link>
+                  <DeleteOutlined style={{ color: "red" }} />
+                </Link>
+              </Popconfirm>
+            </Space>
+          ),
+        },
+      ];
+    }
+    return res;
+  }, [userRole, onConfirmDelete]);
+
   const fetchReferenceDataDetail = (record) => {
     if (isEmpty(expandedData)) {
       api.get(`reference_data/${record.id}`).then((res) => {
@@ -277,7 +303,7 @@ const ExploreStudiesPage = () => {
         };
         const transformData = referenceDataExpand.map((d, di) => {
           let value = values[d.key];
-          if (d?.unit) {
+          if (value && d?.unit) {
             value = `${value} (${values[d.unit]})`;
           }
           return {
@@ -302,8 +328,10 @@ const ExploreStudiesPage = () => {
 
   const onSave = ({ payload, setConfirmLoading, resetFields }) => {
     setConfirmLoading(true);
-    api
-      .post("reference_data", payload)
+    const apiCall = selectedDataId
+      ? api.put(`reference_data/${selectedDataId}`, payload)
+      : api.post("reference_data", payload);
+    apiCall
       .then(() => {
         messageApi.open({
           type: "success",
@@ -319,28 +347,11 @@ const ExploreStudiesPage = () => {
         });
       })
       .finally(() => {
+        setSelectedDataId(null);
         setTimeout(() => {
           setOpen(false);
           setConfirmLoading(false);
         }, 500);
-      });
-  };
-
-  const onConfirmDelete = (record) => {
-    api
-      .delete(`reference_data/${record.id}`)
-      .then(() => {
-        messageApi.open({
-          type: "success",
-          content: "Reference Data deleted successfully.",
-        });
-        fetchReferenceData();
-      })
-      .catch(() => {
-        messageApi.open({
-          type: "error",
-          content: "Failed! Something went wrong.",
-        });
       });
   };
 
@@ -482,7 +493,7 @@ const ExploreStudiesPage = () => {
               onExpand: (event, record) => {
                 event ? fetchReferenceDataDetail(record) : setExpandedData([]);
               },
-              expandedRowRender: (record) => (
+              expandedRowRender: () => (
                 <div style={{ padding: 0 }}>
                   <Table
                     size="small"
@@ -513,7 +524,12 @@ const ExploreStudiesPage = () => {
       </Row>
 
       {/* Form Modal */}
-      <ReferenceDataForm open={open} setOpen={setOpen} onSave={onSave} />
+      <ReferenceDataForm
+        open={open}
+        setOpen={setOpen}
+        onSave={onSave}
+        referenceDataId={selectedDataId}
+      />
     </ContentLayout>
   );
 };

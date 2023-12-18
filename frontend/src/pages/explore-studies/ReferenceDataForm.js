@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import "./explore-studies-page.scss";
 import {
   Form,
@@ -13,6 +13,7 @@ import {
 } from "antd";
 import { areaUnitOptions, volumeUnitOptions } from "../../store/static";
 import { uniqBy, isEmpty } from "lodash";
+import { api } from "../../lib";
 
 const selectProps = {
   showSearch: true,
@@ -94,6 +95,34 @@ const ReferenceDataForm = ({
     return [countryCurrency, ...additonalCurrencies];
   }, [selectedCountry, form, initValues]);
 
+  useEffect(() => {
+    if (referenceDataId) {
+      setLoading(true);
+      setInitValues({});
+      form.resetFields();
+      api
+        .get(`reference_data/${referenceDataId}`)
+        .then((res) => {
+          const {
+            country,
+            area_size_unit,
+            currency,
+            volume_measurement_unit,
+            cost_of_production_unit,
+          } = res.data;
+          setSelectedCountry(country || null);
+          setAreaUnitName(area_size_unit || null);
+          setVolumeUnitName(volume_measurement_unit || null);
+          setCopUnitName(cost_of_production_unit || null);
+          setCurrencyUnitName(currency || null);
+          setInitValues(res.data);
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    }
+  }, [referenceDataId, form]);
+
   const onChange = (_, allValues) => {
     const {
       commodity,
@@ -152,7 +181,10 @@ const ReferenceDataForm = ({
     onSave({
       payload: payload,
       setConfirmLoading: setConfirmLoading,
-      resetFields: form.resetFields(),
+      resetFields: () => {
+        setInitValues({});
+        form.resetFields();
+      },
     });
   };
 
@@ -165,6 +197,8 @@ const ReferenceDataForm = ({
       onCancel={() => setOpen(false)}
       width="90%"
       okText="Save"
+      keyboard={false}
+      destroyOnClose={true}
     >
       {loading ? (
         <div className="loading-container">
