@@ -7,19 +7,52 @@ const ChartIncomeGap = ({ dashboardData, currentCase }) => {
       const target = d?.target || 0;
       const currentValue = target - d.total_current_income;
       const feasibleValue = target - d.total_feasible_income;
+      console.log(d);
       return [
         ...c,
         {
           name: `Current\n${d.name}`,
-          value: currentValue.toFixed(2),
-          total: currentValue.toFixed(2),
-          color: "#854634",
+          target: d.target,
+          stack: [
+            {
+              name: "Diversified Income",
+              title: "Diversified Income",
+              value: d.total_current_diversified_income,
+              total: d.total_current_diversified_income,
+              color: "#49d985",
+              order: 1,
+            },
+            {
+              name: "Revenue Focus Commodity",
+              title: "Revenue Focus Commodity",
+              value: d.total_current_diversified_income,
+              total: d.total_current_diversified_income,
+              color: "#03625f",
+              order: 2,
+            },
+          ],
         },
         {
           name: `Feasible\n${d.name}`,
-          value: feasibleValue.toFixed(2),
-          total: feasibleValue.toFixed(2),
-          color: "#ff6c19",
+          target: d.target,
+          stack: [
+            {
+              name: "Diversified Income",
+              title: "Diversified Income",
+              value: d.total_feasible_diversified_income,
+              total: d.total_feasible_diversified_income,
+              color: "#49d985",
+              order: 1,
+            },
+            {
+              name: "Revenue Focus Commodity",
+              title: "Revenue Focus Commodity",
+              value: d.total_current_diversified_income,
+              total: d.total_current_diversified_income,
+              color: "#03625f",
+              order: 2,
+            },
+          ],
         },
       ];
     }, []);
@@ -28,7 +61,7 @@ const ChartIncomeGap = ({ dashboardData, currentCase }) => {
   return (
     <Chart
       wrapper={false}
-      type="BAR"
+      type="BARSTACK"
       data={chartData}
       affix={true}
       extra={{ axisTitle: { y: `Income Gap (${currentCase.currency})` } }}
