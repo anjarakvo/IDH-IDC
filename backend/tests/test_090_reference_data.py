@@ -288,6 +288,11 @@ class TestReferenceRoute:
                 "link": "http://example.com",
                 "value": 100.5,
                 "unit": "acres",
+                "region": "Sample Region",
+                "year": 2023,
+                "type": "Sample Type",
+                "confidence_level": "High",
+                "range": "Sample Range",
             }
         ]
 

@@ -63,6 +63,11 @@ class ReferenceValueList(TypedDict):
     link: str
     value: Optional[float]
     unit: Optional[str]
+    region: str
+    year: int
+    type: Optional[str]
+    confidence_level: Optional[str]
+    range: Optional[str]
 
 
 class ReferenceData(Base):
