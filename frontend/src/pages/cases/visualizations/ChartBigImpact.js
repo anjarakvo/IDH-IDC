@@ -11,7 +11,7 @@ import {
   Easing,
 } from "../../../components/chart/options/common";
 
-const legendColors = ["#47D985", "#00625F"];
+const legendColors = ["#03625f", "#82b2b2", "#F9BC05"];
 
 const ChartBigImpact = ({ dashboardData }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
@@ -51,6 +51,12 @@ const ChartBigImpact = ({ dashboardData }) => {
     const feasibleValuesArray = feasibleValues.reduce((c, d) => {
       return [...c, { id: `feasible-${d.questionId}`, value: d.value || 0 }];
     }, []);
+
+    const feasiblePerCurrentTotalIncome =
+      (currentSegmentData.total_feasible_income /
+        currentSegmentData.total_current_income) *
+      100;
+
     // populate impact values for focus commodity
     let transformedData = indicators.map((ind) => {
       const currentValue = focusCommodityData.find(
@@ -104,10 +110,6 @@ const ChartBigImpact = ({ dashboardData }) => {
         const incomeIncreaseFeasible =
           (newAdditionalTotalValue / currentSegmentData.total_current_income) *
           100;
-        const feasiblePerCurrentTotalIncome =
-          (currentSegmentData.total_feasible_income /
-            currentSegmentData.total_current_income) *
-          100;
         const additionalValue =
           feasiblePerCurrentTotalIncome - incomeIncreaseFeasible;
         // EOL Income value
@@ -127,21 +129,33 @@ const ChartBigImpact = ({ dashboardData }) => {
       };
     });
     // add diversified value
-    // if (transformedData.length) {
-    //   transformedData.push({
-    //     name: "Diversified Income",
-    //     income:
-    //       (currentSegmentData.total_current_diversified_income /
-    //         currentSegmentData.total_feasible_diversified_income) *
-    //         100 || 0,
-    //     possible:
-    //       ((currentSegmentData.total_current_focus_income +
-    //         currentSegmentData.total_feasible_diversified_income) /
-    //         currentSegmentData.total_current_income) *
-    //         100 || 0,
-    //     additional: 0,
-    //   });
-    // }
+    if (transformedData.length) {
+      const newDiversifiedValue =
+        currentSegmentData.total_current_focus_income +
+        currentSegmentData.total_feasible_diversified_income;
+      const newAdditionalDiversifiedValue =
+        currentSegmentData.total_feasible_focus_income +
+        currentSegmentData.total_current_diversified_income;
+      const diversifiedIncreaseFeasible =
+        (newAdditionalDiversifiedValue /
+          currentSegmentData.total_current_income) *
+        100;
+      const additionalDiversifiedValue =
+        feasiblePerCurrentTotalIncome - diversifiedIncreaseFeasible;
+      transformedData.push({
+        name: "Diversified Income",
+        income:
+          ((currentSegmentData.total_current_income - newDiversifiedValue) /
+            currentSegmentData.total_current_income) *
+            100 || 0,
+        possible:
+          ((currentSegmentData.total_feasible_diversified_income -
+            currentSegmentData.total_current_diversified_income) /
+            currentSegmentData.total_current_diversified_income) *
+            100 || 0,
+        additional: additionalDiversifiedValue || 0,
+      });
+    }
     // reorder
     transformedData = orderBy(
       transformedData,
@@ -185,7 +199,7 @@ const ChartBigImpact = ({ dashboardData }) => {
       legend: {
         ...Legend,
         data: finalData.map((x) => x.name),
-        top: 15,
+        top: 5,
         left: "center",
       },
       grid: {
