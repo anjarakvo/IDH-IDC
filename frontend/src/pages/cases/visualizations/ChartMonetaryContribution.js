@@ -63,12 +63,10 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
             "custom",
             replacedCurrentValues
           ) + data.total_current_diversified_income;
-        const resValue = (newTotalValue - data.total_current_income)?.toFixed(
-          2
-        );
+        const resValue = newTotalValue - data.total_current_income;
         // CoP
         if (d.toLowerCase().includes("cost")) {
-          return (parseFloat(resValue) * -1)?.toFixed(2);
+          return resValue * -1;
         }
         return resValue;
       }
@@ -85,11 +83,10 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
       if (di === 0) {
         return data.total_current_income;
       }
-      const prevSum =
-        di > 0 ? sum(additionalData.slice(0, di).map((x) => parseFloat(x))) : 0;
+      const prevSum = di > 0 ? sum(additionalData.slice(0, di)) : 0;
       // handle cost of production value
-      if (parseFloat(d) < 0) {
-        return parseFloat(d) + prevSum + data.total_current_income;
+      if (d < 0) {
+        return d + prevSum + data.total_current_income;
       }
       // EOL handle cost of production value
       return prevSum + data.total_current_income;
@@ -101,9 +98,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
     // EOL populate the waterfall value for placeholder bar
 
     const feasibleValue =
-      data.total_current_income +
-      sum(additionalData.map((x) => parseFloat(x))) +
-      diversifiedIncome;
+      data.total_current_income + sum(additionalData) + diversifiedIncome;
 
     return {
       legend: {
@@ -131,7 +126,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
           } else {
             name = negative.name;
             seriesName = negative.seriesName;
-            value = (parseFloat(negative.value) * -1)?.toFixed(2);
+            value = (negative.value * -1)?.toFixed(2);
           }
           return name + "<br/>" + seriesName + " : " + thousandFormatter(value);
         },
@@ -211,7 +206,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
             data?.total_current_income < 0
               ? "-"
               : data?.total_current_income?.toFixed(2),
-            ...additionalData.map((d) => (parseFloat(d) < 0 ? "-" : d)),
+            ...additionalData.map((d) => (d < 0 ? "-" : d?.toFixed(2))),
             diversifiedIncome < 0 ? "-" : diversifiedIncome?.toFixed(2), // diversified value
             feasibleValue < 0 ? "-" : feasibleValue?.toFixed(2),
           ],
@@ -235,9 +230,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
             data?.total_current_income >= 0
               ? "-"
               : data.total_current_income?.toFixed(2),
-            ...additionalData.map((d) =>
-              parseFloat(d) >= 0 ? "-" : (parseFloat(d) * -1)?.toFixed(2)
-            ),
+            ...additionalData.map((d) => (d >= 0 ? "-" : (d * -1)?.toFixed(2))),
             diversifiedIncome >= 0 ? "-" : diversifiedIncome?.toFixed(2), // diversified value
             feasibleValue >= 0 ? "-" : feasibleValue?.toFixed(2),
           ],
