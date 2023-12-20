@@ -88,12 +88,14 @@ const IncomeDriverTarget = ({
       // Case year LI Benchmark = Latest Benchmark*(1-CPI factor)
       if (benchmark?.cpi_factor) {
         const caseYearLIB = targetValue * (1 - benchmark.cpi_factor);
+        // incorporate year multiplier
         const LITarget =
-          (householdSize / benchmark.household_equiv) * caseYearLIB;
+          (householdSize / benchmark.household_equiv) * caseYearLIB * 12;
         setIncomeTarget(LITarget);
       } else {
+        // incorporate year multiplier
         const LITarget =
-          (householdSize / benchmark.household_equiv) * targetValue;
+          (householdSize / benchmark.household_equiv) * targetValue * 12;
         setIncomeTarget(LITarget);
       }
     }
@@ -174,8 +176,9 @@ const IncomeDriverTarget = ({
           // Case year LI Benchmark = Latest Benchmark*(1-CPI factor)
           if (data?.cpi_factor) {
             const caseYearLIB = targetValue * (1 - data.cpi_factor);
-            const LITarget = (HHSize / targetHH) * caseYearLIB;
-            setIncomeTarget(LITarget);
+            // incorporate year multiplier
+            const LITarget = (HHSize / targetHH) * caseYearLIB * 12;
+            setIncomeTarget(LITarget * 12);
             updateFormValues({
               ...regionData,
               target: LITarget,
@@ -184,7 +187,8 @@ const IncomeDriverTarget = ({
               child: data.household_size - data.nr_adults,
             });
           } else {
-            const LITarget = (HHSize / targetHH) * targetValue;
+            // incorporate year multiplier
+            const LITarget = (HHSize / targetHH) * targetValue * 12;
             setIncomeTarget(LITarget);
             updateFormValues({
               ...regionData,
@@ -320,7 +324,7 @@ const IncomeDriverTarget = ({
       >
         <Col span={8}>
           <p>Living Income Target</p>
-          <h2>
+          <h2 className="income-target-value">
             {thousandFormatter(incomeTarget.toFixed(2))} {currentCase.currency}
           </h2>
         </Col>
