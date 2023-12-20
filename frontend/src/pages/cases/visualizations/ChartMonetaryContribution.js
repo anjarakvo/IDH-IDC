@@ -86,24 +86,24 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
         return data.total_current_income;
       }
       const prevSum =
-        di > 0 ? sum(additionalData.slice(1, di).map((x) => parseFloat(x))) : 0;
+        di > 0 ? sum(additionalData.slice(0, di).map((x) => parseFloat(x))) : 0;
       // handle cost of production value
       if (parseFloat(d) < 0) {
-        return (
-          parseFloat(d) +
-          prevSum +
-          parseFloat(additionalData[di - 1]) +
-          data.total_current_income
-        );
+        return parseFloat(d) + prevSum + data.total_current_income;
       }
       // EOL handle cost of production value
-      return parseFloat(d) + prevSum + data.total_current_income;
+      return prevSum + data.total_current_income;
     });
 
     const diversifiedPlaceholder =
       diversifiedIncome +
       placeholderAdditionalData[placeholderAdditionalData.length - 1];
     // EOL populate the waterfall value for placeholder bar
+
+    const feasibleValue =
+      data.total_current_income +
+      sum(additionalData.map((x) => parseFloat(x))) +
+      diversifiedIncome;
 
     return {
       legend: {
@@ -213,9 +213,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
               : data?.total_current_income?.toFixed(2),
             ...additionalData.map((d) => (parseFloat(d) < 0 ? "-" : d)),
             diversifiedIncome < 0 ? "-" : diversifiedIncome?.toFixed(2), // diversified value
-            data?.total_feasible_income < 0
-              ? "-"
-              : data?.total_feasible_income?.toFixed(2),
+            feasibleValue < 0 ? "-" : feasibleValue?.toFixed(2),
           ],
           ...LabelStyle,
         },
@@ -241,9 +239,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
               parseFloat(d) >= 0 ? "-" : (parseFloat(d) * -1)?.toFixed(2)
             ),
             diversifiedIncome >= 0 ? "-" : diversifiedIncome?.toFixed(2), // diversified value
-            data?.total_feasible_income >= 0
-              ? "-"
-              : data.total_feasible_income?.toFixed(2),
+            feasibleValue >= 0 ? "-" : feasibleValue?.toFixed(2),
           ],
         },
       ],
