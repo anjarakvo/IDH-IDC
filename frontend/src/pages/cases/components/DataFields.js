@@ -55,6 +55,7 @@ const DataFields = ({
   dashboardData,
   setPage,
   enableEditCase,
+  segments,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
@@ -130,8 +131,6 @@ const DataFields = ({
     };
   }, [formValues, segmentItem, dashboardData, totalIncomeQuestion]);
 
-  const segmentValues = formValues.find((v) => v.key === segment);
-
   const benchmarkInfo = useMemo(() => {
     const findSegmentBenchmark =
       dashboardData.find((d) => d.key === segment)?.benchmark || null;
@@ -160,20 +159,22 @@ const DataFields = ({
   }, [dashboardData, segment]);
 
   const chartData = useMemo(() => {
-    if (!formValues.length || !segmentValues) {
+    if (!segments.length) {
       return [];
     }
-    const res = formValues.map((currentFormValue) => {
+    const res = segments.map((item) => {
+      const answers =
+        formValues.find((fv) => fv.key === item.key)?.answers || {};
       const current = totalIncomeQuestion
-        .map((qs) => currentFormValue?.answers[`current-${qs}`])
+        .map((qs) => answers?.[`current-${qs}`] || 0)
         .filter((a) => a)
         .reduce((acc, a) => acc + a, 0);
       const feasible = totalIncomeQuestion
-        .map((qs) => currentFormValue?.answers[`feasible-${qs}`])
+        .map((qs) => answers?.[`feasible-${qs}`] || 0)
         .filter((a) => a)
         .reduce((acc, a) => acc + a, 0);
       return {
-        name: `Total Income\n${currentFormValue.name}`,
+        name: `Total Income\n${item.label}`,
         data: [
           {
             name: "Current Income",
@@ -189,7 +190,7 @@ const DataFields = ({
       };
     });
     return res;
-  }, [totalIncomeQuestion, formValues, segmentValues]);
+  }, [totalIncomeQuestion, segments, formValues]);
 
   const ButtonEdit = () => (
     <Button
