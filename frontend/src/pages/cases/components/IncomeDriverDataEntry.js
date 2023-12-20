@@ -263,6 +263,7 @@ const IncomeDriverDataEntry = ({
             currentCase={currentCase}
             setPage={setPage}
             enableEditCase={enableEditCase}
+            segments={items.filter((it) => it.key !== "add")}
           />
         );
         // handle form values
@@ -345,6 +346,7 @@ const IncomeDriverDataEntry = ({
                   currentCase={currentCase}
                   setPage={setPage}
                   enableEditCase={enableEditCase}
+                  segments={items.filter((it) => it.key !== "add")}
                 />
               ),
           }))}
