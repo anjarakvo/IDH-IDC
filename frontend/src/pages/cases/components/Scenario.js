@@ -11,6 +11,9 @@ import {
   Form,
   Popover,
   Spin,
+  Tabs,
+  Select,
+  Table,
 } from "antd";
 import {
   EditTwoTone,
@@ -18,9 +21,13 @@ import {
   CloseCircleTwoTone,
   DeleteTwoTone,
 } from "@ant-design/icons";
-import { InputNumberThousandFormatter, getFunctionDefaultValue } from "./";
+import {
+  InputNumberThousandFormatter,
+  getFunctionDefaultValue,
+  selectProps,
+} from "./";
 import { ChartScenarioModeling } from "../visualizations";
-import { isEmpty } from "lodash";
+import { isEmpty, orderBy } from "lodash";
 import { SaveAsImageButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
@@ -360,6 +367,38 @@ const ScenarioInput = ({
   );
 };
 
+const Step = ({ number, title }) => (
+  <Col span={24}>
+    <Space align="center" className="scenario-step-wrapper">
+      <div className="number">{number}</div>
+      <div className="title">{title}</div>
+    </Space>
+  </Col>
+);
+
+const outcomeIndicator = [
+  {
+    key: "income_driver",
+    name: "What income drivers have changed?",
+  },
+  {
+    key: "income_gap",
+    name: "How big is the income gap?",
+  },
+  {
+    key: "income_target",
+    name: "Is the income target reached?",
+  },
+  {
+    key: "income_increase",
+    name: "What is the income increase?",
+  },
+  {
+    key: "income_increase_percentage",
+    name: "What is the % income increase?",
+  },
+];
+
 const Scenario = ({
   index,
   scenarioItem,
@@ -370,6 +409,7 @@ const Scenario = ({
   commodityQuestions,
   segmentTabs,
   percentage,
+  scenarioData,
   setScenarioData,
   currentScenarioValues = {},
   enableEditCase,
@@ -382,7 +422,31 @@ const Scenario = ({
   );
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
-  const elScenarioModeling = useRef(null);
+  const elIncomeGapScenario = useRef(null);
+
+  const scenarioSegmentOptions = useMemo(() => {
+    let i = 1;
+    const res = orderBy(scenarioData, "key").flatMap((sc) => {
+      const concat = segmentTabs.map((st) => {
+        const opt = {
+          order: i,
+          label: `${sc.name} - ${st.label}`,
+          value: `${sc.key}-${st.key}`,
+        };
+        i += 1;
+        return opt;
+      });
+      return concat;
+    });
+    return res;
+  }, [scenarioData, segmentTabs]);
+
+  const segmentOptions = useMemo(() => {
+    return segmentTabs.map((st) => ({
+      label: st.label,
+      value: st.key,
+    }));
+  }, [segmentTabs]);
 
   const finishEditing = () => {
     renameScenario(index, newName, newDescription);
@@ -532,7 +596,7 @@ const Scenario = ({
           </Button>
         </Space>
       }
-      title="Are you sure want to delete this segment?"
+      title="Are you sure want to delete this scenario?"
       trigger="click"
       open={confirmationModal}
       onOpenChange={(e) => setConfimationModal(e)}
@@ -558,17 +622,22 @@ const Scenario = ({
       {editing && <ButtonCancelEdit />}
     </Space>
   );
+  console.info(extra);
 
   const renderScenarioCardHeader = () => {
-    if (editing) {
-      return (
-        <Space direction="vertical" className="scenario-header-wrapper">
+    return (
+      <Row gutter={[16, 16]} className="scenario-information-wrapper">
+        <Col span={24}>
+          <div className="label">Name</div>
           <Input
             key={`scenario-name-${scenarioItem.key}`}
             placeholder="Scenario Name"
             defaultValue={scenarioItem.name}
             onChange={(e) => setNewName(e.target.value)}
           />
+        </Col>
+        <Col span={24}>
+          <div className="label">Description</div>
           <Input.TextArea
             key={`scenario-description-${scenarioItem.key}`}
             rows={4}
@@ -576,35 +645,165 @@ const Scenario = ({
             defaultValue={scenarioItem.description}
             onChange={(e) => setNewDescription(e.target.value)}
           />
-        </Space>
-      );
-    }
-    return (
-      <div className="scenario-header-wrapper">
-        <h3>{scenarioItem.name}</h3>
-        {scenarioItem?.description ? (
-          <p>{scenarioItem.description}</p>
-        ) : (
-          <p>Scenario Description</p>
-        )}
-      </div>
+        </Col>
+      </Row>
     );
   };
 
+  const scenarioOutcomeColumns = useMemo(() => {
+    const scenarioCol = scenarioData.map((x) => ({
+      title: x.name,
+      dataIndex: x.name,
+      key: x.name,
+    }));
+    return [
+      {
+        title: null,
+        dataIndex: "title",
+        key: "title",
+        width: "25%",
+      },
+      {
+        title: "Current Value",
+        dataIndex: "current",
+        key: "current",
+      },
+      ...scenarioCol,
+    ];
+  }, [scenarioData]);
+
+  const scenarioOutcomeDataSource = useMemo(() => {
+    return outcomeIndicator.map((ind) => ({ title: ind.name }));
+  }, []);
+
   return (
-    <Col span={24} ref={elScenarioModeling}>
-      <Card
-        className="income-driver-dashboard"
-        title={renderScenarioCardHeader()}
-        extra={
-          <Space className="card-extra-wrapper">
-            {enableEditCase ? extra : null}
-            <SaveAsImageButton
-              elementRef={elScenarioModeling}
-              filename={scenarioItem.name}
+    <Row gutter={[16, 16]}>
+      {/* Information Input */}
+      <Col span={24}>
+        <Card className="info-card-wrapper" title="Information">
+          {renderScenarioCardHeader()}
+        </Card>
+      </Col>
+
+      {/* Step 1 */}
+      <Step number={1} title="Fill in values for your scenarios" />
+
+      {/* Income Driver Scenario Values */}
+      <Col span={24}>
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={segmentTabs.map((item) => ({
+            ...item,
+            children: dashboardData
+              .filter((d) => d.id === activeTab)
+              .map((segment) => (
+                <Row key={segment.id} gutter={[24, 24]}>
+                  <Col span={16}>
+                    <Card
+                      className="info-card-wrapper"
+                      title="Income Driver Values"
+                    >
+                      <ScenarioInput
+                        segment={segment}
+                        commodityQuestions={commodityQuestions}
+                        percentage={percentage}
+                        setScenarioValues={setScenarioValues}
+                        scenarioValue={scenarioValues.find(
+                          (s) => s.segmentId === segment.id
+                        )}
+                        scenarioItem={scenarioItem}
+                        setScenarioData={setScenarioData}
+                        currencyUnitName={currencyUnitName}
+                        enableEditCase={enableEditCase}
+                      />
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <h2>
+                      What is the income gap when you change your income drivers
+                      using the scenario modeler?
+                    </h2>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                      sed do eiusmod tempor incididunt ut labore et dolore magna
+                      aliqua.
+                    </p>
+                  </Col>
+                </Row>
+              )),
+          }))}
+        />
+      </Col>
+
+      {/* Step 2 */}
+      <Step number={2} title="Visualise your scenarios" />
+
+      {/* Chart and Select scenario - segment */}
+      <Col span={24}>
+        <Row gutter={[24, 24]} ref={elIncomeGapScenario}>
+          <Col span={8}>
+            <Select
+              {...selectProps}
+              options={scenarioSegmentOptions}
+              placeholder="Select Scenario - Segment"
             />
-          </Space>
-        }
+            <h2>
+              What is the income gap when you change your income drivers using
+              the scenario modeler?
+            </h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.{" "}
+            </p>
+          </Col>
+          <Col span={16}>
+            <Card
+              className="chart-card-wrapper"
+              title="Income Gap"
+              extra={
+                <SaveAsImageButton
+                  elementRef={elIncomeGapScenario}
+                  filename="What is the income gap when you change your income drivers using
+              the scenario modeler?"
+                  type="ghost-white"
+                />
+              }
+            >
+              <ChartScenarioModeling
+                data={chartData || []}
+                targetChartData={targetChartData}
+                currencyUnitName={currencyUnitName}
+              />
+            </Card>
+          </Col>
+        </Row>
+      </Col>
+
+      {/* Step 3 */}
+      <Step number={3} title="Better understand outcomes for your segments" />
+
+      {/* Scenario Outcomes */}
+      <Col span={24}>
+        <Card className="info-card-wrapper" title="Scenario Outcomes">
+          <Select
+            {...selectProps}
+            options={segmentOptions}
+            placeholder="Select Segment"
+            style={{ width: "25%" }}
+          />
+          <br />
+          <br />
+          <Table
+            columns={scenarioOutcomeColumns}
+            dataSource={scenarioOutcomeDataSource}
+            pagination={false}
+          />
+        </Card>
+      </Col>
+
+      {/* <Card
+        className="income-driver-dashboard"
         tabList={segmentTabs}
         activeTabKey={activeTab}
         onTabChange={(key) => setActiveTab(key)}
@@ -654,8 +853,8 @@ const Scenario = ({
             </Col>
           </Row>
         </Card.Grid>
-      </Card>
-    </Col>
+      </Card> */}
+    </Row>
   );
 };
 
