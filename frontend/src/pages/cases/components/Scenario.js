@@ -790,6 +790,7 @@ const Scenario = ({
             {...selectProps}
             options={segmentOptions}
             placeholder="Select Segment"
+            style={{ width: "25%" }}
           />
           <br />
           <br />
