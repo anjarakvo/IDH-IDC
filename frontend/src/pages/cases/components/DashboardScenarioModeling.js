@@ -1,7 +1,19 @@
-import React, { useMemo } from "react";
-import { Row, Col, Alert, Button, Select, Card } from "antd";
+import React, { useMemo, useState } from "react";
+import { Row, Col, Alert, Select, Tabs } from "antd";
 import { Scenario } from "./";
 import { orderBy } from "lodash";
+import { PlusCircleFilled } from "@ant-design/icons";
+
+const addScenarioButton = {
+  key: "add",
+  name: (
+    <span>
+      <PlusCircleFilled /> Add Scenario
+    </span>
+  ),
+  description: null,
+  scenarioValues: [],
+};
 
 const DashboardScenarioModeling = ({
   dashboardData,
@@ -13,6 +25,8 @@ const DashboardScenarioModeling = ({
   setScenarioData,
   enableEditCase,
 }) => {
+  const [activeKey, setActiveKey] = useState(1);
+
   const segmentTabs = useMemo(
     () =>
       dashboardData.map((segment) => ({
@@ -21,6 +35,13 @@ const DashboardScenarioModeling = ({
       })),
     [dashboardData]
   );
+
+  const scenarioDataWithAddButton = useMemo(() => {
+    if (enableEditCase) {
+      return [...orderBy(scenarioData, "key"), addScenarioButton];
+    }
+    return orderBy(scenarioData, "key");
+  }, [enableEditCase, scenarioData]);
 
   const commodityQuestions = useMemo(() => {
     return commodityList.map((c) => ({
@@ -50,23 +71,30 @@ const DashboardScenarioModeling = ({
     }
   };
 
+  const onChangeTab = (key) => {
+    if (key === "add") {
+      setScenarioData((prev) => {
+        return [
+          ...prev,
+          {
+            key: prev.length + 1,
+            name: `Scenario ${prev.length + 1}`,
+            description: null,
+            scenarioValues: [],
+          },
+        ];
+      });
+      setActiveKey(scenarioDataWithAddButton.length);
+    } else {
+      setActiveKey(key);
+    }
+  };
+
   return (
     <Row id="scenario-modeling">
       <Col span={24}>
         <Alert
-          message="On this page you can define and save up to three scenarioData."
-          type="success"
-          className="alert-box"
-        />
-      </Col>
-      <Col span={24}>
-        <Card className="income-driver-dashboard">
-          <Card.Grid
-            style={{
-              width: "100%",
-            }}
-            hoverable={false}
-          >
+          message={
             <Row>
               <Col span={12}>How do you want to report on change?</Col>
               <Col span={12}>
@@ -82,52 +110,43 @@ const DashboardScenarioModeling = ({
                 />
               </Col>
             </Row>
-          </Card.Grid>
-        </Card>
-      </Col>
-      {orderBy(scenarioData, "key").map((scenarioItem, index) => (
-        <Scenario
-          key={index}
-          index={index}
-          scenarioItem={scenarioItem}
-          renameScenario={renameScenario}
-          onDelete={() => onDelete(index)}
-          hideDelete={scenarioData.length === 1 && index === 0}
-          dashboardData={dashboardData}
-          commodityQuestions={commodityQuestions}
-          segmentTabs={segmentTabs}
-          percentage={percentage}
-          setScenarioData={setScenarioData}
-          currentScenarioValues={
-            scenarioData.find((d) => d.key === scenarioItem.key)
-              ?.scenarioValues || {}
           }
-          enableEditCase={enableEditCase}
+          type="success"
+          className="alert-box"
         />
-      ))}
-      {enableEditCase && (
-        <Col span={24}>
-          <Button
-            onClick={() =>
-              setScenarioData((prev) => {
-                return [
-                  ...prev,
-                  {
-                    key: prev.length + 1,
-                    name: `Scenario ${prev.length + 1}`,
-                    description: null,
-                    scenarioValues: [],
-                  },
-                ];
-              })
-            }
-            type="primary"
-            style={{ width: "100%" }}
-          >
-            Add New Scenario
-          </Button>
-        </Col>
-      )}
+      </Col>
+
+      <Col span={24}>
+        <Tabs
+          onChange={onChangeTab}
+          activeKey={activeKey}
+          items={scenarioDataWithAddButton.map((scenarioItem, index) => ({
+            ...scenarioItem,
+            label: scenarioItem.name,
+            children:
+              scenarioItem.key === "add" ? null : (
+                <Scenario
+                  key={index}
+                  index={index}
+                  scenarioItem={scenarioItem}
+                  renameScenario={renameScenario}
+                  onDelete={() => onDelete(index)}
+                  hideDelete={scenarioData.length === 1 && index === 0}
+                  dashboardData={dashboardData}
+                  commodityQuestions={commodityQuestions}
+                  segmentTabs={segmentTabs}
+                  percentage={percentage}
+                  setScenarioData={setScenarioData}
+                  currentScenarioValues={
+                    scenarioData.find((d) => d.key === scenarioItem.key)
+                      ?.scenarioValues || {}
+                  }
+                  enableEditCase={enableEditCase}
+                />
+              ),
+          }))}
+        />
+      </Col>
     </Row>
   );
 };
