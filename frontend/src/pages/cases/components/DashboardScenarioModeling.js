@@ -136,7 +136,7 @@ const DashboardScenarioModeling = ({
                   commodityQuestions={commodityQuestions}
                   segmentTabs={segmentTabs}
                   percentage={percentage}
-                  scenarioData={scenarioData}
+                  scenarioData={orderBy(scenarioData, "key")}
                   setScenarioData={setScenarioData}
                   currentScenarioValues={
                     scenarioData.find((d) => d.key === scenarioItem.key)

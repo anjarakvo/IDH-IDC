@@ -13,6 +13,7 @@ import {
   Spin,
   Tabs,
   Select,
+  Table,
 } from "antd";
 import {
   EditTwoTone,
@@ -375,6 +376,29 @@ const Step = ({ number, title }) => (
   </Col>
 );
 
+const outcomeIndicator = [
+  {
+    key: "income_driver",
+    name: "What income drivers have changed?",
+  },
+  {
+    key: "income_gap",
+    name: "How big is the income gap?",
+  },
+  {
+    key: "income_target",
+    name: "Is the income target reached?",
+  },
+  {
+    key: "income_increase",
+    name: "What is the income increase?",
+  },
+  {
+    key: "income_increase_percentage",
+    name: "What is the % income increase?",
+  },
+];
+
 const Scenario = ({
   index,
   scenarioItem,
@@ -398,7 +422,7 @@ const Scenario = ({
   );
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
-  const elScenarioModeling = useRef(null);
+  const elIncomeGapScenario = useRef(null);
 
   const scenarioSegmentOptions = useMemo(() => {
     let i = 1;
@@ -416,6 +440,13 @@ const Scenario = ({
     });
     return res;
   }, [scenarioData, segmentTabs]);
+
+  const segmentOptions = useMemo(() => {
+    return segmentTabs.map((st) => ({
+      label: st.label,
+      value: st.key,
+    }));
+  }, [segmentTabs]);
 
   const finishEditing = () => {
     renameScenario(index, newName, newDescription);
@@ -618,8 +649,34 @@ const Scenario = ({
     );
   };
 
+  const scenarioOutcomeColumns = useMemo(() => {
+    const scenarioCol = scenarioData.map((x) => ({
+      title: x.name,
+      dataIndex: x.name,
+      key: x.name,
+    }));
+    return [
+      {
+        title: null,
+        dataIndex: "title",
+        key: "title",
+        width: "25%",
+      },
+      {
+        title: "Current Value",
+        dataIndex: "current",
+        key: "current",
+      },
+      ...scenarioCol,
+    ];
+  }, [scenarioData]);
+
+  const scenarioOutcomeDataSource = useMemo(() => {
+    return outcomeIndicator.map((ind) => ({ title: ind.name }));
+  }, [outcomeIndicator]);
+
   return (
-    <Row gutter={[16, 16]} ref={elScenarioModeling}>
+    <Row gutter={[16, 16]}>
       {/* Information Input */}
       <Col span={24}>
         <Card className="info-card-wrapper" title="Information">
@@ -683,7 +740,7 @@ const Scenario = ({
 
       {/* Chart and Select scenario - segment */}
       <Col span={24}>
-        <Row gutter={[24, 24]}>
+        <Row gutter={[24, 24]} ref={elIncomeGapScenario}>
           <Col span={8}>
             <Select
               {...selectProps}
@@ -700,7 +757,18 @@ const Scenario = ({
             </p>
           </Col>
           <Col span={16}>
-            <Card className="chart-card-wrapper" title="Income Gap">
+            <Card
+              className="chart-card-wrapper"
+              title="Income Gap"
+              extra={
+                <SaveAsImageButton
+                  elementRef={elIncomeGapScenario}
+                  filename="What is the income gap when you change your income drivers using
+              the scenario modeler?"
+                  type="ghost-white"
+                />
+              }
+            >
               <ChartScenarioModeling
                 data={chartData || []}
                 targetChartData={targetChartData}
@@ -709,6 +777,26 @@ const Scenario = ({
             </Card>
           </Col>
         </Row>
+      </Col>
+
+      {/* Step 3 */}
+      <Step number={3} title="Better understand outcomes for your segments" />
+
+      {/* Scenario Outcomes */}
+      <Col span={24}>
+        <Card className="info-card-wrapper" title="Scenario Outcomes">
+          <Select
+            {...selectProps}
+            options={segmentOptions}
+            placeholder="Select Segment"
+          />
+          <br />
+          <br />
+          <Table
+            columns={scenarioOutcomeColumns}
+            dataSource={scenarioOutcomeDataSource}
+          />
+        </Card>
       </Col>
 
       {/* <Card
