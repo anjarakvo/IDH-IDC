@@ -426,8 +426,8 @@ const Scenario = ({
 
   const scenarioSegmentOptions = useMemo(() => {
     let i = 1;
-    const res = orderBy(scenarioData, "key").flatMap((sc, sci) => {
-      const concat = segmentTabs.map((st, sti) => {
+    const res = orderBy(scenarioData, "key").flatMap((sc) => {
+      const concat = segmentTabs.map((st) => {
         const opt = {
           order: i,
           label: `${sc.name} - ${st.label}`,
@@ -596,7 +596,7 @@ const Scenario = ({
           </Button>
         </Space>
       }
-      title="Are you sure want to delete this segment?"
+      title="Are you sure want to delete this scenario?"
       trigger="click"
       open={confirmationModal}
       onOpenChange={(e) => setConfimationModal(e)}
@@ -622,6 +622,7 @@ const Scenario = ({
       {editing && <ButtonCancelEdit />}
     </Space>
   );
+  console.info(extra);
 
   const renderScenarioCardHeader = () => {
     return (
@@ -673,7 +674,7 @@ const Scenario = ({
 
   const scenarioOutcomeDataSource = useMemo(() => {
     return outcomeIndicator.map((ind) => ({ title: ind.name }));
-  }, [outcomeIndicator]);
+  }, []);
 
   return (
     <Row gutter={[16, 16]}>
@@ -795,6 +796,7 @@ const Scenario = ({
           <Table
             columns={scenarioOutcomeColumns}
             dataSource={scenarioOutcomeDataSource}
+            pagination={false}
           />
         </Card>
       </Col>

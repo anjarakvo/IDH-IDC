@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { Row, Col, Alert, Select, Tabs } from "antd";
+import { Row, Col, Card, Select, Tabs, Space } from "antd";
 import { Scenario } from "./";
 import { orderBy } from "lodash";
 import { PlusCircleFilled } from "@ant-design/icons";
@@ -93,27 +93,30 @@ const DashboardScenarioModeling = ({
   return (
     <div id="scenario-modeling">
       <Col span={24}>
-        <Alert
-          message={
-            <Row>
-              <Col span={12}>How do you want to report on change?</Col>
-              <Col span={12}>
-                <Select
-                  size="small"
-                  style={{ width: "100%", marginLeft: "10px" }}
-                  options={[
-                    { label: "Percentage", value: "percentage" },
-                    { label: "Absolute", value: "absolute" },
-                  ]}
-                  onChange={onChangePercentage}
-                  value={percentage ? "percentage" : "absolute"}
-                />
-              </Col>
-            </Row>
-          }
-          type="success"
-          className="alert-box"
-        />
+        <Card className="card-alert-box">
+          <Row gutter={[16, 16]} align="middle">
+            <Col span={18}>
+              <Space direction="vertical">
+                <div className="title">Choose approach</div>
+                <div className="description">
+                  Please choose whether you would like to express the changes in
+                  current values using percentages or absolute values.
+                </div>
+              </Space>
+            </Col>
+            <Col span={6}>
+              <Select
+                style={{ width: "100%" }}
+                options={[
+                  { label: "Percentage", value: "percentage" },
+                  { label: "Absolute", value: "absolute" },
+                ]}
+                onChange={onChangePercentage}
+                value={percentage ? "percentage" : "absolute"}
+              />
+            </Col>
+          </Row>
+        </Card>
       </Col>
 
       <Col span={24}>
