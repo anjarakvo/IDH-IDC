@@ -31,7 +31,7 @@ const DashboardScenarioModeling = ({
     () =>
       dashboardData.map((segment) => ({
         key: segment.id,
-        tab: segment.name,
+        label: segment.name,
       })),
     [dashboardData]
   );
@@ -91,7 +91,7 @@ const DashboardScenarioModeling = ({
   };
 
   return (
-    <Row id="scenario-modeling">
+    <div id="scenario-modeling">
       <Col span={24}>
         <Alert
           message={
@@ -147,7 +147,7 @@ const DashboardScenarioModeling = ({
           }))}
         />
       </Col>
-    </Row>
+    </div>
   );
 };
 

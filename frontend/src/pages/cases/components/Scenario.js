@@ -11,6 +11,7 @@ import {
   Form,
   Popover,
   Spin,
+  Tabs,
 } from "antd";
 import {
   EditTwoTone,
@@ -560,15 +561,19 @@ const Scenario = ({
   );
 
   const renderScenarioCardHeader = () => {
-    if (editing) {
-      return (
-        <Space direction="vertical" className="scenario-header-wrapper">
+    return (
+      <Row gutter={[16, 16]} className="scenario-information-wrapper">
+        <Col span={24}>
+          <div className="label">Name</div>
           <Input
             key={`scenario-name-${scenarioItem.key}`}
             placeholder="Scenario Name"
             defaultValue={scenarioItem.name}
             onChange={(e) => setNewName(e.target.value)}
           />
+        </Col>
+        <Col span={24}>
+          <div className="label">Description</div>
           <Input.TextArea
             key={`scenario-description-${scenarioItem.key}`}
             rows={4}
@@ -576,35 +581,78 @@ const Scenario = ({
             defaultValue={scenarioItem.description}
             onChange={(e) => setNewDescription(e.target.value)}
           />
-        </Space>
-      );
-    }
-    return (
-      <div className="scenario-header-wrapper">
-        <h3>{scenarioItem.name}</h3>
-        {scenarioItem?.description ? (
-          <p>{scenarioItem.description}</p>
-        ) : (
-          <p>Scenario Description</p>
-        )}
-      </div>
+        </Col>
+      </Row>
     );
   };
 
   return (
-    <Col span={24} ref={elScenarioModeling}>
-      <Card
+    <Row gutter={[16, 16]} ref={elScenarioModeling}>
+      {/* Step 1 */}
+      <Col span={24}>
+        <Space align="center" className="scenario-step-wrapper">
+          <div className="number">1</div>
+          <div className="title">Fill in values for your scenarios</div>
+        </Space>
+      </Col>
+
+      {/* Information Input */}
+      <Col span={24}>
+        <Card className="info-card-wrapper" title="Information">
+          {renderScenarioCardHeader()}
+        </Card>
+      </Col>
+
+      {/* Income Driver Scenario Values */}
+      <Col span={24}>
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          items={segmentTabs.map((item) => ({
+            ...item,
+            children: dashboardData
+              .filter((d) => d.id === activeTab)
+              .map((segment) => (
+                <Row key={segment.id} gutter={[24, 24]}>
+                  <Col span={14}>
+                    <Card
+                      className="info-card-wrapper"
+                      title="Income Driver Values"
+                    >
+                      <ScenarioInput
+                        segment={segment}
+                        commodityQuestions={commodityQuestions}
+                        percentage={percentage}
+                        setScenarioValues={setScenarioValues}
+                        scenarioValue={scenarioValues.find(
+                          (s) => s.segmentId === segment.id
+                        )}
+                        scenarioItem={scenarioItem}
+                        setScenarioData={setScenarioData}
+                        currencyUnitName={currencyUnitName}
+                        enableEditCase={enableEditCase}
+                      />
+                    </Card>
+                  </Col>
+                  <Col span={8}>
+                    <h2>
+                      What is the income gap when you change your income drivers
+                      using the scenario modeler?
+                    </h2>
+                    <p>
+                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
+                      sed do eiusmod tempor incididunt ut labore et dolore magna
+                      aliqua.
+                    </p>
+                  </Col>
+                </Row>
+              )),
+          }))}
+        />
+      </Col>
+
+      {/* <Card
         className="income-driver-dashboard"
-        title={renderScenarioCardHeader()}
-        extra={
-          <Space className="card-extra-wrapper">
-            {enableEditCase ? extra : null}
-            <SaveAsImageButton
-              elementRef={elScenarioModeling}
-              filename={scenarioItem.name}
-            />
-          </Space>
-        }
         tabList={segmentTabs}
         activeTabKey={activeTab}
         onTabChange={(key) => setActiveTab(key)}
@@ -654,8 +702,8 @@ const Scenario = ({
             </Col>
           </Row>
         </Card.Grid>
-      </Card>
-    </Col>
+      </Card> */}
+    </Row>
   );
 };
 
