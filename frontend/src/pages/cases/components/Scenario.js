@@ -12,6 +12,7 @@ import {
   Popover,
   Spin,
   Tabs,
+  Select,
 } from "antd";
 import {
   EditTwoTone,
@@ -19,9 +20,13 @@ import {
   CloseCircleTwoTone,
   DeleteTwoTone,
 } from "@ant-design/icons";
-import { InputNumberThousandFormatter, getFunctionDefaultValue } from "./";
+import {
+  InputNumberThousandFormatter,
+  getFunctionDefaultValue,
+  selectProps,
+} from "./";
 import { ChartScenarioModeling } from "../visualizations";
-import { isEmpty } from "lodash";
+import { isEmpty, orderBy } from "lodash";
 import { SaveAsImageButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
@@ -361,6 +366,15 @@ const ScenarioInput = ({
   );
 };
 
+const Step = ({ number, title }) => (
+  <Col span={24}>
+    <Space align="center" className="scenario-step-wrapper">
+      <div className="number">{number}</div>
+      <div className="title">{title}</div>
+    </Space>
+  </Col>
+);
+
 const Scenario = ({
   index,
   scenarioItem,
@@ -371,6 +385,7 @@ const Scenario = ({
   commodityQuestions,
   segmentTabs,
   percentage,
+  scenarioData,
   setScenarioData,
   currentScenarioValues = {},
   enableEditCase,
@@ -384,6 +399,23 @@ const Scenario = ({
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
   const elScenarioModeling = useRef(null);
+
+  const scenarioSegmentOptions = useMemo(() => {
+    let i = 1;
+    const res = orderBy(scenarioData, "key").flatMap((sc, sci) => {
+      const concat = segmentTabs.map((st, sti) => {
+        const opt = {
+          order: i,
+          label: `${sc.name} - ${st.label}`,
+          value: `${sc.key}-${st.key}`,
+        };
+        i += 1;
+        return opt;
+      });
+      return concat;
+    });
+    return res;
+  }, [scenarioData, segmentTabs]);
 
   const finishEditing = () => {
     renameScenario(index, newName, newDescription);
@@ -588,20 +620,15 @@ const Scenario = ({
 
   return (
     <Row gutter={[16, 16]} ref={elScenarioModeling}>
-      {/* Step 1 */}
-      <Col span={24}>
-        <Space align="center" className="scenario-step-wrapper">
-          <div className="number">1</div>
-          <div className="title">Fill in values for your scenarios</div>
-        </Space>
-      </Col>
-
       {/* Information Input */}
       <Col span={24}>
         <Card className="info-card-wrapper" title="Information">
           {renderScenarioCardHeader()}
         </Card>
       </Col>
+
+      {/* Step 1 */}
+      <Step number={1} title="Fill in values for your scenarios" />
 
       {/* Income Driver Scenario Values */}
       <Col span={24}>
@@ -614,7 +641,7 @@ const Scenario = ({
               .filter((d) => d.id === activeTab)
               .map((segment) => (
                 <Row key={segment.id} gutter={[24, 24]}>
-                  <Col span={14}>
+                  <Col span={16}>
                     <Card
                       className="info-card-wrapper"
                       title="Income Driver Values"
@@ -649,6 +676,39 @@ const Scenario = ({
               )),
           }))}
         />
+      </Col>
+
+      {/* Step 2 */}
+      <Step number={2} title="Visualise your scenarios" />
+
+      {/* Chart and Select scenario - segment */}
+      <Col span={24}>
+        <Row gutter={[24, 24]}>
+          <Col span={8}>
+            <Select
+              {...selectProps}
+              options={scenarioSegmentOptions}
+              placeholder="Select Scenario - Segment"
+            />
+            <h2>
+              What is the income gap when you change your income drivers using
+              the scenario modeler?
+            </h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+              eiusmod tempor incididunt ut labore et dolore magna aliqua.{" "}
+            </p>
+          </Col>
+          <Col span={16}>
+            <Card className="chart-card-wrapper" title="Income Gap">
+              <ChartScenarioModeling
+                data={chartData || []}
+                targetChartData={targetChartData}
+                currencyUnitName={currencyUnitName}
+              />
+            </Card>
+          </Col>
+        </Row>
       </Col>
 
       {/* <Card
