@@ -178,7 +178,7 @@ const Cases = () => {
       key: "created_by",
       width: "20%",
       render: (row) => {
-        if (row.created_by !== userEmail) {
+        if (row.created_by !== userEmail || !adminRole.includes(userRole)) {
           return row.created_by;
         }
         if (row.id === showChangeOwnerForm) {
