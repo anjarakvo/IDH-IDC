@@ -311,6 +311,14 @@ const ScenarioInput = ({
     >
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>
+          <h2>Income Target</h2>
+        </Col>
+        <Col span={15}>
+          <h2>{`${segment.target} ${currencyUnitName}`}</h2>
+        </Col>
+      </Row>
+      <Row gutter={[8, 8]} align="middle" justify="space-between">
+        <Col span={9}>
           <h4>Income Driver</h4>
         </Col>
         <Col span={5} align="center">
