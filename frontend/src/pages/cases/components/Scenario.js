@@ -674,7 +674,7 @@ const Scenario = ({
   const targetChartData = useMemo(() => {
     return [
       {
-        name: "Benchmark",
+        name: "Income Target",
         type: "line",
         symbol: "diamond",
         symbolSize: 15,
