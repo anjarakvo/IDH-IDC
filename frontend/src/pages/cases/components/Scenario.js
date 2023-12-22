@@ -422,6 +422,8 @@ const Scenario = ({
   );
   const [confirmationModal, setConfimationModal] = useState(false);
   const [scenarioValues, setScenarioValues] = useState([]);
+  const [selectedScenarioSegmentChart, setSelectedScenarioSegmentChart] =
+    useState([]);
   const elIncomeGapScenario = useRef(null);
 
   const scenarioSegmentOptions = useMemo(() => {
@@ -498,25 +500,48 @@ const Scenario = ({
   }, [commodityQuestions]);
 
   const combineScenarioDataWithDashboardData = useMemo(() => {
-    const data = scenarioData
-      .filter((sd) => sd.key === scenarioItem.key)
-      .flatMap((sd) => {
-        const segments = scenarioValues.map((sv) => {
-          return {
-            ...sv,
-            allNewValues: sv?.allNewValues || {},
-            newTotalIncome: sv?.value || 0,
-            scenarioKey: sd.key,
-            scenarioName: sd.name,
-            currentSegmentValue: dashboardData.find(
-              (dd) => dd.id === sv.segmentId
-            ),
-          };
-        });
-        return segments;
+    const scenarioKeys = [];
+    const segmentIds = [];
+    selectedScenarioSegmentChart.forEach((item) => {
+      const [scenario, segment] = item.split("-").map((x) => parseInt(x));
+      scenarioKeys.push(scenario);
+      segmentIds.push(segment);
+    });
+
+    const filterScenarioData = isEmpty(selectedScenarioSegmentChart)
+      ? scenarioData.filter((sd) => sd.key === scenarioItem.key)
+      : scenarioData.filter((sd) => scenarioKeys.includes(sd.key));
+
+    const data = filterScenarioData.flatMap((sd) => {
+      const segments = scenarioValues.map((sv) => {
+        return {
+          ...sv,
+          scenarioSegmentKey: `${sd.key}-${sv.segmentId}`,
+          allNewValues: sv?.allNewValues || {},
+          newTotalIncome: sv?.value || 0,
+          scenarioKey: sd.key,
+          scenarioName: sd.name,
+          currentSegmentValue: dashboardData.find(
+            (dd) => dd.id === sv.segmentId
+          ),
+        };
       });
+      return segments;
+    });
+
+    if (!isEmpty(selectedScenarioSegmentChart)) {
+      return data.filter((d) =>
+        selectedScenarioSegmentChart.includes(d.scenarioSegmentKey)
+      );
+    }
     return data;
-  }, [dashboardData, scenarioData, scenarioItem]);
+  }, [
+    dashboardData,
+    scenarioData,
+    scenarioItem,
+    scenarioValues,
+    selectedScenarioSegmentChart,
+  ]);
 
   const chartData = useMemo(() => {
     const totalFocusIncomeQuestion = focusCommodity.questions[0];
@@ -614,7 +639,7 @@ const Scenario = ({
     //   };
     // });
     // return data;
-  }, [combineScenarioDataWithDashboardData]);
+  }, [combineScenarioDataWithDashboardData, focusCommodity]);
 
   const targetChartData = useMemo(() => {
     return [
@@ -824,6 +849,8 @@ const Scenario = ({
               {...selectProps}
               options={scenarioSegmentOptions}
               placeholder="Select Scenario - Segment"
+              mode="multiple"
+              onChange={setSelectedScenarioSegmentChart}
             />
             <h2>
               What is the income gap when you change your income drivers using
