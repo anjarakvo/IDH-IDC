@@ -719,7 +719,9 @@ const Scenario = ({
       size="small"
       shape="circle"
       type="secondary"
-      icon={<CloseCircleTwoTone twoToneColor="#eb2f96" />}
+      icon={
+        <CloseCircleTwoTone twoToneColor="#eb2f96" style={{ fontSize: 18 }} />
+      }
       onClick={cancelEditing}
     />
   );
@@ -745,15 +747,15 @@ const Scenario = ({
         size="small"
         shape="circle"
         type="secondary"
-        icon={<DeleteTwoTone twoToneColor="#eb2f96" />}
+        icon={<DeleteTwoTone twoToneColor="#fff" style={{ fontSize: 18 }} />}
       />
     </Popover>
   );
 
   const extra = !hideDelete ? (
     <Space>
-      <ButtonEdit />
-      {editing && <ButtonCancelEdit />}
+      {/* <ButtonEdit />
+      {editing && <ButtonCancelEdit />} */}
       {!editing && <ButtonDelete />}
     </Space>
   ) : (
@@ -762,7 +764,6 @@ const Scenario = ({
       {editing && <ButtonCancelEdit />}
     </Space>
   );
-  console.info(extra);
 
   const renderScenarioCardHeader = () => {
     return (
@@ -981,7 +982,11 @@ const Scenario = ({
     <Row gutter={[16, 16]}>
       {/* Information Input */}
       <Col span={24}>
-        <Card className="info-card-wrapper" title="Information">
+        <Card
+          className="info-card-wrapper"
+          title="Information"
+          extra={scenarioItem?.key > 1 ? extra : null}
+        >
           {renderScenarioCardHeader()}
         </Card>
       </Col>
