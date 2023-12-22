@@ -311,7 +311,7 @@ const ScenarioInput = ({
     >
       <Row gutter={[8, 8]} align="middle" justify="space-between">
         <Col span={9}>
-          <h4>Commodity</h4>
+          <h4>Income Driver</h4>
         </Col>
         <Col span={5} align="center">
           <h4>New Value</h4>
@@ -601,8 +601,8 @@ const Scenario = ({
           {
             name: "Current total household income",
             title: "Current total household income",
-            value: newTotalIncome,
-            total: newTotalIncome,
+            value: currentTotalIncome,
+            total: currentTotalIncome,
             color: "#1B625F",
             order: 1,
           },
@@ -682,13 +682,13 @@ const Scenario = ({
         lineStyle: {
           width: 0,
         },
-        data: dashboardData.map((d) => ({
+        data: chartData.map((d) => ({
           name: "Benchmark",
           value: d?.target ? d.target.toFixed(2) : 0,
         })),
       },
     ];
-  }, [dashboardData]);
+  }, [chartData]);
 
   const ButtonEdit = () => (
     <Button
