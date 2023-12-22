@@ -27,7 +27,7 @@ import {
   selectProps,
 } from "./";
 import { ChartScenarioModeling } from "../visualizations";
-import { isEmpty, orderBy } from "lodash";
+import { isEmpty, orderBy, uniq } from "lodash";
 import { SaveAsImageButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
@@ -424,6 +424,7 @@ const Scenario = ({
   const [scenarioValues, setScenarioValues] = useState([]);
   const [selectedScenarioSegmentChart, setSelectedScenarioSegmentChart] =
     useState([]);
+  const [selectedSegment, setSelectedSegment] = useState(null);
   const elIncomeGapScenario = useRef(null);
 
   const scenarioSegmentOptions = useMemo(() => {
@@ -498,6 +499,26 @@ const Scenario = ({
   const focusCommodity = useMemo(() => {
     return commodityQuestions.find((cq) => cq.commodity_type === "focus");
   }, [commodityQuestions]);
+
+  const outcomeDriverQuestions = useMemo(() => {
+    const focus = focusCommodity?.questions[0]?.childrens?.map((x) => ({
+      ...x,
+      case_commodity: focusCommodity.case_commodity,
+    }));
+    let diversified = commodityQuestions.find(
+      (cq) => cq.commodity_type === "diversified"
+    );
+    diversified = diversified?.questions?.map((x) => ({
+      ...x,
+      case_commodity: diversified.case_commodity,
+    }));
+    return [...focus, ...diversified].map((q) => ({
+      questionId: q.id,
+      text: q.text,
+      questionType: q.question_type,
+      caseCommodityId: q.case_commodity,
+    }));
+  }, [commodityQuestions, focusCommodity]);
 
   const combineScenarioDataWithDashboardData = useMemo(() => {
     const scenarioKeys = [];
@@ -639,7 +660,7 @@ const Scenario = ({
     //   };
     // });
     // return data;
-  }, [combineScenarioDataWithDashboardData, focusCommodity]);
+  }, [combineScenarioDataWithDashboardData]);
 
   const targetChartData = useMemo(() => {
     return [
@@ -755,8 +776,8 @@ const Scenario = ({
   const scenarioOutcomeColumns = useMemo(() => {
     const scenarioCol = scenarioData.map((x) => ({
       title: x.name,
-      dataIndex: x.name,
-      key: x.name,
+      dataIndex: `scenario-${x.key}`,
+      key: `scenario-${x.key}`,
     }));
     return [
       {
@@ -775,8 +796,65 @@ const Scenario = ({
   }, [scenarioData]);
 
   const scenarioOutcomeDataSource = useMemo(() => {
-    return outcomeIndicator.map((ind) => ({ title: ind.name }));
-  }, []);
+    if (!selectedSegment || isEmpty(outcomeDriverQuestions)) {
+      return [];
+    }
+    // current data
+    const current = dashboardData.find((dd) => dd.id === selectedSegment);
+    const data = outcomeIndicator.map((ind) => {
+      let res = { title: ind.name };
+      if (ind.key === "income_driver") {
+        res = {
+          ...res,
+          current: null,
+        };
+        const currentDriverValues = outcomeDriverQuestions.map((q) => {
+          return {
+            ...q,
+            value:
+              current?.answers?.find((a) => a.questionId === q.questionId)
+                ?.value || 0,
+          };
+        });
+        // scenario data
+        scenarioData.forEach((sd) => {
+          const scenarioKey = `scenario-${sd.key}`;
+          const segment =
+            sd.scenarioValues.find((sv) => sv.segmentId === selectedSegment) ||
+            {};
+          const scenarioDriverValues = outcomeDriverQuestions.map((q) => {
+            const answerKey = `absolute-${q.caseCommodityId}-${q.questionId}`;
+            return {
+              ...q,
+              value: segment?.allNewValues?.[answerKey] || null,
+            };
+          });
+          // commpare current driver with scenario driver values
+          const compareDrivers = currentDriverValues
+            .map((cur) => {
+              const check = scenarioDriverValues.find(
+                (nw) => nw.questionId === cur.questionId
+              );
+              if (check.value !== null && check.value !== cur.value) {
+                return check.questionType !== "diversified"
+                  ? cur.text
+                  : "Diversified Income";
+              }
+              return false;
+            })
+            .filter((x) => x);
+          res = {
+            ...res,
+            [scenarioKey]: isEmpty(compareDrivers)
+              ? "-"
+              : uniq(compareDrivers).join(", "),
+          };
+        });
+      }
+      return res;
+    });
+    return data;
+  }, [dashboardData, scenarioData, selectedSegment, outcomeDriverQuestions]);
 
   return (
     <Row gutter={[16, 16]}>
@@ -890,19 +968,20 @@ const Scenario = ({
       {/* Scenario Outcomes */}
       <Col span={24}>
         <Card className="info-card-wrapper" title="Scenario Outcomes">
-          <Select
-            {...selectProps}
-            options={segmentOptions}
-            placeholder="Select Segment"
-            style={{ width: "25%" }}
-          />
-          <br />
-          <br />
-          <Table
-            columns={scenarioOutcomeColumns}
-            dataSource={scenarioOutcomeDataSource}
-            pagination={false}
-          />
+          <Space size="large" direction="vertical">
+            <Select
+              {...selectProps}
+              options={segmentOptions}
+              placeholder="Select Segment"
+              style={{ width: "25%" }}
+              onChange={setSelectedSegment}
+            />
+            <Table
+              columns={scenarioOutcomeColumns}
+              dataSource={scenarioOutcomeDataSource}
+              pagination={false}
+            />
+          </Space>
         </Card>
       </Col>
 
