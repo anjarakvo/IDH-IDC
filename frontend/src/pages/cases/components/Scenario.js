@@ -599,7 +599,7 @@ const Scenario = ({
       // newFocusCommodityIncome = parseFloat(newFocusCommodityIncome);
       const additionalValue = newTotalIncome - currentTotalIncome;
 
-      let gapValue = incomeTarget - (newTotalIncome + additionalValue);
+      let gapValue = incomeTarget - newTotalIncome;
       gapValue = gapValue < 0 ? 0 : gapValue;
 
       return {
@@ -892,6 +892,27 @@ const Scenario = ({
               current.target <= newTotalIncome
                 ? incomeTargetIcon.reached
                 : incomeTargetIcon.not_reached,
+          };
+        });
+      }
+
+      if (ind.key === "income_gap") {
+        const currentGap = current.target - current.total_current_income;
+        res = {
+          ...res,
+          current: currentGap <= 0 ? "-" : currentGap?.toFixed(2),
+        };
+        // scenario data
+        scenarioData.forEach((sd) => {
+          const scenarioKey = `scenario-${sd.key}`;
+          const segment =
+            sd.scenarioValues.find((sv) => sv.segmentId === selectedSegment) ||
+            {};
+          const segmentValue = segment?.value ? segment.value : current.target;
+          const segmentGap = current.target - segmentValue;
+          res = {
+            ...res,
+            [scenarioKey]: segmentGap <= 0 ? "-" : segmentGap?.toFixed(2),
           };
         });
       }
