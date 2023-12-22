@@ -544,22 +544,22 @@ const Scenario = ({
   ]);
 
   const chartData = useMemo(() => {
-    const totalFocusIncomeQuestion = focusCommodity.questions[0];
+    // const totalFocusIncomeQuestion = focusCommodity.questions[0];
     const data = combineScenarioDataWithDashboardData.map((d) => {
       const incomeTarget = d.currentSegmentValue.target;
       const currentTotalIncome = d.currentSegmentValue.total_current_income;
-      const currentFocusIncome =
-        d.currentSegmentValue.total_current_focus_income;
+      // const currentFocusIncome =
+      //   d.currentSegmentValue.total_current_focus_income;
       const feasibleFocusIncome =
         d.currentSegmentValue.total_feasible_focus_income;
 
-      const newTotalIncome = d?.newTotalIncome || currentTotalIncome;
-      let newFocusCommodityIncome =
-        d.allNewValues?.[
-          `absolute-${focusCommodity.case_commodity}-${totalFocusIncomeQuestion.id}`
-        ] || feasibleFocusIncome;
-      newFocusCommodityIncome = parseFloat(newFocusCommodityIncome);
-      const additionalValue = newFocusCommodityIncome - currentFocusIncome;
+      const newTotalIncome = d?.newTotalIncome || feasibleFocusIncome;
+      // let newFocusCommodityIncome =
+      //   d.allNewValues?.[
+      //     `absolute-${focusCommodity.case_commodity}-${totalFocusIncomeQuestion.id}`
+      //   ] || feasibleFocusIncome;
+      // newFocusCommodityIncome = parseFloat(newFocusCommodityIncome);
+      const additionalValue = newTotalIncome - currentTotalIncome;
 
       let gapValue = incomeTarget - (newTotalIncome + additionalValue);
       gapValue = gapValue < 0 ? 0 : gapValue;
