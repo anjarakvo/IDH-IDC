@@ -133,7 +133,10 @@ const DashboardScenarioModeling = ({
                   index={index}
                   scenarioItem={scenarioItem}
                   renameScenario={renameScenario}
-                  onDelete={() => onDelete(index)}
+                  onDelete={() => {
+                    onDelete(index);
+                    setActiveKey(1);
+                  }}
                   hideDelete={scenarioData.length === 1 && index === 0}
                   dashboardData={dashboardData}
                   commodityQuestions={commodityQuestions}
