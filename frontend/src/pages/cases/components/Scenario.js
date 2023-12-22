@@ -424,6 +424,8 @@ const Scenario = ({
   const [scenarioValues, setScenarioValues] = useState([]);
   const elIncomeGapScenario = useRef(null);
 
+  console.log(scenarioData);
+
   const scenarioSegmentOptions = useMemo(() => {
     let i = 1;
     const res = orderBy(scenarioData, "key").flatMap((sc) => {
