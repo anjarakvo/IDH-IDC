@@ -823,7 +823,7 @@ const Scenario = ({
       if (ind.key === "income_driver") {
         res = {
           ...res,
-          current: null,
+          current: "-",
         };
         const currentDriverValues = outcomeDriverQuestions.map((q) => {
           return {
@@ -912,7 +912,63 @@ const Scenario = ({
           const segmentGap = current.target - segmentValue;
           res = {
             ...res,
-            [scenarioKey]: segmentGap <= 0 ? "-" : segmentGap?.toFixed(2),
+            [scenarioKey]:
+              segmentGap <= 0 ? "-" : thousandFormatter(segmentGap?.toFixed(2)),
+          };
+        });
+      }
+
+      if (ind.key === "income_increase") {
+        res = {
+          ...res,
+          current: "-",
+        };
+        // scenario data
+        scenarioData.forEach((sd) => {
+          const scenarioKey = `scenario-${sd.key}`;
+          const segment =
+            sd.scenarioValues.find((sv) => sv.segmentId === selectedSegment) ||
+            {};
+          const segmentValue = segment?.value
+            ? segment.value
+            : current.total_current_income;
+          const incomeIncrease = segmentValue - current.total_current_income;
+          res = {
+            ...res,
+            [scenarioKey]:
+              parseInt(incomeIncrease) === 0
+                ? "-"
+                : thousandFormatter(incomeIncrease?.toFixed(2)),
+          };
+        });
+      }
+
+      if (ind.key === "income_increase_percentage") {
+        res = {
+          ...res,
+          current: "-",
+        };
+        // scenario data
+        scenarioData.forEach((sd) => {
+          const scenarioKey = `scenario-${sd.key}`;
+          const segment =
+            sd.scenarioValues.find((sv) => sv.segmentId === selectedSegment) ||
+            {};
+          const segmentValue = segment?.value
+            ? segment.value
+            : current.total_current_income;
+          const incomeIncrease = segmentValue - current.total_current_income;
+          let incomeIncreasePercent = "-";
+          if (parseInt(incomeIncrease) !== 0) {
+            incomeIncreasePercent = (
+              (incomeIncrease / current.total_current_income) *
+              100
+            )?.toFixed(2);
+            incomeIncreasePercent = `${incomeIncreasePercent}%`;
+          }
+          res = {
+            ...res,
+            [scenarioKey]: incomeIncreasePercent,
           };
         });
       }
