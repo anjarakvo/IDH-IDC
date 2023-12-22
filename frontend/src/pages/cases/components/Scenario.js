@@ -424,8 +424,6 @@ const Scenario = ({
   const [scenarioValues, setScenarioValues] = useState([]);
   const elIncomeGapScenario = useRef(null);
 
-  console.log(scenarioData);
-
   const scenarioSegmentOptions = useMemo(() => {
     let i = 1;
     const res = orderBy(scenarioData, "key").flatMap((sc) => {
@@ -495,51 +493,128 @@ const Scenario = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardData]);
 
+  const focusCommodity = useMemo(() => {
+    return commodityQuestions.find((cq) => cq.commodity_type === "focus");
+  }, [commodityQuestions]);
+
+  const combineScenarioDataWithDashboardData = useMemo(() => {
+    const data = scenarioData
+      .filter((sd) => sd.key === scenarioItem.key)
+      .flatMap((sd) => {
+        const segments = scenarioValues.map((sv) => {
+          return {
+            ...sv,
+            allNewValues: sv?.allNewValues || {},
+            newTotalIncome: sv?.value || 0,
+            scenarioKey: sd.key,
+            scenarioName: sd.name,
+            currentSegmentValue: dashboardData.find(
+              (dd) => dd.id === sv.segmentId
+            ),
+          };
+        });
+        return segments;
+      });
+    return data;
+  }, [dashboardData, scenarioData, scenarioItem]);
+
   const chartData = useMemo(() => {
-    const data = dashboardData.map((segment) => {
-      const scenarioIncome =
-        scenarioValues.find((s) => s.segmentId === segment.id)?.value || 0;
-      const increaseIncome = scenarioIncome
-        ? scenarioIncome - segment.total_current_income
-        : scenarioIncome;
-      const gapValue = scenarioIncome
-        ? scenarioIncome >= segment.target
-          ? 0
-          : segment.target - scenarioIncome
-        : segment.target - segment.total_current_income;
+    const totalFocusIncomeQuestion = focusCommodity.questions[0];
+    const data = combineScenarioDataWithDashboardData.map((d) => {
+      const incomeTarget = d.currentSegmentValue.target;
+      const currentTotalIncome = d.currentSegmentValue.total_current_income;
+      const currentFocusIncome =
+        d.currentSegmentValue.total_current_focus_income;
+      const feasibleFocusIncome =
+        d.currentSegmentValue.total_feasible_focus_income;
+
+      const newTotalIncome = d?.newTotalIncome || currentTotalIncome;
+      let newFocusCommodityIncome =
+        d.allNewValues?.[
+          `absolute-${focusCommodity.case_commodity}-${totalFocusIncomeQuestion.id}`
+        ] || feasibleFocusIncome;
+      newFocusCommodityIncome = parseFloat(newFocusCommodityIncome);
+      const additionalValue = newFocusCommodityIncome - currentFocusIncome;
+
+      let gapValue = incomeTarget - (newTotalIncome + additionalValue);
+      gapValue = gapValue < 0 ? 0 : gapValue;
+
       return {
-        name: segment.name,
-        title: segment.name,
+        name: `${d.scenarioName} - ${d.name}`,
+        target: incomeTarget,
         stack: [
           {
-            name: "Current Income",
-            title: "Current Income",
+            name: "Current total household income",
+            title: "Current total household income",
+            value: newTotalIncome,
+            total: newTotalIncome,
+            color: "#1B625F",
             order: 1,
-            total: segment.total_current_income,
-            value: segment.total_current_income,
-            color: "#00625F",
           },
           {
-            name: "Income Increase",
-            title: "Income Increase",
+            name: "Additional income when income drivers are changed",
+            title: "Additional income when income drivers are changed",
+            value: additionalValue,
+            total: additionalValue,
+            color: "#49D985",
             order: 2,
-            total: increaseIncome,
-            value: increaseIncome,
-            color: "#47D985",
           },
           {
             name: "Gap",
             title: "Gap",
+            value: gapValue,
+            total: gapValue,
+            color: "#E06666",
             order: 3,
-            total: gapValue > 0 ? gapValue : 0,
-            value: gapValue > 0 ? gapValue : 0,
-            color: "#F1C5B2",
           },
         ],
       };
     });
     return data;
-  }, [dashboardData, scenarioValues]);
+    // const data = dashboardData.map((segment) => {
+    //   const scenarioIncome =
+    //     scenarioValues.find((s) => s.segmentId === segment.id)?.value || 0;
+    //   const increaseIncome = scenarioIncome
+    //     ? scenarioIncome - segment.total_current_income
+    //     : scenarioIncome;
+    //   const gapValue = scenarioIncome
+    //     ? scenarioIncome >= segment.target
+    //       ? 0
+    //       : segment.target - scenarioIncome
+    //     : segment.target - segment.total_current_income;
+    //   return {
+    //     name: segment.name,
+    //     title: segment.name,
+    //     stack: [
+    //       {
+    //         name: "Current Income",
+    //         title: "Current Income",
+    //         order: 1,
+    //         total: segment.total_current_income,
+    //         value: segment.total_current_income,
+    //         color: "#00625F",
+    //       },
+    //       {
+    //         name: "Income Increase",
+    //         title: "Income Increase",
+    //         order: 2,
+    //         total: increaseIncome,
+    //         value: increaseIncome,
+    //         color: "#47D985",
+    //       },
+    //       {
+    //         name: "Gap",
+    //         title: "Gap",
+    //         order: 3,
+    //         total: gapValue > 0 ? gapValue : 0,
+    //         value: gapValue > 0 ? gapValue : 0,
+    //         color: "#F1C5B2",
+    //       },
+    //     ],
+    //   };
+    // });
+    // return data;
+  }, [combineScenarioDataWithDashboardData]);
 
   const targetChartData = useMemo(() => {
     return [
@@ -548,7 +623,7 @@ const Scenario = ({
         type: "line",
         symbol: "diamond",
         symbolSize: 15,
-        color: "#FF5D00",
+        color: "#000",
         lineStyle: {
           width: 0,
         },

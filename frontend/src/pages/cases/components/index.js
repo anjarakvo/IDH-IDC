@@ -179,7 +179,7 @@ export const customFormula = {
 
 /**
  * NOTE
- * Income formula ( #2 * #3 * #4 ) - ( ( #5 * #2 ) + ( #26 * #3 * #2 ) )
+ * Focus Income formula ( #2 * #3 * #4 ) - ( ( #5 * #2 ) + ( #26 * #3 * #2 ) )
  * Target = 9001,
  * Diversified = 9002
  */
