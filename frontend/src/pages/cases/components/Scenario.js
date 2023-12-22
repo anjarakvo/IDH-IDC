@@ -386,7 +386,7 @@ const outcomeIndicator = [
     name: "How big is the income gap?",
   },
   {
-    key: "income_target",
+    key: "income_target_reached",
     name: "Is the income target reached?",
   },
   {
@@ -398,6 +398,15 @@ const outcomeIndicator = [
     name: "What is the % income increase?",
   },
 ];
+
+const incomeTargetIcon = {
+  reached: (
+    <CheckCircleTwoTone twoToneColor="#52c41a" style={{ fontSize: 18 }} />
+  ),
+  not_reached: (
+    <CloseCircleTwoTone twoToneColor="#eb2f96" style={{ fontSize: 18 }} />
+  ),
+};
 
 const Scenario = ({
   index,
@@ -848,6 +857,33 @@ const Scenario = ({
             [scenarioKey]: isEmpty(compareDrivers)
               ? "-"
               : uniq(compareDrivers).join(", "),
+          };
+        });
+      }
+
+      if (ind.key === "income_target_reached") {
+        res = {
+          ...res,
+          current:
+            current.target <= current.total_current_income
+              ? incomeTargetIcon.reached
+              : incomeTargetIcon.not_reached,
+        };
+        // scenario data
+        scenarioData.forEach((sd) => {
+          const scenarioKey = `scenario-${sd.key}`;
+          const segment =
+            sd.scenarioValues.find((sv) => sv.segmentId === selectedSegment) ||
+            {};
+          const newTotalIncome = !segment?.value
+            ? current.total_current_income
+            : segment?.value;
+          res = {
+            ...res,
+            [scenarioKey]:
+              current.target <= newTotalIncome
+                ? incomeTargetIcon.reached
+                : incomeTargetIcon.not_reached,
           };
         });
       }
