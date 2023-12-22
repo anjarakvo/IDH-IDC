@@ -40,7 +40,7 @@ const Cases = () => {
   const tagOptions = UIState.useState((s) => s.tagOptions);
   const {
     id: userID,
-    email: userEmail,
+    // email: userEmail,
     role: userRole,
     internal_user: userInternal,
     case_access: userCaseAccess,
@@ -178,7 +178,8 @@ const Cases = () => {
       key: "created_by",
       width: "20%",
       render: (row) => {
-        if (row.created_by !== userEmail || !adminRole.includes(userRole)) {
+        // case owner row.created_by !== userEmail
+        if (!adminRole.includes(userRole)) {
           return row.created_by;
         }
         if (row.id === showChangeOwnerForm) {
