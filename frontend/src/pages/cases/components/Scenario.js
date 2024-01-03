@@ -56,13 +56,34 @@ const Question = ({
   }, [unit, commodity]);
 
   const answer = useMemo(() => {
+    if (id === "diversified") {
+      const answers = childrens
+        .map((c) => {
+          return segment.answers.find(
+            (s) =>
+              s.question.id === c.id &&
+              s.caseCommodityId === case_commodity &&
+              s.name === "current"
+          );
+        })
+        .filter((x) => x);
+      return {
+        ...answers[0],
+        id: id,
+        question: childrens.map((c) => ({
+          ...c,
+          value: answers.find((a) => a.question.id === c.id)?.value || 0,
+        })),
+        value: answers.reduce((res, cur) => res + cur.value, 0),
+      };
+    }
     return segment.answers.find(
       (s) =>
         s.question.id === id &&
         s.caseCommodityId === case_commodity &&
         s.name === "current"
     );
-  }, [segment, id, case_commodity]);
+  }, [segment, id, case_commodity, childrens]);
 
   const currentIncrease = useMemo(() => {
     let value = 0;
@@ -196,12 +217,39 @@ const ScenarioInput = ({
   const onValuesChange = (changedValues, allValues) => {
     const objectId = Object.keys(changedValues)[0];
     const [, case_commodity, id] = objectId.split("-");
-    const segmentAnswer = segment.answers.find(
-      (s) =>
-        s.questionId === parseInt(id) &&
-        s.caseCommodityId === parseInt(case_commodity) &&
-        s.name === "current"
-    );
+
+    let segmentAnswer = {};
+    if (id === "diversified") {
+      const childrens = commodityQuestions
+        .find((cq) => cq.commodity_type === "diversified")
+        ?.questions?.find((q) => !q.parent)?.childrens;
+      const answers = childrens
+        ?.map((c) => {
+          return segment.answers.find(
+            (s) =>
+              s.question.id === c.id &&
+              s.caseCommodityId === parseInt(case_commodity) &&
+              s.name === "current"
+          );
+        })
+        .filter((x) => x);
+      segmentAnswer = {
+        ...answers[0],
+        id: id,
+        question: childrens.map((c) => ({
+          ...c,
+          value: answers.find((a) => a.question.id === c.id)?.value || 0,
+        })),
+        value: answers.reduce((res, cur) => res + cur.value, 0),
+      };
+    } else {
+      segmentAnswer = segment.answers.find(
+        (s) =>
+          s.questionId === parseInt(id) &&
+          s.caseCommodityId === parseInt(case_commodity) &&
+          s.name === "current"
+      );
+    }
 
     const parentQuestion = segment.answers.find(
       (s) =>
@@ -258,14 +306,20 @@ const ScenarioInput = ({
     );
     const allNewValues = { ...allValues, ...newFieldsValue };
 
-    const totalValues = allParentQuestions.reduce((acc, p) => {
+    let totalValues = allParentQuestions.reduce((acc, p) => {
       const questionId = `absolute-${p.caseCommodityId}-${p.question.id}`;
-      const value = allNewValues[questionId];
+      const value = allNewValues?.[questionId] || 0;
       if (value) {
         acc += parseFloat(value);
       }
       return acc;
     }, 0);
+    // handle grouped diversified value
+    const newDiversified =
+      allNewValues?.[`absolute-${parseInt(case_commodity)}-diversified`];
+    totalValues =
+      totalValues + (newDiversified ? parseFloat(newDiversified) : 0);
+    //
 
     const newScenarioValue = {
       segmentId: segment.id,
@@ -318,7 +372,7 @@ const ScenarioInput = ({
           <h2>Income Target</h2>
         </Col>
         <Col span={15}>
-          <h2>{`${segment.target} ${currencyUnitName}`}</h2>
+          <h2>{`${segment.target?.toFixed(2)} ${currencyUnitName}`}</h2>
         </Col>
       </Row>
       <Row gutter={[8, 8]} align="middle" justify="space-between">
