@@ -1110,59 +1110,6 @@ const Scenario = ({
           </Space>
         </Card>
       </Col>
-
-      {/* <Card
-        className="income-driver-dashboard"
-        tabList={segmentTabs}
-        activeTabKey={activeTab}
-        onTabChange={(key) => setActiveTab(key)}
-      >
-        <Card.Grid
-          style={{
-            width: "100%",
-          }}
-          hoverable={false}
-        >
-          <Row
-            className="income-driver-content"
-            align="middle"
-            justify="space-evenly"
-            gutter={[8, 8]}
-          >
-            {dashboardData.map((segment) => (
-              <Col
-                key={segment.id}
-                span={12}
-                style={{
-                  display: activeTab === segment.id ? "" : "none",
-                  borderRight: "1px solid #f0f0f0",
-                }}
-              >
-                <ScenarioInput
-                  segment={segment}
-                  commodityQuestions={commodityQuestions}
-                  percentage={percentage}
-                  setScenarioValues={setScenarioValues}
-                  scenarioValue={scenarioValues.find(
-                    (s) => s.segmentId === segment.id
-                  )}
-                  scenarioItem={scenarioItem}
-                  setScenarioData={setScenarioData}
-                  currencyUnitName={currencyUnitName}
-                  enableEditCase={enableEditCase}
-                />
-              </Col>
-            ))}
-            <Col span={12}>
-              <ChartScenarioModeling
-                data={chartData || []}
-                targetChartData={targetChartData}
-                currencyUnitName={currencyUnitName}
-              />
-            </Col>
-          </Row>
-        </Card.Grid>
-      </Card> */}
     </Row>
   );
 };
