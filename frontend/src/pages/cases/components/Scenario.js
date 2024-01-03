@@ -56,13 +56,35 @@ const Question = ({
   }, [unit, commodity]);
 
   const answer = useMemo(() => {
+    // handle grouped diversified value
+    if (id === "diversified") {
+      const answers = childrens
+        .map((c) => {
+          return segment.answers.find(
+            (s) =>
+              s.question.id === c.id &&
+              s.caseCommodityId === case_commodity &&
+              s.name === "current"
+          );
+        })
+        .filter((x) => x);
+      return {
+        ...answers[0],
+        id: id,
+        question: childrens.map((c) => ({
+          ...c,
+          value: answers.find((a) => a.question.id === c.id)?.value || 0,
+        })),
+        value: answers.reduce((res, cur) => res + cur.value, 0),
+      };
+    }
     return segment.answers.find(
       (s) =>
         s.question.id === id &&
         s.caseCommodityId === case_commodity &&
         s.name === "current"
     );
-  }, [segment, id, case_commodity]);
+  }, [segment, id, case_commodity, childrens]);
 
   const currentIncrease = useMemo(() => {
     let value = 0;
@@ -95,6 +117,10 @@ const Question = ({
             <h4>
               Total Income from {commodity_name} <small>({currency})</small>
             </h4>
+          ) : question_type === "diversified" ? (
+            <h4>
+              {commodity_name} <small>({currency})</small>
+            </h4>
           ) : (
             <h4>
               {text} <small>({unitName})</small>
@@ -115,7 +141,6 @@ const Question = ({
                     ? "none"
                     : "",
               }}
-              // disabled={disableTotalIncomeFocusCommodityField}
             >
               <InputNumber
                 style={{
@@ -137,6 +162,7 @@ const Question = ({
             : `${currentIncrease} %`}
         </Col>
       </Row>
+      {/* Render questions */}
       {!parent && commodity_type === "focus"
         ? childrens.map((child) => (
             <Question
@@ -192,12 +218,40 @@ const ScenarioInput = ({
   const onValuesChange = (changedValues, allValues) => {
     const objectId = Object.keys(changedValues)[0];
     const [, case_commodity, id] = objectId.split("-");
-    const segmentAnswer = segment.answers.find(
-      (s) =>
-        s.questionId === parseInt(id) &&
-        s.caseCommodityId === parseInt(case_commodity) &&
-        s.name === "current"
-    );
+
+    let segmentAnswer = {};
+    // handle grouped diversified value
+    if (id === "diversified") {
+      const childrens = commodityQuestions
+        .find((cq) => cq.commodity_type === "diversified")
+        ?.questions?.find((q) => !q.parent)?.childrens;
+      const answers = childrens
+        ?.map((c) => {
+          return segment.answers.find(
+            (s) =>
+              s.question.id === c.id &&
+              s.caseCommodityId === parseInt(case_commodity) &&
+              s.name === "current"
+          );
+        })
+        .filter((x) => x);
+      segmentAnswer = {
+        ...answers[0],
+        id: id,
+        question: childrens.map((c) => ({
+          ...c,
+          value: answers.find((a) => a.question.id === c.id)?.value || 0,
+        })),
+        value: answers.reduce((res, cur) => res + cur.value, 0),
+      };
+    } else {
+      segmentAnswer = segment.answers.find(
+        (s) =>
+          s.questionId === parseInt(id) &&
+          s.caseCommodityId === parseInt(case_commodity) &&
+          s.name === "current"
+      );
+    }
 
     const parentQuestion = segment.answers.find(
       (s) =>
@@ -254,14 +308,20 @@ const ScenarioInput = ({
     );
     const allNewValues = { ...allValues, ...newFieldsValue };
 
-    const totalValues = allParentQuestions.reduce((acc, p) => {
+    let totalValues = allParentQuestions.reduce((acc, p) => {
       const questionId = `absolute-${p.caseCommodityId}-${p.question.id}`;
-      const value = allNewValues[questionId];
+      const value = allNewValues?.[questionId] || 0;
       if (value) {
         acc += parseFloat(value);
       }
       return acc;
     }, 0);
+    // handle grouped diversified value
+    const newDiversified =
+      allNewValues?.[`absolute-${parseInt(case_commodity)}-diversified`];
+    totalValues =
+      totalValues + (newDiversified ? parseFloat(newDiversified) : 0);
+    //
 
     const newScenarioValue = {
       segmentId: segment.id,
@@ -314,7 +374,7 @@ const ScenarioInput = ({
           <h2>Income Target</h2>
         </Col>
         <Col span={15}>
-          <h2>{`${segment.target} ${currencyUnitName}`}</h2>
+          <h2>{`${segment.target?.toFixed(2)} ${currencyUnitName}`}</h2>
         </Col>
       </Row>
       <Row gutter={[8, 8]} align="middle" justify="space-between">
@@ -513,29 +573,38 @@ const Scenario = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardData]);
 
-  const focusCommodity = useMemo(() => {
-    return commodityQuestions.find((cq) => cq.commodity_type === "focus");
-  }, [commodityQuestions]);
-
   const outcomeDriverQuestions = useMemo(() => {
-    const focus = focusCommodity?.questions[0]?.childrens?.map((x) => ({
-      ...x,
-      case_commodity: focusCommodity.case_commodity,
-    }));
+    const commodities = commodityQuestions
+      .filter(
+        (cq) =>
+          cq.commodity_type === "focus" && cq.commodity_type !== "diversified"
+      )
+      .flatMap((cq) => {
+        const questions = cq.questions.find((q) => !q.parent);
+        return questions.childrens?.map((x) => ({
+          ...x,
+          case_commodity: cq.case_commodity,
+          commodity_name: cq.commodity_name,
+        }));
+      });
     let diversified = commodityQuestions.find(
       (cq) => cq.commodity_type === "diversified"
     );
     diversified = diversified?.questions?.map((x) => ({
       ...x,
       case_commodity: diversified.case_commodity,
+      commodity_name: diversified.commodity_name,
+      childrens: x.childrens,
     }));
-    return [...focus, ...diversified].map((q) => ({
+    return [...commodities, ...diversified].map((q) => ({
       questionId: q.id,
       text: q.text,
       questionType: q.question_type,
       caseCommodityId: q.case_commodity,
+      commodityName: q.commodity_name,
+      childrens: q?.childrens || [],
     }));
-  }, [commodityQuestions, focusCommodity]);
+  }, [commodityQuestions]);
 
   const combineScenarioDataWithDashboardData = useMemo(() => {
     const scenarioKeys = [];
@@ -582,21 +651,13 @@ const Scenario = ({
   ]);
 
   const chartData = useMemo(() => {
-    // const totalFocusIncomeQuestion = focusCommodity.questions[0];
     const data = combineScenarioDataWithDashboardData.map((d) => {
       const incomeTarget = d.currentSegmentValue.target;
       const currentTotalIncome = d.currentSegmentValue.total_current_income;
-      // const currentFocusIncome =
-      //   d.currentSegmentValue.total_current_focus_income;
       const feasibleFocusIncome =
         d.currentSegmentValue.total_feasible_focus_income;
 
       const newTotalIncome = d?.newTotalIncome || feasibleFocusIncome;
-      // let newFocusCommodityIncome =
-      //   d.allNewValues?.[
-      //     `absolute-${focusCommodity.case_commodity}-${totalFocusIncomeQuestion.id}`
-      //   ] || feasibleFocusIncome;
-      // newFocusCommodityIncome = parseFloat(newFocusCommodityIncome);
       const additionalValue = newTotalIncome - currentTotalIncome;
 
       let gapValue = incomeTarget - newTotalIncome;
@@ -634,49 +695,6 @@ const Scenario = ({
       };
     });
     return data;
-    // const data = dashboardData.map((segment) => {
-    //   const scenarioIncome =
-    //     scenarioValues.find((s) => s.segmentId === segment.id)?.value || 0;
-    //   const increaseIncome = scenarioIncome
-    //     ? scenarioIncome - segment.total_current_income
-    //     : scenarioIncome;
-    //   const gapValue = scenarioIncome
-    //     ? scenarioIncome >= segment.target
-    //       ? 0
-    //       : segment.target - scenarioIncome
-    //     : segment.target - segment.total_current_income;
-    //   return {
-    //     name: segment.name,
-    //     title: segment.name,
-    //     stack: [
-    //       {
-    //         name: "Current Income",
-    //         title: "Current Income",
-    //         order: 1,
-    //         total: segment.total_current_income,
-    //         value: segment.total_current_income,
-    //         color: "#00625F",
-    //       },
-    //       {
-    //         name: "Income Increase",
-    //         title: "Income Increase",
-    //         order: 2,
-    //         total: increaseIncome,
-    //         value: increaseIncome,
-    //         color: "#47D985",
-    //       },
-    //       {
-    //         name: "Gap",
-    //         title: "Gap",
-    //         order: 3,
-    //         total: gapValue > 0 ? gapValue : 0,
-    //         value: gapValue > 0 ? gapValue : 0,
-    //         color: "#F1C5B2",
-    //       },
-    //     ],
-    //   };
-    // });
-    // return data;
   }, [combineScenarioDataWithDashboardData]);
 
   const targetChartData = useMemo(() => {
@@ -820,13 +838,24 @@ const Scenario = ({
     // current data
     const current = dashboardData.find((dd) => dd.id === selectedSegment);
     const data = outcomeIndicator.map((ind) => {
-      let res = { title: ind.name };
+      let res = { id: ind.key, title: ind.name };
       if (ind.key === "income_driver") {
         res = {
           ...res,
           current: "-",
         };
         const currentDriverValues = outcomeDriverQuestions.map((q) => {
+          // handle grouped diversified income
+          if (q.questionType === "diversified") {
+            const temp = q.childrens.map(
+              (c) =>
+                current?.answers?.find((a) => a.questionId === c.id)?.value || 0
+            );
+            return {
+              ...q,
+              value: temp.reduce((res, cur) => res + cur, 0),
+            };
+          }
           return {
             ...q,
             value:
@@ -1103,6 +1132,7 @@ const Scenario = ({
               onChange={setSelectedSegment}
             />
             <Table
+              rowKey="id"
               columns={scenarioOutcomeColumns}
               dataSource={scenarioOutcomeDataSource}
               pagination={false}
@@ -1110,59 +1140,6 @@ const Scenario = ({
           </Space>
         </Card>
       </Col>
-
-      {/* <Card
-        className="income-driver-dashboard"
-        tabList={segmentTabs}
-        activeTabKey={activeTab}
-        onTabChange={(key) => setActiveTab(key)}
-      >
-        <Card.Grid
-          style={{
-            width: "100%",
-          }}
-          hoverable={false}
-        >
-          <Row
-            className="income-driver-content"
-            align="middle"
-            justify="space-evenly"
-            gutter={[8, 8]}
-          >
-            {dashboardData.map((segment) => (
-              <Col
-                key={segment.id}
-                span={12}
-                style={{
-                  display: activeTab === segment.id ? "" : "none",
-                  borderRight: "1px solid #f0f0f0",
-                }}
-              >
-                <ScenarioInput
-                  segment={segment}
-                  commodityQuestions={commodityQuestions}
-                  percentage={percentage}
-                  setScenarioValues={setScenarioValues}
-                  scenarioValue={scenarioValues.find(
-                    (s) => s.segmentId === segment.id
-                  )}
-                  scenarioItem={scenarioItem}
-                  setScenarioData={setScenarioData}
-                  currencyUnitName={currencyUnitName}
-                  enableEditCase={enableEditCase}
-                />
-              </Col>
-            ))}
-            <Col span={12}>
-              <ChartScenarioModeling
-                data={chartData || []}
-                targetChartData={targetChartData}
-                currencyUnitName={currencyUnitName}
-              />
-            </Col>
-          </Row>
-        </Card.Grid>
-      </Card> */}
     </Row>
   );
 };
