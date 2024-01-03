@@ -517,11 +517,6 @@ const Scenario = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardData]);
 
-  // const focusCommodity = useMemo(() => {
-  //   return commodityQuestions.find((cq) => cq.commodity_type === "focus");
-  // }, [commodityQuestions]);
-  console.log(commodityQuestions);
-
   const outcomeDriverQuestions = useMemo(() => {
     const commodities = commodityQuestions
       .filter(
@@ -597,21 +592,13 @@ const Scenario = ({
   ]);
 
   const chartData = useMemo(() => {
-    // const totalFocusIncomeQuestion = focusCommodity.questions[0];
     const data = combineScenarioDataWithDashboardData.map((d) => {
       const incomeTarget = d.currentSegmentValue.target;
       const currentTotalIncome = d.currentSegmentValue.total_current_income;
-      // const currentFocusIncome =
-      //   d.currentSegmentValue.total_current_focus_income;
       const feasibleFocusIncome =
         d.currentSegmentValue.total_feasible_focus_income;
 
       const newTotalIncome = d?.newTotalIncome || feasibleFocusIncome;
-      // let newFocusCommodityIncome =
-      //   d.allNewValues?.[
-      //     `absolute-${focusCommodity.case_commodity}-${totalFocusIncomeQuestion.id}`
-      //   ] || feasibleFocusIncome;
-      // newFocusCommodityIncome = parseFloat(newFocusCommodityIncome);
       const additionalValue = newTotalIncome - currentTotalIncome;
 
       let gapValue = incomeTarget - newTotalIncome;
@@ -649,49 +636,6 @@ const Scenario = ({
       };
     });
     return data;
-    // const data = dashboardData.map((segment) => {
-    //   const scenarioIncome =
-    //     scenarioValues.find((s) => s.segmentId === segment.id)?.value || 0;
-    //   const increaseIncome = scenarioIncome
-    //     ? scenarioIncome - segment.total_current_income
-    //     : scenarioIncome;
-    //   const gapValue = scenarioIncome
-    //     ? scenarioIncome >= segment.target
-    //       ? 0
-    //       : segment.target - scenarioIncome
-    //     : segment.target - segment.total_current_income;
-    //   return {
-    //     name: segment.name,
-    //     title: segment.name,
-    //     stack: [
-    //       {
-    //         name: "Current Income",
-    //         title: "Current Income",
-    //         order: 1,
-    //         total: segment.total_current_income,
-    //         value: segment.total_current_income,
-    //         color: "#00625F",
-    //       },
-    //       {
-    //         name: "Income Increase",
-    //         title: "Income Increase",
-    //         order: 2,
-    //         total: increaseIncome,
-    //         value: increaseIncome,
-    //         color: "#47D985",
-    //       },
-    //       {
-    //         name: "Gap",
-    //         title: "Gap",
-    //         order: 3,
-    //         total: gapValue > 0 ? gapValue : 0,
-    //         value: gapValue > 0 ? gapValue : 0,
-    //         color: "#F1C5B2",
-    //       },
-    //     ],
-    //   };
-    // });
-    // return data;
   }, [combineScenarioDataWithDashboardData]);
 
   const targetChartData = useMemo(() => {
