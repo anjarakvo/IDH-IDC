@@ -95,6 +95,10 @@ const Question = ({
             <h4>
               Total Income from {commodity_name} <small>({currency})</small>
             </h4>
+          ) : question_type === "diversified" ? (
+            <h4>
+              {commodity_name} <small>({currency})</small>
+            </h4>
           ) : (
             <h4>
               {text} <small>({unitName})</small>
@@ -115,7 +119,6 @@ const Question = ({
                     ? "none"
                     : "",
               }}
-              // disabled={disableTotalIncomeFocusCommodityField}
             >
               <InputNumber
                 style={{
@@ -137,6 +140,7 @@ const Question = ({
             : `${currentIncrease} %`}
         </Col>
       </Row>
+      {/* Render questions */}
       {!parent && commodity_type === "focus"
         ? childrens.map((child) => (
             <Question
@@ -513,29 +517,40 @@ const Scenario = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dashboardData]);
 
-  const focusCommodity = useMemo(() => {
-    return commodityQuestions.find((cq) => cq.commodity_type === "focus");
-  }, [commodityQuestions]);
+  // const focusCommodity = useMemo(() => {
+  //   return commodityQuestions.find((cq) => cq.commodity_type === "focus");
+  // }, [commodityQuestions]);
+  console.log(commodityQuestions);
 
   const outcomeDriverQuestions = useMemo(() => {
-    const focus = focusCommodity?.questions[0]?.childrens?.map((x) => ({
-      ...x,
-      case_commodity: focusCommodity.case_commodity,
-    }));
+    const commodities = commodityQuestions
+      .filter(
+        (cq) =>
+          cq.commodity_type === "focus" && cq.commodity_type !== "diversified"
+      )
+      .flatMap((cq) => {
+        const questions = cq.questions.find((q) => !q.parent);
+        return questions.childrens?.map((x) => ({
+          ...x,
+          case_commodity: cq.case_commodity,
+          commodity_name: cq.commodity_name,
+        }));
+      });
     let diversified = commodityQuestions.find(
       (cq) => cq.commodity_type === "diversified"
     );
     diversified = diversified?.questions?.map((x) => ({
       ...x,
       case_commodity: diversified.case_commodity,
+      commodity_name: diversified.commodity_name,
     }));
-    return [...focus, ...diversified].map((q) => ({
+    return [...commodities, ...diversified].map((q) => ({
       questionId: q.id,
       text: q.text,
       questionType: q.question_type,
       caseCommodityId: q.case_commodity,
     }));
-  }, [commodityQuestions, focusCommodity]);
+  }, [commodityQuestions]);
 
   const combineScenarioDataWithDashboardData = useMemo(() => {
     const scenarioKeys = [];

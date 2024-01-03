@@ -175,6 +175,7 @@ export const customFormula = {
   revenue_focus_commodity: "#2 * #3 * #4",
   focus_commodity_cost_of_production:
     "( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) * -1",
+  total_diversified_income: "#35 + #36 + #37",
 };
 
 /**
