@@ -21,6 +21,8 @@ class PaginatedCaseData(TypedDict):
 
 
 def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
+    reporting_period = payload.reporting_period
+    reporting_period = reporting_period if reporting_period else "per-year"
     current_datetime = datetime.now()
     case = Case(
         name=payload.name,
@@ -33,7 +35,7 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
         area_size_unit=payload.area_size_unit,
         volume_measurement_unit=payload.volume_measurement_unit,
         cost_of_production_unit=payload.cost_of_production_unit,
-        reporting_period=payload.reporting_period,
+        reporting_period=reporting_period,
         segmentation=1 if payload.segmentation else 0,
         living_income_study=payload.living_income_study,
         multiple_commodities=1 if payload.multiple_commodities else 0,
@@ -140,12 +142,14 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     case.area_size_unit = payload.area_size_unit
     case.volume_measurement_unit = payload.volume_measurement_unit
     case.cost_of_production_unit = payload.cost_of_production_unit
-    case.reporting_period = payload.reporting_period
     case.segmentation = 1 if payload.segmentation else 0
     case.living_income_study = payload.living_income_study
     case.multiple_commodities = 1 if payload.multiple_commodities else 0
     case.logo = payload.logo
     case.private = 1 if payload.private else 0
+    # reporting period
+    if payload.reporting_period:
+        case.reporting_period = payload.reporting_period
     # handle tag
     if payload.tags:
         prev_tags = (

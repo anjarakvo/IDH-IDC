@@ -44,10 +44,36 @@ const DashboardScenarioModeling = ({
   }, [enableEditCase, scenarioData]);
 
   const commodityQuestions = useMemo(() => {
-    return commodityList.map((c) => ({
-      ...c,
-      ...questionGroups.find((qg) => qg.commodity_id === c.commodity),
-    }));
+    return commodityList.map((c) => {
+      const findQG = questionGroups.find(
+        (qg) => qg.commodity_id === c.commodity
+      );
+      // handle grouped diversified income question
+      if (c.commodity_type === "diversified") {
+        return {
+          ...c,
+          ...findQG,
+          questions: [
+            {
+              ...findQG.questions[0],
+              id: "diversified",
+              default_value: findQG.questions
+                .map((x) => `#${x.id}`)
+                .join(" + "),
+              parent: null,
+              question_type: "diversified",
+              text: "Diversified Income",
+              description: "Custom question",
+              childrens: findQG.questions,
+            },
+          ],
+        };
+      }
+      return {
+        ...c,
+        ...findQG,
+      };
+    });
   }, [commodityList, questionGroups]);
 
   const renameScenario = (index, newName, newDescription) => {
