@@ -56,6 +56,7 @@ const Question = ({
   }, [unit, commodity]);
 
   const answer = useMemo(() => {
+    // handle grouped diversified value
     if (id === "diversified") {
       const answers = childrens
         .map((c) => {
@@ -219,6 +220,7 @@ const ScenarioInput = ({
     const [, case_commodity, id] = objectId.split("-");
 
     let segmentAnswer = {};
+    // handle grouped diversified value
     if (id === "diversified") {
       const childrens = commodityQuestions
         .find((cq) => cq.commodity_type === "diversified")
@@ -592,12 +594,15 @@ const Scenario = ({
       ...x,
       case_commodity: diversified.case_commodity,
       commodity_name: diversified.commodity_name,
+      childrens: x.childrens,
     }));
     return [...commodities, ...diversified].map((q) => ({
       questionId: q.id,
       text: q.text,
       questionType: q.question_type,
       caseCommodityId: q.case_commodity,
+      commodityName: q.commodity_name,
+      childrens: q?.childrens || [],
     }));
   }, [commodityQuestions]);
 
@@ -833,13 +838,24 @@ const Scenario = ({
     // current data
     const current = dashboardData.find((dd) => dd.id === selectedSegment);
     const data = outcomeIndicator.map((ind) => {
-      let res = { title: ind.name };
+      let res = { id: ind.key, title: ind.name };
       if (ind.key === "income_driver") {
         res = {
           ...res,
           current: "-",
         };
         const currentDriverValues = outcomeDriverQuestions.map((q) => {
+          // handle grouped diversified income
+          if (q.questionType === "diversified") {
+            const temp = q.childrens.map(
+              (c) =>
+                current?.answers?.find((a) => a.questionId === c.id)?.value || 0
+            );
+            return {
+              ...q,
+              value: temp.reduce((res, cur) => res + cur, 0),
+            };
+          }
           return {
             ...q,
             value:
@@ -1116,6 +1132,7 @@ const Scenario = ({
               onChange={setSelectedSegment}
             />
             <Table
+              rowKey="id"
               columns={scenarioOutcomeColumns}
               dataSource={scenarioOutcomeDataSource}
               pagination={false}

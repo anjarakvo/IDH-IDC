@@ -48,6 +48,7 @@ const DashboardScenarioModeling = ({
       const findQG = questionGroups.find(
         (qg) => qg.commodity_id === c.commodity
       );
+      // handle grouped diversified income question
       if (c.commodity_type === "diversified") {
         return {
           ...c,
