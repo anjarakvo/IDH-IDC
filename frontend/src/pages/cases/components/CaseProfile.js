@@ -27,7 +27,6 @@ import {
   commodityOptions,
   countryOptions,
   currencyOptions,
-  reportingPeriod,
   selectProps,
   yesNoOptions,
   DebounceSelect,
