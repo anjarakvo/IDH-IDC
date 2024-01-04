@@ -1,6 +1,10 @@
 @import "../../variables.scss";
 
 #case {
+  h2 {
+    font-family: "TabletGothicBold" !important;
+  }
+
   .case-content {
     margin-top: 2rem;
 
