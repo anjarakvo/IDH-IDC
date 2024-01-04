@@ -192,6 +192,15 @@ export const yAxisFormula = {
   "#9002": "( #9001 + ( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) ) - ( #2 * #4 * #3 )", // diversified
 };
 
+export const removeUndefinedObjectValue = (obj) => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (typeof value !== "undefined") {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
+};
+
 export { default as AreaUnitFields } from "./AreaUnitFields";
 export { default as SideMenu } from "./SideMenu";
 export { default as CaseProfile } from "./CaseProfile";

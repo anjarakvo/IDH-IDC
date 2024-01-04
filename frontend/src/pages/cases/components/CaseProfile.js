@@ -30,6 +30,7 @@ import {
   selectProps,
   yesNoOptions,
   DebounceSelect,
+  removeUndefinedObjectValue,
 } from "./";
 import { api } from "../../../lib";
 import { UIState, UserState } from "../../../store";
@@ -457,27 +458,11 @@ const CaseProfile = ({
       tags: values.tags || null,
     };
 
-    // check current value with update value
-    const filteredCurrentCaseProfile = Object.entries(
-      currentCaseProfile
-    ).reduce((acc, [key, value]) => {
-      if (typeof value !== "undefined") {
-        acc[key] = value;
-      }
-      return acc;
-    }, {});
-    const filteredValues = Object.entries(values).reduce(
-      (acc, [key, value]) => {
-        if (typeof value !== "undefined") {
-          acc[key] = value;
-        }
-        return acc;
-      },
-      {}
-    );
+    // detect is payload updated
+    const filteredCurrentCaseProfile =
+      removeUndefinedObjectValue(currentCaseProfile);
+    const filteredValues = removeUndefinedObjectValue(values);
     const isUpdated = !isEqual(filteredCurrentCaseProfile, filteredValues);
-    // console.log(filteredCurrentCaseProfile, "FormData");
-    // console.log(filteredValues, "payload");
     console.info(isUpdated, "UPDATED");
 
     const paramCaseId = caseId ? caseId : currentCaseId;

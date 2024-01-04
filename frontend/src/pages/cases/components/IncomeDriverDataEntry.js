@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Row, Col, Tabs, message } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
-import { DataFields, generateSegmentPayloads } from "./";
+import {
+  DataFields,
+  generateSegmentPayloads,
+  removeUndefinedObjectValue,
+} from "./";
 import { api } from "../../../lib";
-import { orderBy } from "lodash";
+import { orderBy, isEqual } from "lodash";
 
 const IncomeDriverDataEntry = ({
   commodityList,
@@ -24,6 +28,7 @@ const IncomeDriverDataEntry = ({
   const [formValues, setFormValues] = useState([]);
   const [messageApi, contextHolder] = message.useMessage();
   const [isSaving, setIsSaving] = useState(false);
+  const [currentValues, setCurrentValues] = useState([]);
 
   useEffect(() => {
     const formValeusWithTotalCurrentIncomeAnswer = formValues.map(
@@ -55,6 +60,28 @@ const IncomeDriverDataEntry = ({
     const apiCalls = [];
     const postFormValues = formValues.filter((fv) => !fv.currentSegmentId);
     const putFormValues = formValues.filter((fv) => fv.currentSegmentId);
+
+    // detect is payload updated
+    const isUpdated = currentValues
+      .map((cv) => {
+        cv = {
+          ...cv,
+          answers: removeUndefinedObjectValue(cv.answers),
+        };
+        let findPayload = formValues.find((fv) => fv.key === cv.key);
+        findPayload = {
+          ...findPayload,
+          answers: removeUndefinedObjectValue(findPayload.answers),
+        };
+        const equal = isEqual(
+          removeUndefinedObjectValue(cv),
+          removeUndefinedObjectValue(findPayload)
+        );
+        return !equal;
+      })
+      .filter((x) => x);
+    console.info(isUpdated, "UPDATED");
+
     if (postFormValues.length) {
       const postPayloads = generateSegmentPayloads(
         postFormValues,
@@ -104,6 +131,7 @@ const IncomeDriverDataEntry = ({
           };
         });
         setFormValues(transformFormValues);
+        setCurrentValues(transformFormValues);
         messageApi.open({
           type: "success",
           content: "Segments saved successfully.",
@@ -184,6 +212,7 @@ const IncomeDriverDataEntry = ({
           }
           setItems(itemsTmp);
           setFormValues(formValuesTmp);
+          setCurrentValues(formValuesTmp);
         })
         .catch(() => {
           // default items if no segments in database
@@ -203,6 +232,12 @@ const IncomeDriverDataEntry = ({
               answers: {},
             },
           ]);
+          setCurrentValues({
+            key: "1",
+            label: "Segment 1",
+            currentSegmentId: null,
+            answers: {},
+          });
         });
     });
   }, [commodityList, setQuestionGroups, currentCaseId, enableEditCase]);
