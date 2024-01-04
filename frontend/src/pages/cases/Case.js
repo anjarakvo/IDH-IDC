@@ -49,6 +49,7 @@ const Case = () => {
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
   const [currentCase, setCurrentCase] = useState({});
+  const showCaseTitle = false; // don't show title for now
 
   const {
     role: userRole,
@@ -386,15 +387,17 @@ const Case = () => {
             </Col>
           )}
           {/* EOL Banner for Viewer */}
-          <Col span={24}>
-            <Card className="case-title-wrapper" id="case-title">
-              <h2>{caseTitle}</h2>
-              {caseDescription ? <p>{caseDescription}</p> : null}
-              <div className="case-title-icon">
-                <CaseTitleIcon height={110} />
-              </div>
-            </Card>
-          </Col>
+          {showCaseTitle && (
+            <Col span={24}>
+              <Card className="case-title-wrapper" id="case-title">
+                <h2>{caseTitle}</h2>
+                {caseDescription ? <p>{caseDescription}</p> : null}
+                <div className="case-title-icon">
+                  <CaseTitleIcon height={110} />
+                </div>
+              </Card>
+            </Col>
+          )}
           <Col span={24}>
             {page === "Case Profile" && (
               <CaseProfile

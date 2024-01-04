@@ -193,6 +193,8 @@ const DashboardScenarioModeling = ({
         <Tabs
           onChange={onChangeTab}
           activeKey={activeKey}
+          type="card"
+          className="scenario-tabs-container"
           items={scenarioDataWithAddButton.map((scenarioItem, index) => ({
             ...scenarioItem,
             label: scenarioItem.name,
