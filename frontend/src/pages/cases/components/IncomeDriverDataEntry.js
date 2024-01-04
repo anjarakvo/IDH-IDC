@@ -324,6 +324,7 @@ const IncomeDriverDataEntry = ({
         <Tabs
           onChange={onChange}
           activeKey={activeKey}
+          type="card"
           items={items.map((item, itemIndex) => ({
             ...item,
             children:
