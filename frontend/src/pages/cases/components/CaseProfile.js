@@ -632,13 +632,16 @@ const CaseProfile = ({
             </Col>
             <Col span={24}>
               <Card
-                title="Secondary Commodity"
-                extra={
-                  <Switch
-                    checked={secondary}
-                    onChange={setSecondary}
-                    disabled={!enableEditCase}
-                  />
+                title={
+                  <Space align="end">
+                    <Switch
+                      size="small"
+                      checked={secondary}
+                      onChange={setSecondary}
+                      disabled={!enableEditCase}
+                    />
+                    <div style={{ lineHeight: 1.2 }}>Secondary Commodity</div>
+                  </Space>
                 }
                 style={{
                   backgroundColor: !secondary ? "#f5f5f5" : "white",
@@ -655,13 +658,16 @@ const CaseProfile = ({
             </Col>
             <Col span={24}>
               <Card
-                title="Tertiary Commodity"
-                extra={
-                  <Switch
-                    checked={tertiary}
-                    onChange={setTertiary}
-                    disabled={!secondary || !enableEditCase}
-                  />
+                title={
+                  <Space align="end">
+                    <Switch
+                      size="small"
+                      checked={tertiary}
+                      onChange={setTertiary}
+                      disabled={!secondary || !enableEditCase}
+                    />
+                    <div style={{ lineHeight: 1.2 }}>Tertiary Commodity</div>
+                  </Space>
                 }
                 style={{
                   backgroundColor: !tertiary ? "#f5f5f5" : "white",

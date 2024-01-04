@@ -1041,6 +1041,8 @@ const Scenario = ({
         <Tabs
           activeKey={activeTab}
           onChange={setActiveTab}
+          type="card"
+          className="scenario-segment-tabs-container"
           items={segmentTabs.map((item) => ({
             ...item,
             children: dashboardData
