@@ -35,6 +35,7 @@ import { api } from "../../../lib";
 import { UIState, UserState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
 import uniqBy from "lodash/uniqBy";
+import isEqual from "lodash/isEqual";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { casePermission } from "../../../store/static";
@@ -298,6 +299,12 @@ const CaseProfile = ({
   const [isNextButton, setIsNextButton] = useState(false);
   const [privateCase, setPrivateCase] = useState(false);
 
+  const currentCaseProfile = useMemo(
+    () => formData,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
   {
     /* Support add User Access */
   }
@@ -449,6 +456,29 @@ const CaseProfile = ({
       other_commodities: other_commodities,
       tags: values.tags || null,
     };
+
+    // check current value with update value
+    const filteredCurrentCaseProfile = Object.entries(
+      currentCaseProfile
+    ).reduce((acc, [key, value]) => {
+      if (typeof value !== "undefined") {
+        acc[key] = value;
+      }
+      return acc;
+    }, {});
+    const filteredValues = Object.entries(values).reduce(
+      (acc, [key, value]) => {
+        if (typeof value !== "undefined") {
+          acc[key] = value;
+        }
+        return acc;
+      },
+      {}
+    );
+    const isUpdated = !isEqual(filteredCurrentCaseProfile, filteredValues);
+    // console.log(filteredCurrentCaseProfile, "FormData");
+    // console.log(filteredValues, "payload");
+    console.info(isUpdated, "UPDATED");
 
     const paramCaseId = caseId ? caseId : currentCaseId;
     const apiCall =
