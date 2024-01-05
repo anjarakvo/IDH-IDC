@@ -299,9 +299,12 @@ const CaseProfile = ({
     useState(true);
   const [isNextButton, setIsNextButton] = useState(false);
   const [privateCase, setPrivateCase] = useState(false);
+  const [currentCaseProfile, setCurrentCaseProfile] = useState({});
 
-  const currentCaseProfile = useMemo(
-    () => formData,
+  useEffect(
+    () => {
+      setCurrentCaseProfile(formData);
+    },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
   );
@@ -461,17 +464,22 @@ const CaseProfile = ({
     // detect is payload updated
     const filteredCurrentCaseProfile =
       removeUndefinedObjectValue(currentCaseProfile);
-    const filteredValues = removeUndefinedObjectValue(values);
+    const filteredValues = {
+      ...filteredCurrentCaseProfile,
+      ...removeUndefinedObjectValue(values),
+      private: privateCase,
+      reporting_period: "per-year",
+    };
     const isUpdated = !isEqual(filteredCurrentCaseProfile, filteredValues);
-    console.info(isUpdated, "UPDATED");
 
     const paramCaseId = caseId ? caseId : currentCaseId;
     const apiCall =
       currentCaseId || caseId
-        ? api.put(`case/${paramCaseId}`, payload)
+        ? api.put(`case/${paramCaseId}?updated=${isUpdated}`, payload)
         : api.post("case", payload);
     apiCall
       .then((res) => {
+        setCurrentCaseProfile(filteredValues);
         const { data } = res;
         setCurrentCaseId(data?.id);
         setCurrentCase(data);
