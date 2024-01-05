@@ -31,6 +31,7 @@ const confidenceLevelOptions = [
   },
   { label: "Medium", value: "medium" },
   { label: "Low", value: "low" },
+  { label: "Undefined", value: "undefined" },
 ];
 
 const rangeOptions = [
