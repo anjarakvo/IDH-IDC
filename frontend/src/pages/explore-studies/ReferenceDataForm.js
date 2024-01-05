@@ -294,7 +294,7 @@ const ReferenceDataForm = ({
                 </Row>
 
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  {/* <Col span={12}>
                     <Form.Item
                       label="Currency"
                       name="currency"
@@ -311,7 +311,7 @@ const ReferenceDataForm = ({
                         disabled={!selectedCountry}
                       />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                   <Col span={12}>
                     <Form.Item
                       label="Commodity"
@@ -326,9 +326,6 @@ const ReferenceDataForm = ({
                       <Select {...selectProps} options={commodityOptions} />
                     </Form.Item>
                   </Col>
-                </Row>
-
-                <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Form.Item
                       label="Year"
@@ -343,6 +340,9 @@ const ReferenceDataForm = ({
                       <Input />
                     </Form.Item>
                   </Col>
+                </Row>
+
+                <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Form.Item
                       label="Source"
@@ -357,7 +357,7 @@ const ReferenceDataForm = ({
                       <Input />
                     </Form.Item>
                   </Col>
-                  <Col span={24}>
+                  <Col span={12}>
                     <Form.Item
                       label="Link"
                       name="link"
@@ -415,7 +415,7 @@ const ReferenceDataForm = ({
                   </Col>
                 </Row>
 
-                <Row gutter={[16, 16]}>
+                {/* <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Form.Item label="Area Unit" name="area_size_unit">
                       <Select {...selectProps} options={areaUnitOptions} />
@@ -429,14 +429,14 @@ const ReferenceDataForm = ({
                       <Select {...selectProps} options={volumeUnitOptions} />
                     </Form.Item>
                   </Col>
-                </Row>
+                </Row> */}
               </Card>
             </Col>
 
             <Col span={24}>
               <Card title="Drivers Value">
                 <Row gutter={[16, 16]}>
-                  <Col span={8}>
+                  <Col span={12}>
                     <Form.Item
                       label={areaUnitName ? `Area (${areaUnitName})` : "Area"}
                       name="area"
@@ -444,7 +444,18 @@ const ReferenceDataForm = ({
                       <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Measurement Unit for Area"
+                      name="area_size_unit"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
                     <Form.Item
                       label={
                         volumeUnitName ? `Volume (${volumeUnitName})` : "Volume"
@@ -454,7 +465,18 @@ const ReferenceDataForm = ({
                       <InputNumber {...InputNumberThousandFormatter} />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Measurement Unit for Volume"
+                      name="volume_measurement_unit"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
                     <Form.Item
                       label={
                         currencyUnitName ? `Price (${priceUnitName})` : "Price"
@@ -462,6 +484,14 @@ const ReferenceDataForm = ({
                       name="price"
                     >
                       <InputNumber {...InputNumberThousandFormatter} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Measurement Unit for Price"
+                      name="price_unit"
+                    >
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
@@ -481,6 +511,17 @@ const ReferenceDataForm = ({
                   </Col>
                   <Col span={12}>
                     <Form.Item
+                      label="Measurement Unit for Cost of Production"
+                      name="cost_of_production_unit"
+                    >
+                      <Input />
+                    </Form.Item>
+                  </Col>
+                </Row>
+
+                <Row gutter={[16, 16]}>
+                  <Col span={12}>
+                    <Form.Item
                       label={
                         currencyUnitName
                           ? `Diversified Income (${currencyUnitName})`
@@ -489,6 +530,14 @@ const ReferenceDataForm = ({
                       name="diversified_income"
                     >
                       <InputNumber {...InputNumberThousandFormatter} />
+                    </Form.Item>
+                  </Col>
+                  <Col span={12}>
+                    <Form.Item
+                      label="Measurement Unit for Diversified Income"
+                      name="diversified_income_unit"
+                    >
+                      <Input />
                     </Form.Item>
                   </Col>
                 </Row>
