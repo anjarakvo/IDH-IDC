@@ -166,7 +166,7 @@ export const InputNumberThousandFormatter = {
     value >= 1000
       ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
       : value && value % 1 !== 0
-      ? parseFloat(value)?.toFixed(2)
+      ? parseFloat(value)
       : value,
   parser: (value) => value.replace(/\$\s?|(,*)/g, ""),
 };
