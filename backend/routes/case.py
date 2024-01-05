@@ -183,13 +183,18 @@ def update_Case(
     req: Request,
     case_id: int,
     payload: CaseBase,
+    updated: Optional[bool] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
-    verify_case_editor(
+    user = verify_case_editor(
         session=session, authenticated=req.state.authenticated, case_id=case_id
     )
     case = crud_case.update_case(session=session, id=case_id, payload=payload)
+    if updated:
+        case = crud_case.case_updated_by(
+            session=session, case_id=case_id, user_id=user.id
+        )
     return case.serialize
 
 
