@@ -81,7 +81,6 @@ const IncomeDriverDataEntry = ({
           return !equal;
         })
         .filter((x) => x)?.length > 0;
-    console.info(isUpdated, "UPDATED");
 
     if (postFormValues.length) {
       const postPayloads = generateSegmentPayloads(
@@ -97,7 +96,7 @@ const IncomeDriverDataEntry = ({
         currentCaseId,
         commodityList
       );
-      apiCalls.push(api.put("/segment", putPayloads));
+      apiCalls.push(api.put(`/segment?updated=${isUpdated}`, putPayloads));
     }
     // api call
     Promise.all(apiCalls)
