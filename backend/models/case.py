@@ -186,6 +186,7 @@ class Case(Base):
         multiple_commodities: int,
         logo: Optional[str],
         created_by: int,
+        updated_by: Optional[int] = None,
         private: Optional[int] = 0,
         id: Optional[int] = None,
     ):
@@ -207,6 +208,7 @@ class Case(Base):
         self.logo = logo
         self.private = private
         self.created_by = created_by
+        self.updated_by = updated_by
 
     def __repr__(self) -> int:
         return f"<Case {self.id}>"

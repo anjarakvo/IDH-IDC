@@ -322,6 +322,7 @@ class TestCaseRoute:
         # with admin user cred
         res = await client.put(
             app.url_path_for("case:update", case_id=1),
+            params={"updated": True},
             headers={"Authorization": f"Bearer {admin_account.token}"},
             json=payload,
         )

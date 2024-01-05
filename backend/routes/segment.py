@@ -32,13 +32,18 @@ segment_route = APIRouter()
 def create_segment(
     req: Request,
     payload: List[SegmentBase],
+    updated: Optional[bool] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
     case_id = payload[0].case
-    verify_case_editor(
+    user = verify_case_editor(
         session=session, authenticated=req.state.authenticated, case_id=case_id
     )
+    if updated:
+        crud_case.case_updated_by(
+            session=session, case_id=case_id, user_id=user.id
+        )
     segments = crud_segment.add_segment(session=session, payloads=payload)
     return [s.serialize for s in segments]
 
