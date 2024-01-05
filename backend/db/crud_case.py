@@ -129,6 +129,16 @@ def get_case_by_id(session: Session, id: int) -> CaseDict:
     return case
 
 
+def case_updated_by(session: Session, case_id: int, user_id: int) -> CaseDict:
+    case = get_case_by_id(session=session, id=case_id)
+    case.updated_by = user_id
+    case.updated_at = datetime.now()
+    session.commit()
+    session.flush()
+    session.refresh(case)
+    return case
+
+
 def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     case = get_case_by_id(session=session, id=id)
     case.name = payload.name
@@ -147,6 +157,8 @@ def update_case(session: Session, id: int, payload: CaseBase) -> CaseDict:
     case.multiple_commodities = 1 if payload.multiple_commodities else 0
     case.logo = payload.logo
     case.private = 1 if payload.private else 0
+    # don't update updated_at value
+    case.updated_at = case.updated_at
     # reporting period
     if payload.reporting_period:
         case.reporting_period = payload.reporting_period

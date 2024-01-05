@@ -127,6 +127,7 @@ class Case(Base):
         server_default=func.now(),
         onupdate=func.now(),
     )
+    updated_by = Column(Integer, ForeignKey("user.id"), nullable=True)
 
     case_commodities = relationship(
         CaseCommodity,
@@ -156,7 +157,15 @@ class Case(Base):
     #     backref='cases'
     # )
     created_by_user = relationship(
-        "User", cascade="all, delete", passive_deletes=True, backref="cases"
+        "User",
+        foreign_keys=[created_by],
+        cascade="all, delete",
+        passive_deletes=True,
+        backref="cases",
+    )
+    updated_by_user = relationship(
+        "User",
+        foreign_keys=[updated_by],
     )
 
     def __init__(
