@@ -62,24 +62,25 @@ const IncomeDriverDataEntry = ({
     const putFormValues = formValues.filter((fv) => fv.currentSegmentId);
 
     // detect is payload updated
-    const isUpdated = currentValues
-      .map((cv) => {
-        cv = {
-          ...cv,
-          answers: removeUndefinedObjectValue(cv.answers),
-        };
-        let findPayload = formValues.find((fv) => fv.key === cv.key);
-        findPayload = {
-          ...findPayload,
-          answers: removeUndefinedObjectValue(findPayload.answers),
-        };
-        const equal = isEqual(
-          removeUndefinedObjectValue(cv),
-          removeUndefinedObjectValue(findPayload)
-        );
-        return !equal;
-      })
-      .filter((x) => x);
+    const isUpdated =
+      currentValues
+        .map((cv) => {
+          cv = {
+            ...cv,
+            answers: removeUndefinedObjectValue(cv.answers),
+          };
+          let findPayload = formValues.find((fv) => fv.key === cv.key);
+          findPayload = {
+            ...findPayload,
+            answers: removeUndefinedObjectValue(findPayload.answers),
+          };
+          const equal = isEqual(
+            removeUndefinedObjectValue(cv),
+            removeUndefinedObjectValue(findPayload)
+          );
+          return !equal;
+        })
+        .filter((x) => x)?.length > 0;
     console.info(isUpdated, "UPDATED");
 
     if (postFormValues.length) {
