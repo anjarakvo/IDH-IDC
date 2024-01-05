@@ -469,7 +469,10 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Form.Item label="Area" name="area">
-                      <InputNumber {...InputNumberThousandFormatter} />
+                      <InputNumber
+                        keyboard={false}
+                        {...InputNumberThousandFormatter}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -485,7 +488,10 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Form.Item label="Volume" name="volume">
-                      <InputNumber {...InputNumberThousandFormatter} />
+                      <InputNumber
+                        keyboard={false}
+                        {...InputNumberThousandFormatter}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -501,7 +507,10 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={12}>
                     <Form.Item label="Price" name="price">
-                      <InputNumber {...InputNumberThousandFormatter} />
+                      <InputNumber
+                        keyboard={false}
+                        {...InputNumberThousandFormatter}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -520,7 +529,10 @@ const ReferenceDataForm = ({
                       label="Cost of Production"
                       name="cost_of_production"
                     >
-                      <InputNumber {...InputNumberThousandFormatter} />
+                      <InputNumber
+                        keyboard={false}
+                        {...InputNumberThousandFormatter}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
@@ -539,7 +551,10 @@ const ReferenceDataForm = ({
                       label="Diversified Income"
                       name="diversified_income"
                     >
-                      <InputNumber {...InputNumberThousandFormatter} />
+                      <InputNumber
+                        keyboard={false}
+                        {...InputNumberThousandFormatter}
+                      />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
