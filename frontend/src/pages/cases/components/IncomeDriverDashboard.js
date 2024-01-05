@@ -136,7 +136,7 @@ const IncomeDriverDashboard = ({
       scenarioDataTmp
     );
     const isUpdated = isBinningDataUpdated || isScenarioDataUpdated;
-    console.info(isUpdated);
+
     // Save
     api
       .post(`visualization?updated=${isUpdated}`, payloads)

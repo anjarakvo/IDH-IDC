@@ -88,7 +88,7 @@ const IncomeDriverDataEntry = ({
         currentCaseId,
         commodityList
       );
-      apiCalls.push(api.post("/segment", postPayloads));
+      apiCalls.push(api.post(`/segment?updated=${isUpdated}`, postPayloads));
     }
     if (putFormValues.length) {
       const putPayloads = generateSegmentPayloads(
