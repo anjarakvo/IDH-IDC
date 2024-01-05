@@ -34,6 +34,12 @@ const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
   return { ...acc, ...commodities };
 }, {});
 
+const options = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
 const Case = () => {
   const { caseId } = useParams();
   const navigate = useNavigate();
@@ -360,6 +366,7 @@ const Case = () => {
       }
     }
   };
+  console.log(currentCase);
 
   return (
     <ContentLayout
@@ -368,6 +375,18 @@ const Case = () => {
         { title: "Cases", href: "/cases" },
         { title: caseTitle },
       ]}
+      breadcrumbRightContent={
+        currentCase.updated_by
+          ? `Last update by ${currentCase?.updated_by} ${
+              currentCase?.updated_at
+                ? `at ${new Date(currentCase?.updated_at).toLocaleString(
+                    "en-US",
+                    options
+                  )}`
+                : ""
+            }`
+          : null
+      }
       wrapperId="case"
     >
       {loading ? (
