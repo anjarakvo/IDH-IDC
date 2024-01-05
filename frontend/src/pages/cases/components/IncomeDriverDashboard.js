@@ -139,8 +139,10 @@ const IncomeDriverDashboard = ({
     console.info(isUpdated);
     // Save
     api
-      .post("visualization", payloads)
+      .post(`visualization?updated=${isUpdated}`, payloads)
       .then(() => {
+        setCurrentBinningData(binningData);
+        setCurrentScenarioData(scenarioData);
         messageApi.open({
           type: "success",
           content: "Visualization Dashboard saved successfully.",

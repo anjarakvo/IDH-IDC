@@ -42,6 +42,7 @@ def add_case(session: Session, payload: CaseBase, user: User) -> CaseDict:
         logo=payload.logo,
         private=1 if payload.private else 0,
         created_by=user.id,
+        updated_by=user.id,
     )
     # store focus to case_commodity by default
     def_focus_commodity = CaseCommodity(
