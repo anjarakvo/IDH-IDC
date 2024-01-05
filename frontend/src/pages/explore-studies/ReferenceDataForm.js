@@ -10,10 +10,13 @@ import {
   Spin,
   InputNumber,
   Modal,
+  Tooltip,
+  Space,
 } from "antd";
 // import { uniqBy, isEmpty } from "lodash";
 import { api } from "../../lib";
 import { InputNumberThousandFormatter } from "../cases/components";
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const selectProps = {
   showSearch: true,
@@ -58,6 +61,15 @@ const isValidUrl = (url) => {
     return false;
   }
 };
+
+const LabelWithTooltip = ({ name, tooltip }) => (
+  <Space align="center">
+    <div>{name}</div>
+    <Tooltip placement="right" title={tooltip}>
+      <QuestionCircleOutlined />
+    </Tooltip>
+  </Space>
+);
 
 const ReferenceDataForm = ({
   open = false,
@@ -274,7 +286,12 @@ const ReferenceDataForm = ({
                   </Col>
                   <Col span={12}>
                     <Form.Item
-                      label="Region"
+                      label={
+                        <LabelWithTooltip
+                          name="Region"
+                          tooltip={`Enter "National" if no region defined as part of the study`}
+                        />
+                      }
                       name="region"
                       rules={[
                         {
@@ -391,7 +408,15 @@ const ReferenceDataForm = ({
               <Card title="Details about the data">
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
-                    <Form.Item label="Confidence Level" name="confidence_level">
+                    <Form.Item
+                      label={
+                        <LabelWithTooltip
+                          name="Confidence Level"
+                          tooltip="Assess level of confidence you have with regards to the reliability of this source"
+                        />
+                      }
+                      name="confidence_level"
+                    >
                       <Select
                         {...selectProps}
                         options={confidenceLevelOptions}
@@ -399,7 +424,15 @@ const ReferenceDataForm = ({
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="Range" name="range">
+                    <Form.Item
+                      label={
+                        <LabelWithTooltip
+                          name="Range"
+                          tooltip="If known, indicate whether the reference values are rather low, median or high values for the particular context"
+                        />
+                      }
+                      name="range"
+                    >
                       <Select {...selectProps} options={rangeOptions} />
                     </Form.Item>
                   </Col>
