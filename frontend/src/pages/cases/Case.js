@@ -366,7 +366,6 @@ const Case = () => {
       }
     }
   };
-  console.log(currentCase);
 
   return (
     <ContentLayout
