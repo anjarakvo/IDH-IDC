@@ -216,7 +216,7 @@ const legends = [
     text: "Income target not reached",
   },
   {
-    color: "#808080",
+    color: "#FEC508",
     text: "Income target reached outside feasible values",
   },
   {
