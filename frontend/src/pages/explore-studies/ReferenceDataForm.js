@@ -53,6 +53,9 @@ const typeOptions = [
   { label: "Minimum", value: "minimum" },
 ];
 
+const sources = ["Farmfit", "Desk research", "IDH internal", "FAO", "Other"];
+const sourceOptions = sources.map((x) => ({ label: x, value: x }));
+
 const isValidUrl = (url) => {
   try {
     new URL(url);
@@ -65,7 +68,7 @@ const isValidUrl = (url) => {
 const LabelWithTooltip = ({ name, tooltip }) => (
   <Space align="center">
     <div>{name}</div>
-    <Tooltip placement="right" title={tooltip}>
+    <Tooltip placement="right" title={tooltip} color="#26605f">
       <QuestionCircleOutlined />
     </Tooltip>
   </Space>
@@ -366,7 +369,7 @@ const ReferenceDataForm = ({
                         },
                       ]}
                     >
-                      <Input />
+                      <Select {...selectProps} options={sourceOptions} />
                     </Form.Item>
                   </Col>
                   <Col span={12}>
