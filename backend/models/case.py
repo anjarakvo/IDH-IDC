@@ -89,6 +89,7 @@ class CaseDetailDict(TypedDict):
     multiple_commodities: bool
     created_by: str
     created_at: str
+    updated_by: Optional[str]
     updated_at: Optional[str]
     segments: Optional[List[SegmentWithAnswersDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
@@ -280,6 +281,7 @@ class Case(Base):
             "logo": self.logo,
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "updated_by": self.updated_by_user.email,
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
             "segments": [
                 ps.serialize_with_answers for ps in self.case_segments

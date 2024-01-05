@@ -421,6 +421,7 @@ class TestCaseRoute:
             "multiple_commodities": False,
             "created_by": "super_admin@akvo.org",
             "created_at": res["created_at"],
+            "updated_by": "super_admin@akvo.org",
             "updated_at": res["updated_at"],
             "segments": [],
             "case_commodities": [
