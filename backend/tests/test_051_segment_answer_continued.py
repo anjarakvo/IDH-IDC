@@ -138,7 +138,7 @@ class TestSegmentAnswerRouteContinued:
             "multiple_commodities": False,
             "created_by": "super_admin@akvo.org",
             "created_at": res["created_at"],
-            "updated_by": "super_admin@akvo.org",
+            "updated_by": "John Doe",
             "updated_at": res["updated_at"],
             "segments": [
                 {
