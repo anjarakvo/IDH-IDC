@@ -245,7 +245,9 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
     } bin.`;
     setLabel(label);
     // chart title
-    setChartTitle(`${yAxisName} required to meet income target by ${xAxisName} at a certain ${binName}`);
+    setChartTitle(
+      `${yAxisName} required to meet income target by ${xAxisName} at a certain ${binName}`
+    );
 
     return {
       binCharts: binName
