@@ -378,7 +378,7 @@ const Case = () => {
         currentCase.updated_by
           ? `Last update by ${currentCase?.updated_by} ${
               currentCase?.updated_at
-                ? `at ${new Date(currentCase?.updated_at).toLocaleString(
+                ? `on ${new Date(currentCase?.updated_at).toLocaleString(
                     "en-US",
                     options
                   )}`
