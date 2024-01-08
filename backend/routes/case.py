@@ -174,7 +174,7 @@ def get_case_options(
 
 @case_route.put(
     "/case/{case_id:path}",
-    response_model=CaseDict,
+    response_model=CaseDetailDict,
     summary="update case by id",
     name="case:update",
     tags=["Case"],
@@ -195,7 +195,7 @@ def update_Case(
         case = crud_case.case_updated_by(
             session=session, case_id=case_id, user_id=user.id
         )
-    return case.serialize
+    return case.to_case_detail
 
 
 @case_route.get(

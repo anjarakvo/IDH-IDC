@@ -344,8 +344,10 @@ class TestCaseRoute:
             "segmentation": False,
             "living_income_study": "living_income",
             "multiple_commodities": False,
-            "logo": None,
-            "created_by": 1,
+            "created_by": "super_admin@akvo.org",
+            "created_at": res["created_at"],
+            "updated_by": "John Doe",
+            "updated_at": res["updated_at"],
             "case_commodities": [
                 {
                     "id": 1,
