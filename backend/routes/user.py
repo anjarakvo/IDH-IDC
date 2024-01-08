@@ -288,7 +288,7 @@ def invitation(
 @user_route.post(
     "/user/invitation/{invitation_id:path}",
     response_model=Token,
-    summary="get set password for invited user",
+    summary="set password for invited user",
     name="user:register_password",
     tags=["User"],
 )
