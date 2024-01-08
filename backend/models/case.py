@@ -281,7 +281,7 @@ class Case(Base):
             "logo": self.logo,
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "updated_by": self.updated_by_user.email
+            "updated_by": self.updated_by_user.fullname
             if self.updated_by
             else None,
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),

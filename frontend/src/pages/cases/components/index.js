@@ -162,12 +162,18 @@ export const generateSegmentPayloads = (
 };
 
 export const InputNumberThousandFormatter = {
-  formatter: (value) =>
-    value >= 1000
-      ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      : value && value % 1 !== 0
-      ? parseFloat(value)
-      : value,
+  formatter: (value, _, round = false) => {
+    if (round) {
+      value = Math.round(parseFloat(value));
+    }
+    const res =
+      value >= 1000
+        ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        : value && value % 1 !== 0
+        ? parseFloat(value)
+        : value;
+    return res;
+  },
   parser: (value) => value.replace(/\$\s?|(,*)/g, ""),
 };
 

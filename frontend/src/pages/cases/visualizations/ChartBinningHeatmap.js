@@ -188,7 +188,7 @@ const getOptions = ({
             },
             out: {
               color: "#fff",
-              backgroundColor: "gray",
+              backgroundColor: "#FEC508",
               padding: 5,
             },
             down: {
