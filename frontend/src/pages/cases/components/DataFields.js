@@ -358,7 +358,14 @@ const DataFields = ({
                           value={totalIncome.current}
                           disabled
                           style={{ width: "100%" }}
-                          {...InputNumberThousandFormatter}
+                          formatter={(value, info) =>
+                            InputNumberThousandFormatter.formatter(
+                              value,
+                              info,
+                              true
+                            )
+                          }
+                          parser={InputNumberThousandFormatter.parser}
                         />
                       </Col>
                       <Col span={4}>
@@ -366,7 +373,14 @@ const DataFields = ({
                           value={totalIncome.feasible}
                           disabled
                           style={{ width: "100%" }}
-                          {...InputNumberThousandFormatter}
+                          formatter={(value, info) =>
+                            InputNumberThousandFormatter.formatter(
+                              value,
+                              info,
+                              true
+                            )
+                          }
+                          parser={InputNumberThousandFormatter.parser}
                         />
                       </Col>
                       <Col span={3}>
