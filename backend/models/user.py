@@ -109,7 +109,7 @@ class UserInvitation(TypedDict):
     fullname: str
     email: str
     role: UserRole
-    invitation_id: str
+    invitation_id: Optional[str]
 
 
 class UserSearchDict(TypedDict):
