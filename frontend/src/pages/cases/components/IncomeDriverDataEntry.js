@@ -232,12 +232,14 @@ const IncomeDriverDataEntry = ({
               answers: {},
             },
           ]);
-          setCurrentValues({
-            key: "1",
-            label: "Segment 1",
-            currentSegmentId: null,
-            answers: {},
-          });
+          setCurrentValues([
+            {
+              key: "1",
+              label: "Segment 1",
+              currentSegmentId: null,
+              answers: {},
+            },
+          ]);
         });
     });
   }, [commodityList, setQuestionGroups, currentCaseId, enableEditCase]);
