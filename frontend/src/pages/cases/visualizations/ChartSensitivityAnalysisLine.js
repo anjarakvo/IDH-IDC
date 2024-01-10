@@ -34,7 +34,7 @@ const getOptions = ({
     : feasibleAnswers.find((fa) => fa.name === yAxis.name)?.value || 0;
 
   let xAxisData = [
-    ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 5).map((x) =>
+    ...range(xAxis.min, xAxis.max, (xAxis.max - xAxis.min) / 20).map((x) =>
       x.toFixed(2)
     ),
     xAxis.max.toFixed(2),
