@@ -412,7 +412,7 @@ const ExploreStudiesPage = () => {
                     onClick={() => setOpen(true)}
                   >
                     {/* Open Form Modal */}
-                    Add New Reference Data
+                    Add a new study
                   </Button>
                 ) : null}
               </div>

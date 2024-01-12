@@ -385,10 +385,10 @@ const ScenarioInput = ({
           <h4>Income Driver</h4>
         </Col>
         <Col span={5} align="center">
-          <h4>New Value</h4>
+          <h4>New value</h4>
         </Col>
         <Col span={5} align="right">
-          <h4>Current</h4>
+          <h4>Current value</h4>
         </Col>
         <Col span={5} align="right">
           <h4>Increase</h4>
@@ -438,12 +438,15 @@ const ScenarioInput = ({
   );
 };
 
-const Step = ({ number, title }) => (
+const Step = ({ number, title, description = null }) => (
   <Col span={24}>
     <Space align="center" className="scenario-step-wrapper">
       <div className="number">{number}</div>
       <div className="title">{title}</div>
     </Space>
+    {description && (
+      <div className="scenario-step-description">{description}</div>
+    )}
   </Col>
 );
 
@@ -790,7 +793,7 @@ const Scenario = ({
     return (
       <Row gutter={[16, 16]} className="scenario-information-wrapper">
         <Col span={24}>
-          <div className="label">Name</div>
+          <div className="label">Name of scenario</div>
           <Input
             key={`scenario-name-${scenarioItem.key}`}
             placeholder="Scenario Name"
@@ -1026,7 +1029,7 @@ const Scenario = ({
       <Col span={24}>
         <Card
           className="info-card-wrapper"
-          title="Information"
+          title="Describe your scenario"
           extra={scenarioItem?.key > 1 ? extra : null}
         >
           {renderScenarioCardHeader()}
@@ -1071,13 +1074,13 @@ const Scenario = ({
                   </Col>
                   <Col span={8}>
                     <h2>
-                      What is the income gap when you change your income drivers
-                      using the scenario modeler?
+                      Input values for the various income drivers for each
+                      segments
                     </h2>
                     <p>
-                      Lorem ipsum dolor sit amet, consectetur adipiscing elit,
-                      sed do eiusmod tempor incididunt ut labore et dolore magna
-                      aliqua.
+                      Below you find a visual showing the calculated household
+                      income and gap to the income target for the different
+                      segments in this scenario.
                     </p>
                   </Col>
                 </Row>
@@ -1133,8 +1136,14 @@ const Scenario = ({
       </Col>
 
       {/* Step 3 */}
-      <Step number={3} title="Better understand outcomes for your segments" />
-
+      <Step
+        number={3}
+        title="Better understand outcomes for your segments"
+        description="In the table below, you can compare specific outcomes per segment to
+        understand in which scenario the farmers in that segment reach the
+        income target, how this is established, and how it compares to the
+        current scenario."
+      />
       {/* Scenario Outcomes */}
       <Col span={24}>
         <Card className="info-card-wrapper" title="Scenario Outcomes">
