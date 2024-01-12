@@ -1,5 +1,15 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
-import { Row, Col, Card, Select, InputNumber, Table, Form, Space } from "antd";
+import {
+  Row,
+  Col,
+  Card,
+  Select,
+  InputNumber,
+  Table,
+  Form,
+  Space,
+  Tooltip,
+} from "antd";
 import { groupBy, map, isEmpty, uniq } from "lodash";
 import {
   ChartBinningHeatmap,
@@ -8,6 +18,7 @@ import {
 import { InputNumberThousandFormatter } from ".";
 import { thousandFormatter } from "../../../components/chart/options/common";
 import { SaveAsImageButton } from "../../../components/utils";
+import { InfoCircleOutlined } from "@ant-design/icons";
 
 const columns = [
   {
@@ -21,13 +32,13 @@ const columns = [
     ),
   },
   {
-    title: "Current",
+    title: "Current values",
     dataIndex: "current",
     key: "current",
     render: (value) => thousandFormatter(value),
   },
   {
-    title: "Feasible",
+    title: "Feasible values",
     dataIndex: "feasible",
     key: "feasible",
     render: (value) => thousandFormatter(value),
@@ -117,6 +128,11 @@ const BinningForm = ({
             </b>
           }
           className="info-card-wrapper"
+          extra={
+            <Tooltip title="The binning driver can take on three specific values called 'bins.' We create a separate heatmap for each bin below allowing us to compare the results. Likewise, the lines in the line graph represent the 3 bins.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
         >
           <Form.Item name={`${segment.id}_binning-driver-name`}>
             <Select
@@ -175,6 +191,11 @@ const BinningForm = ({
             </b>
           }
           className="info-card-wrapper"
+          extra={
+            <Tooltip title="This driver will be reflected on the x-axis of the line chart, and in the columns of the heatmaps. You need to set a minimum and maximum value.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
         >
           <Form.Item name={`${segment.id}_x-axis-driver`}>
             <Select
@@ -231,6 +252,11 @@ const BinningForm = ({
             </b>
           }
           className="info-card-wrapper"
+          extra={
+            <Tooltip title="This driver will be reflected on the y-axis of the line chart, and in the rows of the heatmaps. You need to set a minimum and maximum value.">
+              <InfoCircleOutlined />
+            </Tooltip>
+          }
         >
           <Form.Item name={`${segment.id}_y-axis-driver`}>
             <Select
