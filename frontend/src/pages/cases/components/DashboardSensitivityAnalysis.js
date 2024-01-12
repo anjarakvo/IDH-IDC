@@ -38,16 +38,17 @@ const settingsForAnalysisContent = [
   {
     title: "Select segment",
     description:
-      "Select segment for which you want to perform the sensitivity analysis.",
+      "Select the segment for which you want to perform the sensitivity analysis.",
   },
   {
-    title: "The drivers",
+    title: "Select the drivers",
     description:
       "Select three drivers you want to model. The other two drivers remain at their current level.",
   },
   {
-    title: "Overview",
-    description: "Use the driver overview on the right as reference.",
+    title: "Explore results",
+    description:
+      "Use the different visuals to understand the dynamics of changing the 3 income drivers.",
   },
 ];
 
@@ -464,12 +465,14 @@ const DashboardSensitivityAnalysis = ({
       <Col span={24} className="income-driver-dashboard">
         <Row gutter={[24, 24]} align="middle">
           <Col span={10} className="settings-wrapper">
-            <h2>Settings for analysis</h2>
+            <h2>Perform a sensitivity analysis</h2>
             <p>
-              This graph shows you how the current and feasible income levels
-              relate to the income target. Each element represents the monetary
-              contribution resulting from these changes. The final bar showcases
-              the achievable income when all drivers are set to feasible values.
+              On this page, you can explore how different combinations of income
+              drivers lead to varying income levels. Whether it&apos;s
+              increasing area, applying pricing strategies, or diversifying
+              income sources, this page empowers you to investigate various
+              scenarios and understand the paths towards improving farmer
+              household income.
             </p>
             <Space direction="vertical" className="settings-info-wrapper">
               {settingsForAnalysisContent.map((it, i) => (
