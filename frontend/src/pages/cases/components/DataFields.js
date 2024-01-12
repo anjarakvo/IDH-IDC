@@ -565,7 +565,7 @@ const DataFields = ({
           </Col>
           <Col span={24}>
             <Card
-              title="Explore Studies"
+              title="Explore data from other studies"
               className="info-card-wrapper"
               extra={
                 <a
