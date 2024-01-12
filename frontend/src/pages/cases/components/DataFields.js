@@ -25,7 +25,7 @@ import {
   CalendarOutlined,
   HomeOutlined,
   UserOutlined,
-  QuestionCircleOutlined,
+  InfoCircleOutlined,
   UsergroupAddOutlined,
 } from "@ant-design/icons";
 import { isEmpty, upperFirst } from "lodash";
@@ -314,7 +314,7 @@ const DataFields = ({
                     <h2 className="section-title">
                       Income Target
                       <div>
-                        <QuestionCircleOutlined />
+                        <InfoCircleOutlined />
                       </div>
                     </h2>
                   }
@@ -344,7 +344,7 @@ const DataFields = ({
                     <h2 className="section-title">
                       Income Drivers
                       <div>
-                        <QuestionCircleOutlined />
+                        <InfoCircleOutlined />
                       </div>
                     </h2>
                   }
@@ -503,7 +503,7 @@ const DataFields = ({
               className="info-card-wrapper"
               extra={
                 <Tooltip title={LIBTooltipText}>
-                  <QuestionCircleOutlined style={{ color: "#fff" }} />
+                  <InfoCircleOutlined style={{ color: "#fff" }} />
                 </Tooltip>
               }
             >
@@ -565,7 +565,17 @@ const DataFields = ({
           </Col>
           <Col span={24}>
             <Card
-              title="Explore data from other studies"
+              title={
+                <Space>
+                  <div>Explore data from other studies</div>
+                  <Tooltip
+                    title="We have assessed data from secondary sources that you can use
+                  as a reference for the income drivers."
+                  >
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                </Space>
+              }
               className="info-card-wrapper"
               extra={
                 <a
