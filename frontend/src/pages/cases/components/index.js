@@ -162,8 +162,49 @@ export const generateSegmentPayloads = (
 };
 
 export const InputNumberThousandFormatter = {
-  formatter: (value) => `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ","),
+  formatter: (value, _, round = false) => {
+    if (round) {
+      value = Math.round(parseFloat(value));
+    }
+    const res =
+      value >= 1000
+        ? `${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        : value && value % 1 !== 0
+        ? parseFloat(value)
+        : value;
+    return res;
+  },
   parser: (value) => value.replace(/\$\s?|(,*)/g, ""),
+};
+
+export const customFormula = {
+  revenue_focus_commodity: "#2 * #3 * #4",
+  focus_commodity_cost_of_production:
+    "( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) * -1",
+};
+
+/**
+ * NOTE
+ * Focus Income formula ( #2 * #3 * #4 ) - ( ( #5 * #2 ) + ( #26 * #3 * #2 ) )
+ * Target = 9001,
+ * Diversified = 9002
+ */
+export const yAxisFormula = {
+  "#2": "( #9001 - #9002 + ( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) )  / ( #4 * #3 )", // area
+  "#3": "( #9001 - #9002 + ( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) ) / ( #4 * #2 )", // volume
+  "#4": "( #9001 - #9002 + ( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) ) / ( #3 * #2 )", // price
+  "#5": "( ( #9001 - #9002 ) - ( #2 * #4 * #3 ) ) / #2", // CoP for crop
+  "#26": "( ( #9001 - #9002 ) - ( #2 * #4 * #3 ) ) / ( #3 * #2 )", // CoP for aqua
+  "#9002": "( #9001 + ( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) ) - ( #2 * #4 * #3 )", // diversified
+};
+
+export const removeUndefinedObjectValue = (obj) => {
+  return Object.entries(obj).reduce((acc, [key, value]) => {
+    if (typeof value !== "undefined") {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
 };
 
 export { default as AreaUnitFields } from "./AreaUnitFields";

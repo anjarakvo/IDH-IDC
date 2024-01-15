@@ -18,7 +18,9 @@ def seeder_benchmark(session: Session):
     # truncatedb(session=session, table="living_income_benchmark")
     li_benchmark = pd.read_csv(MASTER_DIR + "li_benchmark.csv")
     # Filter rows where the list does not contain any string values
-    filtered_lib = li_benchmark[li_benchmark["country_id"] != li_benchmark["country"]]
+    filtered_lib = li_benchmark[
+        li_benchmark["country_id"] != li_benchmark["country"]
+    ]
     filtered_lib.drop(columns=["country", "region"], inplace=True)
     filtered_lib = filtered_lib.rename(
         columns={
@@ -47,6 +49,9 @@ def seeder_benchmark(session: Session):
             lib.lcu = row["lcu"]
             lib.usd = row["usd"]
             lib.eur = row["eur"]
+            lib.nr_adults = (row["nr_adults"],)
+            lib.household_equiv = (row["household_equiv"],)
+            lib.links = (row["links"],)
         else:
             # create
             lib = LivingIncomeBenchmark(
@@ -59,6 +64,9 @@ def seeder_benchmark(session: Session):
                 lcu=row["lcu"],
                 usd=row["usd"],
                 eur=row["eur"],
+                nr_adults=row["nr_adults"],
+                household_equiv=row["household_equiv"],
+                links=row["links"],
             )
             session.add(lib)
         session.commit()

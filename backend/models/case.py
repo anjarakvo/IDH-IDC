@@ -89,6 +89,7 @@ class CaseDetailDict(TypedDict):
     multiple_commodities: bool
     created_by: str
     created_at: str
+    updated_by: Optional[str]
     updated_at: Optional[str]
     segments: Optional[List[SegmentWithAnswersDict]]
     case_commodities: List[SimplifiedCaseCommodityDict]
@@ -113,7 +114,8 @@ class Case(Base):
     reporting_period = Column(String, nullable=False)
     segmentation = Column(SmallInteger, nullable=False, default=0)
     living_income_study = Column(
-        Enum(LivingIncomeStudyEnum, name="case_living_income_study"), nullable=True
+        Enum(LivingIncomeStudyEnum, name="case_living_income_study"),
+        nullable=True,
     )
     multiple_commodities = Column(SmallInteger, nullable=False, default=0)
     private = Column(SmallInteger, nullable=False, default=0)
@@ -121,8 +123,12 @@ class Case(Base):
     created_by = Column(Integer, ForeignKey("user.id"))
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
-        DateTime, nullable=False, server_default=func.now(), onupdate=func.now()
+        DateTime,
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
     )
+    updated_by = Column(Integer, ForeignKey("user.id"), nullable=True)
 
     case_commodities = relationship(
         CaseCommodity,
@@ -152,7 +158,15 @@ class Case(Base):
     #     backref='cases'
     # )
     created_by_user = relationship(
-        "User", cascade="all, delete", passive_deletes=True, backref="cases"
+        "User",
+        foreign_keys=[created_by],
+        cascade="all, delete",
+        passive_deletes=True,
+        backref="cases",
+    )
+    updated_by_user = relationship(
+        "User",
+        foreign_keys=[updated_by],
     )
 
     def __init__(
@@ -166,13 +180,14 @@ class Case(Base):
         area_size_unit: str,
         volume_measurement_unit: str,
         cost_of_production_unit: str,
-        reporting_period: str,
         segmentation: int,
+        reporting_period: Optional[str],
         living_income_study: Optional[str],
         description: Optional[str],
         multiple_commodities: int,
         logo: Optional[str],
         created_by: int,
+        updated_by: Optional[int] = None,
         private: Optional[int] = 0,
         id: Optional[int] = None,
     ):
@@ -194,6 +209,7 @@ class Case(Base):
         self.logo = logo
         self.private = private
         self.created_by = created_by
+        self.updated_by = updated_by
 
     def __repr__(self) -> int:
         return f"<Case {self.id}>"
@@ -265,8 +281,13 @@ class Case(Base):
             "logo": self.logo,
             "created_by": self.created_by_user.email,
             "created_at": self.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+            "updated_by": self.updated_by_user.fullname
+            if self.updated_by
+            else None,
             "updated_at": self.updated_at.strftime("%Y-%m-%d %H:%M:%S"),
-            "segments": [ps.serialize_with_answers for ps in self.case_segments],
+            "segments": [
+                ps.serialize_with_answers for ps in self.case_segments
+            ],
             "case_commodities": [pc.simplify for pc in self.case_commodities],
             "private": self.private,
             "tags": [ct.tag for ct in self.case_tags],
@@ -299,9 +320,9 @@ class CaseBase(BaseModel):
     area_size_unit: str
     volume_measurement_unit: str
     cost_of_production_unit: str
-    reporting_period: str
     segmentation: bool
     multiple_commodities: bool
+    reporting_period: Optional[str] = None
     living_income_study: Optional[LivingIncomeStudyEnum] = None
     logo: Optional[str] = None
     private: Optional[bool] = False

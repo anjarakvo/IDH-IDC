@@ -6,6 +6,8 @@ import {
   CaseProfile,
   IncomeDriverDataEntry,
   IncomeDriverDashboard,
+  getFunctionDefaultValue,
+  customFormula,
 } from "./components";
 import { Row, Col, Spin, Card, Alert } from "antd";
 import "./cases.scss";
@@ -32,6 +34,12 @@ const commodityNames = masterCommodityCategories.reduce((acc, curr) => {
   return { ...acc, ...commodities };
 }, {});
 
+const options = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
 const Case = () => {
   const { caseId } = useParams();
   const navigate = useNavigate();
@@ -47,6 +55,7 @@ const Case = () => {
   const [loading, setLoading] = useState(false);
   const [initialOtherCommodityTypes, setInitialCommodityTypes] = useState([]);
   const [currentCase, setCurrentCase] = useState({});
+  const showCaseTitle = false; // don't show title for now
 
   const {
     role: userRole,
@@ -189,6 +198,35 @@ const Case = () => {
       const totalCurrentDiversifiedIncome = answers
         .filter((a) => a.isTotalCurrentDiversifiedIncome)
         .reduce((acc, curr) => acc + curr.value, 0);
+
+      const focusCommodityAnswers = answers
+        .filter((a) => a.commodityType === "focus")
+        .map((a) => ({
+          id: `${a.name}-${a.questionId}`,
+          value: a.value,
+        }));
+
+      const currentRevenueFocusCommodity = getFunctionDefaultValue(
+        { default_value: customFormula.revenue_focus_commodity },
+        "current",
+        focusCommodityAnswers
+      );
+      const feasibleRevenueFocusCommodity = getFunctionDefaultValue(
+        { default_value: customFormula.revenue_focus_commodity },
+        "feasible",
+        focusCommodityAnswers
+      );
+      const currentFocusCommodityCoP = getFunctionDefaultValue(
+        { default_value: customFormula.focus_commodity_cost_of_production },
+        "current",
+        focusCommodityAnswers
+      );
+      const feasibleFocusCommodityCoP = getFunctionDefaultValue(
+        { default_value: customFormula.focus_commodity_cost_of_production },
+        "feasible",
+        focusCommodityAnswers
+      );
+
       return {
         ...d,
         total_feasible_cost: -totalCostFeasible,
@@ -197,6 +235,12 @@ const Case = () => {
         total_feasible_diversified_income: totalFeasibleDiversifiedIncome,
         total_current_focus_income: totalCurrentFocusIncome,
         total_current_diversified_income: totalCurrentDiversifiedIncome,
+        total_current_revenue_focus_commodity: currentRevenueFocusCommodity,
+        total_feasible_revenue_focus_commodity: feasibleRevenueFocusCommodity,
+        total_current_focus_commodity_cost_of_production:
+          currentFocusCommodityCoP,
+        total_feasible_focus_commodity_cost_of_production:
+          feasibleFocusCommodityCoP,
         answers: answers,
       };
     });
@@ -330,6 +374,18 @@ const Case = () => {
         { title: "Cases", href: "/cases" },
         { title: caseTitle },
       ]}
+      breadcrumbRightContent={
+        currentCase.updated_by
+          ? `Last update by ${currentCase?.updated_by} ${
+              currentCase?.updated_at
+                ? `on ${new Date(currentCase?.updated_at).toLocaleString(
+                    "en-US",
+                    options
+                  )}`
+                : ""
+            }`
+          : null
+      }
       wrapperId="case"
     >
       {loading ? (
@@ -349,15 +405,17 @@ const Case = () => {
             </Col>
           )}
           {/* EOL Banner for Viewer */}
-          <Col span={24}>
-            <Card className="case-title-wrapper" id="case-title">
-              <h2>{caseTitle}</h2>
-              {caseDescription ? <p>{caseDescription}</p> : null}
-              <div className="case-title-icon">
-                <CaseTitleIcon height={110} />
-              </div>
-            </Card>
-          </Col>
+          {showCaseTitle && (
+            <Col span={24}>
+              <Card className="case-title-wrapper" id="case-title">
+                <h2>{caseTitle}</h2>
+                {caseDescription ? <p>{caseDescription}</p> : null}
+                <div className="case-title-icon">
+                  <CaseTitleIcon height={110} />
+                </div>
+              </Card>
+            </Col>
+          )}
           <Col span={24}>
             {page === "Case Profile" && (
               <CaseProfile

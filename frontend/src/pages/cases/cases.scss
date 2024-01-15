@@ -1,6 +1,10 @@
 @import "../../variables.scss";
 
 #case {
+  h2 {
+    font-family: "TabletGothicBold" !important;
+  }
+
   .case-content {
     margin-top: 2rem;
 
@@ -42,7 +46,7 @@
           padding: 10px 20px;
           background: $primary-color;
           color: #fff;
-          min-height: 42px;
+          min-height: $card-head-min-height;
 
           .ant-card-head-title {
             font-size: 0.9rem;
@@ -102,7 +106,7 @@
           background: $primary-color;
           color: #fff;
           padding: 10px 20px 0 20px;
-          min-height: 42px;
+          min-height: $card-head-min-height;
         }
       }
       .ant-card-head {
@@ -161,7 +165,7 @@
               padding: 10px 24px;
               position: relative;
               width: calc(100% + 48px);
-              small {
+              div {
                 position: absolute;
                 right: 24px;
                 top: calc(50% - 9px);
@@ -245,11 +249,22 @@
     .ant-tabs-tab-btn {
       font-family: "TabletGothicBold";
       font-size: 1rem;
-      background: #fff;
+      // background: #fff;
       text-shadow: none;
     }
   }
 
+  .ant-tabs-nav .ant-tabs-tab-active {
+    border-top: 1px solid #cfcfcf;
+    border-left: 1px solid #cfcfcf;
+    border-right: 1px solid #cfcfcf;
+  }
+
+  .pending-dot {
+    .ant-steps-item-icon {
+      background: $yellow-color;
+    }
+  }
   .anticon {
     &.finished-dot {
       // position: absolute;
@@ -284,11 +299,20 @@
     .ant-tabs-tab-btn {
       background: none !important;
     }
+    .ant-tabs-nav .ant-tabs-tab-active {
+      border-top: 1px solid transparent;
+      border-left: 1px solid transparent;
+      border-right: 1px solid transparent;
+    }
   }
 
   #sensitivity-analysis {
     .ant-form-item {
       margin-bottom: 0px;
+    }
+
+    .anticon {
+      color: #fff;
     }
 
     .settings-wrapper {
@@ -403,11 +427,68 @@
   .ant-steps-item-title {
     cursor: pointer;
   }
+  .ant-steps-item-title:after {
+    background-color: #053fff !important;
+    border: 1px solid #053fff !important;
+  }
 
   #scenario-modeling {
     font-family: "TabletGothic";
+
+    .scenario-tabs-container {
+      .ant-tabs-nav .ant-tabs-tab {
+        border: 1px solid #cfcfcf;
+      }
+      .ant-tabs-nav .ant-tabs-tab-active {
+        border-bottom: none;
+      }
+    }
+
+    // .scenario-segment-tabs-container {
+    //   .ant-tabs-nav .ant-tabs-tab {
+    //     border-top: none;
+    //     border-left: none;
+    //     border-right: none;
+    //   }
+    // }
+
     .scenario-field-item {
       margin-bottom: 0px;
+    }
+
+    .scenario-information-wrapper {
+      .label {
+        margin-bottom: 5px;
+      }
+    }
+
+    .scenario-step-wrapper {
+      padding: 20px 0;
+
+      .number {
+        color: #00625f;
+        text-align: center;
+        font-family: "RocGrotesk";
+        font-size: 18px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 28px;
+        letter-spacing: -0.28px;
+
+        padding: 4px 8px;
+        background: $yellow-color;
+        border-radius: 100px 70px 100px 70px;
+      }
+
+      .title {
+        color: #00625f;
+        font-family: "RocGrotesk";
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 700;
+        line-height: 28px;
+        letter-spacing: -0.336px;
+      }
     }
   }
 
@@ -430,7 +511,7 @@
       padding: 10px 20px;
       background: $primary-color;
       color: #fff;
-      min-height: 42px;
+      min-height: $card-head-min-height;
     }
 
     .ant-card-head-title {
@@ -462,7 +543,7 @@
       padding: 10px 20px;
       background: $primary-color;
       color: #fff;
-      min-height: 42px;
+      min-height: $card-head-min-height;
     }
 
     .ant-card-head-title {
@@ -488,5 +569,13 @@
         border-radius: 20px;
       }
     }
+  }
+
+  .benchmark-info-child-wrapper {
+    font-family: "TabletGothic";
+  }
+
+  h2.income-target-value {
+    font-family: "TabletGothicBold" !important;
   }
 }

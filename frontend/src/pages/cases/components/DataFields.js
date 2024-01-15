@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import {
   Row,
   Col,
@@ -9,10 +9,12 @@ import {
   Input,
   InputNumber,
   Divider,
+  Table,
+  Select,
+  Tooltip,
 } from "antd";
 import {
   DeleteTwoTone,
-  InfoCircleFilled,
   CheckCircleTwoTone,
   EditTwoTone,
   CloseCircleTwoTone,
@@ -23,17 +25,30 @@ import {
   CalendarOutlined,
   HomeOutlined,
   UserOutlined,
+  InfoCircleOutlined,
+  UsergroupAddOutlined,
 } from "@ant-design/icons";
-import { map, groupBy } from "lodash";
+import { isEmpty, upperFirst } from "lodash";
 import {
   IncomeDriverForm,
   IncomeDriverTarget,
   InputNumberThousandFormatter,
-  commodityOptions,
 } from "./";
 import Chart from "../../../components/chart";
-import { incomeTargetChartOption } from "../../../components/chart/options/common";
 import { SaveAsImageButton } from "../../../components/utils";
+import { api } from "../../../lib";
+import { driverOptions } from "../../explore-studies";
+
+const LIBTooltipText = (
+  <div>
+    Living income is the net annual income required for a household in a
+    particular place to afford a decent standard of living for all members of
+    that household. Elements of a decent standard of living include: food,
+    water, housing, education, healthcare, transport, clothing, and other
+    essential needs including provision for unexpected events. To find out more,
+    visit https://www.living-income.com/the-concept
+  </div>
+);
 
 const DataFields = ({
   segment,
@@ -53,11 +68,17 @@ const DataFields = ({
   dashboardData,
   setPage,
   enableEditCase,
+  segments,
 }) => {
   const [confimationModal, setConfimationModal] = useState(false);
   const [editing, setEditing] = useState(false);
   const [newName, setNewName] = useState(segmentLabel);
   const elDriverChart = useRef(null);
+
+  const [loadingRefData, setLoadingRefData] = useState(false);
+  const [referenceData, setReferenceData] = useState([]);
+  const [selectedDriver, setSelectedDriver] = useState("area");
+  const [exploreButtonLink, setExploreButtonLink] = useState(null);
 
   const finishEditing = () => {
     renameItem(segment, newName);
@@ -67,6 +88,32 @@ const DataFields = ({
     setNewName(segmentLabel);
     setEditing(false);
   };
+
+  useEffect(() => {
+    const country = currentCase?.country;
+    const commodity = currentCase?.case_commodities?.find(
+      (x) => x.commodity_type === "focus"
+    )?.commodity;
+    if (!isEmpty(currentCase) && selectedDriver) {
+      setLoadingRefData(true);
+      setExploreButtonLink(
+        `/explore-studies/${country}/${commodity}/${selectedDriver}`
+      );
+      api
+        .get(
+          `reference_data/reference_value?country=${country}&commodity=${commodity}&driver=${selectedDriver}`
+        )
+        .then((res) => {
+          setReferenceData(res.data);
+        })
+        .catch(() => {
+          setReferenceData([]);
+        })
+        .finally(() => {
+          setLoadingRefData(false);
+        });
+    }
+  }, [currentCase, selectedDriver]);
 
   const totalIncome = useMemo(() => {
     const currentFormValue = formValues.find((x) => x.key === segmentItem.key);
@@ -97,134 +144,77 @@ const DataFields = ({
     };
   }, [formValues, segmentItem, dashboardData, totalIncomeQuestion]);
 
-  const segmentValues = formValues.find((v) => v.key === segment);
-
   const benchmarkInfo = useMemo(() => {
     const findSegmentBenchmark =
-      dashboardData.find((d) => d.key === segment)?.benchmark || null;
+      dashboardData.find((d) => d.key === segment)?.benchmark || {};
+    const { source, links, year, household_size, nr_adults } =
+      findSegmentBenchmark;
+    let nr_childs = "NA";
+    if (household_size && nr_adults) {
+      nr_childs = household_size - nr_adults;
+    }
     return {
       label: "Source",
-      value: findSegmentBenchmark ? "Living Income Benchmark" : "NA",
-      link: findSegmentBenchmark?.source || null,
+      value: source || "NA",
+      link: links || null,
       childs: [
         {
           label: "Year of Study",
-          value: findSegmentBenchmark?.year || "NA",
+          value: year || "NA",
           icon: <CalendarOutlined />,
         },
         {
           label: "Household Size",
-          value: findSegmentBenchmark?.household_size || "NA",
+          value: household_size || "NA",
           icon: <HomeOutlined />,
         },
         {
           label: "Adults",
-          value: findSegmentBenchmark?.adults || "NA",
+          value: nr_adults || "NA",
           icon: <UserOutlined />,
+        },
+        {
+          label: "Childrens",
+          value: nr_childs || "NA",
+          icon: <UsergroupAddOutlined />,
         },
       ],
     };
   }, [dashboardData, segment]);
 
   const chartData = useMemo(() => {
-    if (!formValues.length || !segmentValues) {
+    if (!segments.length) {
       return [];
     }
-    const chartQuestion = totalIncomeQuestion.map((qid) => {
-      const [caseCommodity, questionId] = qid.split("-");
-      const feasibleId = `feasible-${qid}`;
-      const currentId = `current-${qid}`;
-      const feasibleValue = segmentValues.answers?.[feasibleId] || 0;
-      const currentValue = segmentValues.answers?.[currentId];
-      const question = questionGroups
-        .flatMap((g) => g.questions)
-        .find((q) => q.id === parseInt(questionId));
-      const commodityId = commodityList.find(
-        (c) => c.case_commodity === parseInt(caseCommodity)
-      ).commodity;
+    const res = segments.map((item) => {
+      const answers =
+        formValues.find((fv) => fv.key === item.key)?.answers || {};
+      const current = totalIncomeQuestion
+        .map((qs) => answers?.[`current-${qs}`] || 0)
+        .filter((a) => a)
+        .reduce((acc, a) => acc + a, 0);
+      const feasible = totalIncomeQuestion
+        .map((qs) => answers?.[`feasible-${qs}`] || 0)
+        .filter((a) => a)
+        .reduce((acc, a) => acc + a, 0);
       return {
-        case_id: caseCommodity,
-        commodity_id: commodityId,
-        question: question,
-        feasibleValue: feasibleValue - (currentValue || 0),
-        currentValue: currentValue || 0,
-      };
-    });
-    const commodityGroup = map(groupBy(chartQuestion, "case_id"), (g) => {
-      const commodityName =
-        commodityOptions.find((c) => c.value === g[0].commodity_id)?.label ||
-        "diversified";
-      const additionalIncome = g.reduce((a, b) => a + b.feasibleValue, 0);
-      return {
-        name: commodityName,
-        title: commodityName,
-        stack: [
+        name: `Total Income\n${item.label}`,
+        data: [
           {
-            name: "Current",
-            title: "Current Income",
-            value: g.reduce((a, b) => a + b.currentValue, 0),
-            total: g.reduce((a, b) => a + b.currentValue, 0),
-            order: 2,
-            color: "#3b78d8",
+            name: "Current Income",
+            value: current,
+            color: "#03625f",
           },
           {
-            name: "Feasible",
-            title: "Feasible additional income ",
-            value: additionalIncome < 0 ? 0 : additionalIncome,
-            total: additionalIncome < 0 ? 0 : additionalIncome,
-            order: 1,
-            color: "#c9daf8",
+            name: "Feasible Income",
+            value: feasible,
+            color: "#82b2b2",
           },
         ],
       };
     });
-    const totalIncomeCommodityGroup = {
-      name: "Total\nIncome",
-      title: "Total\nIncome",
-      stack: [
-        {
-          name: "Current",
-          title: "Current Income",
-          value: totalIncome.current,
-          total: totalIncome.current,
-          order: 2,
-          color: "#6aa84f",
-        },
-        {
-          name: "Feasible",
-          title: "Feasible additional income",
-          value: totalIncome.feasible - totalIncome.current,
-          total: totalIncome.feasible,
-          order: 1,
-          color: "#d9ead3",
-        },
-      ],
-    };
-    return [...commodityGroup, totalIncomeCommodityGroup];
-  }, [
-    totalIncomeQuestion,
-    formValues,
-    questionGroups,
-    commodityList,
-    totalIncome,
-    segmentValues,
-  ]);
-
-  const targetChartData = useMemo(() => {
-    if (!chartData.length || !segmentValues) {
-      return [];
-    }
-    return [
-      {
-        ...incomeTargetChartOption,
-        data: chartData.map((x) => ({
-          name: "Income Target",
-          symbol: x.name === "Total\nIncome" ? "diamond" : "none",
-          value: segmentValues?.target ? segmentValues.target.toFixed(2) : 0,
-        })),
-      },
-    ];
-  }, [chartData, segmentValues]);
+    return res;
+  }, [totalIncomeQuestion, segments, formValues]);
 
   const ButtonEdit = () => (
     <Button
@@ -323,9 +313,9 @@ const DataFields = ({
                   title={
                     <h2 className="section-title">
                       Income Target
-                      <small>
-                        <InfoCircleFilled />
-                      </small>
+                      <div>
+                        <InfoCircleOutlined />
+                      </div>
                     </h2>
                   }
                   className="segment-child-wrapper"
@@ -353,9 +343,9 @@ const DataFields = ({
                   title={
                     <h2 className="section-title">
                       Income Drivers
-                      <small>
-                        <InfoCircleFilled />
-                      </small>
+                      <div>
+                        <InfoCircleOutlined />
+                      </div>
                     </h2>
                   }
                   className="segment-child-wrapper"
@@ -392,7 +382,14 @@ const DataFields = ({
                           value={totalIncome.current}
                           disabled
                           style={{ width: "100%" }}
-                          {...InputNumberThousandFormatter}
+                          formatter={(value, info) =>
+                            InputNumberThousandFormatter.formatter(
+                              value,
+                              info,
+                              true
+                            )
+                          }
+                          parser={InputNumberThousandFormatter.parser}
                         />
                       </Col>
                       <Col span={4}>
@@ -400,7 +397,14 @@ const DataFields = ({
                           value={totalIncome.feasible}
                           disabled
                           style={{ width: "100%" }}
-                          {...InputNumberThousandFormatter}
+                          formatter={(value, info) =>
+                            InputNumberThousandFormatter.formatter(
+                              value,
+                              info,
+                              true
+                            )
+                          }
+                          parser={InputNumberThousandFormatter.parser}
                         />
                       </Col>
                       <Col span={3}>
@@ -497,11 +501,18 @@ const DataFields = ({
             <Card
               title="Information about Living Income Benchmark"
               className="info-card-wrapper"
+              extra={
+                <Tooltip title={LIBTooltipText}>
+                  <InfoCircleOutlined style={{ color: "#fff" }} />
+                </Tooltip>
+              }
             >
               <div className="benchmark-info-title-wrapper">
                 <b>{benchmarkInfo?.label}</b> :{" "}
                 {benchmarkInfo?.link ? (
-                  <a href={benchmarkInfo.link}>{benchmarkInfo?.value}</a>
+                  <a href={benchmarkInfo.link} target="_blank" rel="noreferrer">
+                    {benchmarkInfo?.value}
+                  </a>
                 ) : (
                   benchmarkInfo?.value
                 )}
@@ -516,7 +527,7 @@ const DataFields = ({
                     <Space>
                       <div>{bi.icon}</div>
                       <div>
-                        <b>{bi.label}</b> : {bi.value}
+                        <b>{bi.label}</b> : <span>{bi.value}</span>
                       </div>
                     </Space>
                   </div>
@@ -542,15 +553,160 @@ const DataFields = ({
                 // span={10}
                 // affix={true}
                 wrapper={false}
-                type="BARSTACK"
+                type="COLUMN-BAR"
                 data={chartData}
-                targetData={targetChartData}
-                loading={!chartData.length || !targetChartData.length}
+                loading={!chartData.length}
                 height={window.innerHeight * 0.45}
                 extra={{
                   axisTitle: { y: `Income (${currentCase.currency})` },
                 }}
               />
+            </Card>
+          </Col>
+          <Col span={24}>
+            <Card
+              title={
+                <Space>
+                  <div>Explore data from other studies</div>
+                  <Tooltip
+                    title="We have assessed data from secondary sources that you can use
+                  as a reference for the income drivers."
+                  >
+                    <InfoCircleOutlined />
+                  </Tooltip>
+                </Space>
+              }
+              className="info-card-wrapper"
+              extra={
+                <a
+                  href={exploreButtonLink}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <Button
+                    className="save-as-image-btn"
+                    style={{
+                      fontSize: 12,
+                      borderRadius: "20px",
+                      padding: "0 10px",
+                      backgroundColor: "transparent",
+                      color: "#fff",
+                      fontWeight: 600,
+                    }}
+                    disabled={!exploreButtonLink}
+                  >
+                    Explore Studies
+                  </Button>
+                </a>
+              }
+            >
+              <Space direction="vertical" size="large">
+                <Select
+                  options={driverOptions}
+                  onChange={setSelectedDriver}
+                  value={selectedDriver}
+                  size="small"
+                />
+                <Table
+                  bordered
+                  size="small"
+                  rowKey="id"
+                  loading={loadingRefData}
+                  columns={[
+                    {
+                      key: "value",
+                      title: "Value",
+                      dataIndex: "value",
+                    },
+                    {
+                      key: "unit",
+                      title: "Unit",
+                      dataIndex: "unit",
+                    },
+                    {
+                      key: "source",
+                      title: "Source",
+                      width: "35%",
+                      render: (value, row) => {
+                        if (!row?.link) {
+                          return value;
+                        }
+                        const url =
+                          row.link?.includes("https://") ||
+                          row.link?.includes("http://")
+                            ? row.link
+                            : `https://${row.link}`;
+                        return (
+                          <a
+                            href={url}
+                            target="_blank"
+                            rel="noreferrer noopener"
+                          >
+                            {row.source}
+                          </a>
+                        );
+                      },
+                    },
+                  ]}
+                  dataSource={referenceData}
+                  expandable={{
+                    expandedRowRender: (record) => (
+                      <div style={{ padding: 0 }}>
+                        <Table
+                          bordered
+                          showHeader={false}
+                          size="small"
+                          rowKey="id"
+                          columns={[
+                            {
+                              key: "label",
+                              title: "Label",
+                              dataIndex: "label",
+                              width: "45%",
+                            },
+                            {
+                              key: "value",
+                              title: "Value",
+                              dataIndex: "value",
+                            },
+                          ]}
+                          dataSource={Object.keys(record)
+                            .map((key) => {
+                              if (
+                                [
+                                  "id",
+                                  "unit",
+                                  "value",
+                                  "source",
+                                  "link",
+                                ].includes(key)
+                              ) {
+                                return false;
+                              }
+                              const label = key
+                                .split("_")
+                                ?.map((x) => upperFirst(x))
+                                ?.join(" ");
+                              let value = record[key];
+                              if (value && !Number(value)) {
+                                value = value
+                                  .split(" ")
+                                  .map((x) => upperFirst(x))
+                                  .join(" ");
+                              }
+                              return {
+                                label: label,
+                                value: value || "-",
+                              };
+                            })
+                            .filter((x) => x)}
+                          pagination={false}
+                        />
+                      </div>
+                    ),
+                  }}
+                />
+              </Space>
             </Card>
           </Col>
         </Row>

@@ -27,15 +27,16 @@ import {
   commodityOptions,
   countryOptions,
   currencyOptions,
-  reportingPeriod,
   selectProps,
   yesNoOptions,
   DebounceSelect,
+  removeUndefinedObjectValue,
 } from "./";
 import { api } from "../../../lib";
 import { UIState, UserState } from "../../../store";
 import isEmpty from "lodash/isEmpty";
 import uniqBy from "lodash/uniqBy";
+import isEqual from "lodash/isEqual";
 import { useParams, useNavigate } from "react-router-dom";
 import dayjs from "dayjs";
 import { casePermission } from "../../../store/static";
@@ -217,23 +218,6 @@ const CaseForm = ({
               <AreaUnitFields form={form} disabled={!enableEditCase} />
             </Col>
           </Row>
-          <Form.Item
-            label="Reporting Period"
-            name="reporting_period"
-            rules={[
-              {
-                required: true,
-                message: "Reporting Period is required",
-              },
-            ]}
-          >
-            <Radio.Group
-              options={reportingPeriod}
-              optionType="button"
-              buttonStyle="solid"
-              disabled={!enableEditCase}
-            />
-          </Form.Item>
         </Card>
       </Col>
     </Row>
@@ -315,6 +299,15 @@ const CaseProfile = ({
     useState(true);
   const [isNextButton, setIsNextButton] = useState(false);
   const [privateCase, setPrivateCase] = useState(false);
+  const [currentCaseProfile, setCurrentCaseProfile] = useState({});
+
+  useEffect(
+    () => {
+      setCurrentCaseProfile(formData);
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   {
     /* Support add User Access */
@@ -456,9 +449,9 @@ const CaseProfile = ({
       currency: values.currency,
       area_size_unit: values.area_size_unit,
       volume_measurement_unit: values.volume_measurement_unit,
-      reporting_period: values.reporting_period,
       multiple_commodities: secondary || tertiary,
-      // need to handle below value correctly
+      reporting_period: "per-year",
+      // TODO:: need to handle below value correctly
       cost_of_production_unit: "cost_of_production_unit",
       segmentation: true,
       living_income_study: null,
@@ -468,13 +461,25 @@ const CaseProfile = ({
       tags: values.tags || null,
     };
 
+    // detect is payload updated
+    const filteredCurrentCaseProfile =
+      removeUndefinedObjectValue(currentCaseProfile);
+    const filteredValues = {
+      ...filteredCurrentCaseProfile,
+      ...removeUndefinedObjectValue(values),
+      private: privateCase,
+      reporting_period: "per-year",
+    };
+    const isUpdated = !isEqual(filteredCurrentCaseProfile, filteredValues);
+
     const paramCaseId = caseId ? caseId : currentCaseId;
     const apiCall =
       currentCaseId || caseId
-        ? api.put(`case/${paramCaseId}`, payload)
+        ? api.put(`case/${paramCaseId}?updated=${isUpdated}`, payload)
         : api.post("case", payload);
     apiCall
       .then((res) => {
+        setCurrentCaseProfile(filteredValues);
         const { data } = res;
         setCurrentCaseId(data?.id);
         setCurrentCase(data);
@@ -650,13 +655,16 @@ const CaseProfile = ({
             </Col>
             <Col span={24}>
               <Card
-                title="Secondary Commodity"
-                extra={
-                  <Switch
-                    checked={secondary}
-                    onChange={setSecondary}
-                    disabled={!enableEditCase}
-                  />
+                title={
+                  <Space align="end">
+                    <Switch
+                      size="small"
+                      checked={secondary}
+                      onChange={setSecondary}
+                      disabled={!enableEditCase}
+                    />
+                    <div style={{ lineHeight: 1.2 }}>Secondary Commodity</div>
+                  </Space>
                 }
                 style={{
                   backgroundColor: !secondary ? "#f5f5f5" : "white",
@@ -673,13 +681,16 @@ const CaseProfile = ({
             </Col>
             <Col span={24}>
               <Card
-                title="Tertiary Commodity"
-                extra={
-                  <Switch
-                    checked={tertiary}
-                    onChange={setTertiary}
-                    disabled={!secondary || !enableEditCase}
-                  />
+                title={
+                  <Space align="end">
+                    <Switch
+                      size="small"
+                      checked={tertiary}
+                      onChange={setTertiary}
+                      disabled={!secondary || !enableEditCase}
+                    />
+                    <div style={{ lineHeight: 1.2 }}>Tertiary Commodity</div>
+                  </Space>
                 }
                 style={{
                   backgroundColor: !tertiary ? "#f5f5f5" : "white",

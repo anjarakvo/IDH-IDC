@@ -7,7 +7,7 @@ const ChartScenarioModeling = ({
   currencyUnitName,
 }) => {
   return (
-    <div style={{ padding: "0px 0px 0px 24px" }}>
+    <div style={{ padding: "0px 0px 0px 0px" }}>
       <Chart
         wrapper={false}
         type="BARSTACK"
@@ -15,6 +15,7 @@ const ChartScenarioModeling = ({
         targetData={targetChartData}
         loading={!data.length}
         extra={{ axisTitle: { y: `Income ${currencyUnitName}` } }}
+        grid={{ right: 330 }}
       />
     </div>
   );
