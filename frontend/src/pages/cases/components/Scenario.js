@@ -157,7 +157,7 @@ const Question = ({
           ))}
         </Col>
         <Col span={5} align="right">
-          {thousandFormatter(answer?.value?.toFixed(2)) || ""}
+          {thousandFormatter(answer?.value?.toFixed()) || ""}
         </Col>
         <Col span={5} align="right">
           {percentage
@@ -209,7 +209,7 @@ const ScenarioInput = ({
       const { total_current_income: totalIncome } = segment;
       return {
         totalPercentage: ((absoluteValue / totalIncome) * 100).toFixed(2),
-        totalAbsolute: absoluteValue.toFixed(2),
+        totalAbsolute: absoluteValue.toFixed(),
       };
     }
     return {
@@ -377,7 +377,7 @@ const ScenarioInput = ({
           <h2>Income Target</h2>
         </Col>
         <Col span={15}>
-          <h2>{`${segment.target?.toFixed(2)} ${currencyUnitName}`}</h2>
+          <h2>{`${segment.target?.toFixed()} ${currencyUnitName}`}</h2>
         </Col>
       </Row>
       <Row gutter={[8, 8]} align="middle" justify="space-between">
@@ -408,7 +408,7 @@ const ScenarioInput = ({
           </h4>
         </Col>
         <Col span={5} align="right">
-          <h4>{thousandFormatter(segment.total_current_income?.toFixed(2))}</h4>
+          <h4>{thousandFormatter(segment.total_current_income?.toFixed())}</h4>
         </Col>
         <Col span={5} align="right">
           <h4>
@@ -508,7 +508,9 @@ const Scenario = ({
   const [selectedScenarioSegmentChart, setSelectedScenarioSegmentChart] =
     useState([]);
   const [selectedSegment, setSelectedSegment] = useState(null);
+
   const elIncomeGapScenario = useRef(null);
+  const elScenarioOutcomes = useRef(null);
 
   const scenarioSegmentOptions = useMemo(() => {
     let i = 1;
@@ -671,29 +673,29 @@ const Scenario = ({
 
       return {
         name: `${d.scenarioName} - ${d.name}`,
-        target: incomeTarget,
+        target: Math.round(incomeTarget),
         stack: [
           {
             name: "Current total household income",
             title: "Current total household income",
-            value: currentTotalIncome,
-            total: currentTotalIncome,
+            value: Math.round(currentTotalIncome),
+            total: Math.round(currentTotalIncome),
             color: "#1B625F",
             order: 1,
           },
           {
             name: "Additional income when income drivers are changed",
             title: "Additional income when income drivers are changed",
-            value: additionalValue,
-            total: additionalValue,
+            value: Math.round(additionalValue),
+            total: Math.round(additionalValue),
             color: "#49D985",
             order: 2,
           },
           {
             name: "Gap",
             title: "Gap",
-            value: gapValue,
-            total: gapValue,
+            value: Math.round(gapValue),
+            total: Math.round(gapValue),
             color: "#E06666",
             order: 3,
           },
@@ -716,7 +718,7 @@ const Scenario = ({
         },
         data: chartData.map((d) => ({
           name: "Benchmark",
-          value: d?.target ? d.target.toFixed(2) : 0,
+          value: d?.target ? Math.round(d.target) : 0,
         })),
       },
     ];
@@ -1145,8 +1147,18 @@ const Scenario = ({
         current scenario."
       />
       {/* Scenario Outcomes */}
-      <Col span={24}>
-        <Card className="info-card-wrapper" title="Scenario Outcomes">
+      <Col span={24} ref={elScenarioOutcomes}>
+        <Card
+          className="info-card-wrapper"
+          title="Scenario Outcomes"
+          // extra={
+          //   <SaveAsImageButton
+          //     elementRef={elScenarioOutcomes}
+          //     filename="Scenario Outcomes"
+          //     type="ghost-white"
+          //   />
+          // }
+        >
           <Space size="large" direction="vertical">
             <Select
               {...selectProps}
