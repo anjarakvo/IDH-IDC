@@ -308,6 +308,7 @@ class TestReferenceRoute:
                 "year": 2023,
                 "confidence_level": "High",
                 "range": "Sample Range",
+                "type": "Sample Type Area",
             }
         ]
 

@@ -71,6 +71,7 @@ class ReferenceValueList(TypedDict):
     year: int
     confidence_level: Optional[str]
     range: Optional[str]
+    type: Optional[str]
 
 
 class ReferenceData(Base):
