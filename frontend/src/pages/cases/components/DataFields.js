@@ -614,11 +614,19 @@ const DataFields = ({
                       key: "value",
                       title: "Value",
                       dataIndex: "value",
+                      render: (value) => value || "-",
                     },
                     {
                       key: "unit",
                       title: "Unit",
                       dataIndex: "unit",
+                      render: (value) => value || "-",
+                    },
+                    {
+                      key: "type",
+                      title: "Type",
+                      dataIndex: "type",
+                      render: (value) => value || "-",
                     },
                     {
                       key: "source",
