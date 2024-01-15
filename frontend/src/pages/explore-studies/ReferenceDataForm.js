@@ -29,27 +29,27 @@ const selectProps = {
 const confidenceLevelOptions = [
   {
     label: "High",
-    value: "high",
+    value: "High",
   },
-  { label: "Medium", value: "medium" },
-  { label: "Low", value: "low" },
-  { label: "Undefined", value: "undefined" },
+  { label: "Medium", value: "Medium" },
+  { label: "Low", value: "Low" },
+  { label: "Undefined", value: "Undefined" },
 ];
 
 const rangeOptions = [
-  { label: "Low value", value: "low value" },
-  { label: "Median value", value: "median value" },
+  { label: "Low value", value: "Low value" },
+  { label: "Median value", value: "Median value" },
   {
     label: "High value",
-    value: "high value",
+    value: "High value",
   },
 ];
 
 const typeOptions = [
-  { label: "Mean", value: "mean" },
-  { label: "Median", value: "median" },
-  { label: "Maximum", value: "maximum" },
-  { label: "Minimum", value: "minimum" },
+  { label: "Mean", value: "Mean" },
+  { label: "Median", value: "Median" },
+  { label: "Maximum", value: "Maximum" },
+  { label: "Minimum", value: "Minimum" },
 ];
 
 const sources = ["Farmfit", "Desk research", "IDH internal", "FAO", "Other"];
