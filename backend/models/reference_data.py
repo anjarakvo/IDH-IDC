@@ -35,7 +35,6 @@ class ReferenceDataDict(TypedDict):
     notes: Optional[str]
     confidence_level: Optional[str]
     range: Optional[str]
-    type: Optional[str]
     area: Optional[float]
     volume: Optional[float]
     price: Optional[float]
@@ -46,6 +45,11 @@ class ReferenceDataDict(TypedDict):
     cost_of_production_unit: Optional[str]
     diversified_income_unit: Optional[str]
     price_unit: Optional[str]
+    type_area: Optional[str]
+    type_volume: Optional[str]
+    type_price: Optional[str]
+    type_cost_of_production: Optional[str]
+    type_diversified_income: Optional[str]
 
 
 class ReferenceDataList(TypedDict):
@@ -65,7 +69,6 @@ class ReferenceValueList(TypedDict):
     unit: Optional[str]
     region: str
     year: int
-    type: Optional[str]
     confidence_level: Optional[str]
     range: Optional[str]
 
@@ -84,7 +87,6 @@ class ReferenceData(Base):
     notes = Column(String, nullable=True)
     confidence_level = Column(String, nullable=True)
     range = Column(String, nullable=True)
-    type = Column(String, nullable=True)
     area = Column(Float, nullable=True)
     volume = Column(Float, nullable=True)
     price = Column(Float, nullable=True)
@@ -98,6 +100,12 @@ class ReferenceData(Base):
     cost_of_production_unit = Column(String, nullable=True)
     diversified_income_unit = Column(String, nullable=True)
     price_unit = Column(String, nullable=True)
+    type_area = Column(String, nullable=True)
+    type_volume = Column(String, nullable=True)
+    type_price = Column(String, nullable=True)
+    type_cost_of_production = Column(String, nullable=True)
+    type_diversified_income = Column(String, nullable=True)
+
     created_by = Column(Integer, ForeignKey("user.id"))
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
@@ -132,7 +140,6 @@ class ReferenceData(Base):
         notes: Optional[str],
         confidence_level: Optional[str],
         range: Optional[str],
-        type: Optional[str],
         area: Optional[float],
         volume: Optional[float],
         price: Optional[float],
@@ -143,6 +150,11 @@ class ReferenceData(Base):
         cost_of_production_unit: Optional[str],
         diversified_income_unit: Optional[str],
         price_unit: Optional[str],
+        type_area: Optional[str],
+        type_volume: Optional[str],
+        type_price: Optional[str],
+        type_cost_of_production: Optional[str],
+        type_diversified_income: Optional[str],
         created_by: Optional[str],
         id: Optional[int] = None,
     ):
@@ -157,7 +169,6 @@ class ReferenceData(Base):
         self.notes = notes
         self.confidence_level = confidence_level
         self.range = range
-        self.type = type
         self.area = area
         self.volume = volume
         self.price = price
@@ -168,6 +179,11 @@ class ReferenceData(Base):
         self.cost_of_production_unit = cost_of_production_unit
         self.diversified_income_unit = diversified_income_unit
         self.price_unit = price_unit
+        self.type_area = type_area
+        self.type_volume = type_volume
+        self.type_price = type_price
+        self.type_cost_of_production = type_cost_of_production
+        self.type_diversified_income = type_diversified_income
         self.created_by = created_by
 
     def __repr__(self) -> int:
@@ -187,7 +203,6 @@ class ReferenceData(Base):
             "notes": self.notes,
             "confidence_level": self.confidence_level,
             "range": self.range,
-            "type": self.type,
             "area": self.area,
             "volume": self.volume,
             "price": self.price,
@@ -198,6 +213,11 @@ class ReferenceData(Base):
             "cost_of_production_unit": self.cost_of_production_unit,
             "diversified_income_unit": self.diversified_income_unit,
             "price_unit": self.price_unit,
+            "type_area": self.type_area,
+            "type_volume": self.type_volume,
+            "type_price": self.type_price,
+            "type_cost_of_production": self.type_cost_of_production,
+            "type_diversified_income": self.type_diversified_income,
         }
 
     @property
@@ -224,7 +244,6 @@ class ReferenceDataBase(BaseModel):
     notes: Optional[str] = None
     confidence_level: Optional[str] = None
     range: Optional[str] = None
-    type: Optional[str] = None
     area: Optional[float] = None
     volume: Optional[float] = None
     price: Optional[float] = None
@@ -235,6 +254,11 @@ class ReferenceDataBase(BaseModel):
     cost_of_production_unit: Optional[str] = None
     diversified_income_unit: Optional[str] = None
     price_unit: Optional[str] = None
+    type_area: Optional[str] = None
+    type_volume: Optional[str] = None
+    type_price: Optional[str] = None
+    type_cost_of_production: Optional[str] = None
+    type_diversified_income: Optional[str] = None
 
 
 class PaginatedReferenceDataResponse(BaseModel):
