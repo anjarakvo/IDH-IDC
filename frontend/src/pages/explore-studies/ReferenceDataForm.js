@@ -301,7 +301,7 @@ const ReferenceDataForm = ({
             <Col span={24}>
               <Card title="Details about the data">
                 <Row gutter={[16, 16]}>
-                  <Col span={8}>
+                  <Col span={12}>
                     <Form.Item
                       label={
                         <LabelWithTooltip
@@ -317,7 +317,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
+                  <Col span={12}>
                     <Form.Item
                       label={
                         <LabelWithTooltip
@@ -330,11 +330,11 @@ const ReferenceDataForm = ({
                       <Select {...selectProps} options={rangeOptions} />
                     </Form.Item>
                   </Col>
-                  <Col span={8}>
+                  {/* <Col span={8}>
                     <Form.Item label="Type" name="type">
                       <Select {...selectProps} options={typeOptions} />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                 </Row>
               </Card>
             </Col>
@@ -342,7 +342,7 @@ const ReferenceDataForm = ({
             <Col span={24}>
               <Card title="Drivers Value">
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item label="Area" name="area">
                       <InputNumber
                         keyboard={false}
@@ -350,7 +350,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Measurement Unit for Area"
                       name="area_size_unit"
@@ -358,10 +358,15 @@ const ReferenceDataForm = ({
                       <Input />
                     </Form.Item>
                   </Col>
+                  <Col span={8}>
+                    <Form.Item label="Type for Area" name="type_area">
+                      <Select {...selectProps} options={typeOptions} />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item label="Volume" name="volume">
                       <InputNumber
                         keyboard={false}
@@ -369,7 +374,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Measurement Unit for Volume"
                       name="volume_measurement_unit"
@@ -377,10 +382,15 @@ const ReferenceDataForm = ({
                       <Input />
                     </Form.Item>
                   </Col>
+                  <Col span={8}>
+                    <Form.Item label="Type for Volume" name="type_volume">
+                      <Select {...selectProps} options={typeOptions} />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item label="Price" name="price">
                       <InputNumber
                         keyboard={false}
@@ -388,7 +398,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Measurement Unit for Price"
                       name="price_unit"
@@ -396,10 +406,15 @@ const ReferenceDataForm = ({
                       <Input />
                     </Form.Item>
                   </Col>
+                  <Col span={8}>
+                    <Form.Item label="Type for Price" name="type_price">
+                      <Select {...selectProps} options={typeOptions} />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Cost of Production"
                       name="cost_of_production"
@@ -410,7 +425,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Measurement Unit for Cost of Production"
                       name="cost_of_production_unit"
@@ -418,10 +433,18 @@ const ReferenceDataForm = ({
                       <Input />
                     </Form.Item>
                   </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Type for Cost of Production"
+                      name="type_cost_of_production"
+                    >
+                      <Select {...selectProps} options={typeOptions} />
+                    </Form.Item>
+                  </Col>
                 </Row>
 
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Diversified Income"
                       name="diversified_income"
@@ -432,12 +455,20 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  <Col span={8}>
                     <Form.Item
                       label="Measurement Unit for Diversified Income"
                       name="diversified_income_unit"
                     >
                       <Input />
+                    </Form.Item>
+                  </Col>
+                  <Col span={8}>
+                    <Form.Item
+                      label="Type for Diversified Income"
+                      name="type_diversified_income"
+                    >
+                      <Select {...selectProps} options={typeOptions} />
                     </Form.Item>
                   </Col>
                 </Row>
