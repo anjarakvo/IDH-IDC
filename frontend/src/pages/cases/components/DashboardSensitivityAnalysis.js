@@ -367,21 +367,21 @@ const DashboardSensitivityAnalysis = ({
       {
         key: data.length + 11,
         name: "Total Focus Income",
-        current: segmentData.total_current_focus_income?.toFixed(2) || 0,
-        feasible: segmentData.total_feasible_focus_income?.toFixed(2) || 0,
+        current: segmentData.total_current_focus_income?.toFixed() || 0,
+        feasible: segmentData.total_feasible_focus_income?.toFixed() || 0,
         unitName: currencyUnit,
       },
       {
         key: data.length + 12,
         name: "Total Income",
-        current: segmentData.total_current_income?.toFixed(2) || 0,
-        feasible: segmentData.total_feasible_income?.toFixed(2) || 0,
+        current: segmentData.total_current_income?.toFixed() || 0,
+        feasible: segmentData.total_feasible_income?.toFixed() || 0,
         unitName: currencyUnit,
       },
       {
         key: data.length + 13,
         name: "Income Target",
-        current: segmentData.target?.toFixed(2) || 0,
+        current: segmentData.target?.toFixed() || 0,
         unitName: currencyUnit,
         render: (i) => {
           <div>test {i}</div>;

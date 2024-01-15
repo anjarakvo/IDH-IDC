@@ -202,12 +202,12 @@ const DataFields = ({
         data: [
           {
             name: "Current Income",
-            value: current,
+            value: Math.round(current),
             color: "#03625f",
           },
           {
             name: "Feasible Income",
-            value: feasible,
+            value: Math.round(feasible),
             color: "#82b2b2",
           },
         ],
@@ -549,9 +549,6 @@ const DataFields = ({
               }
             >
               <Chart
-                // title="Calculated Household Income"
-                // span={10}
-                // affix={true}
                 wrapper={false}
                 type="COLUMN-BAR"
                 data={chartData}
@@ -617,11 +614,19 @@ const DataFields = ({
                       key: "value",
                       title: "Value",
                       dataIndex: "value",
+                      render: (value) => value || "-",
                     },
                     {
                       key: "unit",
                       title: "Unit",
                       dataIndex: "unit",
+                      render: (value) => value || "-",
+                    },
+                    {
+                      key: "type",
+                      title: "Type",
+                      dataIndex: "type",
+                      render: (value) => value || "-",
                     },
                     {
                       key: "source",
