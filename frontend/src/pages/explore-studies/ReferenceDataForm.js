@@ -13,7 +13,6 @@ import {
   Tooltip,
   Space,
 } from "antd";
-// import { uniqBy, isEmpty } from "lodash";
 import { api } from "../../lib";
 import { InputNumberThousandFormatter } from "../cases/components";
 import { QuestionCircleOutlined } from "@ant-design/icons";
@@ -85,13 +84,6 @@ const ReferenceDataForm = ({
   const [loading, setLoading] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
-  // const [selectedCountry, setSelectedCountry] = useState(null);
-  // const [areaUnitName, setAreaUnitName] = useState(null);
-  // const [volumeUnitName, setVolumeUnitName] = useState(null);
-  // const [currencyUnitName, setCurrencyUnitName] = useState(null);
-  // const [copUnitName, setCopUnitName] = useState(null);
-  // const [priceUnitName, setPriceUnitName] = useState(null);
-
   const commodityOptions = window?.master?.commodity_categories?.flatMap((ct) =>
     ct.commodities.map((c) => ({
       label: c.name,
@@ -101,26 +93,6 @@ const ReferenceDataForm = ({
   );
   const countryOptions = window?.master?.countries || [];
 
-  // const filteredCurrencyOptions = useMemo(() => {
-  //   const currencyOptions = window?.master?.currencies || [];
-  //   if (!selectedCountry) {
-  //     return uniqBy(currencyOptions, "value");
-  //   }
-  //   const countryCurrency = currencyOptions.find(
-  //     (co) => co.country === selectedCountry
-  //   );
-  //   // set default currency value
-  //   if (isEmpty(initValues)) {
-  //     form.setFieldsValue({ currency: countryCurrency?.value });
-  //   }
-  //   // TODO: Wrong format when store to db
-  //   let additonalCurrencies = currencyOptions.filter((co) =>
-  //     ["eur", "usd"].includes(co.value.toLowerCase())
-  //   );
-  //   additonalCurrencies = uniqBy(additonalCurrencies, "value");
-  //   return [countryCurrency, ...additonalCurrencies];
-  // }, [selectedCountry, form, initValues]);
-
   useEffect(() => {
     setInitValues({});
     form.resetFields();
@@ -129,26 +101,6 @@ const ReferenceDataForm = ({
       api
         .get(`reference_data/${referenceDataId}`)
         .then((res) => {
-          // const {
-          //   country,
-          //   area_size_unit,
-          //   currency,
-          //   volume_measurement_unit,
-          //   cost_of_production_unit,
-          //   price_unit,
-          // } = res.data;
-          // // handle Volume unit
-          // if (area_size_unit && volume_measurement_unit) {
-          //   setVolumeUnitName(`${volume_measurement_unit} / ${area_size_unit}`);
-          // } else {
-          //   setVolumeUnitName(null);
-          // }
-          // // EOL handle Volume unit
-          // setSelectedCountry(country || null);
-          // setAreaUnitName(area_size_unit || null);
-          // setCopUnitName(cost_of_production_unit || null);
-          // setCurrencyUnitName(currency || null);
-          // setPriceUnitName(price_unit || null);
           setInitValues(res.data);
         })
         .finally(() => {
@@ -157,65 +109,9 @@ const ReferenceDataForm = ({
     }
   }, [referenceDataId, form]);
 
-  // const onChange = (_, allValues) => {
-  //   const {
-  //     commodity,
-  //     currency,
-  //     area_size_unit,
-  //     volume_measurement_unit,
-  //     country,
-  //   } = allValues;
-  //   setSelectedCountry(country);
-  //   setCurrencyUnitName(currency);
-  //   setAreaUnitName(area_size_unit);
-  //   // handle CoP unit
-  //   const findCommodityCategory = commodityOptions.find(
-  //     (co) => co.value === commodity
-  //   )?.category;
-  //   if (findCommodityCategory?.toLowerCase() === "crop") {
-  //     if (currency && area_size_unit) {
-  //       setCopUnitName(`${currency} / ${area_size_unit}`);
-  //     } else {
-  //       setCopUnitName(null);
-  //     }
-  //   }
-  //   if (
-  //     ["aquaculture", "livestock"].includes(
-  //       findCommodityCategory?.toLowerCase()
-  //     )
-  //   ) {
-  //     if (currency && volume_measurement_unit) {
-  //       setCopUnitName(`${currency} / ${volume_measurement_unit}`);
-  //     } else {
-  //       setCopUnitName(null);
-  //     }
-  //   }
-  //   // EOL handle CoP unit
-  //   // handle Volume unit
-  //   if (area_size_unit && volume_measurement_unit) {
-  //     setVolumeUnitName(`${volume_measurement_unit} / ${area_size_unit}`);
-  //   } else {
-  //     setVolumeUnitName(null);
-  //   }
-  //   // EOL handle Volume unit
-  //   // handle Price unit
-  //   if (currency && volume_measurement_unit) {
-  //     setPriceUnitName(`${currency} / ${volume_measurement_unit}`);
-  //   } else {
-  //     setPriceUnitName(null);
-  //   }
-  //   // EOL handle Volume unit
-  // };
-
   const clearForm = () => {
     form.resetFields();
     setInitValues({});
-    // setSelectedCountry(null);
-    // setAreaUnitName(null);
-    // setVolumeUnitName(null);
-    // setCurrencyUnitName(null);
-    // setCopUnitName(null);
-    // setPriceUnitName(null);
   };
 
   const onFinish = (values) => {
@@ -223,10 +119,6 @@ const ReferenceDataForm = ({
     const payload = {
       ...values,
       currency: "",
-      // area_size_unit: areaUnitName,
-      // cost_of_production_unit: copUnitName,
-      // diversified_income_unit: values?.currency,
-      // price_unit: priceUnitName,
     };
     onSave({
       payload: payload,
@@ -266,7 +158,6 @@ const ReferenceDataForm = ({
           layout="vertical"
           initialValues={initValues}
           onFinish={onFinish}
-          // onValuesChange={onChange}
           className="reference-form-container"
         >
           <Row gutter={[16, 16]}>
@@ -445,22 +336,6 @@ const ReferenceDataForm = ({
                     </Form.Item>
                   </Col>
                 </Row>
-
-                {/* <Row gutter={[16, 16]}>
-                  <Col span={12}>
-                    <Form.Item label="Area Unit" name="area_size_unit">
-                      <Select {...selectProps} options={areaUnitOptions} />
-                    </Form.Item>
-                  </Col>
-                  <Col span={12}>
-                    <Form.Item
-                      label="Weight Measurement Unit"
-                      name="volume_measurement_unit"
-                    >
-                      <Select {...selectProps} options={volumeUnitOptions} />
-                    </Form.Item>
-                  </Col>
-                </Row> */}
               </Card>
             </Col>
 
