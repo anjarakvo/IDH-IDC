@@ -126,9 +126,15 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
           } else {
             name = negative.name;
             seriesName = negative.seriesName;
-            value = (negative.value * -1)?.toFixed(2);
+            value = negative.value * -1;
           }
-          return name + "<br/>" + seriesName + " : " + thousandFormatter(value);
+          return (
+            name +
+            "<br/>" +
+            seriesName +
+            " : " +
+            thousandFormatter(value.toFixed(2))
+          );
         },
       },
       grid: {
