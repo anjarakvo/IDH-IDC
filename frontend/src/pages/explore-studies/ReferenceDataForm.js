@@ -343,7 +343,7 @@ const ReferenceDataForm = ({
               <Card title="Drivers Value">
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
-                    <Form.Item label="Area" name="area">
+                    <Form.Item label="Land" name="area">
                       <InputNumber
                         keyboard={false}
                         {...InputNumberThousandFormatter}
@@ -352,14 +352,14 @@ const ReferenceDataForm = ({
                   </Col>
                   <Col span={8}>
                     <Form.Item
-                      label="Measurement Unit for Area"
+                      label="Measurement Unit for Land"
                       name="area_size_unit"
                     >
                       <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
-                    <Form.Item label="Type for Area" name="type_area">
+                    <Form.Item label="Type for Land" name="type_area">
                       <Select {...selectProps} options={typeOptions} />
                     </Form.Item>
                   </Col>

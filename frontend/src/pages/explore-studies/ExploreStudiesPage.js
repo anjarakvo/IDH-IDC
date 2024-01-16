@@ -81,7 +81,7 @@ const referenceDataExpand = [
   },
   {
     key: "area",
-    label: "Area",
+    label: "Land",
     unit: "area_size_unit",
     type: "type_area",
   },

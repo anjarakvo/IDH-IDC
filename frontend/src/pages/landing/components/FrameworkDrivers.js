@@ -16,15 +16,15 @@ const FrameworkDrivers = () => {
   const items = [
     {
       key: "1",
-      label: "Area",
-      children: <p>The size of the area used to grow the focus commodity.</p>,
+      label: "Land",
+      children: <p>The size of the land used to grow the focus commodity.</p>,
     },
     {
       key: "2",
       label: "Volume",
       children: (
         <p>
-          The quantity per unit area, taking into account both yield and
+          The quantity per unit land, taking into account both yield and
           potential loss.
         </p>
       ),
@@ -88,7 +88,7 @@ const FrameworkDrivers = () => {
             <div className="driver-icon-wrapper land-area-icon">
               <LandAreaIcon />
             </div>
-            <div className="driver-label">Area</div>
+            <div className="driver-label">Land</div>
           </Space>
           <div className="math-symbol">x</div>
           <Space direction="vertical" align="center">

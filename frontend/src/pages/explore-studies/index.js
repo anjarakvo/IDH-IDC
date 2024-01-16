@@ -1,6 +1,6 @@
 export const driverOptions = [
   {
-    label: "Area",
+    label: "Land",
     value: "area",
   },
   {
