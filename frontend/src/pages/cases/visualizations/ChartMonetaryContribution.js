@@ -128,12 +128,9 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
             seriesName = negative.seriesName;
             value = negative.value * -1;
           }
+          value = thousandFormatter(value);
           return (
-            name +
-            "<br/>" +
-            seriesName +
-            " : " +
-            thousandFormatter(value.toFixed(2))
+            name + "<br/>" + seriesName + " : " + parseFloat(value)?.toFixed(2)
           );
         },
       },
