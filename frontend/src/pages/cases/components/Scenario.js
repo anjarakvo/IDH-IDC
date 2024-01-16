@@ -508,7 +508,12 @@ const Scenario = ({
   const [selectedScenarioSegmentChart, setSelectedScenarioSegmentChart] =
     useState([]);
   const [selectedSegment, setSelectedSegment] = useState(null);
+  const [currentScenarioIncomeGap, setCurrentScenarioIncomeGap] = useState({
+    chartData: [],
+    targetChartData: [],
+  });
 
+  const elCurrentScenarioIncomeGap = useRef(null);
   const elIncomeGapScenario = useRef(null);
   const elScenarioOutcomes = useRef(null);
 
@@ -627,7 +632,7 @@ const Scenario = ({
       ? scenarioData.filter((sd) => sd.key === scenarioItem.key)
       : scenarioData.filter((sd) => scenarioKeys.includes(sd.key));
 
-    const data = filterScenarioData.flatMap((sd) => {
+    let data = filterScenarioData.flatMap((sd) => {
       const segments = scenarioValues.map((sv) => {
         return {
           ...sv,
@@ -643,6 +648,7 @@ const Scenario = ({
       });
       return segments;
     });
+    data = orderBy(data, ["scenarioSegmentKey"]);
 
     if (!isEmpty(selectedScenarioSegmentChart)) {
       return data.filter((d) =>
@@ -676,16 +682,16 @@ const Scenario = ({
         target: Math.round(incomeTarget),
         stack: [
           {
-            name: "Current total household income",
-            title: "Current total household income",
+            name: "Current total\nhousehold income",
+            title: "Current total\nhousehold income",
             value: Math.round(currentTotalIncome),
             total: Math.round(currentTotalIncome),
             color: "#1B625F",
             order: 1,
           },
           {
-            name: "Additional income when income drivers are changed",
-            title: "Additional income when income drivers are changed",
+            name: "Additional income\nwhen income drivers\nare changed",
+            title: "Additional income\nwhen income drivers\nare changed",
             value: Math.round(additionalValue),
             total: Math.round(additionalValue),
             color: "#49D985",
@@ -702,11 +708,15 @@ const Scenario = ({
         ],
       };
     });
+
+    if (isEmpty(selectedScenarioSegmentChart)) {
+      setCurrentScenarioIncomeGap((prev) => ({ ...prev, chartData: data }));
+    }
     return data;
-  }, [combineScenarioDataWithDashboardData]);
+  }, [combineScenarioDataWithDashboardData, selectedScenarioSegmentChart]);
 
   const targetChartData = useMemo(() => {
-    return [
+    const target = [
       {
         name: "Income Target",
         type: "line",
@@ -722,7 +732,15 @@ const Scenario = ({
         })),
       },
     ];
-  }, [chartData]);
+
+    if (isEmpty(selectedScenarioSegmentChart)) {
+      setCurrentScenarioIncomeGap((prev) => ({
+        ...prev,
+        targetChartData: target,
+      }));
+    }
+    return target;
+  }, [chartData, selectedScenarioSegmentChart]);
 
   const ButtonEdit = () => (
     <Button
@@ -1053,8 +1071,13 @@ const Scenario = ({
             children: dashboardData
               .filter((d) => d.id === activeTab)
               .map((segment) => (
-                <Row key={segment.id} gutter={[24, 24]}>
-                  <Col span={16}>
+                <Row
+                  key={segment.id}
+                  gutter={[24, 24]}
+                  align="center"
+                  ref={elCurrentScenarioIncomeGap}
+                >
+                  <Col span={12}>
                     <Card
                       className="info-card-wrapper"
                       title="Income Driver Values"
@@ -1074,7 +1097,7 @@ const Scenario = ({
                       />
                     </Card>
                   </Col>
-                  <Col span={8}>
+                  <Col span={12}>
                     <h2>
                       Input values for the various income drivers for each
                       segments
@@ -1084,6 +1107,25 @@ const Scenario = ({
                       income and gap to the income target for the different
                       segments in this scenario.
                     </p>
+                    <Card
+                      className="chart-card-wrapper"
+                      title="Income Gap for current scenario"
+                      extra={
+                        <SaveAsImageButton
+                          elementRef={elCurrentScenarioIncomeGap}
+                          filename="Calculated household income and gap to the income target for the different segments in this scenario."
+                          type="ghost-white"
+                        />
+                      }
+                    >
+                      <ChartScenarioModeling
+                        data={currentScenarioIncomeGap.chartData || []}
+                        targetChartData={
+                          currentScenarioIncomeGap.targetChartData
+                        }
+                        currencyUnitName={currencyUnitName}
+                      />
+                    </Card>
                   </Col>
                 </Row>
               )),
