@@ -14,14 +14,14 @@ $card-head-min-height: 42px;
 
 @font-face {
   font-family: "TabletGothic";
-  src: url("/assets/fonts/TabletGothic.woff2") format("woff2");
+  src: url("/assets/fonts/TabletGothic.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
 }
 
 @font-face {
   font-family: "TabletGothicBold";
-  src: url("/assets/fonts/TabletGothic-Bold.woff2") format("woff2");
+  src: url("/assets/fonts/TabletGothic-Bold.otf") format("opentype");
   font-weight: 700;
   font-style: normal;
 }

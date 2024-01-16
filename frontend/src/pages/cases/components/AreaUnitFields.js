@@ -16,18 +16,18 @@ const AreaUnitFields = ({ disabled = true, index = 0 }) => {
     <Row gutter={[12, 12]}>
       <Col {...responsiveCol}>
         <Form.Item
-          label="Area Unit"
+          label="Land Unit"
           name={index ? `${index}-area_size_unit` : "area_size_unit"}
           rules={[
             {
               required: !disabled,
-              message: "Area Unit is required",
+              message: "Land Unit is required",
             },
           ]}
         >
           <Select
             disabled={disabled}
-            placeholder="Select Area Unit"
+            placeholder="Select Land Unit"
             options={areaUnitOptions}
             {...selectProps}
           />

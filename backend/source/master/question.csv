@@ -1,10 +1,10 @@
 id,parent,text,description,unit,default_value,question_type
 1,,Income,"Crop, Aquaculture, Livestock",currency,( #2 * #3 * #4 ) - ( ( #5 * #2 ) + ( #26 * #3 * #2 ) ) + #7,aggregator
-2,1,Area,"Crop, Aquaculture, Livestock",area_size_unit,,question
+2,1,Land,"Crop, Aquaculture, Livestock",area_size_unit,,question
 3,1,Volume,"Crop, Aquaculture, Livestock",volume_measurement_unit / area_size_unit,#8 - #9,question
 4,1,Price,"Crop, Aquaculture, Livestock",currency / volume_measurement_unit,,question
 5,1,Cost of Production,"Crop",currency / area_size_unit,,question
-6,2,Land Size,Crop,area_size_unit,,question
+6,2,Land,Crop,area_size_unit,,question
 7,2,Area Under Production,Aquaculture,currency,,question
 8,3,Yield,"Crop, Aquaculture",volume_measurement_unit / area_size_unit,,question
 9,3,Loss,"Crop, Aquaculture",volume_measurement_unit / area_size_unit,,question
