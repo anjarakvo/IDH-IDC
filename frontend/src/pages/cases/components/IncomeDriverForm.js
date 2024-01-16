@@ -7,7 +7,7 @@ import {
   InputNumberThousandFormatter,
 } from "./";
 import { flatten } from "../../../lib";
-import isEmpty from "lodash/isEmpty";
+import { isEmpty, orderBy } from "lodash";
 import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
 
 const IncomeDriverForm = ({
@@ -223,7 +223,7 @@ const IncomeDriverForm = ({
         form={form}
         onValuesChange={onValuesChange}
       >
-        {group.questions.map((question, questionIndex) => (
+        {orderBy(group.questions, ["id"]).map((question, questionIndex) => (
           <Questions
             key={question.id}
             indent={!groupIndex ? 0 : indentSize}

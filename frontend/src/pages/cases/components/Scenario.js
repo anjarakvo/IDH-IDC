@@ -167,7 +167,7 @@ const Question = ({
       </Row>
       {/* Render questions */}
       {!parent && commodity_type === "focus"
-        ? childrens.map((child) => (
+        ? orderBy(childrens, ["id"]).map((child) => (
             <Question
               key={`scenario-${segment.id}-${case_commodity}-${child.id}`}
               commodity={commodity}
@@ -421,7 +421,7 @@ const ScenarioInput = ({
       {commodityQuestions.map((c) => (
         <div key={c.commodity_id}>
           <Divider />
-          {c.questions.map((question) => (
+          {orderBy(c.questions, ["id"]).map((question) => (
             <Question
               key={`scenario-${segment.id}-${c.case_commodity}-${question.id}`}
               form={form}

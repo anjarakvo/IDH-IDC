@@ -17,6 +17,7 @@ import {
   InfoCircleTwoTone,
 } from "@ant-design/icons";
 import { InputNumberThousandFormatter, indentSize, regexQuestionId } from "./";
+import orderBy from "lodash/orderBy";
 
 const commoditiesBreakdown = ["secondary", "tertiary"];
 
@@ -221,7 +222,7 @@ const Questions = ({
         </Col>
       </Row>
       {!collapsed && (checkFocus || checkBreakdownValue)
-        ? childrens.map((child) => (
+        ? orderBy(childrens, ["id"]).map((child) => (
             <Questions
               key={child.id}
               units={units}
