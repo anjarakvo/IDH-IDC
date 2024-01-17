@@ -17,3 +17,4 @@ export const checkPasswordCriteria = (value) => {
 
 export { default as SaveAsImageButton } from "./SaveAsImageButton";
 export { default as PasswordCriteria } from "./PasswordCriteria";
+export { default as ShowLabelButton } from "./ShowLabelButton";

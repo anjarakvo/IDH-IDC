@@ -38,6 +38,7 @@ const ColumnBar = ({
   extra = {},
   horizontal = false,
   grid = {},
+  showLabel = true,
 }) => {
   if (isEmpty(data) || !data) {
     return NoData;
@@ -69,7 +70,7 @@ const ColumnBar = ({
         ...LabelStyle.label,
         colorBy: "data",
         position: horizontal ? "insideLeft" : "top",
-        show: true,
+        show: showLabel,
         padding: 5,
         backgroundColor: "rgba(0,0,0,.3)",
         ...TextStyle,
@@ -138,9 +139,10 @@ const ColumnBar = ({
         width: horizontal ? 90 : "auto",
         overflow: horizontal ? "break" : "none",
         interval: 0,
+        rotate: 45,
+        margin: 25,
         ...TextStyle,
         color: "#4b4b4e",
-        // rotate: 45,
         formatter: AxisShortLabelFormatter?.formatter,
       },
       axisTick: {

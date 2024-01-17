@@ -35,6 +35,8 @@ export const generateOptions = (
         extra: extra,
         horizontal: horizontal,
         highlighted: highlighted,
+        grid: grid,
+        showLabel: showLabel,
       });
     default:
       return Bar({
@@ -86,7 +88,7 @@ const Chart = ({
   override = false,
   affix = false,
   targetData = [], // to show income target symbol,
-  showLabel = false,
+  showLabel = true,
 }) => {
   const elementRef = useRef(null);
 

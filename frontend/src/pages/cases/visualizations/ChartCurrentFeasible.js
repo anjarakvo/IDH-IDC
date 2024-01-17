@@ -97,7 +97,7 @@ const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
       },
     ];
   }, [chartData]);
-  console.log(showLabel);
+
   return (
     <>
       <Button onClick={() => setShowLabel(!showLabel)}>Show Label</Button>
