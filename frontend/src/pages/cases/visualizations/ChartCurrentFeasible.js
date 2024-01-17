@@ -1,8 +1,11 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import Chart from "../../../components/chart";
 import { incomeTargetChartOption } from "../../../components/chart/options/common";
+import { Button } from "antd";
 
 const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
+  const [showLabel, setShowLabel] = useState(false);
+
   const chartData = useMemo(() => {
     return dashboardData.reduce((c, d) => {
       return [
@@ -94,20 +97,24 @@ const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
       },
     ];
   }, [chartData]);
-
+  console.log(showLabel);
   return (
-    <Chart
-      wrapper={false}
-      type="BARSTACK"
-      data={chartData}
-      affix={true}
-      loading={!chartData.length || !targetChartData.length}
-      targetData={targetChartData}
-      extra={{ axisTitle: { y: `Income (${currentCase.currency})` } }}
-      grid={{
-        right: 250,
-      }}
-    />
+    <>
+      <Button onClick={() => setShowLabel(!showLabel)}>Show Label</Button>
+      <Chart
+        wrapper={false}
+        type="BARSTACK"
+        data={chartData}
+        affix={true}
+        loading={!chartData.length || !targetChartData.length}
+        targetData={targetChartData}
+        extra={{ axisTitle: { y: `Income (${currentCase.currency})` } }}
+        grid={{
+          right: 250,
+        }}
+        showLabel={showLabel}
+      />
+    </>
   );
 };
 

@@ -54,6 +54,7 @@ const BarStack = ({
   highlighted = null,
   targetData = [], // to show income target symbol
   grid = {},
+  showLabel = false,
 }) => {
   if (isEmpty(data) || !data) {
     return NoData;
@@ -135,6 +136,7 @@ const BarStack = ({
       ...d,
       label: {
         ...LabelStyle.label,
+        show: showLabel,
         position: "right",
       },
     };
@@ -201,6 +203,7 @@ const BarStack = ({
         overflow: "break",
         ...TextStyle,
         color: "#4b4b4e",
+        // rotate: 45,
         formatter: horizontal
           ? AxisShortLabelFormatter?.formatter
           : AxisLabelFormatter?.formatter,
