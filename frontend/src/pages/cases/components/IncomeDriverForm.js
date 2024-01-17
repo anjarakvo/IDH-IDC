@@ -1,14 +1,19 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Row, Col, Space, Form, InputNumber } from "antd";
+import { Row, Col, Space, Form, InputNumber, Tooltip } from "antd";
 import {
   Questions,
   indentSize,
   getFunctionDefaultValue,
   InputNumberThousandFormatter,
+  diversifiedIncomeTooltipText,
 } from "./";
 import { flatten } from "../../../lib";
 import { isEmpty, orderBy } from "lodash";
-import { CaretDownFilled, CaretUpFilled } from "@ant-design/icons";
+import {
+  CaretDownFilled,
+  CaretUpFilled,
+  InfoCircleTwoTone,
+} from "@ant-design/icons";
 
 const IncomeDriverForm = ({
   group,
@@ -159,7 +164,17 @@ const IncomeDriverForm = ({
           // style={{ marginLeft: "-4px", marginRight: "-4px" }}
         >
           <Col span={13}>
-            <h3 className="diversified-income-title">Diversified Income</h3>
+            <Space size="small" align="center">
+              <h3 className="diversified-income-title">Diversified Income</h3>
+              {diversifiedIncomeTooltipText && (
+                <Tooltip title={diversifiedIncomeTooltipText}>
+                  <InfoCircleTwoTone
+                    twoToneColor="#1677ff"
+                    style={{ marginBottom: "8px" }}
+                  />
+                </Tooltip>
+              )}
+            </Space>
           </Col>
           <Col span={4}>
             <InputNumber

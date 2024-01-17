@@ -357,14 +357,22 @@ const DataFields = ({
                     hoverable={false}
                   >
                     <Row gutter={[8, 8]} align="middle">
-                      <Col span={14}></Col>
-                      <Col span={4}>
-                        <h4>Current</h4>
+                      <Col span={13}></Col>
+                      <Col span={4} align="center">
+                        <h4>
+                          Current level
+                          <br />
+                          per year
+                        </h4>
                       </Col>
-                      <Col span={4}>
-                        <h4>Feasible</h4>
+                      <Col span={4} align="center">
+                        <h4>
+                          Feasible level
+                          <br />
+                          per year
+                        </h4>
                       </Col>
-                      <Col span={2}></Col>
+                      <Col span={3}></Col>
                     </Row>
                     <Row
                       gutter={[8, 8]}

@@ -7,7 +7,7 @@ import {
   InputNumber,
   Space,
   Switch,
-  Popover,
+  Tooltip,
 } from "antd";
 import {
   CaretDownFilled,
@@ -54,6 +54,7 @@ const Questions = ({
   commodityName,
   allQuestions,
   text,
+  description,
   unit,
   units,
   form,
@@ -95,11 +96,19 @@ const Questions = ({
     .join(" / ");
 
   useEffect(() => {
+    let info = null;
+    if (description) {
+      info = description;
+    }
     if (default_value) {
       const fnText = getQuestionFunctionInfo(allQuestions, default_value);
+      info = info ? `${info} [ ${fnText} ]` : fnText;
       setInfoText(fnText);
     }
-  }, [default_value, allQuestions]);
+    if (info) {
+      setInfoText(info);
+    }
+  }, [description, allQuestions, default_value]);
 
   useEffect(() => {
     if (currentValue && feasibleValue) {
@@ -137,7 +146,7 @@ const Questions = ({
               : 10,
           }}
         >
-          <Space size="small">
+          <Space size="small" align="center">
             {childrens.length > 0 && question_type !== "aggregator" && (
               <Button
                 type="link"
@@ -157,9 +166,12 @@ const Questions = ({
               </h4>
             ) : null}
             {infoText.length && !hidden ? (
-              <Popover content={<div className="fn-info">{infoText}</div>}>
-                <InfoCircleTwoTone twoToneColor="#1677ff" />
-              </Popover>
+              <Tooltip title={infoText}>
+                <InfoCircleTwoTone
+                  twoToneColor="#1677ff"
+                  style={{ marginBottom: "6px" }}
+                />
+              </Tooltip>
             ) : null}
           </Space>
         </Col>
