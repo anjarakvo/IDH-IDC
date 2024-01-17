@@ -349,6 +349,7 @@
     .fn-info {
       font-family: "TabletGothic" !important;
       font-size: 12px;
+      max-width: 60%;
     }
   }
 }
@@ -364,4 +365,6 @@
 
 .ant-tooltip-inner {
   background-color: #1b625f !important;
+  font-family: "TabletGothic" !important;
+  font-size: 12px;
 }
