@@ -17,7 +17,7 @@ sys.path.append(BASE_DIR)
 def seeder_question(session: Session):
     truncatedb(session=session, table="commodity_category_question")
 
-    # Quesion
+    # Question
     # truncatedb(session=session, table="question")
     data = pd.read_csv(MASTER_DIR + "question.csv")
     data.replace({np.nan: None}, inplace=True)
@@ -27,14 +27,16 @@ def seeder_question(session: Session):
             "parent",
             "text",
             "unit",
-            "description",
             "question_type",
             "default_value",
+            "description",
         ]
     ]
     for index, row in question.iterrows():
         # find prev question
-        question = session.query(Question).filter(Question.id == row["id"]).first()
+        question = (
+            session.query(Question).filter(Question.id == row["id"]).first()
+        )
         if question:
             # update
             question.parent = row["parent"]
@@ -64,8 +66,8 @@ def seeder_question(session: Session):
     # Commodity Category Question
     commodities = pd.read_csv(MASTER_DIR + "commodities.csv")
     commodity_group = commodities[["group_id", "group_name"]]
-    data = data.dropna(subset=["description"])
-    data["commodity_group_names"] = data["description"].apply(
+    data = data.dropna(subset=["commodity_category"])
+    data["commodity_group_names"] = data["commodity_category"].apply(
         lambda x: [i.strip() for i in x.split(",")]
     )
     group_question = data.explode("commodity_group_names")
