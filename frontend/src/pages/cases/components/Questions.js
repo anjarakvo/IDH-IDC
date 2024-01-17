@@ -16,41 +16,41 @@ import {
   CaretUpFilled,
   InfoCircleTwoTone,
 } from "@ant-design/icons";
-import { InputNumberThousandFormatter, indentSize, regexQuestionId } from "./";
+import { InputNumberThousandFormatter, indentSize } from "./";
 import orderBy from "lodash/orderBy";
 
 const commoditiesBreakdown = ["secondary", "tertiary"];
 
-const getQuestionFunctionInfo = (allQuestions, fnString) => {
-  const fn = fnString.split(" ");
-  const fnName = fn.reduce((acc, f) => {
-    const id = f.match(regexQuestionId);
-    const question = allQuestions.find((q) => q.id.toString() === id?.[1]);
-    if (question) {
-      acc.push(question.text);
-      return acc;
-    }
-    if (id) {
-      return acc;
-    }
-    if (f === "*") {
-      acc.push("x");
-      return acc;
-    }
-    acc.push(f);
-    return acc;
-  }, []);
-  // remove if last element is *+-
-  if (["*", "+", "-"].includes(fnName[fnName.length - 1])) {
-    fnName.pop();
-  }
-  return fnName.join(" ");
-};
+// const getQuestionFunctionInfo = (allQuestions, fnString) => {
+//   const fn = fnString.split(" ");
+//   const fnName = fn.reduce((acc, f) => {
+//     const id = f.match(regexQuestionId);
+//     const question = allQuestions.find((q) => q.id.toString() === id?.[1]);
+//     if (question) {
+//       acc.push(question.text);
+//       return acc;
+//     }
+//     if (id) {
+//       return acc;
+//     }
+//     if (f === "*") {
+//       acc.push("x");
+//       return acc;
+//     }
+//     acc.push(f);
+//     return acc;
+//   }, []);
+//   // remove if last element is *+-
+//   if (["*", "+", "-"].includes(fnName[fnName.length - 1])) {
+//     fnName.pop();
+//   }
+//   return fnName.join(" ");
+// };
 
 const Questions = ({
   id,
   question_type,
-  default_value,
+  // default_value,
   commodityName,
   allQuestions,
   text,
@@ -100,15 +100,15 @@ const Questions = ({
     if (description) {
       info = description;
     }
-    if (default_value) {
-      const fnText = getQuestionFunctionInfo(allQuestions, default_value);
-      info = info ? `${info} [ ${fnText} ]` : fnText;
-      setInfoText(fnText);
-    }
+    // if (default_value) {
+    //   const fnText = getQuestionFunctionInfo(allQuestions, default_value);
+    //   info = info ? `${info} [ ${fnText} ]` : fnText;
+    //   setInfoText(fnText);
+    // }
     if (info) {
       setInfoText(info);
     }
-  }, [description, allQuestions, default_value]);
+  }, [description]);
 
   useEffect(() => {
     if (currentValue && feasibleValue) {
