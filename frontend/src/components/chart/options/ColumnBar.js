@@ -46,6 +46,8 @@ const ColumnBar = ({
 
   // Custom Axis Title
   const { xAxisTitle, yAxisTitle } = axisTitle(extra);
+  const xAxisLabel = extra?.xAxisLabel || {};
+
   data = sortBy(data, "order");
 
   const labels = data.map((x) => x.name);
@@ -139,11 +141,10 @@ const ColumnBar = ({
         width: horizontal ? 90 : "auto",
         overflow: horizontal ? "break" : "none",
         interval: 0,
-        rotate: 45,
-        margin: 25,
         ...TextStyle,
         color: "#4b4b4e",
         formatter: AxisShortLabelFormatter?.formatter,
+        ...xAxisLabel,
       },
       axisTick: {
         alignWithLabel: true,

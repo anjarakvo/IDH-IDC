@@ -1,5 +1,5 @@
-import React, { useRef } from "react";
-import { Row, Col, Card } from "antd";
+import React, { useRef, useState } from "react";
+import { Row, Col, Card, Space } from "antd";
 import {
   ChartCurrentFeasible,
   ChartIncomeGap,
@@ -8,7 +8,7 @@ import {
   ChartExploreBreakdownDrivers,
   ChartIncomeLevelPerCommodities,
 } from "../visualizations";
-import { SaveAsImageButton } from "../../../components/utils";
+import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 
 const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
   const elCurrentFeasibleChart = useRef(null);
@@ -17,6 +17,10 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
   const elExploreBreakdownDrivers = useRef(null);
   const elMonetaryContribution = useRef(null);
   const elIncomeLevelPerCommodities = useRef(null);
+
+  const [showLabelChartCurrentFeasible, setShowLabelChartCurrentFeasible] =
+    useState(false);
+  const [showLabelChartIncomeGap, setShowLabelChartIncomeGap] = useState(false);
 
   return (
     <Row
@@ -35,17 +39,25 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               className="chart-card-wrapper"
               title="Current and feasible income"
               extra={
-                <SaveAsImageButton
-                  elementRef={elCurrentFeasibleChart}
-                  filename="What are the current and feasible income levels for the
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartCurrentFeasible}
+                    setShowLabel={setShowLabelChartCurrentFeasible}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elCurrentFeasibleChart}
+                    filename="What are the current and feasible income levels for the
                   different segments?"
-                  type="ghost-white"
-                />
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <ChartCurrentFeasible
                 dashboardData={dashboardData}
                 currentCase={currentCase}
+                showLabel={showLabelChartCurrentFeasible}
               />
             </Card>
           </Col>
@@ -80,16 +92,24 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               className="chart-card-wrapper"
               title="Income Gap"
               extra={
-                <SaveAsImageButton
-                  elementRef={elIncomeGap}
-                  filename="How big is the income gap?"
-                  type="ghost-white"
-                />
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartIncomeGap}
+                    setShowLabel={setShowLabelChartIncomeGap}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elIncomeGap}
+                    filename="How big is the income gap?"
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <ChartIncomeGap
                 dashboardData={dashboardData}
                 currentCase={currentCase}
+                showLabel={showLabelChartIncomeGap}
               />
             </Card>
           </Col>

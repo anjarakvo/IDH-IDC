@@ -3,7 +3,7 @@ import {
   Color,
   TextStyle,
   backgroundColor,
-  AxisLabelFormatter,
+  // AxisLabelFormatter,
   AxisShortLabelFormatter,
   Legend,
   Title,
@@ -61,6 +61,7 @@ const BarStack = ({
   }
   // Custom Axis Title
   const { xAxisTitle, yAxisTitle } = axisTitle(extra);
+  const xAxisLabel = extra?.xAxisLabel || {};
 
   const stacked = uniqBy(flatten(data.map((d) => d.stack)), "title") || [];
 
@@ -158,7 +159,7 @@ const BarStack = ({
     },
     grid: {
       top: 25,
-      bottom: 28,
+      bottom: grid?.bottom ? grid.bottom : 28,
       left: 50,
       right: grid?.right ? grid.right : 150,
       show: true,
@@ -203,10 +204,8 @@ const BarStack = ({
         overflow: "break",
         ...TextStyle,
         color: "#4b4b4e",
-        // rotate: 45,
-        formatter: horizontal
-          ? AxisShortLabelFormatter?.formatter
-          : AxisLabelFormatter?.formatter,
+        formatter: AxisShortLabelFormatter?.formatter,
+        ...xAxisLabel,
       },
       axisTick: {
         alignWithLabel: true,
