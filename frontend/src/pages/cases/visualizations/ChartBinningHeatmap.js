@@ -150,12 +150,14 @@ const getOptions = ({
           padding: 5,
           formatter: (params) => {
             const binRange = origin.find((x) => x.name === binName);
-            const isOutRange =
-              binRange.current > binRange.feasible
-                ? binValue > binRange.current || binValue < binRange.feasible
-                : binValue < binRange.current || binValue > binRange.feasible;
-            if (isOutRange) {
-              return `{out|${thousandFormatter(params.value[2])}}`;
+            if (binRange) {
+              const isOutRange =
+                binRange.current > binRange.feasible
+                  ? binValue > binRange.current || binValue < binRange.feasible
+                  : binValue < binRange.current || binValue > binRange.feasible;
+              if (isOutRange) {
+                return `{out|${thousandFormatter(params.value[2])}}`;
+              }
             }
             const value = params.value[2];
             const xAxisRange = origin.find((x) => x.name === xAxis.name);

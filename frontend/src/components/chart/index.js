@@ -6,7 +6,7 @@ import { Easing } from "./options/common";
 import { SaveAsImageButton } from "../utils";
 
 export const generateOptions = (
-  { type, data, chartTitle, percentage, extra, targetData },
+  { type, data, chartTitle, percentage, extra, targetData, showLabel },
   series,
   legend,
   horizontal,
@@ -25,6 +25,7 @@ export const generateOptions = (
         highlighted: highlighted,
         targetData: targetData,
         grid: grid,
+        showLabel: showLabel,
       });
     case "COLUMN-BAR":
       return ColumnBar({
@@ -34,6 +35,8 @@ export const generateOptions = (
         extra: extra,
         horizontal: horizontal,
         highlighted: highlighted,
+        grid: grid,
+        showLabel: showLabel,
       });
     default:
       return Bar({
@@ -84,7 +87,8 @@ const Chart = ({
   grid = {},
   override = false,
   affix = false,
-  targetData = [], // to show income target symbol
+  targetData = [], // to show income target symbol,
+  showLabel = true,
 }) => {
   const elementRef = useRef(null);
 
@@ -97,6 +101,7 @@ const Chart = ({
       percentage: percentage,
       extra: extra,
       targetData: targetData,
+      showLabel: showLabel,
     },
     series,
     legend,
