@@ -3,7 +3,7 @@ import {
   Color,
   TextStyle,
   backgroundColor,
-  AxisLabelFormatter,
+  // AxisLabelFormatter,
   AxisShortLabelFormatter,
   Legend,
   Title,
@@ -54,12 +54,14 @@ const BarStack = ({
   highlighted = null,
   targetData = [], // to show income target symbol
   grid = {},
+  showLabel = false,
 }) => {
   if (isEmpty(data) || !data) {
     return NoData;
   }
   // Custom Axis Title
   const { xAxisTitle, yAxisTitle } = axisTitle(extra);
+  const xAxisLabel = extra?.xAxisLabel || {};
 
   const stacked = uniqBy(flatten(data.map((d) => d.stack)), "title") || [];
 
@@ -135,6 +137,7 @@ const BarStack = ({
       ...d,
       label: {
         ...LabelStyle.label,
+        show: showLabel,
         position: "right",
       },
     };
@@ -156,7 +159,7 @@ const BarStack = ({
     },
     grid: {
       top: 25,
-      bottom: 28,
+      bottom: grid?.bottom ? grid.bottom : 28,
       left: 50,
       right: grid?.right ? grid.right : 150,
       show: true,
@@ -201,9 +204,8 @@ const BarStack = ({
         overflow: "break",
         ...TextStyle,
         color: "#4b4b4e",
-        formatter: horizontal
-          ? AxisShortLabelFormatter?.formatter
-          : AxisLabelFormatter?.formatter,
+        formatter: AxisShortLabelFormatter?.formatter,
+        ...xAxisLabel,
       },
       axisTick: {
         alignWithLabel: true,

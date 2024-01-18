@@ -49,6 +49,9 @@ const IncomeDriverForm = ({
   }, [currentCaseId]);
 
   const flattenQuestionList = useMemo(() => {
+    if (!group) {
+      return [];
+    }
     return flatten(group.questions);
   }, [group]);
 
@@ -230,7 +233,7 @@ const IncomeDriverForm = ({
           : group.commodity_id === null
           ? "Other "
           : ""}{" "}
-        {group.commodity_name}
+        {group?.commodity_name || ""}
       </h3>
       <Form
         name={`drivers-income-${segmentItem.key}-${groupIndex}`}
@@ -238,24 +241,26 @@ const IncomeDriverForm = ({
         form={form}
         onValuesChange={onValuesChange}
       >
-        {orderBy(group.questions, ["id"]).map((question, questionIndex) => (
-          <Questions
-            key={question.id}
-            indent={!groupIndex ? 0 : indentSize}
-            units={commodity}
-            form={form}
-            refresh={refresh}
-            commodityName={group?.commodity_name}
-            allQuestions={flattenQuestionList}
-            totalIncome={
-              !groupIndex &&
-              questionIndex === 0 &&
-              question.question_type === "aggregator"
-            }
-            {...question}
-            enableEditCase={enableEditCase}
-          />
-        ))}
+        {group?.questions
+          ? orderBy(group.questions, ["id"]).map((question, questionIndex) => (
+              <Questions
+                key={question.id}
+                indent={!groupIndex ? 0 : indentSize}
+                units={commodity}
+                form={form}
+                refresh={refresh}
+                commodityName={group?.commodity_name}
+                allQuestions={flattenQuestionList}
+                totalIncome={
+                  !groupIndex &&
+                  questionIndex === 0 &&
+                  question.question_type === "aggregator"
+                }
+                {...question}
+                enableEditCase={enableEditCase}
+              />
+            ))
+          : ""}
       </Form>
     </div>
   );

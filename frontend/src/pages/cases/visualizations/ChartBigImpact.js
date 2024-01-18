@@ -13,7 +13,7 @@ import {
 
 const legendColors = ["#03625f", "#82b2b2", "#F9BC05"];
 
-const ChartBigImpact = ({ dashboardData }) => {
+const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
 
   useEffect(() => {
@@ -244,7 +244,7 @@ const ChartBigImpact = ({ dashboardData }) => {
           ...d,
           type: "bar",
           label: {
-            show: true,
+            show: showLabel,
             position: "left",
             verticalAlign: "middle",
             color: "#fff",
@@ -258,7 +258,7 @@ const ChartBigImpact = ({ dashboardData }) => {
       }),
       ...Easing,
     };
-  }, [dashboardData, selectedSegment]);
+  }, [dashboardData, selectedSegment, showLabel]);
 
   return (
     <div>

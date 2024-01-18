@@ -4,6 +4,7 @@ import { DownloadOutlined } from "@ant-design/icons";
 import { toPng } from "html-to-image";
 
 const defaultStyle = {
+  fontSize: "12px",
   borderRadius: "20px",
   padding: "0 10px",
 };
@@ -29,7 +30,7 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
   //
   toPng(elementRef.current, {
     filter: (node) => {
-      const exclusionClasses = ["save-as-image-btn"];
+      const exclusionClasses = ["save-as-image-btn", "show-label-btn"];
       return !exclusionClasses.some((classname) =>
         node.classList?.contains(classname)
       );
@@ -82,7 +83,7 @@ const SaveAsImageButton = ({
       icon={<DownloadOutlined />}
       size="small"
       onClick={handleOnClickSaveAsImage}
-      style={{ fontSize: 12, ...defaultStyle, ...typeStyle, ...style }}
+      style={{ ...defaultStyle, ...typeStyle, ...style }}
       loading={loading}
     >
       Download chart

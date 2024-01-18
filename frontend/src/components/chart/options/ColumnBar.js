@@ -3,7 +3,7 @@ import {
   Color,
   TextStyle,
   backgroundColor,
-  AxisLabelFormatter,
+  // AxisLabelFormatter,
   AxisShortLabelFormatter,
   Title,
   axisTitle,
@@ -38,6 +38,7 @@ const ColumnBar = ({
   extra = {},
   horizontal = false,
   grid = {},
+  showLabel = true,
 }) => {
   if (isEmpty(data) || !data) {
     return NoData;
@@ -45,6 +46,8 @@ const ColumnBar = ({
 
   // Custom Axis Title
   const { xAxisTitle, yAxisTitle } = axisTitle(extra);
+  const xAxisLabel = extra?.xAxisLabel || {};
+
   data = sortBy(data, "order");
 
   const labels = data.map((x) => x.name);
@@ -69,7 +72,7 @@ const ColumnBar = ({
         ...LabelStyle.label,
         colorBy: "data",
         position: horizontal ? "insideLeft" : "top",
-        show: true,
+        show: showLabel,
         padding: 5,
         backgroundColor: "rgba(0,0,0,.3)",
         ...TextStyle,
@@ -140,9 +143,8 @@ const ColumnBar = ({
         interval: 0,
         ...TextStyle,
         color: "#4b4b4e",
-        formatter: horizontal
-          ? AxisShortLabelFormatter?.formatter
-          : AxisLabelFormatter?.formatter,
+        formatter: AxisShortLabelFormatter?.formatter,
+        ...xAxisLabel,
       },
       axisTick: {
         alignWithLabel: true,

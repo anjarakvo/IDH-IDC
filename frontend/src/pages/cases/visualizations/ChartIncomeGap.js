@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
 import { incomeTargetChartOption } from "../../../components/chart/options/common";
 
-const ChartIncomeGap = ({ dashboardData, currentCase }) => {
+const ChartIncomeGap = ({ dashboardData, currentCase, showLabel = false }) => {
   const chartData = useMemo(() => {
     return dashboardData.reduce((c, d) => {
       const currentIncomeGap =
@@ -89,7 +89,12 @@ const ChartIncomeGap = ({ dashboardData, currentCase }) => {
       affix={true}
       loading={!chartData.length || !targetChartData.length}
       targetData={targetChartData}
-      extra={{ axisTitle: { y: `Income (${currentCase.currency})` } }}
+      extra={{
+        axisTitle: { y: `Income (${currentCase.currency})` },
+        xAxisLabel: dashboardData?.length > 2 ? { rotate: 45, margin: 25 } : {},
+      }}
+      grid={{ bottom: 10 }}
+      showLabel={showLabel}
     />
   );
 };

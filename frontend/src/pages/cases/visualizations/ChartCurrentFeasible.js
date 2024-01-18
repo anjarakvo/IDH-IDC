@@ -2,7 +2,11 @@ import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
 import { incomeTargetChartOption } from "../../../components/chart/options/common";
 
-const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
+const ChartCurrentFeasible = ({
+  dashboardData = [],
+  currentCase,
+  showLabel = false,
+}) => {
   const chartData = useMemo(() => {
     return dashboardData.reduce((c, d) => {
       return [
@@ -28,8 +32,8 @@ const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
               order: 2,
             },
             {
-              name: "Focus Commodity Costs of Production",
-              title: "Focus Commodity Costs of Production",
+              name: "Focus Commodity\nCosts of Production",
+              title: "Focus Commodity\nCosts of Production",
               value: Math.round(
                 d.total_current_focus_commodity_cost_of_production
               ),
@@ -62,8 +66,8 @@ const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
               order: 2,
             },
             {
-              name: "Focus Commodity Costs of Production",
-              title: "Focus Commodity Costs of Production",
+              name: "Focus Commodity\nCosts of Production",
+              title: "Focus Commodity\nCosts of Production",
               value: Math.round(
                 d.total_feasible_focus_commodity_cost_of_production
               ),
@@ -103,10 +107,15 @@ const ChartCurrentFeasible = ({ dashboardData = [], currentCase }) => {
       affix={true}
       loading={!chartData.length || !targetChartData.length}
       targetData={targetChartData}
-      extra={{ axisTitle: { y: `Income (${currentCase.currency})` } }}
-      grid={{
-        right: 250,
+      extra={{
+        axisTitle: { y: `Income (${currentCase.currency})` },
+        xAxisLabel: dashboardData?.length > 2 ? { rotate: 45, margin: 20 } : {},
       }}
+      grid={{
+        right: 190,
+        bottom: 10,
+      }}
+      showLabel={showLabel}
     />
   );
 };

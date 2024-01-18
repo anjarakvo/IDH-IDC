@@ -89,6 +89,9 @@ const Case = () => {
 
   const totalIncomeQuestion = useMemo(() => {
     const qs = questionGroups.map((group) => {
+      if (!group) {
+        return [];
+      }
       const questions = flatten(group.questions).filter((q) => !q.parent);
       const commodity = commodityList.find(
         (c) => c.commodity === group.commodity_id
@@ -100,6 +103,9 @@ const Case = () => {
 
   const costQuestions = useMemo(() => {
     const qs = questionGroups.map((group) => {
+      if (!group) {
+        return [];
+      }
       const questions = flatten(group.questions).filter((q) =>
         q.text.toLowerCase().includes("cost")
       );
@@ -109,7 +115,9 @@ const Case = () => {
   }, [questionGroups]);
 
   const flattenedQuestionGroups = useMemo(() => {
-    const qg = questionGroups.map((group) => flatten(group.questions));
+    const qg = questionGroups.map((group) =>
+      group ? flatten(group.questions) : []
+    );
     return qg.flatMap((q) => q);
   }, [questionGroups]);
 
@@ -125,6 +133,9 @@ const Case = () => {
           commodity.commodity_type === "focus" ? true : false;
         const totalCommodityQuestion = questionGroups
           .map((group) => {
+            if (!group) {
+              return [];
+            }
             const questions = flatten(group.questions).filter(
               (q) => !q.parent && q.question_type === "aggregator"
             );

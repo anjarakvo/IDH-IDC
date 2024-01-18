@@ -35,7 +35,7 @@ import {
   InputNumberThousandFormatter,
 } from "./";
 import Chart from "../../../components/chart";
-import { SaveAsImageButton } from "../../../components/utils";
+import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 import { api } from "../../../lib";
 import { driverOptions } from "../../explore-studies";
 
@@ -79,6 +79,8 @@ const DataFields = ({
   const [referenceData, setReferenceData] = useState([]);
   const [selectedDriver, setSelectedDriver] = useState("area");
   const [exploreButtonLink, setExploreButtonLink] = useState(null);
+
+  const [showChartLabel, setShowChartLabel] = useState(false);
 
   const finishEditing = () => {
     renameItem(segment, newName);
@@ -549,11 +551,18 @@ const DataFields = ({
               title="Calculated Household Income"
               className="chart-card-wrapper"
               extra={
-                <SaveAsImageButton
-                  elementRef={elDriverChart}
-                  filename="Calculated Household Income"
-                  type="ghost-white"
-                />
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showChartLabel}
+                    setShowLabel={setShowChartLabel}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elDriverChart}
+                    filename="Calculated Household Income"
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <Chart
@@ -564,7 +573,11 @@ const DataFields = ({
                 height={window.innerHeight * 0.45}
                 extra={{
                   axisTitle: { y: `Income (${currentCase.currency})` },
+                  xAxisLabel:
+                    segments?.length > 2 ? { rotate: 45, margin: 25 } : {},
                 }}
+                grid={{ bottom: 90 }}
+                showLabel={showChartLabel}
               />
             </Card>
           </Col>
