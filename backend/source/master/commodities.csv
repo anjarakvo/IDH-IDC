@@ -3,9 +3,39 @@ id,group_id,name,group_name
 1001,100,Tea,Crop
 1002,100,Wheat,Crop
 1003,100,Rice,Crop
-1004,100,Corn,Crop
-1005,101,Shrimp,Aquaculture
-1006,101,Salmon,Aquaculture
+1004,100,Cocoa,Crop
+1005,100,Maize,Crop
+1006,100,Cassava,Crop
 1007,101,Tilapia,Aquaculture
-1009,102,Pigs,Livestock
-1010,102,Chickens,Livestock
+1008,102,Pigs,Livestock
+1009,102,Chickens,Livestock
+1010,100,Cotton,Crop
+1011,100,Sorghum,Crop
+1012,100,Pepper,Crop
+1013,100,Pineapple,Crop
+1014,100,Cashew,Crop
+1015,100,Macademia,Crop
+1016,100,Mango,Crop
+1017,100,Palm Oil,Crop
+1018,100,Timber,Crop
+1019,100,Vanilla,Crop
+1020,100,Bean,Crop
+1021,100,Chilli,Crop
+1022,100,Fonio,Crop
+1023,100,Ginger,Crop
+1024,100,Mange Tout,Crop
+1025,100,Millet,Crop
+1026,100,Onion,Crop
+1027,100,Potato,Crop
+1028,100,Rubber,Crop
+1029,100,Sunflower,Crop
+1030,100,Tomato,Crop
+1031,100,Mint,Crop
+1032,102,Dairy,Livestock
+1033,101,Aquaculture,Aquaculture
+1034,100,Spices,Crop
+1035,100,Pulses,Crop
+1036,100,Soybean,Crop
+1037,100,Nuts,Crop
+1038,100,Black Pepper,Crop
+1039,100,Sugar snaps,Crop
