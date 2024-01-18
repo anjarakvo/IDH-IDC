@@ -21,6 +21,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
   const [showLabelChartCurrentFeasible, setShowLabelChartCurrentFeasible] =
     useState(false);
   const [showLabelChartIncomeGap, setShowLabelChartIncomeGap] = useState(false);
+  const [showLabelChartBigImpact, setShowLabelChartBigImpact] = useState(false);
 
   return (
     <Row
@@ -127,14 +128,24 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               className="chart-card-wrapper has-segments-button"
               title="Biggest Impact on Income"
               extra={
-                <SaveAsImageButton
-                  elementRef={elBigImpact}
-                  filename="Which drivers have the biggest impact on income?"
-                  type="ghost-white"
-                />
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartBigImpact}
+                    setShowLabel={setShowLabelChartBigImpact}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elBigImpact}
+                    filename="Which drivers have the biggest impact on income?"
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
-              <ChartBigImpact dashboardData={dashboardData} />
+              <ChartBigImpact
+                dashboardData={dashboardData}
+                showLabel={showLabelChartBigImpact}
+              />
             </Card>
           </Col>
           <Col span={8} className="income-overview-chart-wrapper">
