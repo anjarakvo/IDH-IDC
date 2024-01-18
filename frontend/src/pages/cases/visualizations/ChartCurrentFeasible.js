@@ -109,7 +109,7 @@ const ChartCurrentFeasible = ({
       targetData={targetChartData}
       extra={{
         axisTitle: { y: `Income (${currentCase.currency})` },
-        xAxisLabel: { rotate: 45, margin: 20 },
+        xAxisLabel: dashboardData?.length > 2 ? { rotate: 45, margin: 20 } : {},
       }}
       grid={{
         right: 190,

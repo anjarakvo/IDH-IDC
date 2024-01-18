@@ -91,7 +91,7 @@ const ChartIncomeGap = ({ dashboardData, currentCase, showLabel = false }) => {
       targetData={targetChartData}
       extra={{
         axisTitle: { y: `Income (${currentCase.currency})` },
-        xAxisLabel: { rotate: 45, margin: 25 },
+        xAxisLabel: dashboardData?.length > 2 ? { rotate: 45, margin: 25 } : {},
       }}
       grid={{ bottom: 10 }}
       showLabel={showLabel}

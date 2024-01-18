@@ -573,7 +573,8 @@ const DataFields = ({
                 height={window.innerHeight * 0.45}
                 extra={{
                   axisTitle: { y: `Income (${currentCase.currency})` },
-                  xAxisLabel: { rotate: 45, margin: 25 },
+                  xAxisLabel:
+                    segments?.length > 2 ? { rotate: 45, margin: 25 } : {},
                 }}
                 grid={{ bottom: 90 }}
                 showLabel={showChartLabel}
