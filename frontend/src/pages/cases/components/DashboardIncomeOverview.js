@@ -47,7 +47,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elCurrentFeasibleChart}
         >
-          <Col span={16}>
+          <Col span={18}>
             <Card
               className="chart-card-wrapper"
               title="Current and feasible income"
@@ -74,7 +74,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               />
             </Card>
           </Col>
-          <Col span={8} className="income-overview-chart-wrapper">
+          <Col span={6} className="income-overview-chart-wrapper">
             <h2>
               What are the current and feasible income levels for the different
               segments?
@@ -93,14 +93,14 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elIncomeGap}
         >
-          <Col span={8} className="income-overview-chart-wrapper">
+          <Col span={6} className="income-overview-chart-wrapper">
             <h2>How big is the income gap?</h2>
             <p>
               This graph shows you the actual household income components, and
               the income target per segment
             </p>
           </Col>
-          <Col span={16}>
+          <Col span={18}>
             <Card
               className="chart-card-wrapper"
               title="Income Gap"
@@ -135,7 +135,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elBigImpact}
         >
-          <Col span={16}>
+          <Col span={18}>
             <Card
               className="chart-card-wrapper has-segments-button"
               title="Biggest Impact on Income"
@@ -160,7 +160,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               />
             </Card>
           </Col>
-          <Col span={8} className="income-overview-chart-wrapper">
+          <Col span={6} className="income-overview-chart-wrapper">
             <h2>Which drivers have the biggest impact on income?</h2>
             <p>
               This ranking shows the elasticity of the driver and to which the
@@ -176,14 +176,14 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elExploreBreakdownDrivers}
         >
-          <Col span={8} className="income-overview-chart-wrapper">
+          <Col span={6} className="income-overview-chart-wrapper">
             <h2>Explore the breakdown of drivers</h2>
             <p>
               Select the driver for which you want to breakdown to be
               visualised.
             </p>
           </Col>
-          <Col span={16}>
+          <Col span={18}>
             <Card
               className="chart-card-wrapper has-segments-button"
               title="The breakdown of drivers"
@@ -218,7 +218,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elMonetaryContribution}
         >
-          <Col span={16}>
+          <Col span={18}>
             <Card
               className="chart-card-wrapper has-segments-button"
               title="Monetary contribution of each driver to income"
@@ -244,7 +244,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               />
             </Card>
           </Col>
-          <Col span={8} className="income-overview-chart-wrapper">
+          <Col span={6} className="income-overview-chart-wrapper">
             <h2>Monetary contribution of each driver to income.</h2>
           </Col>
         </Row>
@@ -256,7 +256,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elIncomeLevelPerCommodities}
         >
-          <Col span={8} className="income-overview-chart-wrapper">
+          <Col span={6} className="income-overview-chart-wrapper">
             <h2>
               <i>For landscape studies</i>
             </h2>
@@ -269,7 +269,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               the income levels.
             </p>
           </Col>
-          <Col span={16}>
+          <Col span={18}>
             <Card
               className="chart-card-wrapper has-segments-button"
               title="Income levels for different commodities"

@@ -37,6 +37,7 @@ export const generateOptions = (
         highlighted: highlighted,
         grid: grid,
         showLabel: showLabel,
+        series: series,
       });
     default:
       return Bar({
@@ -72,13 +73,13 @@ const Chart = ({
   subTitle = "",
   height = 450,
   span = 12,
-  data,
+  data = [],
   extra = {},
   wrapper = true,
   axis = null,
   horizontal = false,
   styles = {},
-  series,
+  series = [],
   legend,
   callbacks = null,
   highlighted,
