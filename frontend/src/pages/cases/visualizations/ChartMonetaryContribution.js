@@ -13,7 +13,11 @@ import {
 } from "../../../components/chart/options/common";
 import { sum } from "lodash";
 
-const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
+const ChartMonetaryContribution = ({
+  dashboardData,
+  currentCase,
+  showLabel = false,
+}) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
 
   useEffect(() => {
@@ -202,8 +206,8 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
             color: "#03625f",
           },
           label: {
-            show: true,
-            position: "bottom",
+            ...LabelStyle.label,
+            show: showLabel,
           },
           data: [
             data?.total_current_income < 0
@@ -213,7 +217,6 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
             diversifiedIncome < 0 ? "-" : diversifiedIncome?.toFixed(2), // diversified value
             feasibleValue < 0 ? "-" : feasibleValue?.toFixed(2),
           ],
-          ...LabelStyle,
         },
         {
           name: "Negative",
@@ -224,6 +227,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
           },
           label: {
             ...LabelStyle.label,
+            show: showLabel,
             formatter: (param) => {
               const value = parseFloat(param.value) * -1;
               return thousandFormatter(value?.toFixed(2));
@@ -240,7 +244,7 @@ const ChartMonetaryContribution = ({ dashboardData, currentCase }) => {
         },
       ],
     };
-  }, [dashboardData, selectedSegment, currentCase.currency]);
+  }, [dashboardData, selectedSegment, currentCase.currency, showLabel]);
 
   return (
     <div>

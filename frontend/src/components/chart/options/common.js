@@ -66,8 +66,8 @@ export const AxisLabelFormatter = {
 export const AxisShortLabelFormatter = {
   formatter: function (params) {
     const stringArr = String(params).split(" ");
-    const newParamsName = take(stringArr, 3).join("\n");
-    return upperFirst(newParamsName) + (stringArr.length > 3 ? ".." : "");
+    const newParamsName = take(stringArr, 5).join("\n");
+    return upperFirst(newParamsName) + (stringArr.length > 5 ? ".." : "");
   },
 };
 

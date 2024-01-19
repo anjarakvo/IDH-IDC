@@ -7,7 +7,11 @@ import Chart from "../../../components/chart";
 const colors = ["#00625F", "#47D985", "#82B2B2"];
 const legendColors = ["#00625F", "#47D985", "#82B2B2"];
 
-const ChartIncomeLevelPerCommodities = ({ dashboardData, currentCase }) => {
+const ChartIncomeLevelPerCommodities = ({
+  dashboardData,
+  currentCase,
+  showLabel = false,
+}) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
 
   useEffect(() => {
@@ -196,6 +200,7 @@ const ChartIncomeLevelPerCommodities = ({ dashboardData, currentCase }) => {
             extra={{
               axisTitle: { y: `Income  Levels (${currentCase.currency})` },
             }}
+            showLabel={showLabel}
           />
         </Col>
       </Row>

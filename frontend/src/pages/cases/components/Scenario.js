@@ -28,7 +28,7 @@ import {
 } from "./";
 import { ChartScenarioModeling } from "../visualizations";
 import { isEmpty, orderBy, uniq } from "lodash";
-import { SaveAsImageButton } from "../../../components/utils";
+import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
 const Question = ({
@@ -513,6 +513,12 @@ const Scenario = ({
     targetChartData: [],
   });
 
+  const [
+    showLabelChartCurrentScenarioIncomeGap,
+    setShowLabelChartCurrentScenarioIncomeGap,
+  ] = useState(false);
+  const [showLabelChartIncomeGap, setShowLabelChartIncomeGap] = useState(false);
+
   const elCurrentScenarioIncomeGap = useRef(null);
   const elIncomeGapScenario = useRef(null);
   const elScenarioOutcomes = useRef(null);
@@ -678,7 +684,7 @@ const Scenario = ({
       gapValue = gapValue < 0 ? 0 : gapValue;
 
       return {
-        name: `${d.scenarioName} - ${d.name}`,
+        name: `${d.scenarioName}-${d.name}`,
         target: Math.round(incomeTarget),
         stack: [
           {
@@ -1111,11 +1117,20 @@ const Scenario = ({
                       className="chart-card-wrapper"
                       title="Income Gap for current scenario"
                       extra={
-                        <SaveAsImageButton
-                          elementRef={elCurrentScenarioIncomeGap}
-                          filename="Calculated household income and gap to the income target for the different segments in this scenario."
-                          type="ghost-white"
-                        />
+                        <Space align="center">
+                          <ShowLabelButton
+                            showLabel={showLabelChartCurrentScenarioIncomeGap}
+                            setShowLabel={
+                              setShowLabelChartCurrentScenarioIncomeGap
+                            }
+                            type="ghost-white"
+                          />
+                          <SaveAsImageButton
+                            elementRef={elCurrentScenarioIncomeGap}
+                            filename="Calculated household income and gap to the income target for the different segments in this scenario."
+                            type="ghost-white"
+                          />
+                        </Space>
                       }
                     >
                       <ChartScenarioModeling
@@ -1124,6 +1139,7 @@ const Scenario = ({
                           currentScenarioIncomeGap.targetChartData
                         }
                         currencyUnitName={currencyUnitName}
+                        showLabel={showLabelChartCurrentScenarioIncomeGap}
                       />
                     </Card>
                   </Col>
@@ -1161,18 +1177,26 @@ const Scenario = ({
               className="chart-card-wrapper"
               title="Income Gap"
               extra={
-                <SaveAsImageButton
-                  elementRef={elIncomeGapScenario}
-                  filename="What is the income gap when you change your income drivers using
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartIncomeGap}
+                    setShowLabel={setShowLabelChartIncomeGap}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elIncomeGapScenario}
+                    filename="What is the income gap when you change your income drivers using
               the scenario modeler?"
-                  type="ghost-white"
-                />
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <ChartScenarioModeling
                 data={chartData || []}
                 targetChartData={targetChartData}
                 currencyUnitName={currencyUnitName}
+                showLabel={showLabelChartIncomeGap}
               />
             </Card>
           </Col>

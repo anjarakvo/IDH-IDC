@@ -5,6 +5,7 @@ const ChartScenarioModeling = ({
   data = [],
   targetChartData = [],
   currencyUnitName,
+  showLabel = false,
 }) => {
   return (
     <div style={{ padding: "0px 0px 0px 0px" }}>
@@ -16,6 +17,7 @@ const ChartScenarioModeling = ({
         loading={!data.length}
         extra={{ axisTitle: { y: `Income ${currencyUnitName}` } }}
         grid={{ right: 161 }}
+        showLabel={showLabel}
       />
     </div>
   );

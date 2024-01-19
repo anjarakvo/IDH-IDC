@@ -22,6 +22,18 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
     useState(false);
   const [showLabelChartIncomeGap, setShowLabelChartIncomeGap] = useState(false);
   const [showLabelChartBigImpact, setShowLabelChartBigImpact] = useState(false);
+  const [
+    showLabelChartExploreBreakdownDrivers,
+    setShowLabelChartExploreBreakdownDrivers,
+  ] = useState(false);
+  const [
+    showLabelChartMonetaryContribution,
+    setShowLabelChartMonetaryContribution,
+  ] = useState(false);
+  const [
+    showLabelChartIncomeLevelPerCommodities,
+    setShowLabelChartIncomeLevelPerCommodities,
+  ] = useState(false);
 
   return (
     <Row
@@ -176,16 +188,24 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               className="chart-card-wrapper has-segments-button"
               title="The breakdown of drivers"
               extra={
-                <SaveAsImageButton
-                  elementRef={elExploreBreakdownDrivers}
-                  filename="Explore the breakdown of drivers"
-                  type="ghost-white"
-                />
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartExploreBreakdownDrivers}
+                    setShowLabel={setShowLabelChartExploreBreakdownDrivers}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elExploreBreakdownDrivers}
+                    filename="Explore the breakdown of drivers"
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <ChartExploreBreakdownDrivers
                 dashboardData={dashboardData}
                 currentCase={currentCase}
+                showLabel={showLabelChartExploreBreakdownDrivers}
               />
             </Card>
           </Col>
@@ -203,16 +223,24 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               className="chart-card-wrapper has-segments-button"
               title="Monetary contribution of each driver to income"
               extra={
-                <SaveAsImageButton
-                  elementRef={elMonetaryContribution}
-                  filename="Monetary contribution of each driver to income"
-                  type="ghost-white"
-                />
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartMonetaryContribution}
+                    setShowLabel={setShowLabelChartMonetaryContribution}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elMonetaryContribution}
+                    filename="Monetary contribution of each driver to income"
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <ChartMonetaryContribution
                 dashboardData={dashboardData}
                 currentCase={currentCase}
+                showLabel={showLabelChartMonetaryContribution}
               />
             </Card>
           </Col>
@@ -246,17 +274,25 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               className="chart-card-wrapper has-segments-button"
               title="Income levels for different commodities"
               extra={
-                <SaveAsImageButton
-                  elementRef={elIncomeLevelPerCommodities}
-                  filename="What are the income levels for the different commodities in
+                <Space align="center">
+                  <ShowLabelButton
+                    showLabel={showLabelChartIncomeLevelPerCommodities}
+                    setShowLabel={setShowLabelChartIncomeLevelPerCommodities}
+                    type="ghost-white"
+                  />
+                  <SaveAsImageButton
+                    elementRef={elIncomeLevelPerCommodities}
+                    filename="What are the income levels for the different commodities in
                   each segment?"
-                  type="ghost-white"
-                />
+                    type="ghost-white"
+                  />
+                </Space>
               }
             >
               <ChartIncomeLevelPerCommodities
                 dashboardData={dashboardData}
                 currentCase={currentCase}
+                showLabel={showLabelChartIncomeLevelPerCommodities}
               />
             </Card>
           </Col>
