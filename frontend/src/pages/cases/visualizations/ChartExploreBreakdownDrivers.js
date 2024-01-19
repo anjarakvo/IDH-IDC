@@ -8,7 +8,11 @@ import Chart from "../../../components/chart";
 const otherCommodities = ["secondary", "tertiary"];
 const colors = ["#00625F", "#47D985", "#82B2B2"];
 
-const ChartExploreBreakdownDrivers = ({ dashboardData, currentCase }) => {
+const ChartExploreBreakdownDrivers = ({
+  dashboardData,
+  currentCase,
+  showLabel = false,
+}) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
   const [selectedDriver, setSelectedDriver] = useState(null);
   const [axisTitle, setAxisTitle] = useState(null);
@@ -265,6 +269,7 @@ const ChartExploreBreakdownDrivers = ({ dashboardData, currentCase }) => {
             affix={true}
             extra={{ axisTitle: axisTitle }}
             grid={{ right: 235 }}
+            showLabel={showLabel}
           />
         </Col>
       </Row>
