@@ -1,100 +1,92 @@
 import React, { useMemo } from "react";
 import Chart from "../../../components/chart";
-import { incomeTargetChartOption } from "../../../components/chart/options/common";
+import { getColumnStackBarOptions } from ".";
+
+const seriesTmp = [
+  {
+    key: "total_current_income",
+    name: "Current Household Income",
+    type: "bar",
+    stack: "current",
+    color: "#1b726f",
+  },
+  {
+    key: "total_feasible_income",
+    name: "Feasible Household Income",
+    type: "bar",
+    stack: "feasible",
+    color: "#9cc2c1",
+  },
+  {
+    key: "current_income_gap",
+    name: "Current Income Gap",
+    type: "bar",
+    stack: "current",
+    color: "#fecb21",
+  },
+  {
+    key: "feasible_income_gap",
+    name: "Feasible Income Gap",
+    type: "bar",
+    stack: "feasible",
+    color: "#ffeeb8",
+  },
+  {
+    key: "target",
+    name: "Income Target",
+    type: "line",
+    symbol: "diamond",
+    symbolSize: 15,
+    color: "#000",
+  },
+];
 
 const ChartIncomeGap = ({ dashboardData, currentCase, showLabel = false }) => {
   const chartData = useMemo(() => {
-    return dashboardData.reduce((c, d) => {
-      const currentIncomeGap =
-        d.target - d.total_current_income < 0
-          ? 0
-          : d.target - d.total_current_income;
-      const feasibleIncomeGap =
-        d.target - d.total_feasible_income < 0
-          ? 0
-          : d.target - d.total_feasible_income;
-      return [
-        ...c,
-        {
-          name: `Current\n${d.name}`,
-          title: `Current\n${d.name}`,
-          target: Math.round(d.target),
-          stack: [
-            {
-              name: "Household Income",
-              title: "Household Income",
-              value: Math.round(d.total_current_income),
-              total: Math.round(d.total_current_income),
-              color: "#03625f",
-              order: 1,
-            },
-            {
-              name: "Income Gap",
-              title: "Income Gap",
-              value: Math.round(currentIncomeGap),
-              total: Math.round(currentIncomeGap),
-              color: "#fbbc04",
-              order: 2,
-            },
-          ],
-        },
-        {
-          name: `Feasible\n${d.name}`,
-          title: `Feasible\n${d.name}`,
-          target: Math.round(d.target),
-          stack: [
-            {
-              name: "Household Income",
-              title: "Household Income",
-              value: Math.round(d.total_feasible_income),
-              total: Math.round(d.total_feasible_income),
-              color: "#03625f",
-              order: 1,
-            },
-            {
-              name: "Income Gap",
-              title: "Income Gap",
-              value: Math.round(feasibleIncomeGap),
-              total: Math.round(feasibleIncomeGap),
-              color: "#fbbc04",
-              order: 2,
-            },
-          ],
-        },
-      ];
-    }, []);
+    return seriesTmp.map((tmp) => {
+      const data = dashboardData.map((d) => {
+        let value = d?.[tmp.key] ? d[tmp.key] : 0;
+        if (tmp.key === "current_income_gap") {
+          const currentIncomeGap =
+            d.target - d.total_current_income < 0
+              ? 0
+              : d.target - d.total_current_income;
+          value = currentIncomeGap;
+        }
+        if (tmp.key === "feasible_income_gap") {
+          const feasibleIncomeGap =
+            d.target - d.total_feasible_income < 0
+              ? 0
+              : d.target - d.total_feasible_income;
+          value = feasibleIncomeGap;
+        }
+        return {
+          name: d.name,
+          value: Math.round(value),
+        };
+      });
+      return {
+        ...tmp,
+        data: data,
+      };
+    });
   }, [dashboardData]);
-
-  const targetChartData = useMemo(() => {
-    if (!chartData.length) {
-      return [];
-    }
-    return [
-      {
-        ...incomeTargetChartOption,
-        color: "#000",
-        data: chartData.map((cd) => ({
-          name: "Income Target",
-          value: cd?.target ? Math.round(cd.target) : 0,
-        })),
-      },
-    ];
-  }, [chartData]);
 
   return (
     <Chart
       wrapper={false}
       type="BARSTACK"
-      data={chartData}
-      affix={true}
-      loading={!chartData.length || !targetChartData.length}
-      targetData={targetChartData}
-      extra={{
-        axisTitle: { y: `Income (${currentCase.currency})` },
-        xAxisLabel: dashboardData?.length > 2 ? { rotate: 45, margin: 25 } : {},
-      }}
-      grid={{ bottom: 10 }}
-      showLabel={showLabel}
+      loading={!chartData.length}
+      override={getColumnStackBarOptions({
+        series: chartData,
+        origin: dashboardData,
+        yAxis: { name: `Income (${currentCase.currency})` },
+        xAxis:
+          dashboardData?.length > 2
+            ? { axisLabel: { rotate: 45, margin: 20 } }
+            : {},
+        showLabel: showLabel,
+      })}
     />
   );
 };

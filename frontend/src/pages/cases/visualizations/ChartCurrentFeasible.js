@@ -78,7 +78,6 @@ const ChartCurrentFeasible = ({
       });
       return {
         ...tmp,
-
         data: data,
       };
     });

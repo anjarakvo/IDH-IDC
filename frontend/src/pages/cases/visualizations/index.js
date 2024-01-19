@@ -16,6 +16,7 @@ export const getColumnStackBarOptions = ({
   origin = [],
   series = [],
   showLabel = false,
+  grid = {},
 }) => {
   const legends = series.map((x) => x.name);
   const xAxisData = origin.map((x) => x.name);
@@ -57,10 +58,10 @@ export const getColumnStackBarOptions = ({
       ...TextStyle,
     },
     grid: {
-      top: 25,
-      left: 50,
-      right: 190,
-      bottom: 25,
+      top: grid?.top ? grid.top : 25,
+      left: grid?.left ? grid.left : 50,
+      right: grid?.right ? grid.right : 190,
+      bottom: grid?.bottom ? grid.bottom : 25,
       show: true,
       containLabel: true,
       label: {
