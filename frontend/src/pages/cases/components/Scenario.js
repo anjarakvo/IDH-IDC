@@ -684,7 +684,7 @@ const Scenario = ({
       gapValue = gapValue < 0 ? 0 : gapValue;
 
       return {
-        name: `${d.scenarioName} - ${d.name}`,
+        name: `${d.scenarioName}-${d.name}`,
         target: Math.round(incomeTarget),
         stack: [
           {
