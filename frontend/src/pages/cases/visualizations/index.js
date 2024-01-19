@@ -105,6 +105,7 @@ export const getColumnStackBarOptions = ({
     series: series.map((s) => {
       s = {
         ...s,
+        barMaxWidth: 50,
         emphasis: {
           focus: "series",
         },
