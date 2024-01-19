@@ -2,11 +2,12 @@ import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col } from "antd";
 import uniqBy from "lodash/uniqBy";
 import capitalize from "lodash/capitalize";
-import { SegmentSelector, DriverDropdown } from "./";
+import { SegmentSelector, DriverDropdown, getColumnStackBarOptions } from "./";
 import Chart from "../../../components/chart";
 
 const otherCommodities = ["secondary", "tertiary"];
-const colors = ["#00625F", "#47D985", "#82B2B2"];
+const currentColors = ["#1b726f", "#81e4ab", "#fecb21", "#4eb8ff", "#ff8f4e"];
+const feasibleColors = ["#9cc2c1", "#ddf8e9", "#ffeeb8", "#doecff", "#ffe1do"];
 
 const ChartExploreBreakdownDrivers = ({
   dashboardData,
@@ -15,7 +16,7 @@ const ChartExploreBreakdownDrivers = ({
 }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
   const [selectedDriver, setSelectedDriver] = useState(null);
-  const [axisTitle, setAxisTitle] = useState(null);
+  const [axisTitle, setAxisTitle] = useState(currentCase.currency);
 
   useEffect(() => {
     if (dashboardData.length > 0) {
@@ -101,7 +102,7 @@ const ChartExploreBreakdownDrivers = ({
   const handleOnChangeDriverDropdown = (value) => {
     setSelectedDriver(value);
     if (value === "diversified") {
-      setAxisTitle({ y: currentCase.currency });
+      setAxisTitle(currentCase.currency);
       return;
     }
     if (currentSegmentData) {
@@ -115,7 +116,7 @@ const ChartExploreBreakdownDrivers = ({
         .map((x) => currentCase?.[x])
         .filter((x) => x)
         .join(" / ");
-      setAxisTitle({ y: unitName });
+      setAxisTitle(unitName);
     }
   };
 
@@ -123,124 +124,148 @@ const ChartExploreBreakdownDrivers = ({
     if (!currentSegmentData || !driverOptionsDropdown.length) {
       return [];
     }
-    const res = ["current", "feasible"].map((x) => {
-      const title = `${capitalize(x)}\n${currentSegmentData.name}`;
-      let stack = [];
-      if (!selectedDriver) {
-        stack = driverOptionsDropdown.map((d, di) => {
-          let value = 0;
-          // Calculate focus commodity
-          if (d.type === "focus") {
-            const answer = currentSegmentData.answers
-              .filter((a) => a.commodityFocus && a.name === x)
-              .find((a) => a.questionId === d.value);
-            value = answer && answer.value ? answer.value : 0;
-          }
-          // diversified
-          if (d.type === "diversified" && d.value === "diversified") {
-            value = currentSegmentData?.[`total_${x}_diversified_income`] || 0;
-          }
-          value = value ? parseFloat(value.toFixed(2)) : value;
-          return {
-            name: d.label,
-            title: d.label,
-            value: value,
-            total: value,
-            order: di,
-            color: colors[di],
-          };
-        });
-      }
-      if (selectedDriver) {
-        const findDriver = driverOptionsDropdown.find(
-          (d) => d.value === selectedDriver
-        );
-        if (findDriver.type === "focus") {
-          stack = findDriver.childrens.map((d, di) => {
-            const answer = currentSegmentData.answers
-              .filter((a) => a.commodityFocus && a.name === x)
-              .find((a) => a.questionId === d.id);
-            const value =
-              answer && answer.value ? parseFloat(answer.value.toFixed(2)) : 0;
+    const res = ["current", "feasible"]
+      .map((x) => {
+        const colors = x === "current" ? currentColors : feasibleColors;
+        const title = `${capitalize(x)}\n${currentSegmentData.name}`;
+        let stack = [];
+        if (!selectedDriver) {
+          stack = driverOptionsDropdown.map((d, di) => {
+            let value = 0;
+            // Calculate focus commodity
+            if (d.type === "focus") {
+              const answer = currentSegmentData.answers
+                .filter((a) => a.commodityFocus && a.name === x)
+                .find((a) => a.questionId === d.value);
+              value = answer && answer.value ? answer.value : 0;
+            }
+            // diversified
+            if (d.type === "diversified" && d.value === "diversified") {
+              value =
+                currentSegmentData?.[`total_${x}_diversified_income`] || 0;
+            }
+            value = value ? parseFloat(value.toFixed(2)) : value;
             return {
-              name: d.text,
-              title: d.text,
+              name: `${capitalize(x)} ${d.label}`,
+              title: `${capitalize(x)} ${d.label}`,
               value: value,
               total: value,
               order: di,
               color: colors[di],
+              stack: x,
             };
           });
-          // childrens doesn't have value / answers
-          const check = stack.filter((x) => x.value);
-          if (!check.length) {
-            const parentAnswer = currentSegmentData.answers
-              .filter((a) => a.commodityFocus && a.name === x)
-              .find((a) => a.questionId === findDriver.value);
-            const value =
-              parentAnswer && parentAnswer.value
-                ? parseFloat(parentAnswer.value.toFixed(2))
-                : 0;
-            stack = [
-              {
-                name: findDriver.label,
-                title: findDriver.label,
+        }
+        if (selectedDriver) {
+          const findDriver = driverOptionsDropdown.find(
+            (d) => d.value === selectedDriver
+          );
+          if (findDriver.type === "focus") {
+            stack = findDriver.childrens.map((d, di) => {
+              const answer = currentSegmentData.answers
+                .filter((a) => a.commodityFocus && a.name === x)
+                .find((a) => a.questionId === d.id);
+              const value =
+                answer && answer.value
+                  ? parseFloat(answer.value.toFixed(2))
+                  : 0;
+              return {
+                name: `${capitalize(x)} ${d.text}`,
+                title: `${capitalize(x)} ${d.text}`,
                 value: value,
                 total: value,
-                order: 0,
-                color: colors[0],
-              },
-            ];
+                order: di,
+                color: colors[di],
+                stack: x,
+              };
+            });
+            // childrens doesn't have value / answers
+            const check = stack.filter((x) => x.value);
+            if (!check.length) {
+              const parentAnswer = currentSegmentData.answers
+                .filter((a) => a.commodityFocus && a.name === x)
+                .find((a) => a.questionId === findDriver.value);
+              const value =
+                parentAnswer && parentAnswer.value
+                  ? parseFloat(parentAnswer.value.toFixed(2))
+                  : 0;
+              stack = [
+                {
+                  name: `${capitalize(x)} ${findDriver.label}`,
+                  title: `${capitalize(x)} ${findDriver.label}`,
+                  value: value,
+                  total: value,
+                  order: 0,
+                  color: colors[0],
+                  stack: x,
+                },
+              ];
+            }
+          }
+          if (findDriver.type === "diversified") {
+            stack = findDriver.childrens.map((d, di) => {
+              let value = 0;
+              // Calculate others commodity
+              if (otherCommodities.includes(d.type)) {
+                const nonFocusCommodity = currentSegmentData.answers.find(
+                  (a) =>
+                    a.name === x &&
+                    a.commodityType === d.type &&
+                    !a.question.parent &&
+                    a.question.question_type !== "diversified"
+                );
+                value =
+                  nonFocusCommodity && nonFocusCommodity?.value
+                    ? nonFocusCommodity.value
+                    : 0;
+              }
+              // Calculate diversified
+              if (d.type === "diversified") {
+                const diversified = currentSegmentData.answers.find(
+                  (a) =>
+                    a.name === x &&
+                    a.commodityType === d.type &&
+                    a.questionId === d.id
+                );
+                value =
+                  diversified && diversified?.value
+                    ? parseFloat(diversified.value.toFixed(2))
+                    : 0;
+              }
+              return {
+                name: `${capitalize(x)} ${d.text}`,
+                title: `${capitalize(x)} ${d.text}`,
+                value: value,
+                total: value,
+                order: di,
+                color: colors[di],
+                stack: x,
+              };
+            });
           }
         }
-        if (findDriver.type === "diversified") {
-          stack = findDriver.childrens.map((d, di) => {
-            let value = 0;
-            // Calculate others commodity
-            if (otherCommodities.includes(d.type)) {
-              const nonFocusCommodity = currentSegmentData.answers.find(
-                (a) =>
-                  a.name === x &&
-                  a.commodityType === d.type &&
-                  !a.question.parent &&
-                  a.question.question_type !== "diversified"
-              );
-              value =
-                nonFocusCommodity && nonFocusCommodity?.value
-                  ? nonFocusCommodity.value
-                  : 0;
-            }
-            // Calculate diversified
-            if (d.type === "diversified") {
-              const diversified = currentSegmentData.answers.find(
-                (a) =>
-                  a.name === x &&
-                  a.commodityType === d.type &&
-                  a.questionId === d.id
-              );
-              value =
-                diversified && diversified?.value
-                  ? parseFloat(diversified.value.toFixed(2))
-                  : 0;
-            }
-            return {
-              name: d.text,
-              title: d.text,
-              value: value,
-              total: value,
-              order: di,
-              color: colors[di],
-            };
-          });
-        }
-      }
-      // stack bar chart
-      return {
-        name: title,
-        title: title,
-        stack: stack,
-      };
-    });
+        // stack bar chart
+        return {
+          segment: currentSegmentData.name,
+          name: title,
+          title: title,
+          stack: stack,
+        };
+      })
+      .flatMap((x) => x.stack)
+      .reduce((c, d) => {
+        // transform into column bar chart
+        return [
+          ...c,
+          {
+            name: d.name,
+            type: "bar",
+            stack: d.stack,
+            color: d.color,
+            data: [d.value],
+          },
+        ];
+      }, []);
     return res;
   }, [currentSegmentData, driverOptionsDropdown, selectedDriver]);
 
@@ -264,12 +289,15 @@ const ChartExploreBreakdownDrivers = ({
         <Col span={24}>
           <Chart
             wrapper={false}
-            type={"BARSTACK"}
-            data={chartData}
-            affix={true}
-            extra={{ axisTitle: axisTitle }}
-            grid={{ right: 235 }}
-            showLabel={showLabel}
+            type={"BAR"}
+            loading={!chartData.length || !currentSegmentData}
+            override={getColumnStackBarOptions({
+              series: chartData,
+              origin: currentSegmentData ? [currentSegmentData] : [],
+              yAxis: { name: axisTitle },
+              grid: { right: 285, left: 70, bottom: 20 },
+              showLabel: showLabel,
+            })}
           />
         </Col>
       </Row>

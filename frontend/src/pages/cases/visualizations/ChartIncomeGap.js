@@ -75,7 +75,7 @@ const ChartIncomeGap = ({ dashboardData, currentCase, showLabel = false }) => {
   return (
     <Chart
       wrapper={false}
-      type="BARSTACK"
+      type="BAR"
       loading={!chartData.length}
       override={getColumnStackBarOptions({
         series: chartData,
