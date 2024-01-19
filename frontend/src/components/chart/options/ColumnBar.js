@@ -17,14 +17,21 @@ import { sortBy, isEmpty, groupBy, orderBy } from "lodash";
 const customFormatter = {
   formatter: function (params) {
     if (!params?.data?.stack?.length) {
-      return `<b>${params.name}</b>: ${thousandFormatter(params.value)}`;
+      return `<div>${params.name}: <b>${thousandFormatter(
+        params.value
+      )}</b><div>`;
     }
     let customTooltip = "<div>";
-    customTooltip += `<p><b>${params.name}</b></p>`;
-    customTooltip += "<ul'>";
+    customTooltip += `<b>${params.name}</b>`;
+    customTooltip +=
+      "<ul style='list-style-type: none; margin: 0; padding: 0;'>";
     orderBy(params.data.stack, "order").forEach((it) => {
       customTooltip += `<li key=${it.order}>
-        <b>${it.name}</b>: ${thousandFormatter(it.value)}
+        <span>- ${it.name}:</span>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span style="float: right;">
+        <b>${thousandFormatter(it.value)}</b>
+        </span>
       </li>`;
     });
     customTooltip += "</ul></div>";
@@ -33,14 +40,15 @@ const customFormatter = {
 };
 
 const ColumnBar = ({
-  data,
+  data = [],
   chartTitle,
   extra = {},
   horizontal = false,
   grid = {},
   showLabel = true,
+  series = [],
 }) => {
-  if (isEmpty(data) || !data) {
+  if ((isEmpty(data) || !data) && (isEmpty(series) || !series)) {
     return NoData;
   }
 
@@ -51,37 +59,41 @@ const ColumnBar = ({
   data = sortBy(data, "order");
 
   const labels = data.map((x) => x.name);
+  let transformSeries = [];
 
-  const grouped = groupBy(
-    data.flatMap((d) => d.data),
-    "name"
-  );
-  const series = Object.keys(grouped).map((key, ki) => {
-    const values = grouped[key];
-    return {
-      name: key,
-      title: key,
-      data: values.map((v, vi) => ({
-        ...v,
-        value: v.value,
-        itemStyle: { color: v.color || Color.color[vi] },
-      })),
-      type: "bar",
-      barMaxWidth: 50,
-      label: {
-        ...LabelStyle.label,
-        colorBy: "data",
-        position: horizontal ? "insideLeft" : "top",
-        show: showLabel,
-        padding: 5,
-        backgroundColor: "rgba(0,0,0,.3)",
-        ...TextStyle,
-        color: "#fff",
-      },
-      color: values?.[0]?.color || Color.color[ki],
-    };
-  });
-  const legends = series.map((s, si) => ({
+  if (data.length && !series.length) {
+    const grouped = groupBy(
+      data.flatMap((d) => d.data),
+      "name"
+    );
+    transformSeries = Object.keys(grouped).map((key, ki) => {
+      const values = grouped[key];
+      return {
+        name: key,
+        title: key,
+        data: values.map((v, vi) => ({
+          ...v,
+          value: v.value,
+          itemStyle: { color: v.color || Color.color[vi] },
+        })),
+        type: "bar",
+        barMaxWidth: 50,
+        label: {
+          ...LabelStyle.label,
+          colorBy: "data",
+          position: horizontal ? "insideLeft" : "top",
+          show: showLabel,
+          padding: 5,
+          backgroundColor: "rgba(0,0,0,.3)",
+          ...TextStyle,
+          color: "#fff",
+        },
+        color: values?.[0]?.color || Color.color[ki],
+      };
+    });
+  }
+
+  const legends = transformSeries.map((s, si) => ({
     name: s.name,
     itemStyle: { color: s.color || Color.color[si] },
   }));
@@ -150,7 +162,7 @@ const ColumnBar = ({
         alignWithLabel: true,
       },
     },
-    series: series,
+    series: transformSeries,
     ...Color,
     ...backgroundColor,
     ...Easing,

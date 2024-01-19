@@ -4,8 +4,18 @@ import { SegmentSelector } from ".";
 import { uniqBy, capitalize, sum } from "lodash";
 import Chart from "../../../components/chart";
 
-const colors = ["#00625F", "#47D985", "#82B2B2"];
-const legendColors = ["#00625F", "#47D985", "#82B2B2"];
+const colors = [
+  "#1b726f",
+  "#9cc2c1",
+  "#4eb8ff",
+  "#b7e2ff",
+  "#81e4ab",
+  "#ddf8e9",
+  "#3d4149",
+  "#787d87",
+];
+// const currentColors = ["#1b726f", "#4eb8ff", "#81e4ab", "#3d4149"];
+// const feasibleColors = ["#9cc2c1", "#b7e2ff", "#ddf8e9", "#787d87"];
 
 const ChartIncomeLevelPerCommodities = ({
   dashboardData,
@@ -63,6 +73,7 @@ const ChartIncomeLevelPerCommodities = ({
     const feasibleCommodityValuesExceptFocus = [];
     const res = commodities.map((cm, cmi) => {
       const data = ["current", "feasible"].map((x, xi) => {
+        // const colors = x === "current" ? currentColors : feasibleColors;
         const title = `${capitalize(x)} ${currentSegmentData.name}`;
         // recalculate total value
         const incomeQuestion = currentSegmentData.answers.find(
@@ -109,7 +120,7 @@ const ChartIncomeLevelPerCommodities = ({
           total: newTotalValue,
           commodityId: cm.commodityId,
           commodityName: cm.commodityName,
-          color: legendColors[xi],
+          color: colors[xi],
         };
       });
       return {
@@ -119,6 +130,7 @@ const ChartIncomeLevelPerCommodities = ({
         data: data,
       };
     });
+
     // DIVERSIFIED CALCULATION - add diversified income value
     let diversifiedQUestions = currentSegmentData.answers
       .filter(
@@ -131,6 +143,7 @@ const ChartIncomeLevelPerCommodities = ({
     diversifiedQUestions = uniqBy(diversifiedQUestions, "id");
     // populate diversified income value
     const diversifiedData = ["current", "feasible"].map((x, xi) => {
+      // const colors = x === "current" ? currentColors : feasibleColors;
       const title = `${capitalize(x)} ${currentSegmentData.name}`;
       let newValue = 0;
       if (x === "current") {
@@ -169,7 +182,7 @@ const ChartIncomeLevelPerCommodities = ({
         total: newValue,
         commodityId: null,
         commodityName: null,
-        color: legendColors[xi],
+        color: colors[xi],
       };
     });
     res.push({
