@@ -9,12 +9,14 @@ const CompareIncomeTarget = () => (
     justify="center"
   >
     <Col span={24} align="center">
-      <p>Income Target</p>
-      <h2>Compare to an income target</h2>
+      {/* <p>Income Target</p> */}
+      <h2>Choosing your Income Target</h2>
       <p>
-        This tool allows you to compare the actual income with an income target.{" "}
+        In the IDC, you can choose the Income Target to compare your actual
+        household income.
         <br />
-        Two ways are offered to set this target
+        So do not worry if a Living Income benchmark is not available for your
+        specific case.
       </p>
     </Col>
     <Col span={24}>
@@ -25,11 +27,12 @@ const CompareIncomeTarget = () => (
       >
         <Col span={8}>
           <Card className="compare-income-target-card info-first">
-            <h3>Better Income Target</h3>
+            <h3>Living Income Target</h3>
             <p>
-              If you have a specific income goal in mind, you can set the target
-              value yourself. Simply enter your desired income level in this
-              option.
+              The IDC has the data base for all the publicly available and
+              credible Living Income benchmarks. All you need to do is choose a
+              country and adjust the family size to obtain a Living Income
+              target.
             </p>
           </Card>
         </Col>
@@ -39,7 +42,7 @@ const CompareIncomeTarget = () => (
             <p>
               If there is no living income benchmark available, or if you have a
               specific income target in mind, you can set the target value
-              yourself. Simply enter your desired income level in this option.
+              yourself. Simply enter your desired income level target.
             </p>
           </Card>
         </Col>

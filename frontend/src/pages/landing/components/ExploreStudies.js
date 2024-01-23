@@ -2,7 +2,7 @@ import React from "react";
 import { Row, Col } from "antd";
 import "./landingcomp.scss";
 
-const ExploreStudies = () => {
+const ExploreStudies = ({ signedIn = false }) => {
   return (
     <Row
       id="explore-studies"
@@ -21,7 +21,10 @@ const ExploreStudies = () => {
           income drivers for your selected country and sector. This can serve as
           a helpful reference point when entering your data.
         </p>
-        <div data-testid="map" className="map-container"></div>
+        <div
+          data-testid="map"
+          className={`map-container ${signedIn ? "signed-in" : ""}`}
+        ></div>
       </Col>
     </Row>
   );

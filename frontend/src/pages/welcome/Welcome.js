@@ -53,7 +53,7 @@ const Welcome = ({ signOut }) => {
       <GetStarted />
       <FrameworkDrivers />
       <CompareIncomeTarget />
-      <ExploreStudies />
+      <ExploreStudies signedIn={true} />
       <FAQ />
       <FooterDisclaimer />
     </div>
