@@ -81,10 +81,6 @@ const ChartIncomeGap = ({ dashboardData, currentCase, showLabel = false }) => {
         series: chartData,
         origin: dashboardData,
         yAxis: { name: `Income (${currentCase.currency})` },
-        xAxis:
-          dashboardData?.length > 2
-            ? { axisLabel: { rotate: 45, margin: 20 } }
-            : {},
         showLabel: showLabel,
       })}
     />
