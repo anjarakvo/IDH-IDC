@@ -21,6 +21,15 @@ const customFormatter = {
         params.value
       )}</b><div>`;
     }
+    // handle stack/commodities without breakdowndrivers
+    const stackValues = params.data.stack.filter((x) => x.value);
+    if (!stackValues?.length) {
+      return `<div><b>${
+        params.name
+      }</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>${thousandFormatter(
+        params.value
+      )}</b><div>`;
+    }
     let customTooltip = "<div>";
     customTooltip += `<b>${params.name}</b>`;
     customTooltip +=
