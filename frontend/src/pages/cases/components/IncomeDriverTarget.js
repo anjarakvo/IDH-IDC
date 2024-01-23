@@ -149,7 +149,7 @@ const IncomeDriverTarget = ({
       }
     }
     // manual target
-    if (changedValues.target && !disableTarget) {
+    if ((changedValues.target || !changedValues.target) && !disableTarget) {
       setIncomeTarget(target);
       updateFormValues({ region: null, target: target });
     }
@@ -335,7 +335,8 @@ const IncomeDriverTarget = ({
         <Col span={8}>
           <p>Living income benchmark value for a household per year</p>
           <h2 className="income-target-value">
-            {thousandFormatter(incomeTarget.toFixed())} {currentCase.currency}
+            {incomeTarget ? thousandFormatter(incomeTarget.toFixed()) : 0}{" "}
+            {currentCase.currency}
           </h2>
         </Col>
         {/* <Col span={16}>

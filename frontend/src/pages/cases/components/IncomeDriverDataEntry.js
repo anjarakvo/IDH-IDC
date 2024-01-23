@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Row, Col, Tabs, message } from "antd";
 import { PlusCircleFilled } from "@ant-design/icons";
 import {
@@ -7,7 +7,7 @@ import {
   removeUndefinedObjectValue,
 } from "./";
 import { api } from "../../../lib";
-import { orderBy, isEqual } from "lodash";
+import { orderBy, isEqual, isEmpty } from "lodash";
 
 const IncomeDriverDataEntry = ({
   commodityList,
@@ -29,6 +29,11 @@ const IncomeDriverDataEntry = ({
   const [messageApi, contextHolder] = message.useMessage();
   const [isSaving, setIsSaving] = useState(false);
   const [currentValues, setCurrentValues] = useState([]);
+
+  const isAllSegmentHasBenchmark = useMemo(() => {
+    const check = formValues.filter((f) => !f.target && !isEmpty(f.answers));
+    return check;
+  }, [formValues]);
 
   useEffect(() => {
     const formValeusWithTotalCurrentIncomeAnswer = formValues.map(
@@ -53,6 +58,16 @@ const IncomeDriverDataEntry = ({
 
   // handle save here
   const handleSave = ({ isNextButton = false }) => {
+    if (isAllSegmentHasBenchmark.length) {
+      const segmentNames = isAllSegmentHasBenchmark
+        .map((x) => x.label)
+        .join(", ");
+      messageApi.open({
+        type: "warning",
+        content: `Sorry, your benchmark is not filled in which is a necessary item for sensitivity analysis. Please fill benchmark for ${segmentNames}`,
+      });
+      return;
+    }
     setIsSaving(true);
     const completed = finished.filter(
       (item) => item !== "Income Driver Data Entry"
