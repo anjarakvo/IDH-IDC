@@ -211,6 +211,10 @@
     background-position: center;
     height: 35rem;
     margin-top: 50px;
+
+    &.signed-in {
+      background-image: url("/assets/images/signed-in-explore-studies.svg") !important;
+    }
   }
 }
 
