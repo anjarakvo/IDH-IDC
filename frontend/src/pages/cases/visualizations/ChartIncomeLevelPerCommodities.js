@@ -52,12 +52,20 @@ const ChartIncomeLevelPerCommodities = ({
     parentQuestion = parentQuestion.question;
     // list commodities exclude diversified income
     const commoditiesTemp = currentSegmentData.answers
-      .filter(
-        (a) =>
+      .filter((a) => {
+        const currentCommodity = currentCase.case_commodities.find(
+          (c) => c?.id === a.caseCommodityId
+        );
+        if (
           a.commodityId &&
           a.commodityName &&
-          a.question.parent === parentQuestion.id
-      )
+          (a.question.parent === parentQuestion.id ||
+            currentCommodity?.breakdown === false)
+        ) {
+          return a;
+        }
+        return false;
+      })
       .map((a) => ({
         commodityId: a.commodityId,
         commodityName: a.commodityName,
@@ -192,7 +200,7 @@ const ChartIncomeLevelPerCommodities = ({
       data: diversifiedData,
     });
     return res;
-  }, [currentSegmentData]);
+  }, [currentSegmentData, currentCase]);
 
   return (
     <div>
