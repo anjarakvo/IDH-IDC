@@ -45,22 +45,6 @@ const seriesTmp = [
     stack: "feasible",
     color: "#ff8289",
   },
-  {
-    key: "total_current_income",
-    name: "Nett Current Income",
-    type: "line",
-    symbol: "diamond",
-    symbolSize: 15,
-    color: "#000",
-  },
-  {
-    key: "total_feasible_income",
-    name: "Nett Feasible Income",
-    type: "line",
-    symbol: "circle",
-    symbolSize: 12,
-    color: "#787d87",
-  },
 ];
 
 const ChartCurrentFeasible = ({

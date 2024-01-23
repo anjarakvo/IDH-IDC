@@ -122,12 +122,14 @@ const BarStack = ({
   });
   const legends = series.map((s, si) => ({
     name: s.name,
+    icon: s?.symbol || "circle",
     itemStyle: { color: s.color || Color.color[si] },
   }));
   let additionalLegends = [];
   if (targetData.length) {
     additionalLegends = targetData.map((t, ti) => ({
       name: t.name,
+      icon: t?.symbol || "circle",
       itemStyle: { color: t.color || Color.color[ti] },
     }));
   }

@@ -47,7 +47,17 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elCurrentFeasibleChart}
         >
-          <Col span={18}>
+          <Col span={24} className="income-overview-chart-wrapper">
+            <h2>
+              What are the current and feasible income levels for the different
+              segments?
+            </h2>
+            <p>
+              This graph shows you the actual household income components, and
+              the income target per segment
+            </p>
+          </Col>
+          <Col span={24}>
             <Card
               className="chart-card-wrapper"
               title="Current and feasible income"
@@ -74,16 +84,6 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
               />
             </Card>
           </Col>
-          <Col span={6} className="income-overview-chart-wrapper">
-            <h2>
-              What are the current and feasible income levels for the different
-              segments?
-            </h2>
-            <p>
-              This graph shows you the actual household income components, and
-              the income target per segment
-            </p>
-          </Col>
         </Row>
       </Col>
 
@@ -93,14 +93,14 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           gutter={[24, 24]}
           ref={elIncomeGap}
         >
-          <Col span={6} className="income-overview-chart-wrapper">
+          <Col span={24} className="income-overview-chart-wrapper">
             <h2>How big is the income gap?</h2>
             <p>
               This graph shows you the actual household income components, and
               the income target per segment
             </p>
           </Col>
-          <Col span={18}>
+          <Col span={24}>
             <Card
               className="chart-card-wrapper"
               title="Income Gap"

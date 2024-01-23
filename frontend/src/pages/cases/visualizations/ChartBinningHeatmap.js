@@ -125,7 +125,7 @@ const getOptions = ({
       left: "center",
       show: false,
       bottom: "15%",
-      color: ["#007800", "#ffffff"],
+      color: ["#68BEFC", "#d3ecff"],
     },
     series: [
       {
@@ -185,18 +185,21 @@ const getOptions = ({
           rich: {
             up: {
               color: "#fff",
-              backgroundColor: "green",
+              backgroundColor: "#218400",
               padding: 5,
+              fontWeight: 700,
             },
             out: {
               color: "#fff",
               backgroundColor: "#FEC508",
               padding: 5,
+              fontWeight: 700,
             },
             down: {
               color: "#fff",
-              backgroundColor: "red",
+              backgroundColor: "#F50902",
               padding: 5,
+              fontWeight: 700,
             },
           },
         },

@@ -45,12 +45,14 @@ const ChartExploreBreakdownDrivers = ({
         focusCommodityAnswers.map((a) => a.question),
         "id"
       ).find((q) => !q.parent)?.childrens || [];
-    const focusRes = driverQuestions.map((q) => ({
-      label: q.text,
-      type: "focus",
-      value: q.id,
-      childrens: q.childrens.map((q) => ({ ...q, type: "focus" })),
-    }));
+    const focusRes = driverQuestions
+      .map((q) => ({
+        label: q.text,
+        type: "focus",
+        value: q.id,
+        childrens: q.childrens.map((q) => ({ ...q, type: "focus" })),
+      }))
+      .filter((x) => x.value !== 2); // remove land driver from dropdown
     // add secondary - tertiary value
     const additonalCommodities = otherCommodities
       .map((x) => {

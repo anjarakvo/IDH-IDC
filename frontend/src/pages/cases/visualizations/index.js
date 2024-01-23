@@ -18,7 +18,10 @@ export const getColumnStackBarOptions = ({
   showLabel = false,
   grid = {},
 }) => {
-  const legends = series.map((x) => x.name);
+  const legends = series.map((x) => ({
+    name: x.name,
+    icon: x?.symbol || "circle",
+  }));
   const xAxisData = origin.map((x) => x.name);
 
   const options = {
@@ -118,7 +121,7 @@ export const getColumnStackBarOptions = ({
         label: {
           ...LabelStyle.label,
           show: showLabel,
-          position: "right",
+          position: "inside",
         },
       };
     }),

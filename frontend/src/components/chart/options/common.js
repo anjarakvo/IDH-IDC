@@ -6,6 +6,17 @@ export const thousandFormatter = (value) => {
     : 0;
 };
 
+export const formatNumberToString = (number) => {
+  if (number < 1e3) {
+    return thousandFormatter(number);
+  } else if (number < 1e6) {
+    return (number / 1e3).toFixed(1) + "K";
+  } else if (number < 1e9) {
+    return (number / 1e6).toFixed(1) + "M";
+  }
+  return (number / 1e9).toFixed(1) + "B";
+};
+
 export const popupFormatter = (params) => {
   var value = (params.value + "").split(".");
   value = thousandFormatter(value[0]);
@@ -43,7 +54,7 @@ export const LabelStyle = {
     color: "#fff",
     padding: 5,
     backgroundColor: "rgba(0,0,0,.3)",
-    formatter: (e) => thousandFormatter(e.value),
+    formatter: (e) => formatNumberToString(e.value),
   },
 };
 
@@ -149,6 +160,8 @@ export const Legend = {
     fontFamily: "TabletGothic",
     fontSize: 12,
   },
+  itemWidth: 15,
+  itemHeight: 15,
   formatter: function (name) {
     return name;
   },

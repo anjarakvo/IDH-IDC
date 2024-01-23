@@ -40,6 +40,36 @@ const selectProps = {
 
 const referenceDataExpand = [
   {
+    key: "area",
+    label: "Land",
+    unit: "area_size_unit",
+    type: "type_area",
+  },
+  {
+    key: "volume",
+    label: "Volume",
+    unit: "volume_measurement_unit",
+    type: "type_volume",
+  },
+  {
+    key: "price",
+    label: "Price",
+    unit: "price_unit",
+    type: "type_price",
+  },
+  {
+    key: "cost_of_production",
+    label: "Cost of Production",
+    unit: "cost_of_production_unit",
+    type: "type_cost_of_production",
+  },
+  {
+    key: "diversified_income",
+    label: "Diversified Income",
+    unit: "diversified_income_unit",
+    type: "type_diversified_income",
+  },
+  {
     key: "country",
     label: "Country",
   },
@@ -78,36 +108,6 @@ const referenceDataExpand = [
   {
     key: "range",
     label: "Range",
-  },
-  {
-    key: "area",
-    label: "Land",
-    unit: "area_size_unit",
-    type: "type_area",
-  },
-  {
-    key: "volume",
-    label: "Volume",
-    unit: "volume_measurement_unit",
-    type: "type_volume",
-  },
-  {
-    key: "price",
-    label: "Price",
-    unit: "price_unit",
-    type: "type_price",
-  },
-  {
-    key: "cost_of_production",
-    label: "Cost of Production",
-    unit: "cost_of_production_unit",
-    type: "type_cost_of_production",
-  },
-  {
-    key: "diversified_income",
-    label: "Diversified Income",
-    unit: "diversified_income_unit",
-    type: "type_diversified_income",
   },
 ];
 
