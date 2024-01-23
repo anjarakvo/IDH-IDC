@@ -708,7 +708,7 @@ const Scenario = ({
             title: "Gap",
             value: Math.round(gapValue),
             total: Math.round(gapValue),
-            color: "#E06666",
+            color: "#F9CB21",
             order: 3,
           },
         ],

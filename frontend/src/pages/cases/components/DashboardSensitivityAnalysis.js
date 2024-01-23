@@ -130,7 +130,7 @@ const BinningForm = ({
           className="info-card-wrapper"
           extra={
             <Tooltip title="The binning driver can take on three specific values called 'bins.' We create a separate heatmap for each bin below allowing us to compare the results. Likewise, the lines in the line graph represent the 3 bins.">
-              <InfoCircleOutlined />
+              <InfoCircleOutlined className="info-icon" />
             </Tooltip>
           }
         >
@@ -193,7 +193,7 @@ const BinningForm = ({
           className="info-card-wrapper"
           extra={
             <Tooltip title="This driver will be reflected on the x-axis of the line chart, and in the columns of the heatmaps. You need to set a minimum and maximum value.">
-              <InfoCircleOutlined />
+              <InfoCircleOutlined className="info-icon" />
             </Tooltip>
           }
         >
@@ -254,7 +254,7 @@ const BinningForm = ({
           className="info-card-wrapper"
           extra={
             <Tooltip title="This driver will be reflected on the y-axis of the line chart, and in the rows of the heatmaps. You need to set a minimum and maximum value.">
-              <InfoCircleOutlined />
+              <InfoCircleOutlined className="info-icon" />
             </Tooltip>
           }
         >
