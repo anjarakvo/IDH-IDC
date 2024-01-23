@@ -3,8 +3,7 @@ import {
   Color,
   TextStyle,
   backgroundColor,
-  // AxisLabelFormatter,
-  AxisShortLabelFormatter,
+  AxisLabelFormatter,
   Title,
   axisTitle,
   NoData,
@@ -164,7 +163,7 @@ const ColumnBar = ({
         interval: 0,
         ...TextStyle,
         color: "#4b4b4e",
-        formatter: AxisShortLabelFormatter?.formatter,
+        formatter: AxisLabelFormatter?.formatter,
         ...xAxisLabel,
       },
       axisTick: {

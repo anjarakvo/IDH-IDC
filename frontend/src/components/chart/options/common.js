@@ -49,10 +49,11 @@ export const LabelStyle = {
 
 export const AxisLabelFormatter = {
   formatter: function (params) {
+    const maxLength = 2;
     let newParamsName = String(params).split(" ");
-    if (newParamsName.length > 3) {
+    if (newParamsName.length > maxLength) {
       newParamsName = newParamsName.map((p, pi) => {
-        if (pi !== 0 && pi % 3 === 0) {
+        if (pi !== 0 && pi % maxLength === 0) {
           p += "\n";
         }
         return p;
@@ -68,6 +69,17 @@ export const AxisShortLabelFormatter = {
     const stringArr = String(params).split(" ");
     const newParamsName = take(stringArr, 5).join("\n");
     return upperFirst(newParamsName) + (stringArr.length > 5 ? ".." : "");
+  },
+};
+
+export const AxisTruncateLabelFormatter = {
+  formatter: function (params) {
+    const maxLength = 10;
+    const inputString = String(params);
+    if (inputString.length > maxLength) {
+      return inputString.substring(0, maxLength) + "...";
+    }
+    return inputString;
   },
 };
 

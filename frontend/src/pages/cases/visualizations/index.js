@@ -4,7 +4,7 @@ import {
   Color,
   TextStyle,
   thousandFormatter,
-  AxisShortLabelFormatter,
+  AxisLabelFormatter,
   backgroundColor,
   Easing,
   LabelStyle,
@@ -83,7 +83,7 @@ export const getColumnStackBarOptions = ({
         overflow: "break",
         ...TextStyle,
         color: "#4b4b4e",
-        formatter: AxisShortLabelFormatter?.formatter,
+        formatter: AxisLabelFormatter?.formatter,
         ...xAxis.axisLabel,
       },
       axisTick: {

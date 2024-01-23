@@ -293,6 +293,8 @@ const DataFields = ({
                 <Input
                   defaultValue={segmentLabel}
                   onChange={(e) => setNewName(e.target.value)}
+                  maxLength={15}
+                  showCount={true}
                 />
               ) : (
                 segmentLabel
@@ -573,8 +575,6 @@ const DataFields = ({
                 height={window.innerHeight * 0.45}
                 extra={{
                   axisTitle: { y: `Income (${currentCase.currency})` },
-                  xAxisLabel:
-                    segments?.length > 2 ? { rotate: 45, margin: 25 } : {},
                 }}
                 grid={{ bottom: 90 }}
                 showLabel={showChartLabel}
