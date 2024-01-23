@@ -7,9 +7,20 @@ import { PlusCircleFilled } from "@ant-design/icons";
 const addScenarioButton = {
   key: "add",
   name: (
-    <span>
-      <PlusCircleFilled /> Add Scenario
-    </span>
+    <Space align="center">
+      <div>
+        <PlusCircleFilled /> Add Scenario
+      </div>
+      <div
+        style={{
+          fontSize: "12px",
+          fontWeight: "normal",
+          fontFamily: "TabletGothic",
+        }}
+      >
+        (maximum 3)
+      </div>
+    </Space>
   ),
   description: null,
   scenarioValues: [],
@@ -37,7 +48,7 @@ const DashboardScenarioModeling = ({
   );
 
   const scenarioDataWithAddButton = useMemo(() => {
-    if (enableEditCase) {
+    if (enableEditCase && scenarioData?.length < 3) {
       return [...orderBy(scenarioData, "key"), addScenarioButton];
     }
     return orderBy(scenarioData, "key");
