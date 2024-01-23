@@ -21,16 +21,17 @@ const customFormatter = {
         params.value
       )}</b><div>`;
     }
-    let customTooltip = "<div>";
-    customTooltip += `<b>${params.name}</b>`;
     // handle stack/commodities without breakdowndrivers
     const stackValues = params.data.stack.filter((x) => x.value);
     if (!stackValues?.length) {
-      customTooltip += `<div>Total Income: <b>${thousandFormatter(
+      return `<div><b>${
+        params.name
+      }</b>:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b>${thousandFormatter(
         params.value
       )}</b><div>`;
-      return customTooltip;
     }
+    let customTooltip = "<div>";
+    customTooltip += `<b>${params.name}</b>`;
     customTooltip +=
       "<ul style='list-style-type: none; margin: 0; padding: 0;'>";
     orderBy(params.data.stack, "order").forEach((it) => {
