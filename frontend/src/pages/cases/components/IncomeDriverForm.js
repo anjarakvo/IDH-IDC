@@ -229,7 +229,7 @@ const IncomeDriverForm = ({
         }}
       >
         {groupIndex === 0
-          ? "Focus Commodity:"
+          ? "Primary Commodity:"
           : group.commodity_id === null
           ? "Other "
           : ""}{" "}

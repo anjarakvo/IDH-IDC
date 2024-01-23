@@ -207,7 +207,7 @@ const CaseForm = ({
                 ]}
               >
                 <Select
-                  placeholder="Select Focus Commodity"
+                  placeholder="Select Primary Commodity"
                   options={commodityOptions}
                   {...selectProps}
                   disabled={!enableEditCase}

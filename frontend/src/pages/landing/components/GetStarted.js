@@ -12,7 +12,7 @@ const GetStarted = () => {
     {
       title: "Set up your case",
       description:
-        "To begin, create a new case and fill in the details of your case such as the name, country of interest, name of the focus commodity and measurement units you would like to use.",
+        "To begin, create a new case and fill in the details of your case such as the name, country of interest, name of the primary commodity and measurement units you would like to use.",
     },
     {
       title: "Follow the prompt to input",

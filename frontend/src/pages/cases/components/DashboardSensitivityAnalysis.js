@@ -366,7 +366,7 @@ const DashboardSensitivityAnalysis = ({
       },
       {
         key: data.length + 11,
-        name: "Total Focus Income",
+        name: "Total Primary Income",
         current: segmentData.total_current_focus_income?.toFixed() || 0,
         feasible: segmentData.total_feasible_focus_income?.toFixed() || 0,
         unitName: currencyUnit,
@@ -397,7 +397,7 @@ const DashboardSensitivityAnalysis = ({
     // filter drivers to include in BinningForm options
     return dataSource.filter(
       (d) =>
-        !["Total Focus Income", "Total Income", "Income Target"].includes(
+        !["Total Primary Income", "Total Income", "Income Target"].includes(
           d.name
         )
     );
