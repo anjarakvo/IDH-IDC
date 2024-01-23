@@ -27,7 +27,7 @@ import {
   selectProps,
 } from "./";
 import { ChartScenarioModeling } from "../visualizations";
-import { isEmpty, orderBy, uniq } from "lodash";
+import { isEmpty, orderBy, uniqBy } from "lodash";
 import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
@@ -925,18 +925,46 @@ const Scenario = ({
                 (nw) => nw.questionId === cur.questionId
               );
               if (check.value !== null && check.value !== cur.value) {
-                return check.questionType !== "diversified"
-                  ? cur.text
-                  : "Diversified Income";
+                let percentChange = 0;
+                if (cur.value !== 0) {
+                  percentChange = ((check.value - cur.value) / cur.value) * 100;
+                  percentChange = `${percentChange?.toFixed(2)}%`;
+                } else {
+                  percentChange = "~";
+                }
+                const text =
+                  check.questionType !== "diversified"
+                    ? cur.text
+                    : "Diversified Income";
+                return {
+                  qid: cur.questionId,
+                  text: text,
+                  percent: percentChange,
+                };
               }
               return false;
             })
             .filter((x) => x);
+          if (isEmpty(compareDrivers)) {
+            return {
+              ...res,
+              [scenarioKey]: "-",
+            };
+          }
+          const values = (
+            <Space direction="vertical">
+              {orderBy(uniqBy(compareDrivers, "qid"), "qid").map((x) => (
+                <Space key={x.qid}>
+                  <div>{x.text}</div>
+                  <div>({x.percent})</div>
+                </Space>
+              ))}
+            </Space>
+          );
+
           res = {
             ...res,
-            [scenarioKey]: isEmpty(compareDrivers)
-              ? "-"
-              : uniq(compareDrivers).join(", "),
+            [scenarioKey]: values,
           };
         });
       }
