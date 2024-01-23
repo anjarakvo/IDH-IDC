@@ -62,7 +62,7 @@ const ChartExploreBreakdownDrivers = ({
           return false;
         }
         return {
-          text: `Total ${capitalize(x)} / Non Focus - ${
+          text: `Total ${capitalize(x)} / Non Primary - ${
             commodity.commodityName
           }`,
           type: x,

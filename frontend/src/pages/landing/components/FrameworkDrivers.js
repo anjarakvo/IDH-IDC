@@ -17,7 +17,7 @@ const FrameworkDrivers = () => {
     {
       key: "1",
       label: "Land",
-      children: <p>The size of the land used to grow the focus commodity.</p>,
+      children: <p>The size of the land used to grow the primary commodity.</p>,
     },
     {
       key: "2",
@@ -34,7 +34,7 @@ const FrameworkDrivers = () => {
       label: "Price",
       children: (
         <p>
-          The price per unit of the focus commodity, which may also include a
+          The price per unit of the primary commodity, which may also include a
           price premium.
         </p>
       ),
@@ -44,7 +44,7 @@ const FrameworkDrivers = () => {
       label: "Cost of Production",
       children: (
         <p>
-          The costs of production for growing the focus commodity can cover
+          The costs of production for growing the primary commodity can cover
           several types of costs, such as costs for labour, inputs or equipment.
         </p>
       ),
@@ -54,10 +54,10 @@ const FrameworkDrivers = () => {
       label: "Diversified Income",
       children: (
         <p>
-          The majority of farmer’ households also earn an income from other
-          sources than the focus commodity. This can be income from other crops,
-          livestock, income earned from off-farm labour or non-farm non labour
-          sources (e.g. remittances, government transfers).
+          The majority of farmer households also earn an income from other
+          sources than the primary commodity. This can be income from other
+          crops, livestock, income earned from off-farm labour or non-farm non
+          labour sources (e.g. remittances, government transfers).
         </p>
       ),
     },

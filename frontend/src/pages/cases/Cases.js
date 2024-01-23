@@ -302,7 +302,7 @@ const Cases = () => {
         {...filterProps}
         key="2"
         options={commodityOptios}
-        placeholder="Focus Commodity"
+        placeholder="Primary Commodity"
         value={commodity}
         onChange={setCommodity}
       />

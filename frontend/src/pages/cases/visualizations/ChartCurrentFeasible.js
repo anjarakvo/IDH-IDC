@@ -5,14 +5,14 @@ import { getColumnStackBarOptions } from ".";
 const seriesTmp = [
   {
     key: "total_current_revenue_focus_commodity",
-    name: "Current Revenue\nFocus Commodity",
+    name: "Current Revenue\nPrimary Commodity",
     type: "bar",
     stack: "current",
     color: "#4f9290",
   },
   {
     key: "total_feasible_revenue_focus_commodity",
-    name: "Feasible Revenue\nFocus Commodity",
+    name: "Feasible Revenue\nPrimary Commodity",
     type: "bar",
     stack: "feasible",
     color: "#61adaa",
@@ -33,14 +33,14 @@ const seriesTmp = [
   },
   {
     key: "total_current_focus_commodity_cost_of_production",
-    name: "Current Focus Commodity\nCosts of Production",
+    name: "Current Primary Commodity\nCosts of Production",
     type: "bar",
     stack: "current",
     color: "#ff010e",
   },
   {
     key: "total_feasible_focus_commodity_cost_of_production",
-    name: "Feasible Focus Commodity\nCosts of Production",
+    name: "Feasible Primary Commodity\nCosts of Production",
     type: "bar",
     stack: "feasible",
     color: "#ff8289",
