@@ -17,15 +17,15 @@ const FrameworkDrivers = () => {
     {
       key: "1",
       label: "Land",
-      children: <p>The size of the land used to grow the primary commodity.</p>,
+      children: <p>The size of the land used to grow the crops.</p>,
     },
     {
       key: "2",
       label: "Volume",
       children: (
         <p>
-          The quantity per unit land, taking into account both yield and
-          potential loss.
+          The volume of produce available for commercial sale, taking into
+          account both yield and potential losses.
         </p>
       ),
     },
@@ -34,8 +34,8 @@ const FrameworkDrivers = () => {
       label: "Price",
       children: (
         <p>
-          The price per unit of the primary commodity, which may also include a
-          price premium.
+          The farmgate price for the produce which may also include a price
+          premiums.
         </p>
       ),
     },
@@ -44,8 +44,9 @@ const FrameworkDrivers = () => {
       label: "Cost of Production",
       children: (
         <p>
-          The costs of production for growing the primary commodity can cover
-          several types of costs, such as costs for labour, inputs or equipment.
+          The costs of production for producing the primary Crop which covers
+          all can cover several types of costs, such as costs for labour, inputs
+          or equipment.
         </p>
       ),
     },

@@ -13,11 +13,11 @@ const Jumbotron = ({ signOut = null }) => {
     <Row id="jumbotron" data-testid="jumbotron-wrapper" justify="center">
       <Col span={24}>
         <h1 data-testid="jumbotron-title">
-          Welcome to the income driver calculator
+          Welcome to the Income Driver Calculator (IDC)
         </h1>
         <h3 data-testid="jumbotron-subtitle">
-          IDH is working to secure better income for smallholder farmers in
-          several sectors and landscapes.
+          IDH works towards better incomes for smallholder farmers across
+          different sectors and landscapes.
         </h3>
         {loggedIn ? (
           <Button

@@ -29,7 +29,7 @@ const GetStarted = () => {
   return (
     <Row id="get-started">
       <Col span={12}>
-        <h2>Getting Started</h2>
+        <h2>Using the Income Driver Calculator</h2>
         <Space
           direction="vertical"
           size={[24, 24]}
