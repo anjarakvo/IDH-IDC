@@ -825,6 +825,8 @@ const Scenario = ({
             placeholder="Scenario Name"
             defaultValue={scenarioItem.name}
             onChange={(e) => setNewName(e.target.value)}
+            maxLength={15}
+            showCount={true}
           />
         </Col>
         <Col span={24}>
