@@ -206,6 +206,7 @@ const DashboardScenarioModeling = ({
           activeKey={activeKey}
           type="card"
           className="scenario-tabs-container"
+          destroyInactiveTabPane={true}
           items={scenarioDataWithAddButton.map((scenarioItem, index) => ({
             ...scenarioItem,
             label: scenarioItem.name,
@@ -232,6 +233,7 @@ const DashboardScenarioModeling = ({
                       ?.scenarioValues || {}
                   }
                   enableEditCase={enableEditCase}
+                  activeScenario={activeKey}
                 />
               ),
           }))}
