@@ -36,14 +36,14 @@ const confidenceLevelOptions = [
   { label: "Undefined", value: "Undefined" },
 ];
 
-const rangeOptions = [
-  { label: "Low value", value: "Low value" },
-  { label: "Median value", value: "Median value" },
-  {
-    label: "High value",
-    value: "High value",
-  },
-];
+// const rangeOptions = [
+//   { label: "Low value", value: "Low value" },
+//   { label: "Median value", value: "Median value" },
+//   {
+//     label: "High value",
+//     value: "High value",
+//   },
+// ];
 
 const typeOptions = [
   { label: "Mean", value: "Mean" },
@@ -119,6 +119,7 @@ const ReferenceDataForm = ({
     const payload = {
       ...values,
       currency: "",
+      range: null,
     };
     onSave({
       payload: payload,
@@ -301,7 +302,7 @@ const ReferenceDataForm = ({
             <Col span={24}>
               <Card title="Details about the data">
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={24}>
                     <Form.Item
                       label={
                         <LabelWithTooltip
@@ -317,7 +318,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  {/* <Col span={12}>
                     <Form.Item
                       label={
                         <LabelWithTooltip
@@ -329,7 +330,7 @@ const ReferenceDataForm = ({
                     >
                       <Select {...selectProps} options={rangeOptions} />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                   {/* <Col span={8}>
                     <Form.Item label="Type" name="type">
                       <Select {...selectProps} options={typeOptions} />

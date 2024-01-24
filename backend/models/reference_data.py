@@ -107,7 +107,7 @@ class ReferenceData(Base):
     type_cost_of_production = Column(String, nullable=True)
     type_diversified_income = Column(String, nullable=True)
 
-    created_by = Column(Integer, ForeignKey("user.id"))
+    created_by = Column(Integer, ForeignKey("user.id"), nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime,
