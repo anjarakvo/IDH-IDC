@@ -11,7 +11,7 @@ import {
   Easing,
 } from "../../../components/chart/options/common";
 
-const legendColors = ["#03625f", "#82b2b2", "#F9BC05"];
+const legendColors = ["#F9BC05", "#82b2b2", "#03625f"];
 
 const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
   const [selectedSegment, setSelectedSegment] = useState(null);
@@ -114,6 +114,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
           feasiblePerCurrentTotalIncome - incomeIncreaseFeasible;
         // EOL Income value
         return {
+          id: ind.id,
           name: ind.text,
           income: incomeValue || 0,
           possible: possibleValue || 0,
@@ -122,6 +123,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
       }
 
       return {
+        id: ind.id,
         name: ind.text,
         income: 0,
         possible: possibleValue,
@@ -143,6 +145,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
       const additionalDiversifiedValue =
         feasiblePerCurrentTotalIncome - diversifiedIncreaseFeasible;
       transformedData.push({
+        id: 9002,
         name: "Diversified Income",
         income:
           ((currentSegmentData.total_current_income - newDiversifiedValue) /
@@ -157,11 +160,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
       });
     }
     // reorder
-    transformedData = orderBy(
-      transformedData,
-      ["possible", "income", "additional"],
-      ["asc", "asc", "asc"]
-    );
+    transformedData = orderBy(transformedData, ["id"], ["asc"]);
     const finalData = ["possible", "income", "additional"].map((x, xi) => {
       let title = "";
       if (x === "possible") {
@@ -169,7 +168,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
       }
       if (x === "income") {
         title =
-          "Resulting change in farmers' income if all other income drivers stay the same(%)";
+          "Resulting change in farmers' income if all other income drivers stay the same (%)";
       }
       if (x === "additional") {
         title =
@@ -179,7 +178,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
         name: d.name,
         value: d[x].toFixed(2),
         label: {
-          position: d[x] < 0 ? "insideLeft" : "insideRight",
+          position: d[x] < 0 ? "insideBottom" : "insideTop",
         },
       }));
       return {
@@ -207,12 +206,14 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
         containLabel: true,
         left: 55,
         right: 50,
+        top: 75,
+        bottom: 20,
         label: {
           color: "#222",
           ...TextStyle,
         },
       },
-      xAxis: {
+      yAxis: {
         type: "value",
         name: "Change (%)",
         nameTextStyle: { ...TextStyle },
@@ -223,7 +224,7 @@ const ChartBigImpact = ({ dashboardData, showLabel = false }) => {
           color: "#9292ab",
         },
       },
-      yAxis: {
+      xAxis: {
         type: "category",
         splitLine: { show: false },
         data: transformedData.map((d) => d.name),
