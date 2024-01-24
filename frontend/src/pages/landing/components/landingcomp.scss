@@ -81,8 +81,8 @@
     }
 
     .driver-icon-wrapper {
-      border-radius: 100px 0px 100px 100px;
-      background: #01605f;
+      // border-radius: 100px 0px 100px 100px;
+      background: transparent;
       width: 100px;
       height: 100px;
       flex-shrink: 0;
@@ -91,7 +91,7 @@
       align-items: center;
 
       &.price-icon {
-        background: #6de19e;
+        background: transparent;
       }
     }
 
@@ -106,6 +106,7 @@
 
     .driver-calculation-stroke {
       margin-top: 16px;
+      margin-bottom: 10px;
     }
   }
 }

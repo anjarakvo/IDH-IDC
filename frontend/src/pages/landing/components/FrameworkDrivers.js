@@ -1,16 +1,14 @@
 import React from "react";
 import "./landingcomp.scss";
 import { Row, Col, Image, Collapse, Space } from "antd";
-import {
-  LandAreaIcon,
-  VolumeIcon,
-  PriceIcon,
-  CostProductionIcon,
-  DiversifiedIncomeIcon,
-  HouseholdIncomeIcon,
-  DriverCalculationStroke,
-} from "../../../lib/icon";
+import { DriverCalculationStroke } from "../../../lib/icon";
 import LoginRightImage from "../../../assets/images/login-right-img.png";
+import LandAreaIcon from "../../../assets/icons/land.png";
+import VolumeIcon from "../../../assets/icons/volume.png";
+import PriceIcon from "../../../assets/icons/price.png";
+import CostProductionIcon from "../../../assets/icons/cost-of-production.png";
+import DiversifiedIncomeIcon from "../../../assets/icons/diversified-income.png";
+import HouseholdIncomeIcon from "../../../assets/icons/hh-income.png";
 
 const FrameworkDrivers = () => {
   const items = [
@@ -87,48 +85,51 @@ const FrameworkDrivers = () => {
         <Space align="center" size={[20, 20]}>
           <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper land-area-icon">
-              <LandAreaIcon />
+              <Image src={LandAreaIcon} preview={false} />
             </div>
             <div className="driver-label">Land</div>
           </Space>
           <div className="math-symbol">x</div>
           <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper volume-icon">
-              <VolumeIcon />
+              <Image src={VolumeIcon} preview={false} />
             </div>
             <div className="driver-label">Volume</div>
           </Space>
           <div className="math-symbol">x</div>
           <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper price-icon">
-              <PriceIcon />
+              <Image src={PriceIcon} preview={false} />
             </div>
             <div className="driver-label">Price</div>
           </Space>
           <div className="math-symbol">-</div>
           <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper cost-production-icon">
-              <CostProductionIcon />
+              <Image src={CostProductionIcon} preview={false} />
             </div>
             <div className="driver-label">Cost of production</div>
           </Space>
           <div className="math-symbol">+</div>
           <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper diversified-income-icon">
-              <DiversifiedIncomeIcon />
+              <Image src={DiversifiedIncomeIcon} preview={false} />
             </div>
             <div className="driver-label">Diversified income</div>
           </Space>
           <div className="math-symbol">=</div>
           <Space direction="vertical" align="center">
             <div className="driver-icon-wrapper household-income-icon">
-              <HouseholdIncomeIcon />
+              <Image src={HouseholdIncomeIcon} preview={false} />
             </div>
             <div className="driver-label">Household Income</div>
           </Space>
         </Space>
         <div className="driver-calculation-stroke">
-          <DriverCalculationStroke />
+          <Space direction="vertical" align="center">
+            <DriverCalculationStroke />
+            <div className="driver-label">Primary Crop</div>
+          </Space>
         </div>
       </div>
     </Row>
