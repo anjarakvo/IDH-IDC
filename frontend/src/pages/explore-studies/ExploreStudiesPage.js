@@ -105,10 +105,10 @@ const referenceDataExpand = [
     key: "confidence_level",
     label: "Confidence Level",
   },
-  {
-    key: "range",
-    label: "Range",
-  },
+  // {
+  //   key: "range",
+  //   label: "Range",
+  // },
 ];
 
 const perPage = 10;
