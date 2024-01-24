@@ -31,6 +31,72 @@ import { isEmpty, orderBy, uniqBy } from "lodash";
 import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 import { thousandFormatter } from "../../../components/chart/options/common";
 
+const generateChartData = (data) => {
+  return data.map((d) => {
+    const incomeTarget = d.currentSegmentValue.target;
+    const currentTotalIncome = d.currentSegmentValue.total_current_income;
+    const feasibleFocusIncome =
+      d.currentSegmentValue.total_feasible_focus_income;
+
+    const newTotalIncome = d?.newTotalIncome || feasibleFocusIncome;
+    const additionalValue = newTotalIncome - currentTotalIncome;
+
+    let gapValue = incomeTarget - newTotalIncome;
+    gapValue = gapValue < 0 ? 0 : gapValue;
+
+    return {
+      name: `${d.scenarioName}-${d.name}`,
+      target: Math.round(incomeTarget),
+      stack: [
+        {
+          name: "Current total\nhousehold income",
+          title: "Current total\nhousehold income",
+          value: Math.round(currentTotalIncome),
+          total: Math.round(currentTotalIncome),
+          color: "#1B625F",
+          order: 1,
+        },
+        {
+          name: "Additional income\nwhen income drivers\nare changed",
+          title: "Additional income\nwhen income drivers\nare changed",
+          value: Math.round(additionalValue),
+          total: Math.round(additionalValue),
+          color: "#49D985",
+          order: 2,
+        },
+        {
+          name: "Gap",
+          title: "Gap",
+          value: Math.round(gapValue),
+          total: Math.round(gapValue),
+          color: "#F9CB21",
+          order: 3,
+        },
+      ],
+    };
+  });
+};
+
+const generateTargetChartData = (data) => {
+  const target = [
+    {
+      name: "Income Target",
+      type: "line",
+      symbol: "diamond",
+      symbolSize: 15,
+      color: "#000",
+      lineStyle: {
+        width: 0,
+      },
+      data: data.map((d) => ({
+        name: "Benchmark",
+        value: d?.target ? Math.round(d.target) : 0,
+      })),
+    },
+  ];
+  return target;
+};
+
 const Question = ({
   id,
   parent,
@@ -496,6 +562,7 @@ const Scenario = ({
   setScenarioData,
   currentScenarioValues = {},
   enableEditCase,
+  activeScenario,
 }) => {
   const [editing, setEditing] = useState(false);
   const [activeTab, setActiveTab] = useState(dashboardData[0].id);
@@ -508,10 +575,7 @@ const Scenario = ({
   const [selectedScenarioSegmentChart, setSelectedScenarioSegmentChart] =
     useState([]);
   const [selectedSegment, setSelectedSegment] = useState(null);
-  const [currentScenarioIncomeGap, setCurrentScenarioIncomeGap] = useState({
-    chartData: [],
-    targetChartData: [],
-  });
+  const [currentScenarioData, setCurrentScenarioData] = useState([]);
 
   const [
     showLabelChartCurrentScenarioIncomeGap,
@@ -656,6 +720,10 @@ const Scenario = ({
     });
     data = orderBy(data, ["scenarioSegmentKey"]);
 
+    setCurrentScenarioData(
+      data.filter((d) => d.scenarioKey === parseInt(activeScenario))
+    );
+
     if (!isEmpty(selectedScenarioSegmentChart)) {
       return data.filter((d) =>
         selectedScenarioSegmentChart.includes(d.scenarioSegmentKey)
@@ -668,85 +736,28 @@ const Scenario = ({
     scenarioItem,
     scenarioValues,
     selectedScenarioSegmentChart,
+    activeScenario,
   ]);
 
-  const chartData = useMemo(() => {
-    const data = combineScenarioDataWithDashboardData.map((d) => {
-      const incomeTarget = d.currentSegmentValue.target;
-      const currentTotalIncome = d.currentSegmentValue.total_current_income;
-      const feasibleFocusIncome =
-        d.currentSegmentValue.total_feasible_focus_income;
+  const chartData = useMemo(
+    () => generateChartData(combineScenarioDataWithDashboardData),
+    [combineScenarioDataWithDashboardData]
+  );
 
-      const newTotalIncome = d?.newTotalIncome || feasibleFocusIncome;
-      const additionalValue = newTotalIncome - currentTotalIncome;
+  const targetChartData = useMemo(
+    () => generateTargetChartData(chartData),
+    [chartData]
+  );
 
-      let gapValue = incomeTarget - newTotalIncome;
-      gapValue = gapValue < 0 ? 0 : gapValue;
+  const currentChartData = useMemo(
+    () => generateChartData(currentScenarioData),
+    [currentScenarioData]
+  );
 
-      return {
-        name: `${d.scenarioName}-${d.name}`,
-        target: Math.round(incomeTarget),
-        stack: [
-          {
-            name: "Current total\nhousehold income",
-            title: "Current total\nhousehold income",
-            value: Math.round(currentTotalIncome),
-            total: Math.round(currentTotalIncome),
-            color: "#1B625F",
-            order: 1,
-          },
-          {
-            name: "Additional income\nwhen income drivers\nare changed",
-            title: "Additional income\nwhen income drivers\nare changed",
-            value: Math.round(additionalValue),
-            total: Math.round(additionalValue),
-            color: "#49D985",
-            order: 2,
-          },
-          {
-            name: "Gap",
-            title: "Gap",
-            value: Math.round(gapValue),
-            total: Math.round(gapValue),
-            color: "#F9CB21",
-            order: 3,
-          },
-        ],
-      };
-    });
-
-    if (isEmpty(selectedScenarioSegmentChart)) {
-      setCurrentScenarioIncomeGap((prev) => ({ ...prev, chartData: data }));
-    }
-    return data;
-  }, [combineScenarioDataWithDashboardData, selectedScenarioSegmentChart]);
-
-  const targetChartData = useMemo(() => {
-    const target = [
-      {
-        name: "Income Target",
-        type: "line",
-        symbol: "diamond",
-        symbolSize: 15,
-        color: "#000",
-        lineStyle: {
-          width: 0,
-        },
-        data: chartData.map((d) => ({
-          name: "Benchmark",
-          value: d?.target ? Math.round(d.target) : 0,
-        })),
-      },
-    ];
-
-    if (isEmpty(selectedScenarioSegmentChart)) {
-      setCurrentScenarioIncomeGap((prev) => ({
-        ...prev,
-        targetChartData: target,
-      }));
-    }
-    return target;
-  }, [chartData, selectedScenarioSegmentChart]);
+  const currentTargetChartData = useMemo(
+    () => generateTargetChartData(currentChartData),
+    [currentChartData]
+  );
 
   const ButtonEdit = () => (
     <Button
@@ -1101,6 +1112,7 @@ const Scenario = ({
           activeKey={activeTab}
           onChange={setActiveTab}
           type="card"
+          destroyInactiveTabPane={true}
           className="scenario-segment-tabs-container"
           items={segmentTabs.map((item) => ({
             ...item,
@@ -1164,10 +1176,8 @@ const Scenario = ({
                       }
                     >
                       <ChartScenarioModeling
-                        data={currentScenarioIncomeGap.chartData || []}
-                        targetChartData={
-                          currentScenarioIncomeGap.targetChartData
-                        }
+                        data={currentChartData || []}
+                        targetChartData={currentTargetChartData}
                         currencyUnitName={currencyUnitName}
                         showLabel={showLabelChartCurrentScenarioIncomeGap}
                       />
