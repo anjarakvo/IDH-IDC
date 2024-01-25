@@ -1122,7 +1122,7 @@ const Scenario = ({
                 <Row
                   key={segment.id}
                   gutter={[24, 24]}
-                  align="center"
+                  align="top"
                   ref={elCurrentScenarioIncomeGap}
                 >
                   <Col span={12}>
@@ -1147,17 +1147,25 @@ const Scenario = ({
                   </Col>
                   <Col span={12}>
                     <h2>
-                      Input values for the various income drivers for each
-                      segments
+                      What are the results for the different segments in the
+                      current scenario?
                     </h2>
                     <p>
-                      Below you find a visual showing the calculated household
-                      income and gap to the income target for the different
-                      segments in this scenario.
+                      This graph shows the gap between the household income
+                      levels and the income target for the scenario you are
+                      working on. It also highlights any variations between
+                      segments.
+                      <br />
+                      <br />
+                      Please note that modelling cost of production is only
+                      possible for the primary crop. If you would like to
+                      capture changes in in CoP for secondary and tertiary crops
+                      then that needs to be accounted for in the changes you
+                      model under Diversified Income.
                     </p>
                     <Card
                       className="chart-card-wrapper"
-                      title="Income Gap for current scenario"
+                      title="Income gap for the different segments in the current scenario"
                       extra={
                         <Space align="center">
                           <ShowLabelButton
@@ -1169,7 +1177,7 @@ const Scenario = ({
                           />
                           <SaveAsImageButton
                             elementRef={elCurrentScenarioIncomeGap}
-                            filename="Calculated household income and gap to the income target for the different segments in this scenario."
+                            filename="What are the results for the different segments in the current scenario?"
                             type="ghost-white"
                           />
                         </Space>
@@ -1180,6 +1188,7 @@ const Scenario = ({
                         targetChartData={currentTargetChartData}
                         currencyUnitName={currencyUnitName}
                         showLabel={showLabelChartCurrentScenarioIncomeGap}
+                        height={385}
                       />
                     </Card>
                   </Col>
@@ -1204,18 +1213,26 @@ const Scenario = ({
               onChange={setSelectedScenarioSegmentChart}
             />
             <h2>
-              What is the income gap when you change your income drivers using
-              the scenario modeler?
+              What are the results for the different segments across the
+              different scenarios?
             </h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua.{" "}
+              In the visual on the right you have the flexibility to select and
+              compare specific combinations of scenarios and segments that you
+              wish to visualise. You have the option as a user to choose which
+              specific combination of scenrios and segments that you would like
+              to compare.
+              <br />
+              <br />
+              Insight: Understand the new composition of total household income
+              and the income gap for the different segments in the scenarios you
+              created.
             </p>
           </Col>
           <Col span={16}>
             <Card
               className="chart-card-wrapper"
-              title="Income Gap"
+              title="Income gap across scenario"
               extra={
                 <Space align="center">
                   <ShowLabelButton
@@ -1225,8 +1242,7 @@ const Scenario = ({
                   />
                   <SaveAsImageButton
                     elementRef={elIncomeGapScenario}
-                    filename="What is the income gap when you change your income drivers using
-              the scenario modeler?"
+                    filename="What are the results for the different segments across the different scenarios?"
                     type="ghost-white"
                   />
                 </Space>

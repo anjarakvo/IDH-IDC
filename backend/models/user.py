@@ -38,6 +38,14 @@ class UserRole(enum.Enum):
     user = "user"
 
 
+# only for user:get_all route
+class FilterUserRole(enum.Enum):
+    super_admin = "super_admin"
+    admin = "admin"
+    internal = "internal"
+    external = "external"
+
+
 def json_load(value: Optional[str] = None):
     if value:
         return json.loads(value)
@@ -93,6 +101,7 @@ class UserPageDict(TypedDict):
     active: bool
     tags_count: int
     cases_count: int
+    business_unit_count: int
 
 
 class UserDict(TypedDict):
@@ -270,6 +279,7 @@ class User(Base):
             "active": self.is_active,
             "tags_count": len(self.user_tags),
             "cases_count": len(self.user_case_access),
+            "business_unit_count": len(self.user_business_units),
         }
 
     @property

@@ -10,11 +10,17 @@ from models.user import (
     UserUpdateBase,
     UserInvitation,
     UserRole,
+    FilterUserRole,
 )
 from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
 from models.user_business_unit import UserBusinessUnit, UserBusinessUnitRole
-from db.crud_user_business_unit import find_users_in_same_business_unit
+from db.crud_user_business_unit import (
+    find_users_in_same_business_unit,
+    find_user_business_units,
+    delete_user_business_units_by_user_id,
+    get_all_business_unit_users,
+)
 from db.crud_organisation import defaul_organisation
 
 
@@ -75,7 +81,9 @@ def add_user(
     return user
 
 
-def update_user(session: Session, id: int, payload: UserUpdateBase) -> UserDict:
+def update_user(
+    session: Session, id: int, payload: UserUpdateBase
+) -> UserDict:
     user = get_user_by_id(session=session, id=id)
     user.fullname = payload.fullname
     user.organisation = (
@@ -88,7 +96,13 @@ def update_user(session: Session, id: int, payload: UserUpdateBase) -> UserDict:
     if role in [UserRole.super_admin, UserRole.admin]:
         all_cases = 1
     # all cases TRUE for Regular/Internal user (user with BU)
-    user.all_cases = 1 if payload.all_cases or payload.business_units else all_cases
+    user.all_cases = (
+        1 if payload.all_cases or payload.business_units else all_cases
+    )
+    # Handle business units delete business units
+    user_bus = find_user_business_units(session=session, user_id=user.id)
+    if not payload.business_units and user_bus:
+        delete_user_business_units_by_user_id(session=session, user_id=user.id)
     if payload.password:
         try:
             password = payload.password.get_secret_value()
@@ -97,7 +111,9 @@ def update_user(session: Session, id: int, payload: UserUpdateBase) -> UserDict:
         user.password = password
     if payload.tags:
         # delete prev user tags before update
-        prev_user_tags = session.query(UserTag).filter(UserTag.user == user.id).all()
+        prev_user_tags = (
+            session.query(UserTag).filter(UserTag.user == user.id).all()
+        )
         for ut in prev_user_tags:
             session.delete(ut)
             session.commit()
@@ -108,7 +124,9 @@ def update_user(session: Session, id: int, payload: UserUpdateBase) -> UserDict:
     if payload.cases:
         # delete prev user cases before update
         prev_user_cases = (
-            session.query(UserCaseAccess).filter(UserCaseAccess.user == user.id).all()
+            session.query(UserCaseAccess)
+            .filter(UserCaseAccess.user == user.id)
+            .all()
         )
         for uc in prev_user_cases:
             session.delete(uc)
@@ -164,7 +182,8 @@ def get_user_by_id(session: Session, id: int) -> UserDict:
     user = session.query(User).filter(User.id == id).first()
     if not user:
         raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail=f"user {id} not found"
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"user {id} not found",
         )
     return user
 
@@ -175,6 +194,7 @@ def filter_user(
     approved: Optional[bool] = True,
     organisation: Optional[int] = None,
     business_unit_users: Optional[List[int]] = None,
+    role: Optional[FilterUserRole] = None,
 ):
     is_active = 1 if approved else 0
     user = session.query(User).filter(User.is_active == is_active)
@@ -189,6 +209,23 @@ def filter_user(
         user = user.filter(User.organisation.in_([organisation]))
     if business_unit_users:
         user = user.filter(User.id.in_(business_unit_users))
+    if role and role == FilterUserRole.internal:
+        all_bus = get_all_business_unit_users(session=session)
+        user_ids = [bu.user for bu in all_bus]
+        user = user.filter(
+            and_(User.id.in_(user_ids), User.role == UserRole.user)
+        )
+    if role and role == FilterUserRole.external:
+        all_bus = get_all_business_unit_users(session=session)
+        user_ids = [bu.user for bu in all_bus]
+        user = user.filter(
+            and_(~User.id.in_(user_ids), User.role == UserRole.user)
+        )
+    if role and role not in [
+        FilterUserRole.internal,
+        FilterUserRole.external,
+    ]:
+        user = user.filter(User.role == role.value)
     return user
 
 
@@ -198,6 +235,7 @@ def get_all_user(
     approved: Optional[bool] = True,
     organisation: Optional[List[int]] = None,
     business_unit_users: Optional[List[int]] = None,
+    role: Optional[FilterUserRole] = None,
     skip: int = 0,
     limit: int = 10,
 ) -> List[UserDict]:
@@ -207,6 +245,7 @@ def get_all_user(
         organisation=organisation,
         approved=approved,
         business_unit_users=business_unit_users,
+        role=role,
     )
     user = user.order_by(User.id.desc()).offset(skip).limit(limit).all()
     return user
@@ -237,7 +276,9 @@ def delete_user(session: Session, id: int):
 
 
 def get_invitation(session: Session, invitation_id: str) -> UserInvitation:
-    user = session.query(User).filter(User.invitation_id == invitation_id).first()
+    user = (
+        session.query(User).filter(User.invitation_id == invitation_id).first()
+    )
     if not user:
         return None
     return user
@@ -258,14 +299,18 @@ def accept_invitation(
 
 def find_same_business_unit(session: Session, user_id: int):
     return (
-        session.query(UserBusinessUnit).filter(UserBusinessUnit.user == user_id).all()
+        session.query(UserBusinessUnit)
+        .filter(UserBusinessUnit.user == user_id)
+        .all()
     )
 
 
 def find_business_unit_admin(session: Session, user_id: int):
     business_units = find_same_business_unit(session=session, user_id=user_id)
     bu_ids = [bu.business_unit for bu in business_units]
-    user_ids = find_users_in_same_business_unit(session=session, business_units=bu_ids)
+    user_ids = find_users_in_same_business_unit(
+        session=session, business_units=bu_ids
+    )
     admins = (
         session.query(User)
         .filter(and_(User.id.in_(user_ids), User.role == UserRole.admin))
@@ -275,7 +320,9 @@ def find_business_unit_admin(session: Session, user_id: int):
 
 
 def find_super_admin(session: Session):
-    super_admins = session.query(User).filter(User.role == UserRole.super_admin).all()
+    super_admins = (
+        session.query(User).filter(User.role == UserRole.super_admin).all()
+    )
     return super_admins
 
 
