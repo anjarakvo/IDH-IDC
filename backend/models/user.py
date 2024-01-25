@@ -93,6 +93,7 @@ class UserPageDict(TypedDict):
     active: bool
     tags_count: int
     cases_count: int
+    business_unit_count: int
 
 
 class UserDict(TypedDict):
@@ -270,6 +271,7 @@ class User(Base):
             "active": self.is_active,
             "tags_count": len(self.user_tags),
             "cases_count": len(self.user_case_access),
+            "business_unit_count": len(self.user_business_units),
         }
 
     @property

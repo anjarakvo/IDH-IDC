@@ -67,11 +67,18 @@ const Users = () => {
       key: "role",
       defaultSortOrder: "descend",
       sorter: (a, b) => a.role.localeCompare(b.role),
-      render: (text) =>
-        text
+      render: (text, record) => {
+        const res = text
           .split("_")
           .map((x) => upperFirst(x))
-          .join(" "),
+          .join(" ");
+        if (record.role === "user") {
+          const extra =
+            record.business_unit_count > 0 ? "(Internal)" : "(External)";
+          return `${res} ${extra}`;
+        }
+        return res;
+      },
     },
     {
       key: "action",
