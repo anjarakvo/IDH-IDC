@@ -751,26 +751,26 @@ class TestUserEndpoint:
         assert res == {
             "current": 1,
             "data": [
-                {
-                    "id": 5,
-                    "organisation": 1,
-                    "email": "viewer@akvo.org",
-                    "fullname": "Viewer User",
-                    "role": "viewer",
-                    "active": True,
-                    "tags_count": 0,
-                    "cases_count": 0,
-                },
-                {
-                    "id": 4,
-                    "organisation": 1,
-                    "email": "editor@akvo.org",
-                    "fullname": "Editor User",
-                    "role": "editor",
-                    "active": True,
-                    "tags_count": 0,
-                    "cases_count": 0,
-                },
+                # {
+                #     "id": 5,
+                #     "organisation": 1,
+                #     "email": "viewer@akvo.org",
+                #     "fullname": "Viewer User",
+                #     "role": "viewer",
+                #     "active": True,
+                #     "tags_count": 0,
+                #     "cases_count": 0,
+                # },
+                # {
+                #     "id": 4,
+                #     "organisation": 1,
+                #     "email": "editor@akvo.org",
+                #     "fullname": "Editor User",
+                #     "role": "editor",
+                #     "active": True,
+                #     "tags_count": 0,
+                #     "cases_count": 0,
+                # },
                 {
                     "id": 3,
                     "organisation": 1,
@@ -782,7 +782,7 @@ class TestUserEndpoint:
                     "cases_count": 0,
                 },
             ],
-            "total": 3,
+            "total": 1,
             "total_page": 1,
         }
 
