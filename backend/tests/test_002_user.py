@@ -624,6 +624,7 @@ class TestUserEndpoint:
                     "active": True,
                     "tags_count": 0,
                     "cases_count": 0,
+                    "business_unit_count": 0,
                 },
                 {
                     "id": 4,
@@ -634,6 +635,7 @@ class TestUserEndpoint:
                     "active": True,
                     "tags_count": 0,
                     "cases_count": 0,
+                    "business_unit_count": 0,
                 },
                 {
                     "id": 3,
@@ -644,6 +646,7 @@ class TestUserEndpoint:
                     "active": True,
                     "tags_count": 0,
                     "cases_count": 0,
+                    "business_unit_count": 1,
                 },
                 {
                     "id": 2,
@@ -654,6 +657,7 @@ class TestUserEndpoint:
                     "active": True,
                     "tags_count": 0,
                     "cases_count": 0,
+                    "business_unit_count": 0,
                 },
                 {
                     "id": 1,
@@ -664,6 +668,7 @@ class TestUserEndpoint:
                     "active": True,
                     "tags_count": 0,
                     "cases_count": 0,
+                    "business_unit_count": 0,
                 },
             ],
             "total": 5,
@@ -681,6 +686,31 @@ class TestUserEndpoint:
             headers={"Authorization": f"Bearer {account.token}"},
         )
         assert res.status_code == 404
+        # user role filter
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "super_admin"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 200
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "admin"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 200
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "internal"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 404
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "external"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 200
 
     @pytest.mark.asyncio
     async def test_delete_user_by_super_admin_cred(
@@ -737,7 +767,7 @@ class TestUserEndpoint:
         assert res["active"] is True
 
     @pytest.mark.asyncio
-    async def test_get_all_approved_user_by_admin_cred(
+    async def test_get_all_user_by_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         account = Acc(email="admin@akvo.org", token=None)
@@ -751,26 +781,26 @@ class TestUserEndpoint:
         assert res == {
             "current": 1,
             "data": [
-                {
-                    "id": 5,
-                    "organisation": 1,
-                    "email": "viewer@akvo.org",
-                    "fullname": "Viewer User",
-                    "role": "viewer",
-                    "active": True,
-                    "tags_count": 0,
-                    "cases_count": 0,
-                },
-                {
-                    "id": 4,
-                    "organisation": 1,
-                    "email": "editor@akvo.org",
-                    "fullname": "Editor User",
-                    "role": "editor",
-                    "active": True,
-                    "tags_count": 0,
-                    "cases_count": 0,
-                },
+                # {
+                #     "id": 5,
+                #     "organisation": 1,
+                #     "email": "viewer@akvo.org",
+                #     "fullname": "Viewer User",
+                #     "role": "viewer",
+                #     "active": True,
+                #     "tags_count": 0,
+                #     "cases_count": 0,
+                # },
+                # {
+                #     "id": 4,
+                #     "organisation": 1,
+                #     "email": "editor@akvo.org",
+                #     "fullname": "Editor User",
+                #     "role": "editor",
+                #     "active": True,
+                #     "tags_count": 0,
+                #     "cases_count": 0,
+                # },
                 {
                     "id": 3,
                     "organisation": 1,
@@ -780,9 +810,10 @@ class TestUserEndpoint:
                     "active": True,
                     "tags_count": 0,
                     "cases_count": 0,
+                    "business_unit_count": 1,
                 },
             ],
-            "total": 3,
+            "total": 1,
             "total_page": 1,
         }
 

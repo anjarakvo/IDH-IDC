@@ -66,6 +66,7 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint:
             "active": 1,
             "tags_count": 1,
             "cases_count": 1,
+            "business_unit_count": 1,
         }
 
     @pytest.mark.asyncio
@@ -92,7 +93,8 @@ class TestUserWithTagsCasesAndBusinessUnitEndpoint:
         }
         # without cred
         res = await client.put(
-            app.url_path_for("user:update", user_id=user.id), data=update_payload
+            app.url_path_for("user:update", user_id=user.id),
+            data=update_payload,
         )
         assert res.status_code == 403
         # with cred
