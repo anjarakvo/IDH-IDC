@@ -240,13 +240,13 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
     const xAxisName = bins.find((b) => b.name === "x-axis-driver")?.value || "";
     const yAxisName = bins.find((b) => b.name === "y-axis-driver")?.value || "";
     // label
-    const label = `The following tables represent combination ${yAxisName} and ${xAxisName} to reach the income target for a each ${
+    const label = `At what level of the ${
       binName ? binName : ""
-    } bin.`;
+    }, and a combination of the ${xAxisName} and ${yAxisName}, will we reach the income target?`;
     setLabel(label);
     // chart title
     setChartTitle(
-      `${yAxisName} required to meet income target by ${xAxisName} at a certain ${binName}`
+      "Understanding the influence of a combination of income drivers on reaching the income target"
     );
 
     return {
@@ -300,6 +300,25 @@ const ChartSensitivityAnalysisLine = ({ data, segment, origin }) => {
               <b>{segment.name}</b>
             </div>
             <div className="label">{label}</div>
+            <p>
+              This line graph illustrates how different levels of the binning
+              driver, in combination with the X and Y-axis drivers, affect
+              farmers progress toward reaching the income target. By examining
+              this line graph, you can make informed decisions about the
+              feasibility of reaching the income target for farmers. For more
+              granular information related to each line, please refer to the
+              respective heatmaps provided below.
+              <br />
+              <br />
+              Insight: When the lines are within the dark orange zone, it
+              signals that the income target has been successfully achieved
+              within feasible levels of the income drivers. On the other hand,
+              if a line falls into the light orange zone, it indicates that the
+              income drivers are within their feasible values, but the income
+              target is not reached. This information allows you to assess which
+              combinations of income driver levels are most likely to lead to
+              the desired income target.
+            </p>
           </Space>
         </Col>
         <Col span={16}>

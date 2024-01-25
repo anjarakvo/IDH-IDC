@@ -30,7 +30,11 @@ const htmlToImageConvert = (elementRef, filename, setLoading) => {
   //
   toPng(elementRef.current, {
     filter: (node) => {
-      const exclusionClasses = ["save-as-image-btn", "show-label-btn"];
+      const exclusionClasses = [
+        "save-as-image-btn",
+        "show-label-btn",
+        "info-tooltip",
+      ];
       return !exclusionClasses.some((classname) =>
         node.classList?.contains(classname)
       );

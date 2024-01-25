@@ -259,8 +259,9 @@ const ChartBinningHeatmap = ({ segment, data, origin }) => {
     const xAxisName = bins.find((b) => b.name === "x-axis-driver")?.value || "";
     const yAxisName = bins.find((b) => b.name === "y-axis-driver")?.value || "";
     // label
-    const label = `The following tables represent income levels for levels of ${xAxisName}
-      and ${yAxisName}, for a each ${binName ? binName : ""} bin.`;
+    const label = `At what level of the ${
+      binName ? binName : ""
+    }, and a combination of the ${xAxisName} and ${yAxisName}, will we reach the income target?`;
     setLabel(label);
 
     return {
