@@ -27,11 +27,11 @@ class ReferenceDataDict(TypedDict):
     id: int
     country: int
     commodity: int
-    region: str
-    currency: str
-    year: int
-    source: str
-    link: str
+    region: Optional[str]
+    currency: Optional[str]
+    year: Optional[int]
+    source: Optional[str]
+    link: Optional[str]
     notes: Optional[str]
     confidence_level: Optional[str]
     range: Optional[str]
@@ -56,19 +56,19 @@ class ReferenceDataList(TypedDict):
     id: int
     country: str
     commodity: str
-    source: str
-    link: str
+    source: Optional[str]
+    link: Optional[str]
     confidence_level: Optional[str]
 
 
 class ReferenceValueList(TypedDict):
     id: int
-    source: str
-    link: str
+    source: Optional[str]
+    link: Optional[str]
     value: Optional[float]
     unit: Optional[str]
-    region: str
-    year: int
+    region: Optional[str]
+    year: Optional[int]
     confidence_level: Optional[str]
     type: Optional[str]
 

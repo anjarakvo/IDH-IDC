@@ -28,6 +28,7 @@ import ReferenceDataForm from "./ReferenceDataForm";
 import { api } from "../../lib";
 import { driverOptions } from ".";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
+import { thousandFormatter } from "../../components/chart/options/common";
 
 const selectProps = {
   showSearch: true,
@@ -299,6 +300,9 @@ const ExploreStudiesPage = () => {
         };
         const transformData = referenceDataExpand.map((d, di) => {
           let value = values[d.key];
+          if (typeof value === "number") {
+            value = thousandFormatter(value);
+          }
           if (value && d?.unit) {
             value = `${value} ${
               values?.[d.unit] ? `(${values[d.unit]})` : "(Unit NA)"
@@ -312,7 +316,7 @@ const ExploreStudiesPage = () => {
           return {
             id: di,
             label: d.label,
-            value: value,
+            value: value || "-",
           };
         });
         setExpandedData(transformData);

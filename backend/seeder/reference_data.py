@@ -1,6 +1,7 @@
 import os
 import sys
 import pandas as pd
+import numpy as np
 from core.config import generate_config_file
 from db.connection import Base, engine, SessionLocal
 
@@ -20,6 +21,7 @@ def seeder_reference_data(session: Session):
     # reference data
     truncatedb(session=session, table="reference_data")
     rfd = pd.read_csv(MASTER_DIR + "reference_data.csv")
+    rfd.replace({np.nan: None}, inplace=True)
     for index, row in rfd.iterrows():
         country = (
             session.query(Country)
