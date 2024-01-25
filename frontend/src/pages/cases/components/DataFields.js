@@ -38,6 +38,7 @@ import Chart from "../../../components/chart";
 import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 import { api } from "../../../lib";
 import { driverOptions } from "../../explore-studies";
+import { UserState } from "../../../store";
 
 const LIBTooltipText = (
   <div>
@@ -82,6 +83,9 @@ const DataFields = ({
 
   const [showChartLabel, setShowChartLabel] = useState(false);
 
+  const userRole = UserState.useState((s) => s.role);
+  const isInternalUser = UserState.useState((s) => s.internal_user);
+
   const finishEditing = () => {
     renameItem(segment, newName);
     setEditing(false);
@@ -90,6 +94,10 @@ const DataFields = ({
     setNewName(segmentLabel);
     setEditing(false);
   };
+
+  const isExternalUser = useMemo(() => {
+    return userRole === "user" && !isInternalUser;
+  }, [userRole, isInternalUser]);
 
   useEffect(() => {
     const country = currentCase?.country;
@@ -581,160 +589,162 @@ const DataFields = ({
               />
             </Card>
           </Col>
-          <Col span={24}>
-            <Card
-              title={
-                <Space>
-                  <div>Explore data from other studies</div>
-                  <Tooltip
-                    title="We have assessed data from secondary sources that you can use
+          {!isExternalUser ? (
+            <Col span={24}>
+              <Card
+                title={
+                  <Space>
+                    <div>Explore data from other studies</div>
+                    <Tooltip
+                      title="We have assessed data from secondary sources that you can use
                   as a reference for the income drivers."
+                    >
+                      <InfoCircleOutlined />
+                    </Tooltip>
+                  </Space>
+                }
+                className="info-card-wrapper"
+                extra={
+                  <a
+                    href={exploreButtonLink}
+                    target="_blank"
+                    rel="noreferrer noopener"
                   >
-                    <InfoCircleOutlined />
-                  </Tooltip>
-                </Space>
-              }
-              className="info-card-wrapper"
-              extra={
-                <a
-                  href={exploreButtonLink}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  <Button
-                    className="save-as-image-btn"
-                    style={{
-                      fontSize: 12,
-                      borderRadius: "20px",
-                      padding: "0 10px",
-                      backgroundColor: "transparent",
-                      color: "#fff",
-                      fontWeight: 600,
-                    }}
-                    disabled={!exploreButtonLink}
-                  >
-                    Explore Studies
-                  </Button>
-                </a>
-              }
-            >
-              <Space direction="vertical" size="large">
-                <Select
-                  options={driverOptions}
-                  onChange={setSelectedDriver}
-                  value={selectedDriver}
-                  size="small"
-                />
-                <Table
-                  bordered
-                  size="small"
-                  rowKey="id"
-                  loading={loadingRefData}
-                  columns={[
-                    {
-                      key: "value",
-                      title: "Value",
-                      dataIndex: "value",
-                      render: (value) => value || "-",
-                    },
-                    {
-                      key: "unit",
-                      title: "Unit",
-                      dataIndex: "unit",
-                      render: (value) => value || "-",
-                    },
-                    {
-                      key: "type",
-                      title: "Type",
-                      dataIndex: "type",
-                      render: (value) => value || "-",
-                    },
-                    {
-                      key: "source",
-                      title: "Source",
-                      width: "35%",
-                      render: (value, row) => {
-                        if (!row?.link) {
-                          return value;
-                        }
-                        const url =
-                          row.link?.includes("https://") ||
-                          row.link?.includes("http://")
-                            ? row.link
-                            : `https://${row.link}`;
-                        return (
-                          <a
-                            href={url}
-                            target="_blank"
-                            rel="noreferrer noopener"
-                          >
-                            {row.source}
-                          </a>
-                        );
+                    <Button
+                      className="save-as-image-btn"
+                      style={{
+                        fontSize: 12,
+                        borderRadius: "20px",
+                        padding: "0 10px",
+                        backgroundColor: "transparent",
+                        color: "#fff",
+                        fontWeight: 600,
+                      }}
+                      disabled={!exploreButtonLink}
+                    >
+                      Explore Studies
+                    </Button>
+                  </a>
+                }
+              >
+                <Space direction="vertical" size="large">
+                  <Select
+                    options={driverOptions}
+                    onChange={setSelectedDriver}
+                    value={selectedDriver}
+                    size="small"
+                  />
+                  <Table
+                    bordered
+                    size="small"
+                    rowKey="id"
+                    loading={loadingRefData}
+                    columns={[
+                      {
+                        key: "value",
+                        title: "Value",
+                        dataIndex: "value",
+                        render: (value) => value || "-",
                       },
-                    },
-                  ]}
-                  dataSource={referenceData}
-                  expandable={{
-                    expandedRowRender: (record) => (
-                      <div style={{ padding: 0 }}>
-                        <Table
-                          bordered
-                          showHeader={false}
-                          size="small"
-                          rowKey="id"
-                          columns={[
-                            {
-                              key: "label",
-                              title: "Label",
-                              dataIndex: "label",
-                              width: "45%",
-                            },
-                            {
-                              key: "value",
-                              title: "Value",
-                              dataIndex: "value",
-                            },
-                          ]}
-                          dataSource={Object.keys(record)
-                            .map((key) => {
-                              if (
-                                [
-                                  "id",
-                                  "unit",
-                                  "value",
-                                  "source",
-                                  "link",
-                                ].includes(key)
-                              ) {
-                                return false;
-                              }
-                              const label = key
-                                .split("_")
-                                ?.map((x) => upperFirst(x))
-                                ?.join(" ");
-                              let value = record[key];
-                              if (value && !Number(value)) {
-                                value = value
-                                  .split(" ")
-                                  .map((x) => upperFirst(x))
-                                  .join(" ");
-                              }
-                              return {
-                                label: label,
-                                value: value || "-",
-                              };
-                            })
-                            .filter((x) => x)}
-                          pagination={false}
-                        />
-                      </div>
-                    ),
-                  }}
-                />
-              </Space>
-            </Card>
-          </Col>
+                      {
+                        key: "unit",
+                        title: "Unit",
+                        dataIndex: "unit",
+                        render: (value) => value || "-",
+                      },
+                      {
+                        key: "type",
+                        title: "Type",
+                        dataIndex: "type",
+                        render: (value) => value || "-",
+                      },
+                      {
+                        key: "source",
+                        title: "Source",
+                        width: "35%",
+                        render: (value, row) => {
+                          if (!row?.link) {
+                            return value;
+                          }
+                          const url =
+                            row.link?.includes("https://") ||
+                            row.link?.includes("http://")
+                              ? row.link
+                              : `https://${row.link}`;
+                          return (
+                            <a
+                              href={url}
+                              target="_blank"
+                              rel="noreferrer noopener"
+                            >
+                              {row.source}
+                            </a>
+                          );
+                        },
+                      },
+                    ]}
+                    dataSource={referenceData}
+                    expandable={{
+                      expandedRowRender: (record) => (
+                        <div style={{ padding: 0 }}>
+                          <Table
+                            bordered
+                            showHeader={false}
+                            size="small"
+                            rowKey="id"
+                            columns={[
+                              {
+                                key: "label",
+                                title: "Label",
+                                dataIndex: "label",
+                                width: "45%",
+                              },
+                              {
+                                key: "value",
+                                title: "Value",
+                                dataIndex: "value",
+                              },
+                            ]}
+                            dataSource={Object.keys(record)
+                              .map((key) => {
+                                if (
+                                  [
+                                    "id",
+                                    "unit",
+                                    "value",
+                                    "source",
+                                    "link",
+                                  ].includes(key)
+                                ) {
+                                  return false;
+                                }
+                                const label = key
+                                  .split("_")
+                                  ?.map((x) => upperFirst(x))
+                                  ?.join(" ");
+                                let value = record[key];
+                                if (value && !Number(value)) {
+                                  value = value
+                                    .split(" ")
+                                    .map((x) => upperFirst(x))
+                                    .join(" ");
+                                }
+                                return {
+                                  label: label,
+                                  value: value || "-",
+                                };
+                              })
+                              .filter((x) => x)}
+                            pagination={false}
+                          />
+                        </div>
+                      ),
+                    }}
+                  />
+                </Space>
+              </Card>
+            </Col>
+          ) : null}
         </Row>
       </Col>
     </Row>

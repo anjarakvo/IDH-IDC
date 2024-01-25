@@ -15,33 +15,46 @@ const PageHeader = ({ isLoggedIn, signOut }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const userRole = UserState.useState((s) => s.role);
+  const isInternalUser = UserState.useState((s) => s.internal_user);
 
-  const menus = [
-    // {
-    //   testid: "nav-menu-calculator",
-    //   name: "Use the Calculator",
-    //   path: "/use-calculator",
-    //   role: allUserRole,
-    // },
-    {
-      testid: "nav-menu-cases",
-      name: "Cases Overview",
-      path: "/cases",
-      role: allUserRole,
-    },
-    {
+  const menus = useMemo(() => {
+    const exploreStudiesMenu = {
       testid: "nav-menu-explore-studies",
       name: "Explore Studies",
       path: "/explore-studies",
       role: allUserRole,
-    },
-    {
-      testid: "nav-menu-admin",
-      name: "Admin",
-      path: "/admin/users",
-      role: adminRole,
-    },
-  ];
+    };
+    let values = [
+      // {
+      //   testid: "nav-menu-calculator",
+      //   name: "Use the Calculator",
+      //   path: "/use-calculator",
+      //   role: allUserRole,
+      // },
+      {
+        testid: "nav-menu-cases",
+        name: "Cases Overview",
+        path: "/cases",
+        role: allUserRole,
+      },
+    ];
+    if (adminRole.includes(userRole)) {
+      values = [
+        ...values,
+        exploreStudiesMenu,
+        {
+          testid: "nav-menu-admin",
+          name: "Admin",
+          path: "/admin/users",
+          role: adminRole,
+        },
+      ];
+    }
+    if (userRole === "user" && isInternalUser) {
+      values = [...values, exploreStudiesMenu];
+    }
+    return values;
+  }, [userRole, isInternalUser]);
 
   return (
     <Header

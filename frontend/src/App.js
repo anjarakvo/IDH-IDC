@@ -23,6 +23,11 @@ const App = () => {
   const navigate = useNavigate();
   const [cookies, , removeCookie] = useCookies(["AUTH_TOKEN"]);
   const userRole = UserState.useState((s) => s.role);
+  const isInternalUser = UserState.useState((s) => s.internal_user);
+
+  const isExternalUser = useMemo(() => {
+    return userRole === "user" && !isInternalUser;
+  }, [userRole, isInternalUser]);
 
   useEffect(() => {
     const optionApiCalls = optionRoutes.map((url) => api.get(url));
@@ -122,6 +127,12 @@ const App = () => {
               <Route exact path="/cases" element={<Cases />} />
               <Route exact path="/cases/new" element={<Case />} />
               <Route exact path="/cases/:caseId" element={<Case />} />
+            </Route>
+          ) : (
+            ""
+          )}
+          {!isExternalUser ? (
+            <Route element={<PrivateRoutes />}>
               <Route
                 exact
                 path="/explore-studies"
