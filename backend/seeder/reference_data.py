@@ -32,6 +32,9 @@ def seeder_reference_data(session: Session):
             .first()
         )
         if not country or not commodity:
+            print(
+                f"[ERROR]: Country or Commodity not found for ID: {row['id']}"
+            )
             continue
         # find prev data
         rfd = (
@@ -39,6 +42,27 @@ def seeder_reference_data(session: Session):
             .filter(ReferenceData.id == row["id"])
             .first()
         )
+        # value
+        area = row["area"]
+        if area and isinstance(area, str):
+            area = float(str(area).replace(",", ""))
+        volume = row["volume"]
+        if volume and isinstance(volume, str):
+            volume = float(str(row["volume"]).replace(",", ""))
+        price = row["price"]
+        if price and isinstance(price, str):
+            price = float(str(row["price"]).replace(",", ""))
+        cost_of_production = row["cost_of_production"]
+        if cost_of_production and isinstance(cost_of_production, str):
+            cost_of_production = float(
+                str(row["cost_of_production"]).replace(",", "")
+            )
+        diversified_income = row["diversified_income"]
+        if diversified_income and isinstance(diversified_income, str):
+            diversified_income = float(
+                str(row["diversified_income"]).replace(",", "")
+            )
+
         if rfd:
             # update
             rfd.country = country.id
@@ -51,11 +75,11 @@ def seeder_reference_data(session: Session):
             rfd.notes = row["notes"]
             rfd.confidence_level = row["confidence_level"]
             rfd.range = row["range"]
-            rfd.area = row["area"]
-            rfd.volume = row["volume"]
-            rfd.price = row["price"]
-            rfd.cost_of_production = row["cost_of_production"]
-            rfd.diversified_income = row["diversified_income"]
+            rfd.area = area
+            rfd.volume = volume
+            rfd.price = price
+            rfd.cost_of_production = cost_of_production
+            rfd.diversified_income = diversified_income
             rfd.area_size_unit = row["area_size_unit"]
             rfd.volume_measurement_unit = row["volume_measurement_unit"]
             rfd.cost_of_production_unit = row["cost_of_production_unit"]
@@ -81,11 +105,11 @@ def seeder_reference_data(session: Session):
                 notes=row["notes"],
                 confidence_level=row["confidence_level"],
                 range=row["range"],
-                area=row["area"],
-                volume=row["volume"],
-                price=row["price"],
-                cost_of_production=row["cost_of_production"],
-                diversified_income=row["diversified_income"],
+                area=area,
+                volume=volume,
+                price=price,
+                cost_of_production=cost_of_production,
+                diversified_income=diversified_income,
                 area_size_unit=row["area_size_unit"],
                 volume_measurement_unit=row["volume_measurement_unit"],
                 cost_of_production_unit=row["cost_of_production_unit"],
