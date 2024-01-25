@@ -38,6 +38,14 @@ class UserRole(enum.Enum):
     user = "user"
 
 
+# only for user:get_all route
+class FilterUserRole(enum.Enum):
+    super_admin = "super_admin"
+    admin = "admin"
+    internal = "internal"
+    external = "external"
+
+
 def json_load(value: Optional[str] = None):
     if value:
         return json.loads(value)

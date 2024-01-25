@@ -10,6 +10,7 @@ from models.user import (
     UserUpdateBase,
     UserInvitation,
     UserRole,
+    FilterUserRole,
 )
 from models.user_case_access import UserCaseAccess
 from models.user_tag import UserTag
@@ -18,6 +19,7 @@ from db.crud_user_business_unit import (
     find_users_in_same_business_unit,
     find_user_business_units,
     delete_user_business_units_by_user_id,
+    get_all_business_unit_users,
 )
 from db.crud_organisation import defaul_organisation
 
@@ -192,6 +194,7 @@ def filter_user(
     approved: Optional[bool] = True,
     organisation: Optional[int] = None,
     business_unit_users: Optional[List[int]] = None,
+    role: Optional[FilterUserRole] = None,
 ):
     is_active = 1 if approved else 0
     user = session.query(User).filter(User.is_active == is_active)
@@ -206,6 +209,23 @@ def filter_user(
         user = user.filter(User.organisation.in_([organisation]))
     if business_unit_users:
         user = user.filter(User.id.in_(business_unit_users))
+    if role and role == FilterUserRole.internal:
+        all_bus = get_all_business_unit_users(session=session)
+        user_ids = [bu.user for bu in all_bus]
+        user = user.filter(
+            and_(User.id.in_(user_ids), User.role == UserRole.user)
+        )
+    if role and role == FilterUserRole.external:
+        all_bus = get_all_business_unit_users(session=session)
+        user_ids = [bu.user for bu in all_bus]
+        user = user.filter(
+            and_(~User.id.in_(user_ids), User.role == UserRole.user)
+        )
+    if role and role not in [
+        FilterUserRole.internal,
+        FilterUserRole.external,
+    ]:
+        user = user.filter(User.role == role.value)
     return user
 
 
@@ -215,6 +235,7 @@ def get_all_user(
     approved: Optional[bool] = True,
     organisation: Optional[List[int]] = None,
     business_unit_users: Optional[List[int]] = None,
+    role: Optional[FilterUserRole] = None,
     skip: int = 0,
     limit: int = 10,
 ) -> List[UserDict]:
@@ -224,6 +245,7 @@ def get_all_user(
         organisation=organisation,
         approved=approved,
         business_unit_users=business_unit_users,
+        role=role,
     )
     user = user.order_by(User.id.desc()).offset(skip).limit(limit).all()
     return user

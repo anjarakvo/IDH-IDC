@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 import upperFirst from "lodash/upperFirst";
 import { api } from "../../../lib";
-import { Checkbox } from "antd";
+import { Checkbox, Select } from "antd";
+import { selectProps } from "../../cases/components";
 import "./user.scss";
 
 const perPage = 10;
@@ -15,18 +16,46 @@ const defData = {
   total_page: 1,
 };
 
+const filterProps = {
+  ...selectProps,
+  style: { width: window.innerHeight * 0.225 },
+};
+
+const userRoleOptions = [
+  {
+    label: "Super Admin",
+    value: "super_admin",
+  },
+  {
+    label: "Admin",
+    value: "admin",
+  },
+  {
+    label: "Internal User",
+    value: "internal",
+  },
+  {
+    label: "External User",
+    value: "external",
+  },
+];
+
 const Users = () => {
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [search, setSearch] = useState(null);
   const [data, setData] = useState(defData);
   const [showApprovedUser, setShowApprovedUser] = useState(true);
+  const [role, setRole] = useState(null);
 
   useEffect(() => {
     setLoading(true);
     let url = `user?page=${currentPage}&limit=${perPage}&approved=${showApprovedUser}`;
     if (search) {
       url = `${url}&search=${search}`;
+    }
+    if (role) {
+      url = `${url}&role=${role}`;
     }
     api
       .get(url)
@@ -43,7 +72,7 @@ const Users = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [currentPage, search, showApprovedUser]);
+  }, [currentPage, search, showApprovedUser, role]);
 
   const columns = [
     {
@@ -74,8 +103,8 @@ const Users = () => {
           .join(" ");
         if (record.role === "user") {
           const extra =
-            record.business_unit_count > 0 ? "(Internal)" : "(External)";
-          return `${res} ${extra}`;
+            record.business_unit_count > 0 ? "Internal" : "External";
+          return `${extra} ${res}`;
         }
         return res;
       },
@@ -134,6 +163,15 @@ const Users = () => {
           total: data.total,
           onChange: (page) => setCurrentPage(page),
         }}
+        otherFilters={
+          <Select
+            {...filterProps}
+            options={userRoleOptions}
+            placeholder="User Role"
+            value={role}
+            onChange={setRole}
+          />
+        }
       />
     </ContentLayout>
   );

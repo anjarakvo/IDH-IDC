@@ -38,6 +38,7 @@ from models.user import (
     UserDetailDict,
     UserRole,
     UserSearchDict,
+    FilterUserRole,
 )
 from models.user_business_unit import UserBusinessUnitRole
 from typing import Optional, List
@@ -109,6 +110,7 @@ def get_all(
     search: Optional[str] = Query(None),
     approved: Optional[bool] = Query(True),
     organisation: Optional[int] = Query(None),
+    role: Optional[FilterUserRole] = Query(None),
     session: Session = Depends(get_session),
     credentials: credentials = Depends(security),
 ):
@@ -129,6 +131,7 @@ def get_all(
         skip=(limit * (page - 1)),
         limit=limit,
         business_unit_users=business_unit_users,
+        role=role,
     )
     if not user:
         raise HTTPException(status_code=404, detail="Not found")

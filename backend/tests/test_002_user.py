@@ -686,6 +686,31 @@ class TestUserEndpoint:
             headers={"Authorization": f"Bearer {account.token}"},
         )
         assert res.status_code == 404
+        # user role filter
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "super_admin"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 200
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "admin"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 200
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "internal"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 404
+        res = await client.get(
+            app.url_path_for("user:get_all"),
+            params={"role": "external"},
+            headers={"Authorization": f"Bearer {account.token}"},
+        )
+        assert res.status_code == 200
 
     @pytest.mark.asyncio
     async def test_delete_user_by_super_admin_cred(
@@ -742,7 +767,7 @@ class TestUserEndpoint:
         assert res["active"] is True
 
     @pytest.mark.asyncio
-    async def test_get_all_approved_user_by_admin_cred(
+    async def test_get_all_user_by_admin_cred(
         self, app: FastAPI, session: Session, client: AsyncClient
     ) -> None:
         account = Acc(email="admin@akvo.org", token=None)

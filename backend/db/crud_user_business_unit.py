@@ -32,3 +32,7 @@ def delete_user_business_units_by_user_id(session: Session, user_id: int):
         session.delete(bu)
         session.commit()
         session.flush()
+
+
+def get_all_business_unit_users(session: Session):
+    return session.query(UserBusinessUnit).all()
