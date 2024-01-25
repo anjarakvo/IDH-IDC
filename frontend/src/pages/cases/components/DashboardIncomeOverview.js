@@ -302,7 +302,7 @@ const DashboardIncomeOverview = ({ dashboardData, currentCase }) => {
           <Col span={16}>
             <Card
               className="chart-card-wrapper has-segments-button"
-              title="Monetary contribution of each driver to income"
+              title="Monetary impact of each driver to income"
               extra={
                 <Space align="center">
                   <ShowLabelButton
