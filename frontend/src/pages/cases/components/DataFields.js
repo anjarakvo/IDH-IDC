@@ -38,6 +38,7 @@ import Chart from "../../../components/chart";
 import { SaveAsImageButton, ShowLabelButton } from "../../../components/utils";
 import { api } from "../../../lib";
 import { driverOptions } from "../../explore-studies";
+import { thousandFormatter } from "../../../components/chart/options/common";
 
 const LIBTooltipText = (
   <div>
@@ -635,7 +636,12 @@ const DataFields = ({
                       key: "value",
                       title: "Value",
                       dataIndex: "value",
-                      render: (value) => value || "-",
+                      render: (value) => {
+                        if (value && Number(value)) {
+                          return thousandFormatter(value);
+                        }
+                        return value || "-";
+                      },
                     },
                     {
                       key: "unit",
@@ -714,6 +720,9 @@ const DataFields = ({
                                 ?.map((x) => upperFirst(x))
                                 ?.join(" ");
                               let value = record[key];
+                              if (value && Number(value)) {
+                                value = thousandFormatter(value);
+                              }
                               if (value && !Number(value)) {
                                 value = value
                                   .split(" ")
