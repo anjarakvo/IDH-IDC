@@ -58,7 +58,7 @@ const TableContent = ({
           dataSource={dataSource}
           columns={columns}
           loading={loading}
-          pagination={paginationProps}
+          pagination={{ ...paginationProps, showSizeChanger: false }}
         />
       </Col>
     </Row>

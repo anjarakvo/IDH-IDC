@@ -3,7 +3,7 @@ from db.connection import Base
 from sqlalchemy import (
     Column,
     Integer,
-    Float,
+    Text,
     String,
     ForeignKey,
     DateTime,
@@ -27,19 +27,19 @@ class ReferenceDataDict(TypedDict):
     id: int
     country: int
     commodity: int
-    region: str
-    currency: str
-    year: int
-    source: str
-    link: str
+    region: Optional[str]
+    currency: Optional[str]
+    year: Optional[str]
+    source: Optional[str]
+    link: Optional[str]
     notes: Optional[str]
     confidence_level: Optional[str]
     range: Optional[str]
-    area: Optional[float]
-    volume: Optional[float]
-    price: Optional[float]
-    cost_of_production: Optional[float]
-    diversified_income: Optional[float]
+    area: Optional[str]
+    volume: Optional[str]
+    price: Optional[str]
+    cost_of_production: Optional[str]
+    diversified_income: Optional[str]
     area_size_unit: Optional[str]
     volume_measurement_unit: Optional[str]
     cost_of_production_unit: Optional[str]
@@ -56,21 +56,20 @@ class ReferenceDataList(TypedDict):
     id: int
     country: str
     commodity: str
-    source: str
-    link: str
+    source: Optional[str]
+    link: Optional[str]
     confidence_level: Optional[str]
 
 
 class ReferenceValueList(TypedDict):
     id: int
-    source: str
-    link: str
-    value: Optional[float]
+    source: Optional[str]
+    link: Optional[str]
+    value: Optional[str]
     unit: Optional[str]
-    region: str
-    year: int
+    region: Optional[str]
+    year: Optional[str]
     confidence_level: Optional[str]
-    range: Optional[str]
     type: Optional[str]
 
 
@@ -82,20 +81,20 @@ class ReferenceData(Base):
     commodity = Column(Integer, ForeignKey("commodity.id"))
     region = Column(String, nullable=True)
     currency = Column(String, nullable=True)
-    year = Column(Integer, nullable=True)
+    year = Column(String, nullable=True)
     source = Column(String, nullable=True)
     link = Column(String, nullable=True)
-    notes = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
     confidence_level = Column(String, nullable=True)
     range = Column(String, nullable=True)
-    area = Column(Float, nullable=True)
-    volume = Column(Float, nullable=True)
-    price = Column(Float, nullable=True)
+    area = Column(String, nullable=True)
+    volume = Column(String, nullable=True)
+    price = Column(String, nullable=True)
     cost_of_production = Column(
-        Float,
+        String,
         nullable=True,
     )
-    diversified_income = Column(Float, nullable=True)
+    diversified_income = Column(String, nullable=True)
     area_size_unit = Column(String, nullable=True)
     volume_measurement_unit = Column(String, nullable=True)
     cost_of_production_unit = Column(String, nullable=True)
@@ -107,7 +106,7 @@ class ReferenceData(Base):
     type_cost_of_production = Column(String, nullable=True)
     type_diversified_income = Column(String, nullable=True)
 
-    created_by = Column(Integer, ForeignKey("user.id"))
+    created_by = Column(Integer, ForeignKey("user.id"), nullable=True)
     created_at = Column(DateTime, nullable=False, server_default=func.now())
     updated_at = Column(
         DateTime,
@@ -135,17 +134,17 @@ class ReferenceData(Base):
         commodity: int,
         region: str,
         currency: str,
-        year: int,
+        year: str,
         source: str,
         link: str,
         notes: Optional[str],
         confidence_level: Optional[str],
         range: Optional[str],
-        area: Optional[float],
-        volume: Optional[float],
-        price: Optional[float],
-        cost_of_production: Optional[float],
-        diversified_income: Optional[float],
+        area: Optional[str],
+        volume: Optional[str],
+        price: Optional[str],
+        cost_of_production: Optional[str],
+        diversified_income: Optional[str],
         area_size_unit: Optional[str],
         volume_measurement_unit: Optional[str],
         cost_of_production_unit: Optional[str],
@@ -238,18 +237,18 @@ class ReferenceDataBase(BaseModel):
     commodity: int
     region: str
     currency: str
-    year: int
+    year: str
     source: str
     link: str
     id: Optional[int] = None
     notes: Optional[str] = None
     confidence_level: Optional[str] = None
     range: Optional[str] = None
-    area: Optional[float] = None
-    volume: Optional[float] = None
-    price: Optional[float] = None
-    cost_of_production: Optional[float] = None
-    diversified_income: Optional[float] = None
+    area: Optional[str] = None
+    volume: Optional[str] = None
+    price: Optional[str] = None
+    cost_of_production: Optional[str] = None
+    diversified_income: Optional[str] = None
     area_size_unit: Optional[str] = None
     volume_measurement_unit: Optional[str] = None
     cost_of_production_unit: Optional[str] = None
