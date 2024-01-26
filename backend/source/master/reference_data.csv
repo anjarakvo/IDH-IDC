@@ -8,13 +8,13 @@
 6,7,Cote d'Ivoire,Cocoa,2016,National,,SDM Data,,,High confidence,Median/Mean value,3.0,ha,Mean,1831.2,kg/ha,Mean,1.77,,Mean,,-,Mean,0,,Mean
 7,8,Cote d'Ivoire,Cocoa,2021,National,,SDM Data,,,High confidence,Median/Mean value,3.5,ha,Mean,3576.4,kg/ha,Mean,1.84,,Mean,1065.39,-,Mean,817.96,,Mean
 8,9,Cote d'Ivoire,Cocoa,2021,National,,SDM Data,,,High confidence,Median/Mean value,6.71,ha,Mean,23961.51,kg/ha,Mean,0.4,,Mean,7888.68,-,Mean,38.18,,Mean
-9,10,Cote d'Ivoire,Cocoa,2023,National,CFA,IDH internal,,,High confidence,Low value,2.0,ha,Min,645,kg/ha,Min,1148,CFA/kg,Mean,"1,007,326",XOF/ha,Mean,"1,242,368",XOF,Mean
-10,11,Cote d'Ivoire,Cocoa,2023,National,CFA,IDH internal,,,High confidence,Median/Mean value,3.0,ha,Median,645,kg/ha,Median,1148,CFA/kg,Mean,"1,007,326",XOF/ha,Mean,"1,242,368",XOF,Mean
-11,12,Cote d'Ivoire,Cocoa,2023,National,CFA,IDH internal,,,High confidence,High value,4.0,ha,Max,645,kg/ha,Max ,1148,CFA/kg,Mean,"1,007,326",XOF/ha,Mean,"1,242,368",XOF,Mean
+9,10,Cote d'Ivoire,Cocoa,2023,National,CFA,IDH internal,,,High confidence,Low value,2.0,ha,Min,645,kg/ha,Min,1148,CFA/kg,Mean,1007326.0,XOF/ha,Mean,"1,242,368",XOF,Mean
+10,11,Cote d'Ivoire,Cocoa,2023,National,CFA,IDH internal,,,High confidence,Median/Mean value,3.0,ha,Median,645,kg/ha,Median,1148,CFA/kg,Mean,1007326.0,XOF/ha,Mean,"1,242,368",XOF,Mean
+11,12,Cote d'Ivoire,Cocoa,2023,National,CFA,IDH internal,,,High confidence,High value,4.0,ha,Max,645,kg/ha,Max ,1148,CFA/kg,Mean,1007326.0,XOF/ha,Mean,"1,242,368",XOF,Mean
 12,13,Ghana,Cocoa,2022,National,USD,Desk research,https://livelihoods.eu/can-smallholder-cocoa-farmers-be-prosperous-livelihoods-new-project-in-ghana-2/,"average yield at 450kgs/ha , with a potential of 1-1.5 t/ha",Moderate confidence,Median/Mean value,2.0,ha,Median,450,kg/ha,Mean,1,$/kg,Max ,,,,,,
 13,14,Ghana,Cocoa,2023,National,USD,Desk research,"https://www.oxfam.org/en/press-releases/chocolate-giants-reap-huge-profits-promises-improve-farmers-incomes-ring-hollow#:~:text=Up%20to%2090%20percent%20of,on%20just%20%242%20a%20day.",average cocoa farmer in Ghana produces about one ton of cocoa annually,High confidence,Median/Mean value,,,,,,,35 -40,$/t,Mean,,,,,,
 14,15,Ghana,Maize,2021,National,,Desk research,"https://veggiegrow.ng/how-many-bags-of-maize-can-an-acre-produce/#:~:text=The%20level%20of%20fertility%20of,bag%20of%20maize%20per%20acre.",With a potential of over 20 (100kg) bags and as low as 1 (100kg) bag.,Moderate confidence,Median/Mean value,,,,2000,kg/acre,Mean,,,,,,,,,
-15,16,Ghana,Maize,2023,National,GHS,Desk research,https://thefarmdreams.com/how-to-start-maize-farming-in-ghana-to-make-money/,With a potential of over 20 (100kg) bags and as low as 5 (100kg) bag.,Moderate confidence,Low value,,,,1500,kg/acre,Mean,1,GHS/kg,Mean,775,GHS/acre,Mean,,,
+15,16,Ghana,Maize,2023,National,GHS,Desk research,https://thefarmdreams.com/how-to-start-maize-farming-in-ghana-to-make-money/,With a potential of over 20 (100kg) bags and as low as 5 (100kg) bag.,Moderate confidence,Low value,,,,1500,kg/acre,Mean,1,GHS/kg,Mean,775.0,GHS/acre,Mean,,,
 16,17,Ghana,Rice,2020,National,,Desk research,https://agra.org/wp-content/uploads/2020/10/Ghana-Rice-Mechanisation-Report.pdf,Above 6 tonnes,High confidence,Low value,,,,6,t/ha,Min,,,,,,,,,
 17,18,Ghana,Maize,2022,National,,SDM Data,,,High confidence,Median/Mean value,0.4,ha,Mean,650,kg/ha,Mean,0.13,,Mean,93.97,-,Mean,0,,Mean
 18,19,Ghana,Maize,2022,National,,SDM Data,,,High confidence,Median/Mean value,0.4,ha,Mean,1670,kg/ha,Mean,0.16,,Mean,288.32,-,Mean,0,,Mean
@@ -30,12 +30,12 @@
 28,29,Ghana,Maize,2020,National,,SDM Data,,,High confidence,Median/Mean value,4.0,ha,Mean,2718.59,kg/ha,Mean,0.46,,Mean,730.14,-,Mean,0,,Mean
 29,30,Ghana,Cocoa,2021,National,,SDM Data,,,High confidence,Median/Mean value,3.3,ha,Mean,3273.06,kg/ha,Mean,1.64,,Mean,1811.67,-,Mean,477,,Mean
 30,31,Ghana,Cocoa,2021,National,,SDM Data,,,High confidence,Median/Mean value,3.7,ha,Mean,7518.01,kg/ha,Mean,0.99,,Mean,2298.96,-,Mean,477,,Mean
-31,32,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Low value,1.5,ha,Min,1026,kg/ha,Median,23.8,GHS/kg,Mean,"16,750",GHS/ha,Mean,23772,GHS,Mean
-32,33,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Median/Mean value,2.5,ha,Median,1026,kg/ha,Median,23.8,GHS/kg,Mean,"16,750",GHS/ha,Mean,23772,GHS,Mean
-33,34,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,High value,3.0,ha,Max,1026,kg/ha,Median,23.8,GHS/kg,Mean,"16,750",GHS/ha,Mean,23772,GHS,Mean
-34,35,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Low value,1.5,ha,Min,344,kg/ha,Median,20.94384,GHS/kg,Mean,8540,GHS/ha,Mean,4018,GHS,Mean
-35,36,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Median/Mean value,2.5,ha,Median,344,kg/ha,Median,20.94384,GHS/kg,Mean,8540,GHS/ha,Mean,4018,GHS,Mean
-36,37,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,High value,3.0,ha,Max,344,kg/ha,Median,20.94384,GHS/kg,Mean,8540,GHS/ha,Mean,4018,GHS,Mean
+31,32,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Low value,1.5,ha,Min,1026,kg/ha,Median,23.8,GHS/kg,Mean,16750.0,GHS/ha,Mean,23772,GHS,Mean
+32,33,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Median/Mean value,2.5,ha,Median,1026,kg/ha,Median,23.8,GHS/kg,Mean,16750.0,GHS/ha,Mean,23772,GHS,Mean
+33,34,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,High value,3.0,ha,Max,1026,kg/ha,Median,23.8,GHS/kg,Mean,16750.0,GHS/ha,Mean,23772,GHS,Mean
+34,35,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Low value,1.5,ha,Min,344,kg/ha,Median,20.94384,GHS/kg,Mean,8540.0,GHS/ha,Mean,4018,GHS,Mean
+35,36,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,Median/Mean value,2.5,ha,Median,344,kg/ha,Median,20.94384,GHS/kg,Mean,8540.0,GHS/ha,Mean,4018,GHS,Mean
+36,37,Ghana,Cocoa,2023,National,GHS,IDH internal,,,High confidence,High value,3.0,ha,Max,344,kg/ha,Median,20.94384,GHS/kg,Mean,8540.0,GHS/ha,Mean,4018,GHS,Mean
 37,38,Indonesia,Rice,2021,National,,Desk research,"https://knoema.com/atlas/Indonesia/topics/Agriculture/Crops-Production-Yield/Paddy-rice-yield#:~:text=In%202021%2C%20paddy%20rice%20yield,average%20annual%20rate%20of%201.59%25.",paddy rice yield,Moderate confidence,Median/Mean value,,,,"52,263",hg/ha,Mean,,,,,,,,,
 38,39,Indonesia,Cocoa,2018,National,,Desk research,https://iopscience.iop.org/article/10.1088/1755-1315/157/1/012067/pdf,"a productivity level of 655,515 kg per hectare? around 655 kg per hectare?... conflicting info",Low confidence,Median/Mean value,,,,655,kg/ha,Mean,,,,,,,,,
 39,40,Indonesia,Coffee,2020,National,IDR,Desk research,https://www.fairtrade.org.uk/media-centre/news/new-living-income-price-for-indonesian-coffee-farmers/,equivalent to US$ 0.95 for a kilo of coffee cherry,High confidence,High value,,,,"6,000",kg/ha,Mean,"13,600",IDR/kg,Max ,,,,,,
@@ -101,7 +101,7 @@
 99,100,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,2.0,ha,Mean,1343.38,kg/ha,Mean,4.67,,Mean,3386.13,-,Mean,0,,Mean
 100,101,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,1.5,ha,Mean,644.93,kg/ha,Mean,2.72,,Mean,1392.73,-,Mean,0,,Mean
 101,102,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,2.0,ha,Mean,587.11,kg/ha,Mean,2.72,,Mean,2991.4,-,Mean,0,,Mean
-102,103,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,2.5,ha,Mean,734.48,kg/ha,Mean,3.03,,Mean,3036,-,Mean,0,,Mean
+102,103,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,2.5,ha,Mean,734.48,kg/ha,Mean,3.03,,Mean,3036.0,-,Mean,0,,Mean
 103,104,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,4.5,ha,Mean,1276.29,kg/ha,Mean,3.03,,Mean,3141.18,-,Mean,0,,Mean
 104,105,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,,ha,Mean,,kg/ha,Mean,,,Mean,,,Mean,0,,Mean
 105,106,Mexico,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,,ha,Mean,,kg/ha,Mean,,,Mean,,,Mean,0,,Mean
@@ -166,7 +166,7 @@
 164,165,Uganda,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,,ha,Mean,,kg/ha,Mean,,,Mean,,,Mean,0,,Mean
 165,166,Uganda,Coffee,2017,National,,SDM Data,,,High confidence,Median/Mean value,,ha,Mean,,kg/ha,Mean,,,Mean,,,Mean,0,,Mean
 166,167,Uganda,Coffee,2018,National,,SDM Data,,,High confidence,Median/Mean value,0.44,ha,Mean,800,kg/ha,Mean,0.13,,Mean,21.33,-,Mean,0,,Mean
-167,168,Uganda,Coffee,2018,National,,SDM Data,,,High confidence,Median/Mean value,0.44,ha,Mean,800.03,kg/ha,Mean,0.22,,Mean,40,-,Mean,0,,Mean
+167,168,Uganda,Coffee,2018,National,,SDM Data,,,High confidence,Median/Mean value,0.44,ha,Mean,800.03,kg/ha,Mean,0.22,,Mean,40.0,-,Mean,0,,Mean
 168,169,Uganda,Coffee,2019,National,,SDM Data,,,High confidence,Median/Mean value,0.6,ha,Mean,1036.13,kg/ha,Mean,1.79,,Mean,780.02,-,Mean,0,,Mean
 169,170,Uganda,Coffee,2019,National,,SDM Data,,,High confidence,Median/Mean value,0.6,ha,Mean,1036.13,kg/ha,Mean,1.79,,Mean,664.58,-,Mean,0,,Mean
 170,171,Uganda,Coffee,2019,National,,SDM Data,,,High confidence,Median/Mean value,0.81,ha,Mean,1317.41,kg/ha,Mean,0.82,,Mean,528.61,-,Mean,0,,Mean

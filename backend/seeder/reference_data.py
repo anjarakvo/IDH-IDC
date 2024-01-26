@@ -46,24 +46,10 @@ def seeder_reference_data(session: Session):
         )
         # value
         area = row["area"]
-        if area and isinstance(area, str):
-            area = float(str(area).replace(",", ""))
         volume = row["volume"]
-        if volume and isinstance(volume, str):
-            volume = float(str(row["volume"]).replace(",", ""))
         price = row["price"]
-        if price and isinstance(price, str):
-            price = float(str(row["price"]).replace(",", ""))
         cost_of_production = row["cost_of_production"]
-        if cost_of_production and isinstance(cost_of_production, str):
-            cost_of_production = float(
-                str(row["cost_of_production"]).replace(",", "")
-            )
         diversified_income = row["diversified_income"]
-        if diversified_income and isinstance(diversified_income, str):
-            diversified_income = float(
-                str(row["diversified_income"]).replace(",", "")
-            )
 
         if rfd:
             # update
