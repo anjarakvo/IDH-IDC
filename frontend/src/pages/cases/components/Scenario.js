@@ -109,6 +109,7 @@ const Question = ({
   unit,
   form,
   enableEditCase,
+  refreshCurrentIncrease,
 }) => {
   const { commodity_name, commodity_type, case_commodity, currency } =
     commodity;
@@ -176,7 +177,8 @@ const Question = ({
       value = form.getFieldValue(`percentage-${case_commodity}-${id}`) || "-";
     }
     return !isNaN(value) ? value : 0;
-  }, [form, case_commodity, id, percentage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form, case_commodity, id, percentage, refreshCurrentIncrease]);
 
   const disableTotalIncomeFocusCommodityField = !enableEditCase
     ? true
@@ -255,6 +257,7 @@ const Question = ({
               form={form}
               {...child}
               enableEditCase={enableEditCase}
+              refreshCurrentIncrease={refreshCurrentIncrease}
             />
           ))
         : null}
@@ -275,6 +278,7 @@ const ScenarioInput = ({
 }) => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(true);
+  const [refreshCurrentIncrease, setRefreshCurrentIncrease] = useState(0);
 
   useEffect(() => {
     setTimeout(() => {
@@ -434,6 +438,7 @@ const ScenarioInput = ({
       ];
     });
     form.setFieldsValue(allNewValues);
+    setRefreshCurrentIncrease((prev) => prev + 1);
   };
 
   if (loading) {
@@ -509,6 +514,7 @@ const ScenarioInput = ({
               percentage={percentage}
               {...question}
               enableEditCase={enableEditCase}
+              refreshCurrentIncrease={refreshCurrentIncrease}
             />
           ))}
         </div>
