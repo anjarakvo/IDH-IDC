@@ -29,7 +29,7 @@ class ReferenceDataDict(TypedDict):
     commodity: int
     region: Optional[str]
     currency: Optional[str]
-    year: Optional[int]
+    year: Optional[str]
     source: Optional[str]
     link: Optional[str]
     notes: Optional[str]
@@ -68,7 +68,7 @@ class ReferenceValueList(TypedDict):
     value: Optional[str]
     unit: Optional[str]
     region: Optional[str]
-    year: Optional[int]
+    year: Optional[str]
     confidence_level: Optional[str]
     type: Optional[str]
 
@@ -81,7 +81,7 @@ class ReferenceData(Base):
     commodity = Column(Integer, ForeignKey("commodity.id"))
     region = Column(String, nullable=True)
     currency = Column(String, nullable=True)
-    year = Column(Integer, nullable=True)
+    year = Column(String, nullable=True)
     source = Column(String, nullable=True)
     link = Column(String, nullable=True)
     notes = Column(Text, nullable=True)
@@ -134,7 +134,7 @@ class ReferenceData(Base):
         commodity: int,
         region: str,
         currency: str,
-        year: int,
+        year: str,
         source: str,
         link: str,
         notes: Optional[str],
@@ -237,7 +237,7 @@ class ReferenceDataBase(BaseModel):
     commodity: int
     region: str
     currency: str
-    year: int
+    year: str
     source: str
     link: str
     id: Optional[int] = None

@@ -20,6 +20,7 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.alter_column("reference_data", "notes", type_=sa.Text(), nullable=True)
+    op.alter_column("reference_data", "year", type_=sa.String(), nullable=True)
     op.alter_column("reference_data", "area", type_=sa.String(), nullable=True)
     op.alter_column(
         "reference_data", "volume", type_=sa.String(), nullable=True
@@ -48,6 +49,14 @@ def downgrade() -> None:
 
     op.execute(
         """
+        ALTER TABLE reference_data
+        ALTER COLUMN year TYPE integer
+        USING year::integer
+        """
+    )
+
+    op.execute(
+        r"""
         UPDATE reference_data
         SET area = NULL
         WHERE area IS NOT NULL
@@ -63,7 +72,7 @@ def downgrade() -> None:
     )
 
     op.execute(
-        """
+        r"""
         UPDATE reference_data
         SET volume = NULL
         WHERE volume IS NOT NULL
@@ -79,7 +88,7 @@ def downgrade() -> None:
     )
 
     op.execute(
-        """
+        r"""
         UPDATE reference_data
         SET price = NULL
         WHERE price IS NOT NULL
@@ -95,7 +104,7 @@ def downgrade() -> None:
     )
 
     op.execute(
-        """
+        r"""
         UPDATE reference_data
         SET cost_of_production = NULL
         WHERE cost_of_production IS NOT NULL
@@ -111,7 +120,7 @@ def downgrade() -> None:
     )
 
     op.execute(
-        """
+        r"""
         UPDATE reference_data
         SET diversified_income = NULL
         WHERE diversified_income IS NOT NULL
