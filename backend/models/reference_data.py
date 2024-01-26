@@ -3,7 +3,7 @@ from db.connection import Base
 from sqlalchemy import (
     Column,
     Integer,
-    Float,
+    Text,
     String,
     ForeignKey,
     DateTime,
@@ -35,11 +35,11 @@ class ReferenceDataDict(TypedDict):
     notes: Optional[str]
     confidence_level: Optional[str]
     range: Optional[str]
-    area: Optional[float]
-    volume: Optional[float]
-    price: Optional[float]
-    cost_of_production: Optional[float]
-    diversified_income: Optional[float]
+    area: Optional[str]
+    volume: Optional[str]
+    price: Optional[str]
+    cost_of_production: Optional[str]
+    diversified_income: Optional[str]
     area_size_unit: Optional[str]
     volume_measurement_unit: Optional[str]
     cost_of_production_unit: Optional[str]
@@ -65,7 +65,7 @@ class ReferenceValueList(TypedDict):
     id: int
     source: Optional[str]
     link: Optional[str]
-    value: Optional[float]
+    value: Optional[str]
     unit: Optional[str]
     region: Optional[str]
     year: Optional[int]
@@ -84,17 +84,17 @@ class ReferenceData(Base):
     year = Column(Integer, nullable=True)
     source = Column(String, nullable=True)
     link = Column(String, nullable=True)
-    notes = Column(String, nullable=True)
+    notes = Column(Text, nullable=True)
     confidence_level = Column(String, nullable=True)
     range = Column(String, nullable=True)
-    area = Column(Float, nullable=True)
-    volume = Column(Float, nullable=True)
-    price = Column(Float, nullable=True)
+    area = Column(String, nullable=True)
+    volume = Column(String, nullable=True)
+    price = Column(String, nullable=True)
     cost_of_production = Column(
-        Float,
+        String,
         nullable=True,
     )
-    diversified_income = Column(Float, nullable=True)
+    diversified_income = Column(String, nullable=True)
     area_size_unit = Column(String, nullable=True)
     volume_measurement_unit = Column(String, nullable=True)
     cost_of_production_unit = Column(String, nullable=True)
@@ -140,11 +140,11 @@ class ReferenceData(Base):
         notes: Optional[str],
         confidence_level: Optional[str],
         range: Optional[str],
-        area: Optional[float],
-        volume: Optional[float],
-        price: Optional[float],
-        cost_of_production: Optional[float],
-        diversified_income: Optional[float],
+        area: Optional[str],
+        volume: Optional[str],
+        price: Optional[str],
+        cost_of_production: Optional[str],
+        diversified_income: Optional[str],
         area_size_unit: Optional[str],
         volume_measurement_unit: Optional[str],
         cost_of_production_unit: Optional[str],
@@ -244,11 +244,11 @@ class ReferenceDataBase(BaseModel):
     notes: Optional[str] = None
     confidence_level: Optional[str] = None
     range: Optional[str] = None
-    area: Optional[float] = None
-    volume: Optional[float] = None
-    price: Optional[float] = None
-    cost_of_production: Optional[float] = None
-    diversified_income: Optional[float] = None
+    area: Optional[str] = None
+    volume: Optional[str] = None
+    price: Optional[str] = None
+    cost_of_production: Optional[str] = None
+    diversified_income: Optional[str] = None
     area_size_unit: Optional[str] = None
     volume_measurement_unit: Optional[str] = None
     cost_of_production_unit: Optional[str] = None
