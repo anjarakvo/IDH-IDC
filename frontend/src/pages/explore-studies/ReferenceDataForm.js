@@ -8,13 +8,11 @@ import {
   Col,
   Select,
   Spin,
-  InputNumber,
   Modal,
   Tooltip,
   Space,
 } from "antd";
 import { api } from "../../lib";
-import { InputNumberThousandFormatter } from "../cases/components";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const selectProps = {
@@ -345,10 +343,7 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
                     <Form.Item label="Land" name="area">
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -369,10 +364,7 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
                     <Form.Item label="Volume" name="volume">
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -393,10 +385,7 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
                     <Form.Item label="Price" name="price">
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -420,10 +409,7 @@ const ReferenceDataForm = ({
                       label="Cost of Production"
                       name="cost_of_production"
                     >
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -450,10 +436,7 @@ const ReferenceDataForm = ({
                       label="Diversified Income"
                       name="diversified_income"
                     >
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>

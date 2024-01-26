@@ -525,6 +525,7 @@ const ExploreStudiesPage = () => {
               pageSize: perPage,
               total: data.total,
               onChange: (page) => setCurrentPage(page),
+              showSizeChanger: false,
             }}
             expandable={{
               onExpand: (event, record) => {
