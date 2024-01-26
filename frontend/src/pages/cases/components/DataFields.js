@@ -729,10 +729,10 @@ const DataFields = ({
                                   ?.map((x) => upperFirst(x))
                                   ?.join(" ");
                                 let value = record[key];
-                                if (value && Number(value)) {
+                                if (value && typeof value === "number") {
                                   value = thousandFormatter(value);
                                 }
-                                if (value && !Number(value)) {
+                                if (value && typeof value !== "number") {
                                   value = value
                                     .split(" ")
                                     .map((x) => upperFirst(x))
