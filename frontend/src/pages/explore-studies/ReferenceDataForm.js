@@ -8,13 +8,11 @@ import {
   Col,
   Select,
   Spin,
-  InputNumber,
   Modal,
   Tooltip,
   Space,
 } from "antd";
 import { api } from "../../lib";
-import { InputNumberThousandFormatter } from "../cases/components";
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
 const selectProps = {
@@ -36,14 +34,14 @@ const confidenceLevelOptions = [
   { label: "Undefined", value: "Undefined" },
 ];
 
-const rangeOptions = [
-  { label: "Low value", value: "Low value" },
-  { label: "Median value", value: "Median value" },
-  {
-    label: "High value",
-    value: "High value",
-  },
-];
+// const rangeOptions = [
+//   { label: "Low value", value: "Low value" },
+//   { label: "Median value", value: "Median value" },
+//   {
+//     label: "High value",
+//     value: "High value",
+//   },
+// ];
 
 const typeOptions = [
   { label: "Mean", value: "Mean" },
@@ -119,6 +117,7 @@ const ReferenceDataForm = ({
     const payload = {
       ...values,
       currency: "",
+      range: null,
     };
     onSave({
       payload: payload,
@@ -301,7 +300,7 @@ const ReferenceDataForm = ({
             <Col span={24}>
               <Card title="Details about the data">
                 <Row gutter={[16, 16]}>
-                  <Col span={12}>
+                  <Col span={24}>
                     <Form.Item
                       label={
                         <LabelWithTooltip
@@ -317,7 +316,7 @@ const ReferenceDataForm = ({
                       />
                     </Form.Item>
                   </Col>
-                  <Col span={12}>
+                  {/* <Col span={12}>
                     <Form.Item
                       label={
                         <LabelWithTooltip
@@ -329,7 +328,7 @@ const ReferenceDataForm = ({
                     >
                       <Select {...selectProps} options={rangeOptions} />
                     </Form.Item>
-                  </Col>
+                  </Col> */}
                   {/* <Col span={8}>
                     <Form.Item label="Type" name="type">
                       <Select {...selectProps} options={typeOptions} />
@@ -344,10 +343,7 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
                     <Form.Item label="Land" name="area">
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -368,10 +364,7 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
                     <Form.Item label="Volume" name="volume">
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -392,10 +385,7 @@ const ReferenceDataForm = ({
                 <Row gutter={[16, 16]}>
                   <Col span={8}>
                     <Form.Item label="Price" name="price">
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -419,10 +409,7 @@ const ReferenceDataForm = ({
                       label="Cost of Production"
                       name="cost_of_production"
                     >
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
@@ -449,10 +436,7 @@ const ReferenceDataForm = ({
                       label="Diversified Income"
                       name="diversified_income"
                     >
-                      <InputNumber
-                        keyboard={false}
-                        {...InputNumberThousandFormatter}
-                      />
+                      <Input />
                     </Form.Item>
                   </Col>
                   <Col span={8}>
