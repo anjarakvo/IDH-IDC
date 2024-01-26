@@ -155,6 +155,19 @@ const Question = ({
     );
   }, [segment, id, case_commodity, childrens]);
 
+  const answerValue = useMemo(() => {
+    if (!answer?.value) {
+      return "";
+    }
+    let value = answer.value;
+    if (value < 100) {
+      value = value?.toFixed(2);
+    } else {
+      value = value?.toFixed();
+    }
+    return thousandFormatter(value);
+  }, [answer]);
+
   const currentIncrease = useMemo(() => {
     let value = 0;
     if (percentage) {
@@ -223,7 +236,7 @@ const Question = ({
           ))}
         </Col>
         <Col span={5} align="right">
-          {thousandFormatter(answer?.value?.toFixed()) || ""}
+          {answerValue}
         </Col>
         <Col span={5} align="right">
           {percentage
