@@ -505,9 +505,9 @@ const ExploreStudiesPage = () => {
                     </Col>
                   </Row>
                 </Col>
-                <Col span={24}>
+                {/* <Col span={24}>
                   <div className="map-container"></div>
-                </Col>
+                </Col> */}
               </Row>
             </Form>
           </Card>
