@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -58,7 +59,7 @@ jobs:
           dockerfile-location: "backend"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
 
-      - rollout-frontend:
+      - name: Rollout Frontend
         uses: ./composite-actions/.github/actions/rollout
         with:
           app-name: "idh-idc"
@@ -66,7 +67,7 @@ jobs:
           cluster-name: "test"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_K8S }}
 
-      - rollout-backend:
+      - name: Rollout Backend
         uses: ./composite-actions/.github/actions/rollout
         with:
           app-name: "idh-idc"
