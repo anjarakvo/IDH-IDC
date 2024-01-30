@@ -21,28 +21,28 @@ jobs:
           path: composite-actions
           ref: main
 
-      - name: node-operation
+      - name: Node Operations
         uses: ./composite-actions/.github/actions/node-operation
         with:
           node-version: "18"
           node-command: "yarn install --no-progress --frozen-lock && yarn build && rm -rf node_modules"
 
 
-      - name: docker-build-frontend
+      - name: Docker Build Frontend
         uses: ./composite-actions/.github/actions/docker-build
         with:
           app-name: "idh-idc"
           service-name: "frontend"
           dockerfile-location: "frontend"
 
-      - name: docker-build-backend
+      - name: Docker Build Backend
         uses: ./composite-actions/.github/actions/docker-build
         with:
           app-name: "idh-idc"
           service-name: "backend"
           dockerfile-location: "backend"
 
-      - name: docker-push-frontend
+      - name: Docker Push Frontend
         uses: ./composite-actions/.github/actions/docker-push
         with:
           app-name: "idh-idc"
@@ -50,10 +50,26 @@ jobs:
           dockerfile-location: "frontend"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
 
-      - name: docker-push-backend
+      - name: Docker Push Backend
         uses: ./composite-actions/.github/actions/docker-push
         with:
           app-name: "idh-idc"
           service-name: "backend"
           dockerfile-location: "backend"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
+
+      - rollout-frontend:
+        uses: ./composite-actions/.github/actions/rollout
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          cluster-name: "test"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_K8S }}
+
+      - rollout-backend:
+        uses: ./composite-actions/.github/actions/rollout
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          cluster-name: "test"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_K8S }}
