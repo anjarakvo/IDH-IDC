@@ -6,45 +6,28 @@ on:
       - main
 
 jobs:
-  node-operation:
-    uses: akvo/main-github-workflow/.github/workflows/node-operation.yml@main
-    secrets: inherit
-    with:
-      node-version: "18"
-      node-command: "yarn install --no-progress --frozen-lock && yarn build && rm -rf node_modules"
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: src
 
-  build-push-frontend:
-    needs: node-operation
-    uses: akvo/main-github-workflow/.github/workflows/build-push.yml@main
-    secrets: inherit
-    with:
-      app-name: "idh-idc"
-      service-name: "frontend"
-      dockerfile-location: "frontend"
+      - name: Checkout Akvo composite actions
+        uses: actions/checkout@v4
+        with:
+          repository: akvo/composite-actions
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          path: composite-actions
+          ref: main
 
-  build-push-backend:
-    needs: node-operation
-    uses: akvo/main-github-workflow/.github/workflows/build-push.yml@main
-    secrets: inherit
-    with:
-      app-name: "idh-idc"
-      service-name: "backend"
-      dockerfile-location: "backend"
 
-  rollout-frontend:
-    needs: build-push-frontend
-    uses: akvo/main-github-workflow/.github/workflows/rollout.yml@main
-    secrets: inherit
-    with:
-      app-name: "idh-idc"
-      service-name: "frontend"
-      cluster-name: "test"
+      - name: node-operation
+        uses: ./composite-actions/.github/actions/node-operation
+        working-directory: ./src
+        with:
+          node-version: "18"
+          node-command: "yarn install --no-progress --frozen-lock && yarn build && rm -rf node_modules"
 
-  rollout-backend:
-    needs: build-push-backend
-    uses: akvo/main-github-workflow/.github/workflows/rollout.yml@main
-    secrets: inherit
-    with:
-      app-name: "idh-idc"
-      service-name: "backend"
-      cluster-name: "test"
+
