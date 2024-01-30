@@ -17,7 +17,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: akvo/composite-actions
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          token: ${{ secrets.GH_PAT }}
           path: composite-actions
           ref: main
 
@@ -41,3 +41,19 @@ jobs:
           app-name: "idh-idc"
           service-name: "backend"
           dockerfile-location: "backend"
+
+      - name: docker-push-frontend
+        uses: ./composite-actions/.github/actions/docker-push
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          dockerfile-location: "frontend"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
+
+      - name: docker-push-backend
+        uses: ./composite-actions/.github/actions/docker-push
+        with:
+          app-name: "idh-idc"
+          service-name: "backend"
+          dockerfile-location: "backend"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
