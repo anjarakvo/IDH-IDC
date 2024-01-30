@@ -28,3 +28,16 @@ jobs:
           node-command: "yarn install --no-progress --frozen-lock && yarn build && rm -rf node_modules"
 
 
+      - docker-build-frontend:
+        uses: ./composite-actions/.github/actions/docker-build
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          dockerfile-location: "frontend"
+
+      - docker-build-backend:
+        uses: ./composite-actions/.github/actions/docker-build
+        with:
+          app-name: "idh-idc"
+          service-name: "backend"
+          dockerfile-location: "backend"
