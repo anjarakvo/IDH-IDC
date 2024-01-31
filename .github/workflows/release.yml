@@ -1,0 +1,72 @@
+name: IDH-IDC Release Pipeline
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          path: src
+
+      - name: Checkout Akvo composite actions
+        uses: actions/checkout@v4
+        with:
+          repository: akvo/composite-actions
+          token: ${{ secrets.GH_PAT }}
+          path: composite-actions
+          ref: main
+
+      - name: Node Operations
+        uses: ./composite-actions/.github/actions/node-operation
+        with:
+          node-version: "18"
+          node-command: "yarn install --no-progress --frozen-lock && yarn build && rm -rf node_modules"
+
+      - name: Docker Build Frontend
+        uses: ./composite-actions/.github/actions/docker-build
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          dockerfile-location: "frontend"
+
+      - name: Docker Build Backend
+        uses: ./composite-actions/.github/actions/docker-build
+        with:
+          app-name: "idh-idc"
+          service-name: "backend"
+          dockerfile-location: "backend"
+
+      - name: Docker Push Frontend
+        uses: ./composite-actions/.github/actions/docker-push
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
+
+      - name: Docker Push Backend
+        uses: ./composite-actions/.github/actions/docker-push
+        with:
+          app-name: "idh-idc"
+          service-name: "backend"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
+
+      - name: Rollout Frontend
+        uses: ./composite-actions/.github/actions/rollout
+        with:
+          app-name: "idh-idc"
+          service-name: "frontend"
+          cluster-name: "test"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_K8S }}
+
+      - name: Rollout Backend
+        uses: ./composite-actions/.github/actions/rollout
+        with:
+          app-name: "idh-idc"
+          service-name: "backend"
+          cluster-name: "test"
+          gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_K8S }}
