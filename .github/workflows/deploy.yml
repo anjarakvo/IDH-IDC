@@ -48,7 +48,6 @@ jobs:
         with:
           app-name: "idh-idc"
           service-name: "frontend"
-          dockerfile-location: "frontend"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
 
       - name: Docker Push Backend
@@ -56,7 +55,6 @@ jobs:
         with:
           app-name: "idh-idc"
           service-name: "backend"
-          dockerfile-location: "backend"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_REGISTRY }}
 
       - name: Rollout Frontend
@@ -71,6 +69,6 @@ jobs:
         uses: ./composite-actions/.github/actions/rollout
         with:
           app-name: "idh-idc"
-          service-name: "frontend"
+          service-name: "backend"
           cluster-name: "test"
           gcloud-sa:  ${{ secrets.GCLOUD_SERVICE_ACCOUNT_K8S }}
